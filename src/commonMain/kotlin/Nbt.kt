@@ -120,7 +120,7 @@ private class NbtImpl(configuration: NbtConfiguration, module: SerializersModule
  * Encode NBT to a [Sink].
  */
 @OkioApi
-public inline fun <reified T> Nbt.encodeTo(value: T, sink: Sink): Unit =
+public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
     encodeTo(sink, serializer(), value)
 
 /**
