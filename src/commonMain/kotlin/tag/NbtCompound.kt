@@ -42,6 +42,46 @@ public fun <T : NbtTag> nbtCompoundOf(vararg pairs: Pair<String, T>): NbtCompoun
 public fun <T : NbtTag> Map<String, T>.toNbtCompound(): NbtCompound<T> =
     if (isEmpty()) NbtCompound.empty else NbtCompound(this.toMap())
 
+@JvmName("toNbtCompound\$Byte")
+public fun Map<String, Byte>.toNbtCompound(): NbtCompound<NbtByte> =
+    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtByte() })
+
+@JvmName("toNbtCompound\$Short")
+public fun Map<String, Short>.toNbtCompound(): NbtCompound<NbtShort> =
+    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtShort() })
+
+@JvmName("toNbtCompound\$Int")
+public fun Map<String, Int>.toNbtCompound(): NbtCompound<NbtInt> =
+    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtInt() })
+
+@JvmName("toNbtCompound\$Long")
+public fun Map<String, Long>.toNbtCompound(): NbtCompound<NbtLong> =
+    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtLong() })
+
+@JvmName("toNbtCompound\$Float")
+public fun Map<String, Float>.toNbtCompound(): NbtCompound<NbtFloat> =
+    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtFloat() })
+
+@JvmName("toNbtCompound\$Double")
+public fun Map<String, Double>.toNbtCompound(): NbtCompound<NbtDouble> =
+    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtDouble() })
+
+@JvmName("toNbtCompound\$String")
+public fun Map<String, String>.toNbtCompound(): NbtCompound<NbtString> =
+    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtString() })
+
+@JvmName("toNbtCompound\$ByteArray")
+public fun Map<String, ByteArray>.toNbtCompound(): NbtCompound<NbtByteArray> =
+    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtByteArray() })
+
+@JvmName("toNbtCompound\$IntArray")
+public fun Map<String, IntArray>.toNbtCompound(): NbtCompound<NbtIntArray> =
+    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtIntArray() })
+
+@JvmName("toNbtCompound\$LongArray")
+public fun Map<String, LongArray>.toNbtCompound(): NbtCompound<NbtLongArray> =
+    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtLongArray() })
+
 
 private class NbtCompoundSerializer<T : NbtTag>(
     elementSerializer: KSerializer<T>,

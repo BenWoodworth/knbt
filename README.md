@@ -73,6 +73,8 @@ val nbtListOfStrings = buildNbtList<NbtString> {
     add("strings")
 }
 
+val nbtCompoundOfInts = mapOf("a" to 1, "b" to 2).toNbtCompound()
+
 // bigtest.nbt (https://wiki.vg/NBT#bigtest.nbt)
 val bigtest = buildNbtCompound {
     putNbtCompound("Level") {

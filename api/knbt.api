@@ -685,6 +685,16 @@ public final class net/benwoodworth/knbt/tag/NbtCompoundKt {
 	public static final fun nbtCompoundOf ([Lkotlin/Pair;)Lnet/benwoodworth/knbt/tag/NbtCompound;
 	public static final fun nbtCompoundOf$T ()Lnet/benwoodworth/knbt/tag/NbtCompound;
 	public static final fun toNbtCompound (Ljava/util/Map;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+	public static final fun toNbtCompound$Byte (Ljava/util/Map;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+	public static final fun toNbtCompound$ByteArray (Ljava/util/Map;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+	public static final fun toNbtCompound$Double (Ljava/util/Map;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+	public static final fun toNbtCompound$Float (Ljava/util/Map;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+	public static final fun toNbtCompound$Int (Ljava/util/Map;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+	public static final fun toNbtCompound$IntArray (Ljava/util/Map;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+	public static final fun toNbtCompound$Long (Ljava/util/Map;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+	public static final fun toNbtCompound$LongArray (Ljava/util/Map;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+	public static final fun toNbtCompound$Short (Ljava/util/Map;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+	public static final fun toNbtCompound$String (Ljava/util/Map;)Lnet/benwoodworth/knbt/tag/NbtCompound;
 }
 
 public final class net/benwoodworth/knbt/tag/NbtDouble : net/benwoodworth/knbt/tag/NbtTag {
