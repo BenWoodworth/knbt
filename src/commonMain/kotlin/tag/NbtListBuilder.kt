@@ -8,8 +8,11 @@ import kotlin.contracts.contract
 import kotlin.jvm.JvmName
 
 @NbtDslMarker
-public class NbtListBuilder<T : NbtTag> @PublishedApi internal constructor() {
-    private val elements by lazy { ArrayList<T>() }
+public class NbtListBuilder<T : NbtTag> @PublishedApi internal constructor(size: Int = -1) {
+    private val elements by lazy {
+        if (size >= 0) ArrayList<T>(size) else ArrayList<T>()
+    }
+
     private var elementType: NbtTagType = TAG_End
     private var built = false
 

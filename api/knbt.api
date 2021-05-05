@@ -878,6 +878,8 @@ public final class net/benwoodworth/knbt/tag/NbtList$Companion {
 
 public final class net/benwoodworth/knbt/tag/NbtListBuilder {
 	public fun <init> ()V
+	public fun <init> (I)V
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun addInternal$knbt (Lnet/benwoodworth/knbt/tag/NbtTag;)V
 	public final fun build ()Lnet/benwoodworth/knbt/tag/NbtList;
 }
