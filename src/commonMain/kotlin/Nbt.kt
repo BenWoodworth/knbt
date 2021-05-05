@@ -31,7 +31,7 @@ public sealed class Nbt constructor(
      */
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("Will eventually use kotlinx-io instead of Okio")
-    public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit =
+    public fun <T> encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
         DefaultNbtEncoder(this, BinaryNbtWriter(sink)).encodeSerializableValue(serializer, value)
 
     /**
@@ -39,7 +39,7 @@ public sealed class Nbt constructor(
      */
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("Will eventually use kotlinx-io instead of Okio")
-    public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T =
+    public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
         DefaultNbtDecoder(this, BinaryNbtReader(source)).decodeSerializableValue(deserializer)
 
     /**
@@ -47,14 +47,14 @@ public sealed class Nbt constructor(
      */
     @Suppress("DEPRECATION")
     public fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
-        Buffer().apply { encodeToSink(serializer, value, this) }.readByteArray()
+        Buffer().apply { encodeTo(this, serializer, value) }.readByteArray()
 
     /**
      * Decode NBT from a [ByteArray].
      */
     @Suppress("DEPRECATION")
     public fun <T> decodeFromByteArray(deserializer: DeserializationStrategy<T>, byteArray: ByteArray): T =
-        decodeFromSource(deserializer, Buffer().apply { write(byteArray) })
+        decodeFrom(Buffer().apply { write(byteArray) }, deserializer)
 
     /**
      * Encode to Stringified NBT.
@@ -123,16 +123,16 @@ private class NbtImpl(configuration: NbtConfiguration, module: SerializersModule
  */
 @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
 @Deprecated("Will eventually use kotlinx-io instead of Okio")
-public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
-    encodeToSink(serializer(), value, sink)
+public inline fun <reified T> Nbt.encodeTo(value: T, sink: Sink): Unit =
+    encodeTo(sink, serializer(), value)
 
 /**
  * Decode NBT from a [Source].
  */
 @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
 @Deprecated("Will eventually use kotlinx-io instead of Okio")
-public inline fun <reified T> Nbt.decodeFromSource(source: Source): T =
-    decodeFromSource(serializer(), source)
+public inline fun <reified T> Nbt.decodeFrom(source: Source): T =
+    decodeFrom(source, serializer())
 
 /**
  * Encode NBT to a [ByteArray].
