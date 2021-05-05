@@ -33,19 +33,14 @@ val nbtListOfStrings = buildNbtList<NbtString> {
     add("strings")
 }
 
-// bigtest.nbt
+// bigtest.nbt (https://wiki.vg/NBT#bigtest.nbt)
 val bigtest = buildNbtCompound {
     putNbtCompound("Level") {
         put("longTest", 9223372036854775807L)
-
         put("shortTest", 32767.toShort())
-
         put("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")
-
         put("floatTest", 0.49823147058486938f)
-
         put("intTest", 2147483647)
-
         putNbtCompound("nested compound test") {
             putNbtCompound("ham") {
                 put("name", "Hampus")
@@ -56,15 +51,7 @@ val bigtest = buildNbtCompound {
                 put("value", 0.5f)
             }
         }
-
-        putNbtList<NbtLong>("listTest (long)") {
-            add(11L)
-            add(12L)
-            add(13L)
-            add(14L)
-            add(15L)
-        }
-
+        put("listTest (long)", listOf(11L, 12L, 13L, 14L, 15L).toNbtList())
         putNbtList<NbtCompound<*>>("listTest (compound)") {
             addNbtCompound {
                 put("name", "Compound tag #0")
@@ -75,14 +62,11 @@ val bigtest = buildNbtCompound {
                 put("created-on", 1264099775885L)
             }
         }
-
         put("byteTest", 127.toByte())
-
         put(
             "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
             ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() }
         )
-
         put("doubleTest", 0.49312871321823148)
     }
 }
