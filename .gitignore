@@ -1,0 +1,17 @@
+.DS_Store
+
+# IntelliJ files
+**/.idea/*
+!/.idea/vcs.xml
+out/
+*.iml
+
+# Gradle files
+build/
+.gradle/
+
+# Maven files
+target
+
+# Modules for JS projects build
+node_modules
