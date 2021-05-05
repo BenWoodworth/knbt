@@ -1,5 +1,45 @@
 # knbt
-Minecraft NBT support for kotlinx.serialization
+[![Maven Central](https://img.shields.io/maven-central/v/net.benwoodworth.knbt/knbt)](https://search.maven.org/artifact/net.benwoodworth.knbt/knbt)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.5.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![kotlinx.serialization](https://img.shields.io/badge/kotlinx.serialization-1.2.0-blue.svg?logo=kotlin)](https://github.com/Kotlin/kotlinx.serialization)
+
+An implementation of [Minecraft's NBT format]()
+for [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization).
+
+Technical information about NBT can be found [here](https://wiki.vg/NBT).
+
+Using the same version of kotlinx.serialization is recommended since parts of its API required for custom formats are
+still experimental, and newer versions may have binary-incompatible changes that could break knbt's implementation.
+
+## Configuration
+```kotlin
+val nbt = Nbt {
+    encodeDefaults = false
+    serializersModule = EmptySerializersModule
+}
+```
+
+## Serialization
+An `Nbt` instance can be used to encode/decode `@Serializable` data.
+When serializing to/from NBT binary, the data must be a structure with a single named element (as per the NBT spec).
+
+```kotlin
+// ByteArray
+byteArray = nbt.encodeToByteArray(value)
+value = nbt.decodeFromByteArray(byteArray)
+
+// NbtTag
+nbtTag = nbt.encodeToNbtTag(value)
+value = nbt.decodeFromNbtTag(nbtTag)
+
+// Okio Sink/Source (Multiplatform)
+nbt.encodeTo(sink, value)
+value = nbt.decodeFrom(source)
+
+// OutputStream/InputStream (JVM)
+nbt.encodeTo(outputStream, value)
+value = nbt.decodeFrom(inputStream)
+```
 
 ## NbtTag classes
 
@@ -15,7 +55,7 @@ class NbtByteArray : NbtTag, List<Byte>
 class NbtIntArray : NbtTag, List<Int>
 class NbtLongArray : NbtTag, List<Long>
 class NbtString : NbtTag
-class NbtList<T : NbtTag> : NbtTag, List<T>
+class NbtList<T : NbtTag> : NbtTag, List<T> // Only supports entries of a single type
 class NbtCompound<T : NbtTag> : NbtTag, Map<String, T>
 ```
 
@@ -69,5 +109,23 @@ val bigtest = buildNbtCompound {
         )
         put("doubleTest", 0.49312871321823148)
     }
+}
+```
+
+# Setup
+## Gradle
+```kotlin
+plugins {
+    kotlin("jvm") version "1.5.0" // or kotlin("multiplatform"), etc.
+    kotlin("plugin.serialization") version "1.5.0"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization:1.2.0")
+    implementation("net.benwoodworth.knbt:knbt:$knbt_version")
 }
 ```
