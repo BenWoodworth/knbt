@@ -55,6 +55,7 @@ public sealed class Nbt constructor(
     /**
      * Encode to Stringified NBT.
      */
+    @ExperimentalNbtApi
     public fun <T> encodeToStringifiedNbt(serializer: SerializationStrategy<T>, value: T): String = buildString {
         DefaultNbtEncoder(this@Nbt, StringifiedNbtWriter(this)).encodeSerializableValue(serializer, value)
     }
@@ -141,6 +142,7 @@ public inline fun <reified T> Nbt.decodeFromByteArray(byteArray: ByteArray): T =
 /**
  * Encode to Stringified NBT.
  */
+@ExperimentalNbtApi
 public inline fun <reified T> Nbt.encodeToStringifiedNbt(value: T): String =
     encodeToStringifiedNbt(serializer(), value)
 

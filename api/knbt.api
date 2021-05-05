@@ -60,6 +60,9 @@ public final class net/benwoodworth/knbt/CompositeNbtEncoder$DefaultImpls {
 	public static fun shouldEncodeElementDefault (Lnet/benwoodworth/knbt/CompositeNbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Z
 }
 
+public abstract interface annotation class net/benwoodworth/knbt/ExperimentalNbtApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class net/benwoodworth/knbt/InternalNbtApi : java/lang/annotation/Annotation {
 }
 
@@ -171,7 +174,7 @@ public final class net/benwoodworth/knbt/NbtKt {
 	public static final synthetic fun decodeFrom (Lnet/benwoodworth/knbt/Nbt;Lokio/Source;)Ljava/lang/Object;
 	public static final synthetic fun decodeFromByteArray (Lnet/benwoodworth/knbt/Nbt;[B)Ljava/lang/Object;
 	public static final synthetic fun decodeFromNbtTag (Lnet/benwoodworth/knbt/Nbt;Lnet/benwoodworth/knbt/tag/NbtTag;)Ljava/lang/Object;
-	public static final synthetic fun encodeTo (Lnet/benwoodworth/knbt/Nbt;Ljava/lang/Object;Lokio/Sink;)V
+	public static final synthetic fun encodeTo (Lnet/benwoodworth/knbt/Nbt;Lokio/Sink;Ljava/lang/Object;)V
 	public static final synthetic fun encodeToByteArray (Lnet/benwoodworth/knbt/Nbt;Ljava/lang/Object;)[B
 	public static final synthetic fun encodeToNbtTag (Lnet/benwoodworth/knbt/Nbt;Ljava/lang/Object;)Lnet/benwoodworth/knbt/tag/NbtTag;
 	public static final synthetic fun encodeToStringifiedNbt (Lnet/benwoodworth/knbt/Nbt;Ljava/lang/Object;)Ljava/lang/String;
