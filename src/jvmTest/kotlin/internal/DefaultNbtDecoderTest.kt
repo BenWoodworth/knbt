@@ -182,7 +182,7 @@ class DefaultNbtDecoderTest {
                 readInt() -> 1
                 readInt() -> 2
                 readInt() -> 3
-                endByteArray()
+                endIntArray()
             """,
         )
     }
@@ -198,7 +198,7 @@ class DefaultNbtDecoderTest {
                 readLong() -> 1L
                 readLong() -> 2L
                 readLong() -> 3L
-                endByteArray()
+                endLongArray()
             """,
         )
     }

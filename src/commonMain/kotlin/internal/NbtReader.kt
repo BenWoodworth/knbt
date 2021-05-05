@@ -138,9 +138,9 @@ private inline fun <TArray, TEntry> NbtReader.readArray(
     } else {
         createArray(size).apply {
             repeat(size) { index ->
-                this.set(index, readEntry())
+                set(index, readEntry())
             }
-            endByteArray()
+            endArray()
         }
     }
 }
