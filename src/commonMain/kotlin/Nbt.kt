@@ -24,8 +24,6 @@ public sealed class Nbt constructor(
     @ThreadLocal
     public companion object Default : Nbt(NbtConfiguration(), EmptySerializersModule)
 
-    private class NbtImpl(configuration: NbtConfiguration, module: SerializersModule) : Nbt(configuration, module)
-
     /**
      * Encode NBT to a [Sink].
      */
@@ -91,19 +89,17 @@ public fun Nbt(from: Nbt = Nbt.Default, builderAction: NbtBuilder.() -> Unit): N
 /**
  * Builder of the [Nbt] instance provided by `Nbt { ... }` factory function.
  */
-@Suppress("unused", "DeprecatedCallableAddReplaceWith")
-@OptIn(ExperimentalSerializationApi::class)
-public class NbtBuilder internal constructor(Nbt: Nbt) {
+public class NbtBuilder internal constructor(nbt: Nbt) {
     /**
      * Specifies whether default values of Kotlin properties should be encoded.
      * `false` by default.
      */
-    public var encodeDefaults: Boolean = Nbt.configuration.encodeDefaults
+    public var encodeDefaults: Boolean = nbt.configuration.encodeDefaults
 
     /**
      * Module with contextual and polymorphic serializers to be used in the resulting [Nbt] instance.
      */
-    public var serializersModule: SerializersModule = Nbt.serializersModule
+    public var serializersModule: SerializersModule = nbt.serializersModule
 
     @OptIn(ExperimentalSerializationApi::class)
     internal fun build(): NbtConfiguration {
