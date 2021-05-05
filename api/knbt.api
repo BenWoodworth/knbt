@@ -177,6 +177,9 @@ public final class net/benwoodworth/knbt/NbtKt {
 	public static final synthetic fun encodeToStringifiedNbt (Lnet/benwoodworth/knbt/Nbt;Ljava/lang/Object;)Ljava/lang/String;
 }
 
+public abstract interface annotation class net/benwoodworth/knbt/OkioApi : java/lang/annotation/Annotation {
+}
+
 public final class net/benwoodworth/knbt/internal/BinaryNbtReader : net/benwoodworth/knbt/internal/NbtReader {
 	public fun <init> (Lokio/Source;)V
 	public fun beginByteArray-m9QsVwo ()I

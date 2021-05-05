@@ -29,30 +29,28 @@ public sealed class Nbt constructor(
     /**
      * Encode NBT to a [Sink].
      */
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated("Will eventually use kotlinx-io instead of Okio")
+    @OkioApi
     public fun <T> encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
         DefaultNbtEncoder(this, BinaryNbtWriter(sink)).encodeSerializableValue(serializer, value)
 
     /**
      * Decode NBT from a [Source].
      */
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated("Will eventually use kotlinx-io instead of Okio")
+    @OkioApi
     public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
         DefaultNbtDecoder(this, BinaryNbtReader(source)).decodeSerializableValue(deserializer)
 
     /**
      * Encode NBT to a [ByteArray].
      */
-    @Suppress("DEPRECATION")
+    @OptIn(OkioApi::class)
     public fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
         Buffer().apply { encodeTo(this, serializer, value) }.readByteArray()
 
     /**
      * Decode NBT from a [ByteArray].
      */
-    @Suppress("DEPRECATION")
+    @OptIn(OkioApi::class)
     public fun <T> decodeFromByteArray(deserializer: DeserializationStrategy<T>, byteArray: ByteArray): T =
         decodeFrom(Buffer().apply { write(byteArray) }, deserializer)
 
@@ -121,16 +119,14 @@ private class NbtImpl(configuration: NbtConfiguration, module: SerializersModule
 /**
  * Encode NBT to a [Sink].
  */
-@Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
-@Deprecated("Will eventually use kotlinx-io instead of Okio")
+@OkioApi
 public inline fun <reified T> Nbt.encodeTo(value: T, sink: Sink): Unit =
     encodeTo(sink, serializer(), value)
 
 /**
  * Decode NBT from a [Source].
  */
-@Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
-@Deprecated("Will eventually use kotlinx-io instead of Okio")
+@OkioApi
 public inline fun <reified T> Nbt.decodeFrom(source: Source): T =
     decodeFrom(source, serializer())
 
