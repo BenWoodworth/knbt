@@ -3,7 +3,7 @@
 [![Kotlin](https://img.shields.io/badge/kotlin-1.5.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![kotlinx.serialization](https://img.shields.io/badge/kotlinx.serialization-1.2.0-blue.svg?logo=kotlin)](https://github.com/Kotlin/kotlinx.serialization)
 
-An implementation of [Minecraft's NBT format]()
+An implementation of [Minecraft's NBT format](https://minecraft.fandom.com/wiki/NBT_format)
 for [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization).
 
 Technical information about NBT can be found [here](https://wiki.vg/NBT).
@@ -45,17 +45,17 @@ value = nbt.decodeFrom(inputStream)
 
 The sealed `NbtTag` interface has the following immutable implementations:
 ```kotlin
-class NbtByte : NbtTag
-class NbtShort : NbtTag
-class NbtInt : NbtTag
-class NbtLong : NbtTag
-class NbtFloat : NbtTag
-class NbtDouble : NbtTag
+value class NbtByte : NbtTag
+value class NbtShort : NbtTag
+value class NbtInt : NbtTag
+value class NbtLong : NbtTag
+value class NbtFloat : NbtTag
+value class NbtDouble : NbtTag
+value class NbtString : NbtTag
 class NbtByteArray : NbtTag, List<Byte>
 class NbtIntArray : NbtTag, List<Int>
 class NbtLongArray : NbtTag, List<Long>
-class NbtString : NbtTag
-class NbtList<T : NbtTag> : NbtTag, List<T> // Only supports entries of a single type
+class NbtList<T : NbtTag> : NbtTag, List<T> // Only contains entries of a single type
 class NbtCompound<T : NbtTag> : NbtTag, Map<String, T>
 ```
 
