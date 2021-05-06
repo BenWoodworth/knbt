@@ -31,27 +31,12 @@ public fun Decoder.asNbtDecoder(): NbtDecoder =
         "This serializer can be used only with NBT format. Expected Decoder to be NbtDecoder, got ${this::class}"
     )
 
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-public inline fun <reified T : NbtTag> NbtDecoder.decodeNbtTag(): T {
-    val tag = decodeNbtTag()
-    return tag as? T ?: throw NbtDecodingException("Expected ${T::class.simpleName}, but got ${tag::class.simpleName}")
-}
-
 public sealed interface CompositeNbtDecoder : CompositeDecoder {
     public fun decodeByteArrayElement(descriptor: SerialDescriptor, index: Int): ByteArray
     public fun decodeIntArrayElement(descriptor: SerialDescriptor, index: Int): IntArray
     public fun decodeLongArrayElement(descriptor: SerialDescriptor, index: Int): LongArray
 
     public fun decodeNbtTagElement(descriptor: SerialDescriptor, index: Int): NbtTag
-}
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-public inline fun <reified T : NbtTag> CompositeNbtDecoder.decodeNbtTagElement(
-    descriptor: SerialDescriptor,
-    index: Int,
-): T {
-    val tag = decodeNbtTagElement(descriptor, index)
-    return tag as? T ?: throw NbtDecodingException("Expected ${T::class.simpleName}, but got ${tag::class.simpleName}")
 }
 
 @ExperimentalSerializationApi
