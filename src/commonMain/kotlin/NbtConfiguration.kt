@@ -3,8 +3,14 @@ package net.benwoodworth.knbt
 public class NbtConfiguration internal constructor(
     public val encodeDefaults: Boolean = false,
     public val variant: NbtVariant = NbtVariant.Java,
+    public val compression: NbtCompression = NbtCompression.None,
 ) {
-    override fun toString(): String = "NbtConfiguration(encodeDefaults=$encodeDefaults, variant=$variant)"
+    override fun toString(): String =
+        "NbtConfiguration(" +
+                "encodeDefaults=$encodeDefaults" +
+                ", variant=$variant" +
+                ", compression=$compression" +
+                ")"
 }
 
 public enum class NbtVariant {
@@ -15,4 +21,20 @@ public enum class NbtVariant {
      */
     @ExperimentalNbtApi
     Bedrock,
+}
+
+public enum class NbtCompression {
+    None,
+
+    /**
+     * Currently only [None] is supported.
+     */
+    @ExperimentalNbtApi
+    Gzip,
+
+    /**
+     * Currently only [None] is supported.
+     */
+    @ExperimentalNbtApi
+    Zlib
 }

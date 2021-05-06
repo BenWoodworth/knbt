@@ -93,9 +93,11 @@ public final class net/benwoodworth/knbt/Nbt$Default : net/benwoodworth/knbt/Nbt
 public final class net/benwoodworth/knbt/NbtBuilder {
 	public fun <init> (Lnet/benwoodworth/knbt/Nbt;)V
 	public final fun build$knbt ()Lnet/benwoodworth/knbt/NbtConfiguration;
+	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
 	public final fun getEncodeDefaults ()Z
 	public final fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
 	public final fun getVariant ()Lnet/benwoodworth/knbt/NbtVariant;
+	public final fun setCompression (Lnet/benwoodworth/knbt/NbtCompression;)V
 	public final fun setEncodeDefaults (Z)V
 	public final fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
 	public final fun setVariant (Lnet/benwoodworth/knbt/NbtVariant;)V
@@ -105,10 +107,19 @@ public final class net/benwoodworth/knbt/NbtBuilderKt {
 	public static final fun buildNbt (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/tag/NbtCompound;
 }
 
+public final class net/benwoodworth/knbt/NbtCompression : java/lang/Enum {
+	public static final field Gzip Lnet/benwoodworth/knbt/NbtCompression;
+	public static final field None Lnet/benwoodworth/knbt/NbtCompression;
+	public static final field Zlib Lnet/benwoodworth/knbt/NbtCompression;
+	public static fun valueOf (Ljava/lang/String;)Lnet/benwoodworth/knbt/NbtCompression;
+	public static fun values ()[Lnet/benwoodworth/knbt/NbtCompression;
+}
+
 public final class net/benwoodworth/knbt/NbtConfiguration {
 	public fun <init> ()V
-	public fun <init> (ZLnet/benwoodworth/knbt/NbtVariant;)V
-	public synthetic fun <init> (ZLnet/benwoodworth/knbt/NbtVariant;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZLnet/benwoodworth/knbt/NbtVariant;Lnet/benwoodworth/knbt/NbtCompression;)V
+	public synthetic fun <init> (ZLnet/benwoodworth/knbt/NbtVariant;Lnet/benwoodworth/knbt/NbtCompression;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
 	public final fun getEncodeDefaults ()Z
 	public final fun getVariant ()Lnet/benwoodworth/knbt/NbtVariant;
 	public fun toString ()Ljava/lang/String;

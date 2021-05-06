@@ -103,6 +103,11 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
     public var variant: NbtVariant = nbt.configuration.variant
 
     /**
+     * The compression method to use when writing NBT binary.
+     */
+    public var compression: NbtCompression = nbt.configuration.compression
+
+    /**
      * Module with contextual and polymorphic serializers to be used in the resulting [Nbt] instance.
      */
     public var serializersModule: SerializersModule = nbt.serializersModule
@@ -111,6 +116,10 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
     internal fun build(): NbtConfiguration {
         if (variant != NbtVariant.Java) {
             throw UnsupportedOperationException("Currently only the Java NBT variant is supported")
+        }
+
+        if (compression != NbtCompression.None) {
+            throw UnsupportedOperationException("Currently only NbtCompression.None is supported")
         }
 
         return NbtConfiguration(
