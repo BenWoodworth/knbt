@@ -15,11 +15,15 @@ import net.benwoodworth.knbt.internal.NbtTagType
 public sealed interface NbtTag {
     /**
      * For internal use only. Will be marked as internal once Kotlin supports it on sealed interface members.
+     * @suppress
      */
     @InternalNbtApi
     public val type: NbtTagType // TODO Make internal
 
     // TODO https://github.com/Kotlin/kotlinx.serialization/issues/1207
+    /**
+     * @suppress
+     */
     public companion object {
         public fun serializer(): KSerializer<NbtTag> = NbtTagSerializer
     }

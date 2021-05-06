@@ -7,6 +7,7 @@ import net.benwoodworth.knbt.NbtException
 @InternalNbtApi
 /**
  * For internal use only. Will be marked as internal eventually.
+ * @suppress
  */
 public enum class NbtTagType(internal val id: Byte) {
     TAG_End(0),

@@ -127,7 +127,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization:1.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.0")
     implementation("net.benwoodworth.knbt:knbt:$knbt_version")
 }
 ```
