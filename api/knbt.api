@@ -99,6 +99,10 @@ public final class net/benwoodworth/knbt/NbtBuilder {
 	public final fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
 }
 
+public final class net/benwoodworth/knbt/NbtBuilderKt {
+	public static final fun buildNbt (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+}
+
 public final class net/benwoodworth/knbt/NbtConfiguration {
 	public fun <init> ()V
 	public fun <init> (Z)V
@@ -130,8 +134,6 @@ public final class net/benwoodworth/knbt/NbtDecodingException : net/benwoodworth
 
 public final class net/benwoodworth/knbt/NbtDecodingKt {
 	public static final fun asNbtDecoder (Lkotlinx/serialization/encoding/Decoder;)Lnet/benwoodworth/knbt/NbtDecoder;
-	public static final synthetic fun decodeNbtTag (Lnet/benwoodworth/knbt/NbtDecoder;)Lnet/benwoodworth/knbt/tag/NbtTag;
-	public static final synthetic fun decodeNbtTagElement (Lnet/benwoodworth/knbt/CompositeNbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lnet/benwoodworth/knbt/tag/NbtTag;
 }
 
 public abstract interface annotation class net/benwoodworth/knbt/NbtDslMarker : java/lang/annotation/Annotation {

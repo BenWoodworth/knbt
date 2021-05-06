@@ -76,41 +76,39 @@ val nbtListOfStrings = buildNbtList<NbtString> {
 val nbtCompoundOfInts = mapOf("a" to 1, "b" to 2).toNbtCompound()
 
 // bigtest.nbt (https://wiki.vg/NBT#bigtest.nbt)
-val bigtest = buildNbtCompound {
-    putNbtCompound("Level") {
-        put("longTest", 9223372036854775807L)
-        put("shortTest", 32767.toShort())
-        put("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")
-        put("floatTest", 0.49823147058486938f)
-        put("intTest", 2147483647)
-        putNbtCompound("nested compound test") {
-            putNbtCompound("ham") {
-                put("name", "Hampus")
-                put("value", 0.75f)
-            }
-            putNbtCompound("egg") {
-                put("name", "Eggbert")
-                put("value", 0.5f)
-            }
+val bigtest = buildNbt("Level") {
+    put("longTest", 9223372036854775807L)
+    put("shortTest", 32767.toShort())
+    put("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")
+    put("floatTest", 0.49823147058486938f)
+    put("intTest", 2147483647)
+    putNbtCompound("nested compound test") {
+        putNbtCompound("ham") {
+            put("name", "Hampus")
+            put("value", 0.75f)
         }
-        put("listTest (long)", listOf(11L, 12L, 13L, 14L, 15L).toNbtList())
-        putNbtList<NbtCompound<*>>("listTest (compound)") {
-            addNbtCompound {
-                put("name", "Compound tag #0")
-                put("created-on", 1264099775885L)
-            }
-            addNbtCompound {
-                put("name", "Compound tag #1")
-                put("created-on", 1264099775885L)
-            }
+        putNbtCompound("egg") {
+            put("name", "Eggbert")
+            put("value", 0.5f)
         }
-        put("byteTest", 127.toByte())
-        put(
-            "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
-            ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() }
-        )
-        put("doubleTest", 0.49312871321823148)
     }
+    put("listTest (long)", listOf(11L, 12L, 13L, 14L, 15L).toNbtList())
+    putNbtList<NbtCompound<*>>("listTest (compound)") {
+        addNbtCompound {
+            put("name", "Compound tag #0")
+            put("created-on", 1264099775885L)
+        }
+        addNbtCompound {
+            put("name", "Compound tag #1")
+            put("created-on", 1264099775885L)
+        }
+    }
+    put("byteTest", 127.toByte())
+    put(
+        "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
+        ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() }
+    )
+    put("doubleTest", 0.49312871321823148)
 }
 ```
 
