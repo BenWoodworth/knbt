@@ -98,14 +98,24 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
     public var encodeDefaults: Boolean = nbt.configuration.encodeDefaults
 
     /**
+     * The variant of NBT binary format to use.
+     */
+    public var variant: NbtVariant = nbt.configuration.variant
+
+    /**
      * Module with contextual and polymorphic serializers to be used in the resulting [Nbt] instance.
      */
     public var serializersModule: SerializersModule = nbt.serializersModule
 
     @OptIn(ExperimentalSerializationApi::class)
     internal fun build(): NbtConfiguration {
+        if (variant != NbtVariant.Java) {
+            throw UnsupportedOperationException("Currently only the Java NBT variant is supported")
+        }
+
         return NbtConfiguration(
             encodeDefaults = encodeDefaults,
+            variant = variant,
         )
     }
 }
