@@ -1,5 +1,6 @@
 # knbt
 [![Maven Central](https://img.shields.io/maven-central/v/net.benwoodworth.knbt/knbt)](https://search.maven.org/artifact/net.benwoodworth.knbt/knbt)
+[![KDoc](https://img.shields.io/badge/api-KDoc-blue)](https://benwoodworth.github.io/knbt)
 [![Kotlin](https://img.shields.io/badge/kotlin-1.5.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![kotlinx.serialization](https://img.shields.io/badge/kotlinx.serialization-1.2.0-blue.svg?logo=kotlin)](https://github.com/Kotlin/kotlinx.serialization)
 
