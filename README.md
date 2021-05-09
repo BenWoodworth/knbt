@@ -1,5 +1,6 @@
 # knbt
 [![Maven Central](https://img.shields.io/maven-central/v/net.benwoodworth.knbt/knbt)](https://search.maven.org/artifact/net.benwoodworth.knbt/knbt)
+[![KDoc](https://img.shields.io/badge/api-KDoc-blue)](https://benwoodworth.github.io/knbt)
 [![Kotlin](https://img.shields.io/badge/kotlin-1.5.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![kotlinx.serialization](https://img.shields.io/badge/kotlinx.serialization-1.2.0-blue.svg?logo=kotlin)](https://github.com/Kotlin/kotlinx.serialization)
 
@@ -12,11 +13,13 @@ Using the same version of kotlinx.serialization is recommended since parts of it
 still experimental, and newer versions may have binary-incompatible changes that could break knbt's implementation.
 
 ## Configuration
+Note: Currently only the Java variant is supported, and compression is only supported on Kotlin/JVM.
+
 ```kotlin
 val nbt = Nbt {
-    encodeDefaults = false
     variant = Java // Java, Bedrock
     compression = None // None, Gzip, Zlib
+    encodeDefaults = false
     serializersModule = EmptySerializersModule
 }
 ```

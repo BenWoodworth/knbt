@@ -23,7 +23,14 @@ public sealed class Nbt constructor(
      * The default instance of [Nbt] with default configuration.
      */
     @ThreadLocal
-    public companion object Default : Nbt(NbtConfiguration(), EmptySerializersModule)
+    public companion object Default : Nbt(
+        configuration = NbtConfiguration(
+            variant = NbtVariant.Java,
+            compression = NbtCompression.None,
+            encodeDefaults = false,
+        ),
+        serializersModule = EmptySerializersModule,
+    )
 
     /**
      * Encode NBT to a [Sink].
@@ -102,20 +109,13 @@ public sealed class Nbt constructor(
 public fun Nbt(from: Nbt = Nbt.Default, builderAction: NbtBuilder.() -> Unit): Nbt {
     val builder = NbtBuilder(from)
     builder.builderAction()
-    val conf = builder.build()
-    return NbtImpl(conf, builder.serializersModule)
+    return builder.build()
 }
 
 /**
  * Builder of the [Nbt] instance provided by `Nbt { ... }` factory function.
  */
 public class NbtBuilder internal constructor(nbt: Nbt) {
-    /**
-     * Specifies whether default values of Kotlin properties should be encoded.
-     * `false` by default.
-     */
-    public var encodeDefaults: Boolean = nbt.configuration.encodeDefaults
-
     /**
      * The variant of NBT binary format to use.
      */
@@ -127,29 +127,38 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
     public var compression: NbtCompression = nbt.configuration.compression
 
     /**
+     * Specifies whether default values of Kotlin properties should be encoded.
+     * `false` by default.
+     */
+    public var encodeDefaults: Boolean = nbt.configuration.encodeDefaults
+
+    /**
      * Module with contextual and polymorphic serializers to be used in the resulting [Nbt] instance.
      */
     public var serializersModule: SerializersModule = nbt.serializersModule
 
     @OptIn(ExperimentalSerializationApi::class)
-    internal fun build(): NbtConfiguration {
+    internal fun build(): Nbt {
         if (variant != NbtVariant.Java) {
             throw UnsupportedOperationException("Currently only the Java NBT variant is supported")
         }
 
-        if (compression != NbtCompression.None) {
-            throw UnsupportedOperationException("Currently only NbtCompression.None is supported")
-        }
-
-        return NbtConfiguration(
-            encodeDefaults = encodeDefaults,
-            variant = variant,
+        return NbtImpl(
+            configuration = NbtConfiguration(
+                variant = variant,
+                compression = compression,
+                encodeDefaults = encodeDefaults,
+            ),
+            serializersModule = serializersModule,
         )
     }
 }
 
 @OptIn(ExperimentalSerializationApi::class)
-private class NbtImpl(configuration: NbtConfiguration, module: SerializersModule) : Nbt(configuration, module)
+private class NbtImpl(
+    configuration: NbtConfiguration,
+    serializersModule: SerializersModule,
+) : Nbt(configuration, serializersModule)
 
 /**
  * Encode NBT to a [Sink].

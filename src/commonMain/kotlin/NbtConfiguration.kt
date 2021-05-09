@@ -1,15 +1,15 @@
 package net.benwoodworth.knbt
 
 public class NbtConfiguration internal constructor(
-    public val encodeDefaults: Boolean = false,
-    public val variant: NbtVariant = NbtVariant.Java,
-    public val compression: NbtCompression = NbtCompression.None,
+    public val variant: NbtVariant,
+    public val compression: NbtCompression,
+    public val encodeDefaults: Boolean,
 ) {
     override fun toString(): String =
         "NbtConfiguration(" +
-                "encodeDefaults=$encodeDefaults" +
-                ", variant=$variant" +
+                "variant=$variant" +
                 ", compression=$compression" +
+                ", encodeDefaults=$encodeDefaults" +
                 ")"
 }
 
@@ -27,14 +27,12 @@ public enum class NbtCompression {
     None,
 
     /**
-     * Only supported on Kotlin/JVM
+     * Currently only supported in Kotlin/JVM
      */
-    @ExperimentalNbtApi
     Gzip,
 
     /**
-     * Not yet supported
+     * Currently only supported in Kotlin/JVM
      */
-    @ExperimentalNbtApi
     Zlib
 }

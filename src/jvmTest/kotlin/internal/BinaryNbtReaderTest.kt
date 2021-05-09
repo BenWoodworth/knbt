@@ -21,9 +21,15 @@ class BinaryNbtReaderTest {
     )
 
     @Test
-    fun `Should decode bigtest_nbt to class correctly`(): Unit = assertEquals(
+    fun `Should decode gzip bigtest_nbt to class correctly`(): Unit = assertEquals(
         expected = bigTestClass,
         actual = Nbt.decodeFromByteArray(bigTestBytes.toByteArray()),
+    )
+
+    @Test
+    fun `Should decode zlib bigtest_nbt to class correctly`(): Unit = assertEquals(
+        expected = bigTestClass,
+        actual = Nbt.decodeFromByteArray(bigTestBytesZlib.toByteArray()),
     )
 
     @Test
@@ -39,9 +45,15 @@ class BinaryNbtReaderTest {
     )
 
     @Test
-    fun `Should decode bigtest_nbt to NbtTag correctly`(): Unit = assertEquals(
+    fun `Should decode gzip bigtest_nbt to NbtTag correctly`(): Unit = assertEquals(
         expected = bigTestTag,
         actual = Nbt.decodeFromByteArray(NbtTag.serializer(), bigTestBytes.toByteArray()),
+    )
+
+    @Test
+    fun `Should decode zlib bigtest_nbt to NbtTag correctly`(): Unit = assertEquals(
+        expected = bigTestTag,
+        actual = Nbt.decodeFromByteArray(NbtTag.serializer(), bigTestBytesZlib.toByteArray()),
     )
 
 //    @Test
