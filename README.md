@@ -28,6 +28,8 @@ val nbt = Nbt {
 An `Nbt` instance can be used to encode/decode `@Serializable` data.
 When serializing to/from NBT binary, the data must be a structure with a single named element (as per the NBT spec).
 
+When deserializing, the compression will be automatically detected and decompressed. When serializing, the compression method set in the configuration will be used.
+
 ```kotlin
 // ByteArray
 byteArray = nbt.encodeToByteArray(value)
