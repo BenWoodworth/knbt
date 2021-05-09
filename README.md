@@ -13,11 +13,13 @@ Using the same version of kotlinx.serialization is recommended since parts of it
 still experimental, and newer versions may have binary-incompatible changes that could break knbt's implementation.
 
 ## Configuration
+Note: Currently only the Java variant is supported, and compression is only supported on Kotlin/JVM.
+
 ```kotlin
 val nbt = Nbt {
-    encodeDefaults = false
     variant = Java // Java, Bedrock
     compression = None // None, Gzip, Zlib
+    encodeDefaults = false
     serializersModule = EmptySerializersModule
 }
 ```
