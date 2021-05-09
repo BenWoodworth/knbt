@@ -92,7 +92,7 @@ public final class net/benwoodworth/knbt/Nbt$Default : net/benwoodworth/knbt/Nbt
 
 public final class net/benwoodworth/knbt/NbtBuilder {
 	public fun <init> (Lnet/benwoodworth/knbt/Nbt;)V
-	public final fun build$knbt ()Lnet/benwoodworth/knbt/NbtConfiguration;
+	public final fun build$knbt ()Lnet/benwoodworth/knbt/Nbt;
 	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
 	public final fun getEncodeDefaults ()Z
 	public final fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;

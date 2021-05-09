@@ -185,3 +185,6 @@ val bigTestBytesDecompressed = getResourceAsStream("/bigtest.nbt")
 
 val bigTestBytes = getResourceAsStream("/bigtest.nbt")
     .use { it.readBytes().asList() }
+
+val bigTestBytesZlib = getResourceAsStream("/bigtest-zlib.nbt")
+    .use { it.readBytes().asList() }
