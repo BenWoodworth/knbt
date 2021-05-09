@@ -4,12 +4,10 @@ import net.benwoodworth.knbt.NbtDecodingException
 import net.benwoodworth.knbt.NbtEncodingException
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import okio.BufferedSource
-import okio.Source
-import okio.buffer
 
-internal class BinaryNbtReader(source: Source) : NbtReader {
-    private val buffer = source.buffer()
-
+internal class BinaryNbtReader(
+    private val source: BufferedSource,
+) : NbtReader {
     private var compoundNesting = 0
     private var readRootEntry = false
 
@@ -46,12 +44,12 @@ internal class BinaryNbtReader(source: Source) : NbtReader {
             readRootEntry = true
         }
 
-        val type = buffer.readNbtTagType()
+        val type = source.readNbtTagType()
         return if (type == TAG_End) {
             NbtReader.CompoundEntryInfo.End
         } else {
             tagTypeStack.replaceLast(type)
-            NbtReader.CompoundEntryInfo(type, buffer.readNbtString())
+            NbtReader.CompoundEntryInfo(type, source.readNbtString())
         }
     }
 
@@ -84,8 +82,8 @@ internal class BinaryNbtReader(source: Source) : NbtReader {
     override fun beginList(): NbtReader.ListInfo {
         checkTagType(TAG_List)
 
-        val type = buffer.readNbtTagType()
-        val size = buffer.readInt()
+        val type = source.readNbtTagType()
+        val size = source.readInt()
         beginCollection(type, size)
 
         return NbtReader.ListInfo(type, size)
@@ -98,7 +96,7 @@ internal class BinaryNbtReader(source: Source) : NbtReader {
     override fun beginByteArray(): NbtReader.ArrayInfo {
         checkTagType(TAG_Byte_Array)
 
-        val size = buffer.readInt()
+        val size = source.readInt()
         beginCollection(TAG_Byte, size)
 
         return NbtReader.ArrayInfo(size)
@@ -111,7 +109,7 @@ internal class BinaryNbtReader(source: Source) : NbtReader {
     override fun beginIntArray(): NbtReader.ArrayInfo {
         checkTagType(TAG_Int_Array)
 
-        val size = buffer.readInt()
+        val size = source.readInt()
         beginCollection(TAG_Int, size)
 
         return NbtReader.ArrayInfo(size)
@@ -124,7 +122,7 @@ internal class BinaryNbtReader(source: Source) : NbtReader {
     override fun beginLongArray(): NbtReader.ArrayInfo {
         checkTagType(TAG_Long_Array)
 
-        val size = buffer.readInt()
+        val size = source.readInt()
         beginCollection(TAG_Long, size)
 
         return NbtReader.ArrayInfo(size)
@@ -136,36 +134,36 @@ internal class BinaryNbtReader(source: Source) : NbtReader {
 
     override fun readByte(): Byte {
         checkTagType(TAG_Byte)
-        return buffer.readByte()
+        return source.readByte()
     }
 
     override fun readShort(): Short {
         checkTagType(TAG_Short)
-        return buffer.readShort()
+        return source.readShort()
     }
 
     override fun readInt(): Int {
         checkTagType(TAG_Int)
-        return buffer.readInt()
+        return source.readInt()
     }
 
     override fun readLong(): Long {
         checkTagType(TAG_Long)
-        return buffer.readLong()
+        return source.readLong()
     }
 
     override fun readFloat(): Float {
         checkTagType(TAG_Float)
-        return Float.fromBits(buffer.readInt())
+        return Float.fromBits(source.readInt())
     }
 
     override fun readDouble(): Double {
         checkTagType(TAG_Double)
-        return Double.fromBits(buffer.readLong())
+        return Double.fromBits(source.readLong())
     }
 
     override fun readString(): String {
         checkTagType(TAG_String)
-        return buffer.readNbtString()
+        return source.readNbtString()
     }
 }

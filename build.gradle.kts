@@ -54,7 +54,11 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-        val jvmMain by getting
+        val jvmMain by getting {
+            dependencies {
+                implementation("com.squareup.okio:okio:$okio_version")
+            }
+        }
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("reflect"))

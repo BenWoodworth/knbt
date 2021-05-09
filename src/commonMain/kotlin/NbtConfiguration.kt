@@ -27,13 +27,13 @@ public enum class NbtCompression {
     None,
 
     /**
-     * Currently only [None] is supported.
+     * Only supported on Kotlin/JVM
      */
     @ExperimentalNbtApi
     Gzip,
 
     /**
-     * Currently only [None] is supported.
+     * Not yet supported
      */
     @ExperimentalNbtApi
     Zlib

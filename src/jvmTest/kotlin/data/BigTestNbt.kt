@@ -180,5 +180,8 @@ val bigTestClass = BigTestNbt(
     )
 )
 
-val bigTestBytes = getResourceAsStream("/bigtest.nbt")
+val bigTestBytesDecompressed = getResourceAsStream("/bigtest.nbt")
     .use { GZIPInputStream(it).readBytes().asList() }
+
+val bigTestBytes = getResourceAsStream("/bigtest.nbt")
+    .use { it.readBytes().asList() }

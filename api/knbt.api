@@ -207,7 +207,7 @@ public abstract interface annotation class net/benwoodworth/knbt/OkioApi : java/
 }
 
 public final class net/benwoodworth/knbt/internal/BinaryNbtReader : net/benwoodworth/knbt/internal/NbtReader {
-	public fun <init> (Lokio/Source;)V
+	public fun <init> (Lokio/BufferedSource;)V
 	public fun beginByteArray-m9QsVwo ()I
 	public fun beginByteArrayEntry ()Z
 	public fun beginCompound ()V
@@ -234,7 +234,7 @@ public final class net/benwoodworth/knbt/internal/BinaryNbtReader : net/benwoodw
 }
 
 public final class net/benwoodworth/knbt/internal/BinaryNbtWriter : net/benwoodworth/knbt/internal/NbtWriter {
-	public fun <init> (Lokio/Sink;)V
+	public fun <init> (Lokio/BufferedSink;)V
 	public fun beginByteArray (I)V
 	public fun beginByteArrayEntry ()V
 	public fun beginCompound ()V
@@ -258,6 +258,17 @@ public final class net/benwoodworth/knbt/internal/BinaryNbtWriter : net/benwoodw
 	public fun writeLong (J)V
 	public fun writeShort (S)V
 	public fun writeString (Ljava/lang/String;)V
+}
+
+public final class net/benwoodworth/knbt/internal/CompressionIoJvmKt {
+	public static final fun toGzipSink (Lokio/Sink;)Lokio/Sink;
+	public static final fun toGzipSource (Lokio/Source;)Lokio/Source;
+	public static final fun toZlibSink (Lokio/Sink;)Lokio/Sink;
+	public static final fun toZlibSource (Lokio/Source;)Lokio/Source;
+}
+
+public final class net/benwoodworth/knbt/internal/CompressionIoKt {
+	public static final fun peekNbtCompression (Lokio/BufferedSource;)Lnet/benwoodworth/knbt/NbtCompression;
 }
 
 public final class net/benwoodworth/knbt/internal/DefaultNbtDecoder : net/benwoodworth/knbt/AbstractNbtDecoder {

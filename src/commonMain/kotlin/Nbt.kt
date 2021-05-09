@@ -11,6 +11,7 @@ import net.benwoodworth.knbt.tag.NbtTag
 import okio.Buffer
 import okio.Sink
 import okio.Source
+import okio.buffer
 import kotlin.native.concurrent.ThreadLocal
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -28,15 +29,33 @@ public sealed class Nbt constructor(
      * Encode NBT to a [Sink].
      */
     @OkioApi
-    public fun <T> encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
-        DefaultNbtEncoder(this, BinaryNbtWriter(sink)).encodeSerializableValue(serializer, value)
+    public fun <T> encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T) {
+        @OptIn(ExperimentalNbtApi::class)
+        val writerSink = when (configuration.compression) {
+            NbtCompression.None -> sink.buffer()
+            NbtCompression.Gzip -> sink.toGzipSink().buffer()
+            NbtCompression.Zlib -> sink.toZlibSink().buffer()
+        }
+
+        DefaultNbtEncoder(this, BinaryNbtWriter(writerSink)).encodeSerializableValue(serializer, value)
+    }
 
     /**
      * Decode NBT from a [Source].
      */
     @OkioApi
-    public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
-        DefaultNbtDecoder(this, BinaryNbtReader(source)).decodeSerializableValue(deserializer)
+    public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T {
+        val readerSource = source.buffer().let { bufferedSource ->
+            @OptIn(ExperimentalNbtApi::class)
+            when (bufferedSource.peekNbtCompression().also { println(it) }) {
+                NbtCompression.None -> bufferedSource
+                NbtCompression.Gzip -> bufferedSource.toGzipSource().buffer()
+                NbtCompression.Zlib -> bufferedSource.toZlibSource().buffer()
+            }
+        }
+
+        return DefaultNbtDecoder(this, BinaryNbtReader(readerSource)).decodeSerializableValue(deserializer)
+    }
 
     /**
      * Encode NBT to a [ByteArray].

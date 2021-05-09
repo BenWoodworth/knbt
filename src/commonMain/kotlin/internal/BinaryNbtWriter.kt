@@ -4,12 +4,10 @@ import net.benwoodworth.knbt.NbtEncodingException
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_Compound
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_End
 import okio.BufferedSink
-import okio.Sink
-import okio.buffer
 
-internal class BinaryNbtWriter(sink: Sink) : NbtWriter {
-    private val buffer = sink.buffer()
-
+internal class BinaryNbtWriter(
+    private val sink: BufferedSink,
+) : NbtWriter {
     private var compoundNesting = 0
     private var wroteRootEntry = false
 
@@ -39,8 +37,8 @@ internal class BinaryNbtWriter(sink: Sink) : NbtWriter {
             wroteRootEntry = true
         }
 
-        buffer.writeByte(type.id.toInt())
-        buffer.writeNbtString(name)
+        sink.writeByte(type.id.toInt())
+        sink.writeNbtString(name)
     }
 
     override fun endCompound() {
@@ -48,15 +46,15 @@ internal class BinaryNbtWriter(sink: Sink) : NbtWriter {
 
         compoundNesting--
         if (compoundNesting > 0) {
-            buffer.writeNbtTagType(TAG_End)
+            sink.writeNbtTagType(TAG_End)
         } else {
-            buffer.flush()
+            sink.flush()
         }
     }
 
     override fun beginList(type: NbtTagType, size: Int) {
-        buffer.writeNbtTagType(type)
-        buffer.writeInt(size)
+        sink.writeNbtTagType(type)
+        sink.writeInt(size)
     }
 
     override fun beginListEntry(): Unit = Unit
@@ -64,7 +62,7 @@ internal class BinaryNbtWriter(sink: Sink) : NbtWriter {
     override fun endList(): Unit = Unit
 
     override fun beginByteArray(size: Int) {
-        buffer.writeInt(size)
+        sink.writeInt(size)
     }
 
     override fun beginByteArrayEntry(): Unit = Unit
@@ -72,7 +70,7 @@ internal class BinaryNbtWriter(sink: Sink) : NbtWriter {
     override fun endByteArray(): Unit = Unit
 
     override fun beginIntArray(size: Int) {
-        buffer.writeInt(size)
+        sink.writeInt(size)
     }
 
     override fun beginIntArrayEntry(): Unit = Unit
@@ -80,7 +78,7 @@ internal class BinaryNbtWriter(sink: Sink) : NbtWriter {
     override fun endIntArray(): Unit = Unit
 
     override fun beginLongArray(size: Int) {
-        buffer.writeInt(size)
+        sink.writeInt(size)
     }
 
     override fun beginLongArrayEntry(): Unit = Unit
@@ -88,30 +86,30 @@ internal class BinaryNbtWriter(sink: Sink) : NbtWriter {
     override fun endLongArray(): Unit = Unit
 
     override fun writeByte(value: Byte) {
-        buffer.writeByte(value.toInt())
+        sink.writeByte(value.toInt())
     }
 
     override fun writeShort(value: Short) {
-        buffer.writeShort(value.toInt())
+        sink.writeShort(value.toInt())
     }
 
     override fun writeInt(value: Int) {
-        buffer.writeInt(value)
+        sink.writeInt(value)
     }
 
     override fun writeLong(value: Long) {
-        buffer.writeLong(value)
+        sink.writeLong(value)
     }
 
     override fun writeFloat(value: Float) {
-        buffer.writeInt(value.toRawBits())
+        sink.writeInt(value.toRawBits())
     }
 
     override fun writeDouble(value: Double) {
-        buffer.writeLong(value.toRawBits())
+        sink.writeLong(value.toRawBits())
     }
 
     override fun writeString(value: String) {
-        buffer.writeNbtString(value)
+        sink.writeNbtString(value)
     }
 }
