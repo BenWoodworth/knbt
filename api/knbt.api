@@ -93,17 +93,35 @@ public final class net/benwoodworth/knbt/Nbt$Default : net/benwoodworth/knbt/Nbt
 public final class net/benwoodworth/knbt/NbtBuilder {
 	public fun <init> (Lnet/benwoodworth/knbt/Nbt;)V
 	public final fun build$knbt ()Lnet/benwoodworth/knbt/NbtConfiguration;
+	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
 	public final fun getEncodeDefaults ()Z
 	public final fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
+	public final fun getVariant ()Lnet/benwoodworth/knbt/NbtVariant;
+	public final fun setCompression (Lnet/benwoodworth/knbt/NbtCompression;)V
 	public final fun setEncodeDefaults (Z)V
 	public final fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
+	public final fun setVariant (Lnet/benwoodworth/knbt/NbtVariant;)V
+}
+
+public final class net/benwoodworth/knbt/NbtBuilderKt {
+	public static final fun buildNbt (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/tag/NbtCompound;
+}
+
+public final class net/benwoodworth/knbt/NbtCompression : java/lang/Enum {
+	public static final field Gzip Lnet/benwoodworth/knbt/NbtCompression;
+	public static final field None Lnet/benwoodworth/knbt/NbtCompression;
+	public static final field Zlib Lnet/benwoodworth/knbt/NbtCompression;
+	public static fun valueOf (Ljava/lang/String;)Lnet/benwoodworth/knbt/NbtCompression;
+	public static fun values ()[Lnet/benwoodworth/knbt/NbtCompression;
 }
 
 public final class net/benwoodworth/knbt/NbtConfiguration {
 	public fun <init> ()V
-	public fun <init> (Z)V
-	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZLnet/benwoodworth/knbt/NbtVariant;Lnet/benwoodworth/knbt/NbtCompression;)V
+	public synthetic fun <init> (ZLnet/benwoodworth/knbt/NbtVariant;Lnet/benwoodworth/knbt/NbtCompression;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
 	public final fun getEncodeDefaults ()Z
+	public final fun getVariant ()Lnet/benwoodworth/knbt/NbtVariant;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -130,8 +148,6 @@ public final class net/benwoodworth/knbt/NbtDecodingException : net/benwoodworth
 
 public final class net/benwoodworth/knbt/NbtDecodingKt {
 	public static final fun asNbtDecoder (Lkotlinx/serialization/encoding/Decoder;)Lnet/benwoodworth/knbt/NbtDecoder;
-	public static final synthetic fun decodeNbtTag (Lnet/benwoodworth/knbt/NbtDecoder;)Lnet/benwoodworth/knbt/tag/NbtTag;
-	public static final synthetic fun decodeNbtTagElement (Lnet/benwoodworth/knbt/CompositeNbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lnet/benwoodworth/knbt/tag/NbtTag;
 }
 
 public abstract interface annotation class net/benwoodworth/knbt/NbtDslMarker : java/lang/annotation/Annotation {
@@ -180,11 +196,18 @@ public final class net/benwoodworth/knbt/NbtKt {
 	public static final synthetic fun encodeToStringifiedNbt (Lnet/benwoodworth/knbt/Nbt;Ljava/lang/Object;)Ljava/lang/String;
 }
 
+public final class net/benwoodworth/knbt/NbtVariant : java/lang/Enum {
+	public static final field Bedrock Lnet/benwoodworth/knbt/NbtVariant;
+	public static final field Java Lnet/benwoodworth/knbt/NbtVariant;
+	public static fun valueOf (Ljava/lang/String;)Lnet/benwoodworth/knbt/NbtVariant;
+	public static fun values ()[Lnet/benwoodworth/knbt/NbtVariant;
+}
+
 public abstract interface annotation class net/benwoodworth/knbt/OkioApi : java/lang/annotation/Annotation {
 }
 
 public final class net/benwoodworth/knbt/internal/BinaryNbtReader : net/benwoodworth/knbt/internal/NbtReader {
-	public fun <init> (Lokio/Source;)V
+	public fun <init> (Lokio/BufferedSource;)V
 	public fun beginByteArray-m9QsVwo ()I
 	public fun beginByteArrayEntry ()Z
 	public fun beginCompound ()V
@@ -211,7 +234,7 @@ public final class net/benwoodworth/knbt/internal/BinaryNbtReader : net/benwoodw
 }
 
 public final class net/benwoodworth/knbt/internal/BinaryNbtWriter : net/benwoodworth/knbt/internal/NbtWriter {
-	public fun <init> (Lokio/Sink;)V
+	public fun <init> (Lokio/BufferedSink;)V
 	public fun beginByteArray (I)V
 	public fun beginByteArrayEntry ()V
 	public fun beginCompound ()V
@@ -235,6 +258,17 @@ public final class net/benwoodworth/knbt/internal/BinaryNbtWriter : net/benwoodw
 	public fun writeLong (J)V
 	public fun writeShort (S)V
 	public fun writeString (Ljava/lang/String;)V
+}
+
+public final class net/benwoodworth/knbt/internal/CompressionIoJvmKt {
+	public static final fun toGzipSink (Lokio/Sink;)Lokio/Sink;
+	public static final fun toGzipSource (Lokio/Source;)Lokio/Source;
+	public static final fun toZlibSink (Lokio/Sink;)Lokio/Sink;
+	public static final fun toZlibSource (Lokio/Source;)Lokio/Source;
+}
+
+public final class net/benwoodworth/knbt/internal/CompressionIoKt {
+	public static final fun peekNbtCompression (Lokio/BufferedSource;)Lnet/benwoodworth/knbt/NbtCompression;
 }
 
 public final class net/benwoodworth/knbt/internal/DefaultNbtDecoder : net/benwoodworth/knbt/AbstractNbtDecoder {
