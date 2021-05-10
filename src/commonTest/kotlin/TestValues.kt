@@ -1,5 +1,8 @@
 package net.benwoodworth.knbt
 
+import kotlin.math.E
+import kotlin.math.PI
+
 object TestValues {
     val bytes: Sequence<Byte> = sequence {
         for (i in Byte.MIN_VALUE..Byte.MAX_VALUE) {
@@ -35,8 +38,8 @@ object TestValues {
     }
 
     val floats: Sequence<Float> = sequence {
-        yield(Math.E.toFloat())
-        yield(Math.PI.toFloat())
+        yield(E.toFloat())
+        yield(PI.toFloat())
         yield(Float.MAX_VALUE)
         yield(Float.MIN_VALUE)
         yield(-Float.MAX_VALUE)
@@ -51,8 +54,8 @@ object TestValues {
     }
 
     val doubles: Sequence<Double> = sequence {
-        yield(Math.E)
-        yield(Math.PI)
+        yield(E)
+        yield(PI)
         yield(Double.MAX_VALUE)
         yield(Double.MIN_VALUE)
         yield(-Double.MAX_VALUE)

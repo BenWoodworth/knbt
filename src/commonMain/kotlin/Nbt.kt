@@ -54,7 +54,7 @@ public sealed class Nbt constructor(
     public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T {
         val readerSource = source.buffer().let { bufferedSource ->
             @OptIn(ExperimentalNbtApi::class)
-            when (bufferedSource.peekNbtCompression().also { println(it) }) {
+            when (bufferedSource.peekNbtCompression()) {
                 NbtCompression.None -> bufferedSource
                 NbtCompression.Gzip -> bufferedSource.toGzipSource().buffer()
                 NbtCompression.Zlib -> bufferedSource.toZlibSource().buffer()

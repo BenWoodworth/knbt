@@ -3,9 +3,7 @@ package data
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbt
-import net.benwoodworth.knbt.getResourceAsStream
 import net.benwoodworth.knbt.tag.*
-import java.util.zip.GZIPInputStream
 
 val bigTestTag = buildNbt("Level") {
     put("longTest", 9223372036854775807L)
@@ -110,7 +108,8 @@ data class BigTestNbt(
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
-            if (javaClass != other?.javaClass) return false
+            if (other == null) return false
+            if (this::class != other::class) return false
 
             other as Level
 
@@ -179,12 +178,3 @@ val bigTestClass = BigTestNbt(
         doubleTest = 0.49312871321823148,
     )
 )
-
-val bigTestBytesDecompressed = getResourceAsStream("/bigtest.nbt")
-    .use { GZIPInputStream(it).readBytes().asList() }
-
-val bigTestBytes = getResourceAsStream("/bigtest.nbt")
-    .use { it.readBytes().asList() }
-
-val bigTestBytesZlib = getResourceAsStream("/bigtest-zlib.nbt")
-    .use { it.readBytes().asList() }

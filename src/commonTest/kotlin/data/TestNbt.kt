@@ -3,7 +3,6 @@ package data
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.buildNbt
-import net.benwoodworth.knbt.getResourceAsStream
 import net.benwoodworth.knbt.tag.put
 
 val testTag = buildNbt("hello world") {
@@ -26,6 +25,3 @@ val testClass = TestNbt(
         name = "Bananrama",
     ),
 )
-
-val testBytes = getResourceAsStream("/test.nbt")
-    .use { it.readBytes().asList() }

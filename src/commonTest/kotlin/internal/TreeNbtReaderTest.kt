@@ -1,3 +1,5 @@
+@file:Suppress("TestFunctionName")
+
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.TestValues
@@ -5,7 +7,7 @@ import net.benwoodworth.knbt.internal.NbtReader.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import net.benwoodworth.knbt.shouldReturn
 import net.benwoodworth.knbt.tag.*
-import org.junit.Test
+import kotlin.test.Test
 
 class TreeNbtReaderTest {
     private inline fun expectNbtReaderCalls(tag: NbtTag, assertCalls: NbtReader.() -> Unit) {
@@ -13,7 +15,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read Byte correctly`() {
+    fun Should_read_Byte_correctly() {
         TestValues.bytes.forEach { value ->
             expectNbtReaderCalls(NbtByte(value)) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Byte)
@@ -23,7 +25,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read Short correctly`() {
+    fun Should_read_Short_correctly() {
         TestValues.shorts.forEach { value ->
             expectNbtReaderCalls(NbtShort(value)) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Short)
@@ -33,7 +35,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read Int correctly`() {
+    fun Should_read_Int_correctly() {
         TestValues.ints.forEach { value ->
             expectNbtReaderCalls(NbtInt(value)) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Int)
@@ -43,7 +45,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read Long correctly`() {
+    fun Should_read_Long_correctly() {
         TestValues.longs.forEach { value ->
             expectNbtReaderCalls(NbtLong(value)) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Long)
@@ -53,7 +55,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read Float correctly`() {
+    fun Should_read_Float_correctly() {
         TestValues.floats.forEach { value ->
             expectNbtReaderCalls(NbtFloat(value)) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Float)
@@ -63,7 +65,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read Double correctly`() {
+    fun Should_read_Double_correctly() {
         TestValues.doubles.forEach { value ->
             expectNbtReaderCalls(NbtDouble(value)) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Double)
@@ -73,7 +75,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read ByteArray correctly`() {
+    fun Should_read_ByteArray_correctly() {
         TestValues.byteArrays.forEach { value ->
             expectNbtReaderCalls(value.toNbtByteArray()) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Byte_Array)
@@ -89,7 +91,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read IntArray correctly`() {
+    fun Should_read_IntArray_correctly() {
         TestValues.intArrays.forEach { value ->
             expectNbtReaderCalls(value.toNbtIntArray()) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Int_Array)
@@ -105,7 +107,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read LongArray correctly`() {
+    fun Should_read_LongArray_correctly() {
         TestValues.longArrays.forEach { value ->
             expectNbtReaderCalls(value.toNbtLongArray()) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Long_Array)
@@ -121,7 +123,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read Compound with no entries correctly`() {
+    fun Should_read_Compound_with_no_entries_correctly() {
         expectNbtReaderCalls(buildNbtCompound {}) {
             beginRootTag() shouldReturn RootTagInfo(TAG_Compound)
             beginCompound()
@@ -131,7 +133,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read Compound with one entry correctly`() {
+    fun Should_read_Compound_with_one_entry_correctly() {
         expectNbtReaderCalls(
             buildNbtCompound { put("entry", 5) }
         ) {
@@ -145,7 +147,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read List with no entries correctly`() {
+    fun Should_read_List_with_no_entries_correctly() {
         expectNbtReaderCalls(nbtListOf<NbtTag>()) {
             beginRootTag() shouldReturn RootTagInfo(TAG_List)
             beginList() shouldReturn ListInfo(TAG_End, 0)
@@ -155,7 +157,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read List with one entry correctly`() {
+    fun Should_read_List_with_one_entry_correctly() {
         expectNbtReaderCalls(listOf("entry").toNbtList()) {
             beginRootTag() shouldReturn RootTagInfo(TAG_List)
             beginList() shouldReturn ListInfo(TAG_String, 1)
@@ -167,7 +169,7 @@ class TreeNbtReaderTest {
     }
 
     @Test
-    fun `Should read List of Lists correctly`() {
+    fun Should_read_List_of_Lists_correctly() {
         val list = buildNbtList<NbtList<*>> {
             addNbtList<NbtString> {
                 add("hello")
