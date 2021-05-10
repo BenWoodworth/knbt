@@ -4,7 +4,6 @@ package net.benwoodworth.knbt.internal
 
 import data.*
 import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.tag.NbtTag
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
@@ -20,18 +19,6 @@ class BinaryNbtWriterTest {
     fun Should_encode_bigtest_nbt_from_class_correctly(): Unit = assertContentEquals(
         expected = bigtestUncompressed.toByteArray(),
         actual = Nbt.encodeToByteArray(bigTestClass),
-    )
-
-    @Test
-    fun Should_encode_test_nbt_from_NbtTag_correctly(): Unit = assertContentEquals(
-        expected = testUncompressed.toByteArray(),
-        actual = Nbt.encodeToByteArray(NbtTag.serializer(), testTag),
-    )
-
-    @Test
-    fun Should_encode_bigtest_nbt_from_NbtTag_correctly(): Unit = assertContentEquals(
-        expected = bigtestUncompressed.toByteArray(),
-        actual = Nbt.encodeToByteArray(NbtTag.serializer(), bigTestTag),
     )
 
     @Test
