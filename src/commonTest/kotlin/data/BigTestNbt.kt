@@ -108,10 +108,7 @@ data class BigTestNbt(
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
-            if (other == null) return false
-            if (this::class != other::class) return false
-
-            other as Level
+            if (other !is Level) return false
 
             if (longTest != other.longTest) return false
             if (shortTest != other.shortTest) return false

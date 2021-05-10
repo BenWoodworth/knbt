@@ -34,10 +34,10 @@ class DefaultNbtEncoderTest {
             expectedLog = """
                 beginRootTag(TAG_Compound)
                 beginCompound()
-                beginCompoundEntry(TAG_Compound, "hello world")
+                beginCompoundEntry(TAG_Compound, hello world)
                 beginCompound()
-                beginCompoundEntry(TAG_String, "name")
-                writeString("Bananrama")
+                beginCompoundEntry(TAG_String, name)
+                writeString(Bananrama)
                 endCompound()
                 endCompound()
             """,
@@ -71,7 +71,7 @@ class DefaultNbtEncoderTest {
             expectedLog = """
                 beginRootTag(TAG_Compound)
                 beginCompound()
-                beginCompoundEntry(TAG_Int, "property")
+                beginCompoundEntry(TAG_Int, property)
                 writeInt(7)
                 endCompound()
             """,
@@ -88,10 +88,10 @@ class DefaultNbtEncoderTest {
             expectedLog = """
                 beginRootTag(TAG_Compound)
                 beginCompound()
-                beginCompoundEntry(TAG_String, "entry1")
-                writeString("value1")
-                beginCompoundEntry(TAG_Long, "entry2")
-                writeLong(1234L)
+                beginCompoundEntry(TAG_String, entry1)
+                writeString(value1)
+                beginCompoundEntry(TAG_Long, entry2)
+                writeLong(1234)
                 endCompound()
             """,
         )
@@ -164,11 +164,11 @@ class DefaultNbtEncoderTest {
                 beginRootTag(TAG_Long_Array)
                 beginLongArray(3)
                 beginLongArrayEntry()
-                writeLong(1L)
+                writeLong(1)
                 beginLongArrayEntry()
-                writeLong(2L)
+                writeLong(2)
                 beginLongArrayEntry()
-                writeLong(3L)
+                writeLong(3)
                 endLongArray()
             """,
         )
@@ -213,7 +213,7 @@ class DefaultNbtEncoderTest {
             tag = NbtLong(7L),
             expectedLog = """
                 beginRootTag(TAG_Long)
-                writeLong(7L)
+                writeLong(7)
             """,
         )
     }
@@ -224,7 +224,7 @@ class DefaultNbtEncoderTest {
             tag = NbtFloat(3.14f),
             expectedLog = """
                 beginRootTag(TAG_Float)
-                writeFloat(3.14f)
+                writeFloat(3.14)
             """,
         )
     }

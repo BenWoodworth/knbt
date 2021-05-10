@@ -63,13 +63,13 @@ class DefaultNbtDecoderTest {
             expectedLog = """
                 beginRootTag() -> RootTagInfo(type=TAG_Compound)
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Compound, name="hello world")
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Compound, name=hello world)
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_String, name="name")
-                readString() -> "Bananrama"
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name="")
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_String, name=name)
+                readString() -> Bananrama
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
                 endCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name="")
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
                 endCompound()
             """,
         )
@@ -92,7 +92,7 @@ class DefaultNbtDecoderTest {
             expectedLog = """
                 beginRootTag() -> RootTagInfo(type=TAG_Compound)
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name="")
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
                 endCompound()
             """,
         )
@@ -106,9 +106,9 @@ class DefaultNbtDecoderTest {
             expectedLog = """
                 beginRootTag() -> RootTagInfo(type=TAG_Compound)
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Int, name="property")
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Int, name=property)
                 readInt() -> 7
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name="")
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
                 endCompound()
             """,
         )
@@ -125,9 +125,9 @@ class DefaultNbtDecoderTest {
             expectedLog = """
                 beginRootTag() -> RootTagInfo(type=TAG_Compound)
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Int, name="property")
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Int, name=property)
                 readInt() -> 7
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name="")
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
                 endCompound()
             """,
         )
@@ -194,9 +194,9 @@ class DefaultNbtDecoderTest {
             expectedLog = """
                 beginRootTag() -> RootTagInfo(type=TAG_Long_Array)
                 beginLongArray() -> ArrayInfo(size=3)
-                readLong() -> 1L
-                readLong() -> 2L
-                readLong() -> 3L
+                readLong() -> 1
+                readLong() -> 2
+                readLong() -> 3
                 endLongArray()
             """,
         )
@@ -216,11 +216,11 @@ class DefaultNbtDecoderTest {
             expectedLog = """
                 beginRootTag() -> RootTagInfo(type=TAG_Compound)
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_String, name="entry1")
-                readString() -> "value1"
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Long, name="entry2")
-                readLong() -> 1234L
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name="")
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_String, name=entry1)
+                readString() -> value1
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Long, name=entry2)
+                readLong() -> 1234
+                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
                 endCompound()
             """,
         )
@@ -269,7 +269,7 @@ class DefaultNbtDecoderTest {
             expectedValue = 7L,
             expectedLog = """
                 beginRootTag() -> RootTagInfo(type=TAG_Long)
-                readLong() -> 7L
+                readLong() -> 7
             """,
         )
     }
@@ -281,7 +281,7 @@ class DefaultNbtDecoderTest {
             expectedValue = 3.14f,
             expectedLog = """
                 beginRootTag() -> RootTagInfo(type=TAG_Float)
-                readFloat() -> 3.14f
+                readFloat() -> 3.14
             """,
         )
     }

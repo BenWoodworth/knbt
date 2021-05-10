@@ -22,7 +22,15 @@ kotlin {
     jvm {
     }
     js {
-        browser()
+        browser {
+            testTask {
+                useKarma {
+                    useFirefox()
+//                    useChrome()
+//                    useSafari()
+                }
+            }
+        }
         nodejs()
     }
     val hostOs = System.getProperty("os.name")
