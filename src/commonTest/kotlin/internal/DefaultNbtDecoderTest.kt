@@ -6,6 +6,7 @@ import data.testTag
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.LoggingNbtReader
 import net.benwoodworth.knbt.Nbt
@@ -120,6 +121,7 @@ class DefaultNbtDecoderTest {
     @Test
     fun Decoding_compound_with_one_entry_to_class_should_read_correctly() {
         assertDecodesCorrectly(
+            serializer = OneProperty.serializer(Int.serializer()),
             tag = buildNbtCompound { put("property", 7) },
             expectedValue = OneProperty(7),
             expectedLog = """
@@ -208,6 +210,7 @@ class DefaultNbtDecoderTest {
     @Test
     fun Decoding_compound_with_two_entries_should_read_correctly() {
         assertDecodesCorrectly(
+            serializer = TwoProperties.serializer(),
             tag = buildNbtCompound {
                 put("entry1", "value1")
                 put("entry2", 1234L)
