@@ -12,7 +12,7 @@ val bigTestTag = buildNbt("Level") {
 
     put("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")
 
-    put("floatTest", 0.49823147058486938f)
+    put("floatTest", 0.49823147f)
 
     put("intTest", 2147483647)
 
@@ -53,7 +53,7 @@ val bigTestTag = buildNbt("Level") {
         ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() }
     )
 
-    put("doubleTest", 0.49312871321823148)
+    put("doubleTest", 0.4931287132182315)
 }
 
 @Serializable
@@ -147,7 +147,7 @@ val bigTestClass = BigTestNbt(
         longTest = 9223372036854775807L,
         shortTest = 32767,
         stringTest = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!",
-        floatTest = 0.49823147058486938f,
+        floatTest = 0.49823147f,
         intTest = 2147483647,
         nestedCompoundTest = BigTestNbt.Level.NestedCompoundTest(
             ham = BigTestNbt.Level.NestedCompoundTest.Entry(
@@ -172,6 +172,6 @@ val bigTestClass = BigTestNbt(
         ),
         byteTest = 127,
         byteArrayTest = ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() },
-        doubleTest = 0.49312871321823148,
+        doubleTest = 0.4931287132182315,
     )
 )
