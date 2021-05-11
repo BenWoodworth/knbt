@@ -1,5 +1,3 @@
-@file:JvmName("CompressionIoJvmKt")
-
 package net.benwoodworth.knbt.internal
 
 import okio.*
