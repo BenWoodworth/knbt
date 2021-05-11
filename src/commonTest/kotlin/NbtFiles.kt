@@ -1,8 +1,6 @@
 package net.benwoodworth.knbt
 
-import okio.Buffer
 import okio.Source
-import okio.Timeout
 
 class NbtFile(contentHex: String) {
     private val bytes = contentHex
@@ -12,25 +10,7 @@ class NbtFile(contentHex: String) {
 
     fun toByteArray(): ByteArray = bytes.copyOf()
 
-    fun asSource(): Source = object : Source {
-        private var offset: Int = 0
-
-        override fun close(): Unit = Unit
-
-        override fun read(sink: Buffer, byteCount: Long): Long {
-            val remaining = bytes.size - offset
-            return if (remaining == 0) {
-                -1L
-            } else {
-                val byteCountInt = minOf(remaining.toLong(), byteCount).toInt()
-                sink.write(bytes, offset, byteCountInt)
-                offset += byteCountInt
-                byteCountInt.toLong()
-            }
-        }
-
-        override fun timeout(): Timeout = Timeout.NONE
-    }
+    fun asSource(): Source = bytes.asSource()
 }
 
 private fun String.toNbtFile() = NbtFile(this)

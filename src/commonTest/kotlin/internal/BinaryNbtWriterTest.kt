@@ -2,13 +2,18 @@
 
 package net.benwoodworth.knbt.internal
 
-import data.*
+import data.bigTestClass
+import data.testClass
 import net.benwoodworth.knbt.*
+import okio.buffer
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
 
 class BinaryNbtWriterTest {
+    private val nbtGzip = Nbt { compression = NbtCompression.Gzip }
+    private val nbtZlib = Nbt { compression = NbtCompression.Zlib }
+
     @Test
     fun Should_encode_test_nbt_from_class_correctly(): Unit = assertContentEquals(
         expected = testUncompressed.toByteArray(),
@@ -16,10 +21,50 @@ class BinaryNbtWriterTest {
     )
 
     @Test
+    @OptIn(OkioApi::class)
+    fun Should_encode_test_nbt_gzip_from_class_correctly() {
+        val out = nbtGzip.encodeToByteArray(testClass)
+        assertContentEquals(
+            expected = testUncompressed.toByteArray(),
+            actual = out.asSource().asGzipSource().buffer().readByteArray(),
+        )
+    }
+
+    @Test
+    @OptIn(OkioApi::class)
+    fun Should_encode_test_nbt_zlib_from_class_correctly() {
+        val out = nbtZlib.encodeToByteArray(testClass).asSource()
+        assertContentEquals(
+            expected = testUncompressed.toByteArray(),
+            actual = out.asZlibSource().buffer().readByteArray(),
+        )
+    }
+
+    @Test
     fun Should_encode_bigtest_nbt_from_class_correctly(): Unit = assertContentEquals(
         expected = bigtestUncompressed.toByteArray(),
         actual = Nbt.encodeToByteArray(bigTestClass),
     )
+
+    @Test
+    @OptIn(OkioApi::class)
+    fun Should_encode_bigtest_nbt_gzip_from_class_correctly() {
+        val out = nbtGzip.encodeToByteArray(bigTestClass).asSource()
+        assertContentEquals(
+            expected = bigtestUncompressed.toByteArray(),
+            actual = out.asGzipSource().buffer().readByteArray(),
+        )
+    }
+
+    @Test
+    @OptIn(OkioApi::class)
+    fun Should_encode_bigtest_nbt_zlib_from_class_correctly() {
+        val out = nbtZlib.encodeToByteArray(bigTestClass).asSource()
+        assertContentEquals(
+            expected = bigtestUncompressed.toByteArray(),
+            actual = out.asZlibSource().buffer().readByteArray(),
+        )
+    }
 
     @Test
     fun Should_fail_when_decoding_Byte() {

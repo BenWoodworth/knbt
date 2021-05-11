@@ -62,7 +62,11 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-        val jvmMain by getting
+        val jvmMain by getting {
+            dependencies {
+                implementation("com.squareup.okio:okio-multiplatform:$okio_version")
+            }
+        }
         val jvmTest by getting
         val jsMain by getting
         val jsTest by getting

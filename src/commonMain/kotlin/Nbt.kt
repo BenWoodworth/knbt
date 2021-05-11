@@ -8,10 +8,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.internal.*
 import net.benwoodworth.knbt.tag.NbtTag
-import okio.Buffer
-import okio.Sink
-import okio.Source
-import okio.buffer
+import okio.*
 import kotlin.native.concurrent.ThreadLocal
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -39,12 +36,14 @@ public sealed class Nbt constructor(
     public fun <T> encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T) {
         @OptIn(ExperimentalNbtApi::class)
         val writerSink = when (configuration.compression) {
-            NbtCompression.None -> sink.buffer()
-            NbtCompression.Gzip -> sink.asGzipSink().buffer()
-            NbtCompression.Zlib -> sink.asZlibSink().buffer()
+            NbtCompression.None -> NonClosingSink(sink)
+            NbtCompression.Gzip -> NonClosingSink(sink).asGzipSink()
+            NbtCompression.Zlib -> NonClosingSink(sink).asZlibSink()
         }
 
-        DefaultNbtEncoder(this, BinaryNbtWriter(writerSink)).encodeSerializableValue(serializer, value)
+        writerSink.use {
+            DefaultNbtEncoder(this, BinaryNbtWriter(writerSink.buffer())).encodeSerializableValue(serializer, value)
+        }
     }
 
     /**
@@ -52,7 +51,7 @@ public sealed class Nbt constructor(
      */
     @OkioApi
     public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T {
-        val readerSource = source.buffer().let { bufferedSource ->
+        val readerSource = NonClosingSource(source).buffer().let { bufferedSource ->
             @OptIn(ExperimentalNbtApi::class)
             when (bufferedSource.peekNbtCompression()) {
                 NbtCompression.None -> bufferedSource
@@ -61,7 +60,9 @@ public sealed class Nbt constructor(
             }
         }
 
-        return DefaultNbtDecoder(this, BinaryNbtReader(readerSource)).decodeSerializableValue(deserializer)
+        readerSource.use {
+            return DefaultNbtDecoder(this, BinaryNbtReader(readerSource)).decodeSerializableValue(deserializer)
+        }
     }
 
     /**
