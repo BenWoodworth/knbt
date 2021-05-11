@@ -40,8 +40,8 @@ public sealed class Nbt constructor(
         @OptIn(ExperimentalNbtApi::class)
         val writerSink = when (configuration.compression) {
             NbtCompression.None -> sink.buffer()
-            NbtCompression.Gzip -> sink.toGzipSink().buffer()
-            NbtCompression.Zlib -> sink.toZlibSink().buffer()
+            NbtCompression.Gzip -> sink.asGzipSink().buffer()
+            NbtCompression.Zlib -> sink.asZlibSink().buffer()
         }
 
         DefaultNbtEncoder(this, BinaryNbtWriter(writerSink)).encodeSerializableValue(serializer, value)
@@ -56,8 +56,8 @@ public sealed class Nbt constructor(
             @OptIn(ExperimentalNbtApi::class)
             when (bufferedSource.peekNbtCompression()) {
                 NbtCompression.None -> bufferedSource
-                NbtCompression.Gzip -> bufferedSource.toGzipSource().buffer()
-                NbtCompression.Zlib -> bufferedSource.toZlibSource().buffer()
+                NbtCompression.Gzip -> bufferedSource.asGzipSource().buffer()
+                NbtCompression.Zlib -> bufferedSource.asZlibSource().buffer()
             }
         }
 
