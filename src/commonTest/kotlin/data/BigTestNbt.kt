@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.assertStructureEquals
 import net.benwoodworth.knbt.buildNbt
 import net.benwoodworth.knbt.tag.*
+import net.benwoodworth.knbt.toBinary
 
 val bigTestTag = buildNbt("Level") {
     put("longTest", 9223372036854775807L)
@@ -98,17 +99,17 @@ fun assertStructureEquals(expected: BigTestNbt, actual: BigTestNbt, message: Str
         property("level.longTest") { level.longTest }
         property("level.shortTest") { level.shortTest }
         property("level.stringTest") { level.stringTest }
-        property("level.floatTest") { level.floatTest }
+        property("level.floatTest") { level.floatTest.toBinary() }
         property("level.intTest") { level.intTest }
         property("level.nestedCompoundTest.ham.name") { level.nestedCompoundTest.ham.name }
-        property("level.nestedCompoundTest.ham.value") { level.nestedCompoundTest.ham.value }
+        property("level.nestedCompoundTest.ham.value") { level.nestedCompoundTest.ham.value.toBinary() }
         property("level.nestedCompoundTest.egg.name") { level.nestedCompoundTest.egg.name }
-        property("level.nestedCompoundTest.egg.value") { level.nestedCompoundTest.egg.value }
+        property("level.nestedCompoundTest.egg.value") { level.nestedCompoundTest.egg.value.toBinary() }
         property("level.listTestLong") { level.listTestLong }
         property("level.listTestCompound") { level.listTestCompound }
         property("level.byteTest") { level.byteTest }
         property("level.byteArrayTest") { level.byteArrayTest.asList() }
-        property("level.doubleTest") { level.doubleTest }
+        property("level.doubleTest") { level.doubleTest.toBinary() }
     }
 
 val bigTestClass = BigTestNbt(

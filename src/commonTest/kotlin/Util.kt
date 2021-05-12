@@ -32,6 +32,9 @@ class StructureAsserter<T>(private val expected: T, private val actual: T, priva
     }
 }
 
+fun Float.toBinary(): String = toRawBits().toUInt().toString(2).padStart(32, '0')
+fun Double.toBinary(): String = toRawBits().toULong().toString(2).padStart(64, '0')
+
 fun ByteArray.asSource(): Source = object : Source {
     private var offset: Int = 0
 
