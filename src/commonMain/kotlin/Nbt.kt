@@ -31,6 +31,8 @@ public sealed class Nbt constructor(
 
     /**
      * Encode NBT to a [Sink].
+     *
+     * *Note*: It is the caller's responsibility to close the [sink].
      */
     @OkioApi
     public fun <T> encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T) {
@@ -48,6 +50,8 @@ public sealed class Nbt constructor(
 
     /**
      * Decode NBT from a [Source].
+     *
+     * *Note*: It is the caller's responsibility to close the [source].
      */
     @OkioApi
     public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T {
@@ -163,6 +167,8 @@ private class NbtImpl(
 
 /**
  * Encode NBT to a [Sink].
+ *
+ * *Note*: It is the caller's responsibility to close the [sink].
  */
 @OkioApi
 public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
@@ -170,6 +176,8 @@ public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
 
 /**
  * Decode NBT from a [Source].
+ *
+ * *Note*: It is the caller's responsibility to close the [source].
  */
 @OkioApi
 public inline fun <reified T> Nbt.decodeFrom(source: Source): T =
