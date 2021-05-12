@@ -3,13 +3,20 @@
 package net.benwoodworth.knbt.internal
 
 import data.bigTestClass
+import data.bigTestTag
 import data.testClass
+import data.testTag
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.tag.NbtTag
+import okio.blackholeSink
 import okio.buffer
+import okio.use
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 
+@OptIn(OkioApi::class)
 class BinaryNbtWriterTest {
     private val nbtGzip = Nbt { compression = NbtCompression.Gzip }
     private val nbtZlib = Nbt { compression = NbtCompression.Zlib }
@@ -21,7 +28,6 @@ class BinaryNbtWriterTest {
     )
 
     @Test
-    @OptIn(OkioApi::class)
     fun Should_encode_test_nbt_gzip_from_class_correctly() {
         val out = nbtGzip.encodeToByteArray(testClass)
         assertContentEquals(
@@ -31,7 +37,6 @@ class BinaryNbtWriterTest {
     }
 
     @Test
-    @OptIn(OkioApi::class)
     fun Should_encode_test_nbt_zlib_from_class_correctly() {
         val out = nbtZlib.encodeToByteArray(testClass).asSource()
         assertContentEquals(
@@ -47,7 +52,6 @@ class BinaryNbtWriterTest {
     )
 
     @Test
-    @OptIn(OkioApi::class)
     fun Should_encode_bigtest_nbt_gzip_from_class_correctly() {
         val out = nbtGzip.encodeToByteArray(bigTestClass).asSource()
         assertContentEquals(
@@ -57,7 +61,6 @@ class BinaryNbtWriterTest {
     }
 
     @Test
-    @OptIn(OkioApi::class)
     fun Should_encode_bigtest_nbt_zlib_from_class_correctly() {
         val out = nbtZlib.encodeToByteArray(bigTestClass).asSource()
         assertContentEquals(
@@ -141,5 +144,25 @@ class BinaryNbtWriterTest {
         assertFailsWith<NbtEncodingException> {
             Nbt.encodeToByteArray(listOf<Byte>(1, 2, 3))
         }
+    }
+
+    @Test
+    fun Should_not_close_sink() {
+        fun test(nbt: Nbt, value: NbtTag, fileName: String) {
+            TestSink(blackholeSink()).use { sink ->
+                nbt.encodeTo(sink, NbtTag.serializer(), value)
+                assertFalse(sink.isClosed, "Sink closed while decoding $fileName")
+            }
+        }
+
+        val gzipNbt = Nbt { compression = NbtCompression.Gzip }
+        val zlibNbt = Nbt { compression = NbtCompression.Zlib }
+
+        test(Nbt, testTag, "test.nbt uncompressed")
+        test(gzipNbt, testTag, "test.nbt gzip")
+        test(zlibNbt, testTag, "test.nbt zlib")
+        test(Nbt, bigTestTag, "bigtest.nbt uncompressed")
+        test(gzipNbt, bigTestTag, "bigtest.nbt gzip")
+        test(zlibNbt, bigTestTag, "bigtest.nbt zlib")
     }
 }
