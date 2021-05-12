@@ -24,7 +24,7 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
     // https://stackoverflow.com/questions/17285793/c-inflate-gzip-char-array
 
     private companion object {
-        private const val CHUNK: UInt = 20u
+        private const val CHUNK: UInt = 1024u
     }
 
     private var ret: Int
