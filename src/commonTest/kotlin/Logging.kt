@@ -11,7 +11,7 @@ internal class LoggingNbtReader(
     override fun beginRootTag(): NbtReader.RootTagInfo {
         appendable.append("beginRootTag() -> ")
         return reader.beginRootTag()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun beginCompound() {
@@ -22,7 +22,7 @@ internal class LoggingNbtReader(
     override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
         appendable.append("beginCompoundEntry() -> ")
         return reader.beginCompoundEntry()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun endCompound() {
@@ -33,13 +33,13 @@ internal class LoggingNbtReader(
     override fun beginList(): NbtReader.ListInfo {
         appendable.append("beginList() -> ")
         return reader.beginList()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun beginListEntry(): Boolean {
         appendable.append("beginListEntry() -> ")
         return reader.beginListEntry()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun endList() {
@@ -50,13 +50,13 @@ internal class LoggingNbtReader(
     override fun beginByteArray(): NbtReader.ArrayInfo {
         appendable.append("beginByteArray() -> ")
         return reader.beginByteArray()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun beginByteArrayEntry(): Boolean {
         appendable.append("beginByteArrayEntry() -> ")
         return reader.beginByteArrayEntry()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun endByteArray() {
@@ -67,13 +67,13 @@ internal class LoggingNbtReader(
     override fun beginIntArray(): NbtReader.ArrayInfo {
         appendable.append("beginIntArray() -> ")
         return reader.beginIntArray()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun beginIntArrayEntry(): Boolean {
         appendable.append("beginIntArrayEntry() -> ")
         return reader.beginIntArrayEntry()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun endIntArray() {
@@ -84,13 +84,13 @@ internal class LoggingNbtReader(
     override fun beginLongArray(): NbtReader.ArrayInfo {
         appendable.append("beginLongArray() -> ")
         return reader.beginLongArray()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun beginLongArrayEntry(): Boolean {
         appendable.append("beginLongArrayEntry() -> ")
         return reader.beginLongArrayEntry()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun endLongArray() {
@@ -101,43 +101,43 @@ internal class LoggingNbtReader(
     override fun readByte(): Byte {
         appendable.append("readByte() -> ")
         return reader.readByte()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun readShort(): Short {
         appendable.append("readShort() -> ")
         return reader.readShort()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun readInt(): Int {
         appendable.append("readInt() -> ")
         return reader.readInt()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun readLong(): Long {
         appendable.append("readLong() -> ")
         return reader.readLong()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun readFloat(): Float {
         appendable.append("readFloat() -> ")
         return reader.readFloat()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun readDouble(): Double {
         appendable.append("readDouble() -> ")
         return reader.readDouble()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it.toString()) }
     }
 
     override fun readString(): String {
         appendable.append("readString() -> ")
         return reader.readString()
-            .also { appendable.appendLine(it.toValueString()) }
+            .also { appendable.appendLine(it) }
     }
 }
 
@@ -146,7 +146,7 @@ internal class LoggingNbtWriter(
     private val appendable: Appendable,
 ) : NbtWriter {
     override fun beginRootTag(type: NbtTagType) {
-        appendable.appendLine("beginRootTag(${type.toValueString()})")
+        appendable.appendLine("beginRootTag($type)")
         writer.beginRootTag(type)
     }
 
@@ -156,7 +156,7 @@ internal class LoggingNbtWriter(
     }
 
     override fun beginCompoundEntry(type: NbtTagType, name: String) {
-        appendable.appendLine("beginCompoundEntry(${type.toValueString()}, ${name.toValueString()})")
+        appendable.appendLine("beginCompoundEntry($type, $name)")
         writer.beginCompoundEntry(type, name)
     }
 
@@ -166,7 +166,7 @@ internal class LoggingNbtWriter(
     }
 
     override fun beginList(type: NbtTagType, size: Int) {
-        appendable.appendLine("beginList(${type.toValueString()}, ${size.toValueString()})")
+        appendable.appendLine("beginList($type, $size)")
         writer.beginList(type, size)
     }
 
@@ -181,7 +181,7 @@ internal class LoggingNbtWriter(
     }
 
     override fun beginByteArray(size: Int) {
-        appendable.appendLine("beginByteArray(${size.toValueString()})")
+        appendable.appendLine("beginByteArray($size)")
         writer.beginByteArray(size)
     }
 
@@ -196,7 +196,7 @@ internal class LoggingNbtWriter(
     }
 
     override fun beginIntArray(size: Int) {
-        appendable.appendLine("beginIntArray(${size.toValueString()})")
+        appendable.appendLine("beginIntArray($size)")
         writer.beginIntArray(size)
     }
 
@@ -211,7 +211,7 @@ internal class LoggingNbtWriter(
     }
 
     override fun beginLongArray(size: Int) {
-        appendable.appendLine("beginLongArray(${size.toValueString()})")
+        appendable.appendLine("beginLongArray($size)")
         writer.beginLongArray(size)
     }
 
@@ -226,37 +226,37 @@ internal class LoggingNbtWriter(
     }
 
     override fun writeByte(value: Byte) {
-        appendable.appendLine("writeByte(${value.toValueString()})")
+        appendable.appendLine("writeByte($value)")
         writer.writeByte(value)
     }
 
     override fun writeShort(value: Short) {
-        appendable.appendLine("writeShort(${value.toValueString()})")
+        appendable.appendLine("writeShort($value)")
         writer.writeShort(value)
     }
 
     override fun writeInt(value: Int) {
-        appendable.appendLine("writeInt(${value.toValueString()})")
+        appendable.appendLine("writeInt($value)")
         writer.writeInt(value)
     }
 
     override fun writeLong(value: Long) {
-        appendable.appendLine("writeLong(${value.toValueString()})")
+        appendable.appendLine("writeLong($value)")
         writer.writeLong(value)
     }
 
     override fun writeFloat(value: Float) {
-        appendable.appendLine("writeFloat(${value.toValueString()})")
+        appendable.appendLine("writeFloat($value)")
         writer.writeFloat(value)
     }
 
     override fun writeDouble(value: Double) {
-        appendable.appendLine("writeDouble(${value.toValueString()})")
+        appendable.appendLine("writeDouble($value)")
         writer.writeDouble(value)
     }
 
     override fun writeString(value: String) {
-        appendable.appendLine("writeString(${value.toValueString()})")
+        appendable.appendLine("writeString($value)")
         writer.writeString(value)
     }
 }

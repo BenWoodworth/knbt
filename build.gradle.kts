@@ -22,7 +22,15 @@ kotlin {
     jvm {
     }
     js {
-        browser()
+        browser {
+            testTask {
+                useKarma {
+                    useFirefox()
+//                    useChrome()
+//                    useSafari()
+                }
+            }
+        }
         nodejs()
     }
     val hostOs = System.getProperty("os.name")
@@ -54,17 +62,13 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-        val jvmMain by getting {
+        val jvmMain by getting
+        val jvmTest by getting
+        val jsMain by getting {
             dependencies {
-                implementation("com.squareup.okio:okio:$okio_version")
+                implementation(npm("pako", "2.0.3"))
             }
         }
-        val jvmTest by getting {
-            dependencies {
-                implementation(kotlin("reflect"))
-            }
-        }
-        val jsMain by getting
         val jsTest by getting
         val nativeMain by getting
         val nativeTest by getting

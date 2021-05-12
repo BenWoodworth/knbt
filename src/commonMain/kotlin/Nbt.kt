@@ -8,10 +8,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.internal.*
 import net.benwoodworth.knbt.tag.NbtTag
-import okio.Buffer
-import okio.Sink
-import okio.Source
-import okio.buffer
+import okio.*
 import kotlin.native.concurrent.ThreadLocal
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -34,34 +31,42 @@ public sealed class Nbt constructor(
 
     /**
      * Encode NBT to a [Sink].
+     *
+     * *Note*: It is the caller's responsibility to close the [sink].
      */
     @OkioApi
     public fun <T> encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T) {
         @OptIn(ExperimentalNbtApi::class)
         val writerSink = when (configuration.compression) {
-            NbtCompression.None -> sink.buffer()
-            NbtCompression.Gzip -> sink.toGzipSink().buffer()
-            NbtCompression.Zlib -> sink.toZlibSink().buffer()
+            NbtCompression.None -> NonClosingSink(sink)
+            NbtCompression.Gzip -> NonClosingSink(sink).asGzipSink()
+            NbtCompression.Zlib -> NonClosingSink(sink).asZlibSink()
         }
 
-        DefaultNbtEncoder(this, BinaryNbtWriter(writerSink)).encodeSerializableValue(serializer, value)
+        writerSink.use {
+            DefaultNbtEncoder(this, BinaryNbtWriter(writerSink.buffer())).encodeSerializableValue(serializer, value)
+        }
     }
 
     /**
      * Decode NBT from a [Source].
+     *
+     * *Note*: It is the caller's responsibility to close the [source].
      */
     @OkioApi
     public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T {
-        val readerSource = source.buffer().let { bufferedSource ->
+        val readerSource = NonClosingSource(source).buffer().let { bufferedSource ->
             @OptIn(ExperimentalNbtApi::class)
-            when (bufferedSource.peekNbtCompression().also { println(it) }) {
+            when (bufferedSource.peekNbtCompression()) {
                 NbtCompression.None -> bufferedSource
-                NbtCompression.Gzip -> bufferedSource.toGzipSource().buffer()
-                NbtCompression.Zlib -> bufferedSource.toZlibSource().buffer()
+                NbtCompression.Gzip -> bufferedSource.asGzipSource().buffer()
+                NbtCompression.Zlib -> bufferedSource.asZlibSource().buffer()
             }
         }
 
-        return DefaultNbtDecoder(this, BinaryNbtReader(readerSource)).decodeSerializableValue(deserializer)
+        readerSource.use {
+            return DefaultNbtDecoder(this, BinaryNbtReader(readerSource)).decodeSerializableValue(deserializer)
+        }
     }
 
     /**
@@ -162,6 +167,8 @@ private class NbtImpl(
 
 /**
  * Encode NBT to a [Sink].
+ *
+ * *Note*: It is the caller's responsibility to close the [sink].
  */
 @OkioApi
 public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
@@ -169,6 +176,8 @@ public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
 
 /**
  * Decode NBT from a [Source].
+ *
+ * *Note*: It is the caller's responsibility to close the [source].
  */
 @OkioApi
 public inline fun <reified T> Nbt.decodeFrom(source: Source): T =

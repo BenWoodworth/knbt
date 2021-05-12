@@ -25,8 +25,8 @@ internal fun BufferedSource.peekNbtCompression(): NbtCompression =
         }
     }
 
-internal expect fun Source.toGzipSource(): Source
-internal expect fun Sink.toGzipSink(): Sink
+internal expect fun Source.asGzipSource(): Source
+internal expect fun Sink.asGzipSink(): Sink
 
-internal expect fun Source.toZlibSource(): Source
-internal expect fun Sink.toZlibSink(): Sink
+internal expect fun Source.asZlibSource(): Source
+internal expect fun Sink.asZlibSink(): Sink
