@@ -64,7 +64,11 @@ kotlin {
         }
         val jvmMain by getting
         val jvmTest by getting
-        val jsMain by getting
+        val jsMain by getting {
+            dependencies {
+                implementation(npm("pako", "2.0.3"))
+            }
+        }
         val jsTest by getting
         val nativeMain by getting
         val nativeTest by getting
