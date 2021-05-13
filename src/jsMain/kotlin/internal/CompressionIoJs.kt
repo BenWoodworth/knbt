@@ -20,7 +20,7 @@ internal actual fun Sink.asZlibSink(): Sink =
 
 private class ZlibSource(private val source: BufferedSource) : Source by source {
     private val inbuf = Uint8Array(1)
-    private val outbuf = Buffer()
+    private val outbuf = Uint8ArrayBuffer()
     private var inflateDone = false
 
     private val inflate = Inflate().apply {
@@ -37,14 +37,39 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
         return outbuf.read(sink, byteCount)
     }
 
-    private fun onData(data: Uint8Array) {
-        for (i in 0 until data.byteLength) {
-            outbuf.writeByte(data[i].toInt())
-        }
-    }
+    private fun onData(data: Uint8Array): Unit =
+        outbuf.reset(data)
 
     private fun onEnd(status: Int) {
         inflateDone = true
         if (status != ZStatus.OK.status) throw IOException("Bad inflate status: $status (${inflate.msg})")
     }
+}
+
+private class Uint8ArrayBuffer {
+    private lateinit var buffer: Uint8Array
+    private var position: Int = -1
+
+    fun reset(buffer: Uint8Array) {
+        if (!exhausted()) error("Buffer not exhausted")
+
+        this.buffer = buffer
+        position = 0
+    }
+
+    fun read(sink: Buffer, byteCount: Long): Long {
+        if (exhausted()) return -1
+
+        val remaining = buffer.byteLength - position
+        val readBytes = minOf(remaining.toLong(), byteCount)
+
+        repeat(readBytes.toInt()) {
+            sink.writeByte(buffer[position++].toInt())
+        }
+
+        return readBytes
+    }
+
+    fun exhausted(): Boolean =
+        position == -1 || position == buffer.byteLength
 }
