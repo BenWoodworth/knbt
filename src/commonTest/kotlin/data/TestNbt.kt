@@ -6,7 +6,7 @@ import net.benwoodworth.knbt.assertStructureEquals
 import net.benwoodworth.knbt.buildNbt
 import net.benwoodworth.knbt.tag.put
 
-val testTag = buildNbt("hello world") {
+val testTag get() = buildNbt("hello world") {
     put("name", "Bananrama")
 }
 
@@ -26,7 +26,7 @@ fun assertStructureEquals(expected: TestNbt, actual: TestNbt, message: String? =
         property("helloWorld.name") { helloWorld.name }
     }
 
-val testClass = TestNbt(
+val testClass get() = TestNbt(
     helloWorld = TestNbt.HelloWorld(
         name = "Bananrama",
     ),

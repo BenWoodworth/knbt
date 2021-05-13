@@ -7,7 +7,7 @@ import net.benwoodworth.knbt.buildNbt
 import net.benwoodworth.knbt.tag.*
 import net.benwoodworth.knbt.toBinary
 
-val bigTestTag = buildNbt("Level") {
+val bigTestTag get() = buildNbt("Level") {
     put("longTest", 9223372036854775807L)
     put("shortTest", 32767.toShort())
     put("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")
@@ -91,6 +91,42 @@ data class BigTestNbt(
             @SerialName("created-on")
             val createdOn: Long,
         )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as Level
+
+            if (longTest != other.longTest) return false
+            if (shortTest != other.shortTest) return false
+            if (stringTest != other.stringTest) return false
+            if (floatTest != other.floatTest) return false
+            if (intTest != other.intTest) return false
+            if (nestedCompoundTest != other.nestedCompoundTest) return false
+            if (listTestLong != other.listTestLong) return false
+            if (listTestCompound != other.listTestCompound) return false
+            if (byteTest != other.byteTest) return false
+            if (!byteArrayTest.contentEquals(other.byteArrayTest)) return false
+            if (doubleTest != other.doubleTest) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = longTest.hashCode()
+            result = 31 * result + shortTest
+            result = 31 * result + stringTest.hashCode()
+            result = 31 * result + floatTest.hashCode()
+            result = 31 * result + intTest
+            result = 31 * result + nestedCompoundTest.hashCode()
+            result = 31 * result + listTestLong.hashCode()
+            result = 31 * result + listTestCompound.hashCode()
+            result = 31 * result + byteTest
+            result = 31 * result + byteArrayTest.contentHashCode()
+            result = 31 * result + doubleTest.hashCode()
+            return result
+        }
     }
 }
 
@@ -112,7 +148,7 @@ fun assertStructureEquals(expected: BigTestNbt, actual: BigTestNbt, message: Str
         property("level.doubleTest") { level.doubleTest.toBinary() }
     }
 
-val bigTestClass = BigTestNbt(
+val bigTestClass get() = BigTestNbt(
     level = BigTestNbt.Level(
         longTest = 9223372036854775807L,
         shortTest = 32767,

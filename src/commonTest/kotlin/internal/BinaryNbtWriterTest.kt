@@ -6,67 +6,46 @@ import data.bigTestClass
 import data.bigTestTag
 import data.testClass
 import data.testTag
+import kotlinx.serialization.KSerializer
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.tag.NbtTag
 import okio.blackholeSink
 import okio.buffer
 import okio.use
-import kotlin.test.Test
-import kotlin.test.assertContentEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
+import kotlin.test.*
 
 @OptIn(OkioApi::class)
 class BinaryNbtWriterTest {
-    private val nbtGzip = Nbt { compression = NbtCompression.Gzip }
-    private val nbtZlib = Nbt { compression = NbtCompression.Zlib }
-
     @Test
-    fun Should_encode_test_nbt_from_class_correctly(): Unit = assertContentEquals(
-        expected = testUncompressed.toByteArray(),
-        actual = Nbt.encodeToByteArray(testClass),
-    )
+    fun Should_encode_from_class_correctly() {
+        nbtFiles.assertForEach { file ->
+            val nbt = Nbt { compression = file.compression }
 
-    @Test
-    fun Should_encode_test_nbt_gzip_from_class_correctly() {
-        val out = nbtGzip.encodeToByteArray(testClass)
-        assertContentEquals(
-            expected = testUncompressed.toByteArray(),
-            actual = out.asSource().asGzipSource().buffer().readByteArray(),
-        )
+            @Suppress("UNCHECKED_CAST")
+            val out = nbt.encodeToByteArray(file.valueSerializer as KSerializer<Any>, file.value)
+
+            val outCompression = out.asSource().buffer().peekNbtCompression()
+            assertEquals(file.compression, outCompression, "Encoded with wrong compression: ${file.description}")
+
+            val tag = nbt.decodeFromByteArray(NbtTag.serializer(), out)
+            assertEquals(file.nbtTag, tag, "Unable to decode encoded data correctly: ${file.description}")
+        }
     }
 
     @Test
-    fun Should_encode_test_nbt_zlib_from_class_correctly() {
-        val out = nbtZlib.encodeToByteArray(testClass).asSource()
-        assertContentEquals(
-            expected = testUncompressed.toByteArray(),
-            actual = out.asZlibSource().buffer().readByteArray(),
-        )
-    }
+    fun Should_encode_from_NbtTag_correctly() {
+        nbtFiles.assertForEach { file ->
+            val nbt = Nbt { compression = file.compression }
 
-    @Test
-    fun Should_encode_bigtest_nbt_from_class_correctly(): Unit = assertContentEquals(
-        expected = bigtestUncompressed.toByteArray(),
-        actual = Nbt.encodeToByteArray(bigTestClass),
-    )
+            @Suppress("UNCHECKED_CAST")
+            val out = nbt.encodeToByteArray(NbtTag.serializer(), file.nbtTag)
 
-    @Test
-    fun Should_encode_bigtest_nbt_gzip_from_class_correctly() {
-        val out = nbtGzip.encodeToByteArray(bigTestClass).asSource()
-        assertContentEquals(
-            expected = bigtestUncompressed.toByteArray(),
-            actual = out.asGzipSource().buffer().readByteArray(),
-        )
-    }
+            val outCompression = out.asSource().buffer().peekNbtCompression()
+            assertEquals(file.compression, outCompression, "Encoded with wrong compression: ${file.description}")
 
-    @Test
-    fun Should_encode_bigtest_nbt_zlib_from_class_correctly() {
-        val out = nbtZlib.encodeToByteArray(bigTestClass).asSource()
-        assertContentEquals(
-            expected = bigtestUncompressed.toByteArray(),
-            actual = out.asZlibSource().buffer().readByteArray(),
-        )
+            val tag = nbt.decodeFromByteArray(NbtTag.serializer(), out)
+            assertEquals(file.nbtTag, tag, "Unable to decode encoded data correctly: ${file.description}")
+        }
     }
 
     @Test
@@ -148,21 +127,14 @@ class BinaryNbtWriterTest {
 
     @Test
     fun Should_not_close_sink() {
-        fun test(nbt: Nbt, value: NbtTag, fileName: String) {
+        nbtFiles.assertForEach { file ->
+            val nbt = Nbt { compression = file.compression }
+
             TestSink(blackholeSink()).use { sink ->
-                nbt.encodeTo(sink, NbtTag.serializer(), value)
-                assertFalse(sink.isClosed, "Sink closed while decoding $fileName")
+                @Suppress("UNCHECKED_CAST")
+                nbt.encodeTo(sink, file.valueSerializer as KSerializer<Any>, file.value)
+                assertFalse(sink.isClosed, "Sink closed while decoding ${file.description}")
             }
         }
-
-        val gzipNbt = Nbt { compression = NbtCompression.Gzip }
-        val zlibNbt = Nbt { compression = NbtCompression.Zlib }
-
-        test(Nbt, testTag, "test.nbt uncompressed")
-        test(gzipNbt, testTag, "test.nbt gzip")
-        test(zlibNbt, testTag, "test.nbt zlib")
-        test(Nbt, bigTestTag, "bigtest.nbt uncompressed")
-        test(gzipNbt, bigTestTag, "bigtest.nbt gzip")
-        test(zlibNbt, bigTestTag, "bigtest.nbt zlib")
     }
 }

@@ -54,3 +54,21 @@ fun ByteArray.asSource(): Source = object : Source {
 
     override fun timeout(): Timeout = Timeout.NONE
 }
+
+fun <T> Iterable<T>.assertForEach(assert: (element: T) -> Unit) {
+    val throws = mutableListOf<Throwable>()
+
+    forEach { element ->
+        try {
+            assert(element)
+        } catch (t: Throwable) {
+            throws += t
+            t.printStackTrace()
+            println()
+        }
+    }
+
+    if (throws.any()) {
+        throw AssertionError("Exceptions thrown: ${throws.size}")
+    }
+}
