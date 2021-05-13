@@ -31,7 +31,7 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
     override fun read(sink: Buffer, byteCount: Long): Long {
         while (!inflateDone && outbuf.exhausted()) {
             inbuf[0] = source.readByte()
-            inflate.push(inbuf, ZFlushMode.BLOCK)
+            inflate.push(inbuf, ZFlushMode.SYNC_FLUSH)
         }
 
         return outbuf.read(sink, byteCount)
