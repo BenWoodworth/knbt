@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.assertStructureEquals
 import net.benwoodworth.knbt.buildNbt
+import net.benwoodworth.knbt.fix
 import net.benwoodworth.knbt.tag.*
 import net.benwoodworth.knbt.toBinary
 
@@ -11,7 +12,7 @@ val bigTestTag get() = buildNbt("Level") {
     put("longTest", 9223372036854775807L)
     put("shortTest", 32767.toShort())
     put("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")
-    put("floatTest", 0.49823147f)
+    put("floatTest", 0.49823147f.fix())
     put("intTest", 2147483647)
     putNbtCompound("nested compound test") {
         putNbtCompound("ham") {
@@ -153,7 +154,7 @@ val bigTestClass get() = BigTestNbt(
         longTest = 9223372036854775807L,
         shortTest = 32767,
         stringTest = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!",
-        floatTest = 0.49823147f,
+        floatTest = 0.49823147f.fix(),
         intTest = 2147483647,
         nestedCompoundTest = BigTestNbt.Level.NestedCompoundTest(
             ham = BigTestNbt.Level.NestedCompoundTest.Entry(

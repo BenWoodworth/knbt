@@ -72,3 +72,10 @@ fun <T> Iterable<T>.assertForEach(assert: (element: T) -> Unit) {
         throw AssertionError("Exceptions thrown: ${throws.size}")
     }
 }
+
+/**
+ * Work around Kotlin/JS representing Float values slightly differently.
+ * TODO https://github.com/BenWoodworth/knbt/issues/3
+ */
+fun Float.fix(): Float =
+    Float.fromBits(this.toRawBits())
