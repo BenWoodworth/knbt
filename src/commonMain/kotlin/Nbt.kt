@@ -35,18 +35,10 @@ public sealed class Nbt constructor(
      * *Note*: It is the caller's responsibility to close the [sink].
      */
     @OkioApi
-    public fun <T> encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T) {
-        @OptIn(ExperimentalNbtApi::class)
-        val writerSink = when (configuration.compression) {
-            NbtCompression.None -> NonClosingSink(sink)
-            NbtCompression.Gzip -> NonClosingSink(sink).asGzipSink()
-            NbtCompression.Zlib -> NonClosingSink(sink).asZlibSink()
+    public fun <T> encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
+        BinaryNbtWriter(this, sink).use { writer ->
+            DefaultNbtEncoder(this, writer).encodeSerializableValue(serializer, value)
         }
-
-        writerSink.use {
-            DefaultNbtEncoder(this, BinaryNbtWriter(writerSink.buffer())).encodeSerializableValue(serializer, value)
-        }
-    }
 
     /**
      * Decode NBT from a [Source].
@@ -54,20 +46,11 @@ public sealed class Nbt constructor(
      * *Note*: It is the caller's responsibility to close the [source].
      */
     @OkioApi
-    public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T {
-        val readerSource = NonClosingSource(source).buffer().let { bufferedSource ->
-            @OptIn(ExperimentalNbtApi::class)
-            when (bufferedSource.peekNbtCompression()) {
-                NbtCompression.None -> bufferedSource
-                NbtCompression.Gzip -> bufferedSource.asGzipSource().buffer()
-                NbtCompression.Zlib -> bufferedSource.asZlibSource().buffer()
-            }
+    public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
+        BinaryNbtReader(source).use { reader ->
+            DefaultNbtDecoder(this, reader).decodeSerializableValue(deserializer)
         }
 
-        readerSource.use {
-            return DefaultNbtDecoder(this, BinaryNbtReader(readerSource)).decodeSerializableValue(deserializer)
-        }
-    }
 
     /**
      * Encode NBT to a [ByteArray].

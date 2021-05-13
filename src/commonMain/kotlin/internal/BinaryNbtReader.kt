@@ -1,18 +1,30 @@
 package net.benwoodworth.knbt.internal
 
+import net.benwoodworth.knbt.NbtCompression
 import net.benwoodworth.knbt.NbtDecodingException
 import net.benwoodworth.knbt.NbtEncodingException
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import okio.BufferedSource
+import okio.Closeable
+import okio.Source
+import okio.buffer
 
-internal class BinaryNbtReader(
-    private val source: BufferedSource,
-) : NbtReader {
+internal class BinaryNbtReader(source: Source) : NbtReader, Closeable {
     private var compoundNesting = 0
     private var readRootEntry = false
 
     private val tagTypeStack = ArrayDeque<NbtTagType>()
     private val elementsRemainingStack = ArrayDeque<Int>()
+
+    private val source = NonClosingSource(source).buffer().let { bufferedSource ->
+        when (bufferedSource.peekNbtCompression()) {
+            NbtCompression.None -> bufferedSource
+            NbtCompression.Gzip -> bufferedSource.asGzipSource().buffer()
+            NbtCompression.Zlib -> bufferedSource.asZlibSource().buffer()
+        }
+    }
+
+    override fun close(): Unit = source.close()
 
     private fun <T> ArrayDeque<T>.replaceLast(element: T): T = set(lastIndex, element)
 

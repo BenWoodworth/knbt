@@ -1,15 +1,26 @@
 package net.benwoodworth.knbt.internal
 
+import net.benwoodworth.knbt.Nbt
+import net.benwoodworth.knbt.NbtCompression
 import net.benwoodworth.knbt.NbtEncodingException
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_Compound
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_End
 import okio.BufferedSink
+import okio.Closeable
+import okio.Sink
+import okio.buffer
 
-internal class BinaryNbtWriter(
-    private val sink: BufferedSink,
-) : NbtWriter {
+internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
     private var compoundNesting = 0
     private var wroteRootEntry = false
+
+    private val sink = when (nbt.configuration.compression) {
+        NbtCompression.None -> NonClosingSink(sink).buffer()
+        NbtCompression.Gzip -> NonClosingSink(sink).asGzipSink().buffer()
+        NbtCompression.Zlib -> NonClosingSink(sink).asZlibSink().buffer()
+    }
+
+    override fun close(): Unit = sink.close()
 
     private fun BufferedSink.writeNbtString(value: String) {
         val bytes = value.encodeToByteArray()
