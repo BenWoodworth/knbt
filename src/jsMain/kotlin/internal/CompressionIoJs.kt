@@ -24,8 +24,8 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
     private var inflateDone = false
 
     private val inflate = Inflate().apply {
-        onData = ::onData
-        onEnd = ::onEnd
+        onData = { data -> outbuf.reset(data) }
+        onEnd = { inflateDone = true }
     }
 
     override fun read(sink: Buffer, byteCount: Long): Long {
@@ -36,29 +36,23 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
 
         return outbuf.read(sink, byteCount)
     }
-
-    private fun onData(data: Uint8Array): Unit =
-        outbuf.reset(data)
-
-    private fun onEnd(status: Int) {
-        inflateDone = true
-        if (status != ZStatus.OK.status) throw IOException("Bad inflate status: $status (${inflate.msg})")
-    }
 }
 
 private class Uint8ArrayBuffer {
     private lateinit var buffer: Uint8Array
-    private var position: Int = -1
+    private var position: Int = 0
+    private var exhausted = true
 
     fun reset(buffer: Uint8Array) {
-        if (!exhausted()) error("Buffer not exhausted")
+        if (!exhausted) error("Buffer not exhausted")
 
         this.buffer = buffer
         position = 0
+        exhausted = buffer.byteLength == 0
     }
 
     fun read(sink: Buffer, byteCount: Long): Long {
-        if (exhausted()) return -1
+        if (exhausted) return -1
 
         val remaining = buffer.byteLength - position
         val readBytes = minOf(remaining.toLong(), byteCount)
@@ -67,9 +61,9 @@ private class Uint8ArrayBuffer {
             sink.writeByte(buffer[position++].toInt())
         }
 
+        if (position == buffer.length) exhausted = true
         return readBytes
     }
 
-    fun exhausted(): Boolean =
-        position == -1 || position == buffer.byteLength
+    fun exhausted(): Boolean = exhausted
 }
