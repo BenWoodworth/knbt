@@ -27,13 +27,14 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
     // https://stackoverflow.com/questions/17285793/c-inflate-gzip-char-array
 
     private companion object {
-        private const val CHUNK: UInt = 1024u
+        private const val inputBufferSize: UInt = 1u
+        private const val outputBufferSize: UInt = 1024u
     }
 
     private var ret: Int
     private val strm: z_stream = nativeHeap.alloc()
-    private val inbuf: CArrayPointer<UByteVar> = nativeHeap.allocArray(CHUNK.toLong())
-    private val outbuf: CArrayPointer<uByteVar> = nativeHeap.allocArray(CHUNK.toLong())
+    private val inbuf: CArrayPointer<UByteVar> = nativeHeap.allocArray(inputBufferSize.toLong())
+    private val outbuf: CArrayPointer<uByteVar> = nativeHeap.allocArray(outputBufferSize.toLong())
     private var closed = false
 
     init {
@@ -43,7 +44,7 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
 
     private fun readSourceIn(byteCount: UInt): UInt {
         var count = 0u
-        while (count < CHUNK && count < byteCount && !source.exhausted()) {
+        while (count < inputBufferSize && count < byteCount && !source.exhausted()) {
             inbuf[count.toLong()] = source.readByte().toUByte()
             count++
         }
@@ -73,7 +74,7 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
 
         // run inflate() on input until output buffer not full
         do {
-            strm.avail_out = CHUNK
+            strm.avail_out = outputBufferSize
             strm.next_out = outbuf
 
             ret = inflate(strm.ptr, Z_NO_FLUSH)
@@ -91,7 +92,7 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
             }
 
             try {
-                val have = CHUNK - strm.avail_out
+                val have = outputBufferSize - strm.avail_out
                 bytesWritten += have.toLong()
                 for (i in 0u until have) {
                     sink.writeByte(outbuf[i.toLong()].toInt())
