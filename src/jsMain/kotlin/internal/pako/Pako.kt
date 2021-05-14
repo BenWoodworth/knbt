@@ -142,14 +142,19 @@ internal enum class ZDataType(val dataType: Int) {
     UNKNOWN(Pako.Constants.Z_UNKNOWN),
 }
 
-internal class Deflate(options: Options? = null) {
+internal class Deflate(
+    level: ZLevel? = null,
+    windowBits: Int? = null,
+    memLevel: Int? = null,
+    strategy: ZStrategy? = null,
+) {
     private val deflate = Pako.Deflate(
-        json(
-            "level" to options?.level?.level,
-            "windowBits" to options?.windowBits,
-            "memLevel" to options?.memLevel,
-            "strategy" to options?.strategy?.constant,
-        )
+        json().apply {
+            if (level != null) set("level", level.level)
+            if (windowBits != null) set("windowBits", windowBits)
+            if (memLevel != null) set("memLevel", memLevel)
+            if (strategy != null) set("strategy", strategy.constant)
+        }
     )
 
     val err: ZStatus
@@ -179,14 +184,13 @@ internal class Deflate(options: Options? = null) {
     )
 }
 
-internal fun Deflate(builderAction: Deflate.Options.() -> Unit): Deflate =
-    Deflate(Deflate.Options().apply(builderAction))
-
-internal class Inflate(options: Options? = null) {
+internal class Inflate(
+    windowBits: Int? = null,
+) {
     private val inflate = Pako.Inflate(
-        json(
-            "windowBits" to options?.windowBits,
-        )
+        json().apply {
+            if (windowBits != null) set("windowBits", windowBits)
+        }
     )
 
     val err: ZStatus
@@ -207,11 +211,4 @@ internal class Inflate(options: Options? = null) {
 
     fun push(data: Uint8Array, flushMode: ZFlushMode = ZFlushMode.NO_FLUSH): Boolean =
         inflate.push(data, flushMode.flushMode)
-
-    class Options(
-        var windowBits: Int? = null,
-    )
 }
-
-internal fun Inflate(builderAction: Inflate.Options.() -> Unit): Inflate =
-    Inflate(Inflate.Options().apply(builderAction))

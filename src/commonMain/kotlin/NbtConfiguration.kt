@@ -27,12 +27,12 @@ public enum class NbtCompression {
     None,
 
     /**
-     * Currently only supported in Kotlin/JVM
+     * Currently only supported in Kotlin/JVM and Kotlin/JS
      */
     Gzip,
 
     /**
-     * Currently only supported in Kotlin/JVM
+     * Currently only supported in Kotlin/JVM and Kotlin/JS
      */
     Zlib
 }
