@@ -167,6 +167,8 @@ private class ZlibSink(private val sink: BufferedSink, gzip: Boolean) : Sink by 
     }
 
     override fun write(source: Buffer, byteCount: Long) {
+        if (closed) throw IOException("Sink is closed")
+
         for (i in 0 until byteCount) {
             if (source.exhausted()) throw EOFException("End of source")
 
