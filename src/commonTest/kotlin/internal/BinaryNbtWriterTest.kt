@@ -2,10 +2,6 @@
 
 package net.benwoodworth.knbt.internal
 
-import data.bigTestClass
-import data.bigTestTag
-import data.testClass
-import data.testTag
 import kotlinx.serialization.KSerializer
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.tag.NbtTag
@@ -24,10 +20,20 @@ class BinaryNbtWriterTest {
             @Suppress("UNCHECKED_CAST")
             val out = nbt.encodeToByteArray(file.valueSerializer as KSerializer<Any>, file.value)
 
-            val outCompression = out.asSource().buffer().peekNbtCompression()
+            val outCompression = try {
+                out.asSource().buffer().peekNbtCompression()
+            } catch (t: Throwable) {
+                throw Exception("Unable to check compression type", t)
+            }
+
             assertEquals(file.compression, outCompression, "Encoded with wrong compression: ${file.description}")
 
-            val tag = nbt.decodeFromByteArray(NbtTag.serializer(), out)
+            val tag = try {
+                nbt.decodeFromByteArray(NbtTag.serializer(), out)
+            } catch (t: Throwable) {
+                throw Exception("Unable to decode compressed value", t)
+            }
+
             assertEquals(file.nbtTag, tag, "Unable to decode encoded data correctly: ${file.description}")
         }
     }
@@ -37,13 +43,22 @@ class BinaryNbtWriterTest {
         nbtFiles.assertForEach { file ->
             val nbt = Nbt { compression = file.compression }
 
-            @Suppress("UNCHECKED_CAST")
             val out = nbt.encodeToByteArray(NbtTag.serializer(), file.nbtTag)
 
-            val outCompression = out.asSource().buffer().peekNbtCompression()
+            val outCompression = try {
+                out.asSource().buffer().peekNbtCompression()
+            } catch (t: Throwable) {
+                throw Exception("Unable to check compression type", t)
+            }
+
             assertEquals(file.compression, outCompression, "Encoded with wrong compression: ${file.description}")
 
-            val tag = nbt.decodeFromByteArray(NbtTag.serializer(), out)
+            val tag = try {
+                nbt.decodeFromByteArray(NbtTag.serializer(), out)
+            } catch (t: Throwable) {
+                throw Exception("Unable to decode compressed value", t)
+            }
+
             assertEquals(file.nbtTag, tag, "Unable to decode encoded data correctly: ${file.description}")
         }
     }
