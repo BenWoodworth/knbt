@@ -48,7 +48,7 @@ public sealed class Nbt constructor(
     @OkioApi
     public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
         BinaryNbtReader(source).use { reader ->
-            DefaultNbtDecoder(this, reader).decodeSerializableValue(deserializer)
+            NbtDecoder(this, reader).decodeSerializableValue(deserializer)
         }
 
 
@@ -87,7 +87,7 @@ public sealed class Nbt constructor(
      * Decode from [NbtTag].
      */
     public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
-        DefaultNbtDecoder(this, TreeNbtReader(tag)).decodeSerializableValue(deserializer)
+        NbtDecoder(this, TreeNbtReader(tag)).decodeSerializableValue(deserializer)
 }
 
 /**

@@ -1,11 +1,15 @@
 package net.benwoodworth.knbt.tag
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.listSerialDescriptor
+import kotlinx.serialization.descriptors.mapSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.asNbtEncoder
@@ -86,17 +90,22 @@ public fun Map<String, LongArray>.toNbtCompound(): NbtCompound<NbtLongArray> =
 private class NbtCompoundSerializer<T : NbtTag>(
     elementSerializer: KSerializer<T>,
 ) : KSerializer<NbtCompound<T>> {
-    private val mapSerializer: KSerializer<Map<String, T>> =
-        MapSerializer(String.serializer(), elementSerializer)
-
-    override val descriptor: SerialDescriptor =
-        buildClassSerialDescriptor("net.benwoodworth.knbt.NbtCompound")
+    override val descriptor: SerialDescriptor = NbtListDescriptor(elementSerializer.descriptor)
+    private val mapSerializer = MapSerializer(String.serializer(), elementSerializer)
 
     override fun serialize(encoder: Encoder, value: NbtCompound<T>): Unit =
-        encoder.asNbtEncoder().encodeSerializableValue(mapSerializer, value.value)
+        encoder.asNbtEncoder().encodeNbtTag(value)
 
     override fun deserialize(decoder: Decoder): NbtCompound<T> {
         val map = mapSerializer.deserialize(decoder)
         return if (map.isEmpty()) NbtCompound.empty else NbtCompound(map)
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    private class NbtListDescriptor(
+        val elementDescriptor: SerialDescriptor,
+    ) : SerialDescriptor by mapSerialDescriptor(String.serializer().descriptor, elementDescriptor) {
+        @ExperimentalSerializationApi
+        override val serialName: String = "net.benwoodworth.knbt.NbtCompound"
     }
 }

@@ -5,6 +5,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.listSerialDescriptor
 import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -101,12 +102,7 @@ public fun List<LongArray>.toNbtList(): NbtList<NbtLongArray> =
 internal class NbtListSerializer<T : NbtTag>(
     elementSerializer: KSerializer<T>,
 ) : KSerializer<NbtList<T>> {
-    private object NbtListDescriptor : SerialDescriptor by serialDescriptor<List<NbtTag>>() {
-        @ExperimentalSerializationApi
-        override val serialName: String = "net.benwoodworth.knbt.NbtList"
-    }
-
-    override val descriptor: SerialDescriptor = NbtListDescriptor
+    override val descriptor: SerialDescriptor = NbtListDescriptor(elementSerializer.descriptor)
     private val listSerializer = ListSerializer(elementSerializer)
 
     override fun serialize(encoder: Encoder, value: NbtList<T>): Unit =
@@ -115,5 +111,13 @@ internal class NbtListSerializer<T : NbtTag>(
     override fun deserialize(decoder: Decoder): NbtList<T> {
         val list = listSerializer.deserialize(decoder)
         return if (list.isEmpty()) NbtList.empty else NbtList(list)
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    private class NbtListDescriptor(
+        val elementDescriptor: SerialDescriptor,
+    ) : SerialDescriptor by listSerialDescriptor(elementDescriptor) {
+        @ExperimentalSerializationApi
+        override val serialName: String = "net.benwoodworth.knbt.NbtList"
     }
 }

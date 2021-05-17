@@ -16,7 +16,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
-class DefaultNbtDecoderTest {
+class NbtDecoderTest {
     private fun <T> assertDecodesCorrectly(
         serializer: DeserializationStrategy<T>,
         tag: NbtTag,
@@ -28,9 +28,12 @@ class DefaultNbtDecoderTest {
 
         val actualValue = try {
             @OptIn(ExperimentalSerializationApi::class)
-            DefaultNbtDecoder(Nbt, reader).decodeSerializableValue(serializer)
+            NbtDecoder(Nbt, reader).decodeSerializableValue(serializer)
         } catch (e: Exception) {
-            throw Exception("Error decoding. NbtReader log: <\n$stringBuilder\n>", e)
+            val log = stringBuilder.toString().trimIndent()
+            val expectedLogTrimmed = expectedLog.trimIndent()
+
+            throw Exception("Error decoding. NbtReader log: <\n$log\n>\nExpected log: <\n$expectedLogTrimmed\n>", e)
         }
 
         when (expectedValue) {
