@@ -87,7 +87,7 @@ public fun Map<String, LongArray>.toNbtCompound(): NbtCompound<NbtLongArray> =
     if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtLongArray() })
 
 
-private class NbtCompoundSerializer<T : NbtTag>(
+internal class NbtCompoundSerializer<T : NbtTag>(
     elementSerializer: KSerializer<T>,
 ) : KSerializer<NbtCompound<T>> {
     override val descriptor: SerialDescriptor = NbtListDescriptor(elementSerializer.descriptor)

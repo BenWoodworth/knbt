@@ -24,7 +24,7 @@ public fun Double.toNbtDouble(): NbtDouble = NbtDouble(this)
 public fun NbtDouble.toDouble(): Double = value
 
 
-private object NbtDoubleSerializer : KSerializer<NbtDouble> {
+internal object NbtDoubleSerializer : KSerializer<NbtDouble> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("net.benwoodworth.knbt.tag.NbtDouble", PrimitiveKind.DOUBLE)
 

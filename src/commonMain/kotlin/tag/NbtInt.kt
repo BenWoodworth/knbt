@@ -24,7 +24,7 @@ public fun Int.toNbtInt(): NbtInt = NbtInt(this)
 public fun NbtInt.toInt(): Int = value
 
 
-private object NbtIntSerializer : KSerializer<NbtInt> {
+internal object NbtIntSerializer : KSerializer<NbtInt> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("NbtInt", PrimitiveKind.INT)
 

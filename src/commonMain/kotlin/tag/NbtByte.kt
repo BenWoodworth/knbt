@@ -24,7 +24,7 @@ public fun NbtByte.toByte(): Byte = value
 public fun Int.toNbtByte(): NbtByte = NbtByte(toByte())
 public fun Byte.toNbtByte(): NbtByte = NbtByte(this)
 
-private object NbtByteSerializer : KSerializer<NbtByte> {
+internal object NbtByteSerializer : KSerializer<NbtByte> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("net.benwoodworth.knbt.NbtByte", PrimitiveKind.BYTE)
 

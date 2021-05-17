@@ -23,7 +23,7 @@ public value class NbtString internal constructor(internal val value: String) : 
 public fun String.toNbtString(): NbtString = NbtString(this)
 
 
-private object NbtStringSerializer : KSerializer<NbtString> {
+internal object NbtStringSerializer : KSerializer<NbtString> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("net.benwoodworth.knbt.NbtString", PrimitiveKind.STRING)
 

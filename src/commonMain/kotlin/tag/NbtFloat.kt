@@ -24,7 +24,7 @@ public fun Float.toNbtFloat(): NbtFloat = NbtFloat(this)
 public fun NbtFloat.toFloat(): Float = value
 
 
-private object NbtFloatSerializer : KSerializer<NbtFloat> {
+internal object NbtFloatSerializer : KSerializer<NbtFloat> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("net.benwoodworth.knbt.NbtFloat", PrimitiveKind.FLOAT)
 

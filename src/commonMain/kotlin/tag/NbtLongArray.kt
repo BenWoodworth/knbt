@@ -35,7 +35,7 @@ public fun LongArray.toNbtLongArray(): NbtLongArray = NbtLongArray(this.copyOf()
 public fun Collection<Long>.toNbtLongArray(): NbtLongArray = NbtLongArray(this.toLongArray())
 
 
-private object NbtLongArraySerializer : KSerializer<NbtLongArray> {
+internal object NbtLongArraySerializer : KSerializer<NbtLongArray> {
     private object NbtLongArrayDescriptor : SerialDescriptor by serialDescriptor<LongArray>() {
         @ExperimentalSerializationApi
         override val serialName: String = "net.benwoodworth.knbt.NbtLongArray"
