@@ -18,6 +18,7 @@ val nbt = Nbt {
     variant = Java // Java, Bedrock
     compression = None // None, Gzip, Zlib
     encodeDefaults = false
+    ignoreUnknownKeys = false
     serializersModule = EmptySerializersModule
 }
 ```

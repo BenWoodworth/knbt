@@ -1,6 +1,6 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.internal.NbtTagType.TAG_End
+import net.benwoodworth.knbt.internal.NbtTagType.*
 import kotlin.jvm.JvmInline
 
 /**
@@ -174,3 +174,64 @@ internal fun NbtReader.readLongArray(): LongArray = readArray(
     endArray = { endLongArray() },
     toEntryArray = { toLongArray() },
 )
+
+private inline fun NbtReader.discardTagEntries(
+    size: Int,
+    beginEntry: NbtReader.() -> Boolean,
+    discardEntry: NbtReader.() -> Unit,
+) {
+    if (size == NbtReader.UNKNOWN_SIZE) {
+        while (beginEntry()) {
+            discardEntry()
+        }
+    } else {
+        repeat(size) {
+            discardEntry()
+        }
+    }
+}
+
+internal fun NbtReader.discardListTag(): NbtReader.ListInfo {
+    val info = beginList()
+    discardTagEntries(info.size, { beginListEntry() }, { discardTag(info.type) })
+    endList()
+    return info
+}
+
+internal fun NbtReader.discardTag(type: NbtTagType) {
+    when (type) {
+        TAG_End -> error("Unexpected $TAG_End")
+        TAG_Byte -> readByte()
+        TAG_Short -> readShort()
+        TAG_Int -> readInt()
+        TAG_Long -> readLong()
+        TAG_Float -> readFloat()
+        TAG_Double -> readDouble()
+        TAG_Byte_Array -> {
+            val info = beginByteArray()
+            discardTagEntries(info.size, { beginByteArrayEntry() }, { readByte() })
+            endByteArray()
+        }
+        TAG_String -> readString()
+        TAG_List -> discardListTag()
+        TAG_Compound -> {
+            beginCompound()
+            while (true) {
+                val entryInfo = beginCompoundEntry()
+                if (entryInfo.type == TAG_End) break
+                discardTag(entryInfo.type)
+            }
+            endCompound()
+        }
+        TAG_Int_Array -> {
+            val info = beginIntArray()
+            discardTagEntries(info.size, { beginIntArrayEntry() }, { readInt() })
+            endIntArray()
+        }
+        TAG_Long_Array -> {
+            val info = beginLongArray()
+            discardTagEntries(info.size, { beginLongArrayEntry() }, { readLong() })
+            endLongArray()
+        }
+    }
+}

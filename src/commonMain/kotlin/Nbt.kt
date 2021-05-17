@@ -1,11 +1,8 @@
 package net.benwoodworth.knbt
 
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.*
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.internal.*
 import net.benwoodworth.knbt.tag.NbtTag
 import okio.*
@@ -25,6 +22,7 @@ public sealed class Nbt constructor(
             variant = NbtVariant.Java,
             compression = NbtCompression.None,
             encodeDefaults = false,
+            ignoreUnknownKeys = false,
         ),
         serializersModule = EmptySerializersModule,
     )
@@ -121,6 +119,13 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
     public var encodeDefaults: Boolean = nbt.configuration.encodeDefaults
 
     /**
+     * Specifies whether encounters of unknown properties in the input NBT
+     * should be ignored instead of throwing [SerializationException].
+     * `false` by default.
+     */
+    public var ignoreUnknownKeys: Boolean = nbt.configuration.ignoreUnknownKeys
+
+    /**
      * Module with contextual and polymorphic serializers to be used in the resulting [Nbt] instance.
      */
     public var serializersModule: SerializersModule = nbt.serializersModule
@@ -136,6 +141,7 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
                 variant = variant,
                 compression = compression,
                 encodeDefaults = encodeDefaults,
+                ignoreUnknownKeys = ignoreUnknownKeys,
             ),
             serializersModule = serializersModule,
         )

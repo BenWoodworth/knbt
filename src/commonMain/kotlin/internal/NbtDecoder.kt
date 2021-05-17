@@ -250,22 +250,47 @@ private class ClassNbtDecoder(
         reader.beginCompound()
     }
 
+    private fun handleUnknownKey(info: NbtReader.CompoundEntryInfo) {
+        fun discardTagAndGetTypeName(): String =
+            if (info.type == TAG_List) {
+                try {
+                    val entryType = reader.discardListTag().type
+                    "${TAG_List.friendlyName}<${entryType.friendlyName}>"
+                } catch (e: Exception) {
+                    info.type.friendlyName
+                }
+            } else {
+                info.type.friendlyName
+            }
+
+        if (!nbt.configuration.ignoreUnknownKeys) {
+            val discardedType = discardTagAndGetTypeName()
+            val message = "Encountered unknown key '${info.name}' ($discardedType)"
+            throw NbtDecodingException(message).withContext(parent.getPath())
+        }
+
+        reader.discardTag(info.type)
+    }
+
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
         compoundEntryInfo = reader.beginCompoundEntry()
 
         return if (compoundEntryInfo.type == TAG_End) {
             CompositeDecoder.DECODE_DONE
         } else {
-            @OptIn(ExperimentalSerializationApi::class)
-            val index = descriptor.getElementIndex(compoundEntryInfo.name)
+            var index: Int
 
-            if (index == CompositeDecoder.UNKNOWN_NAME) {
-                throw NbtDecodingException(
-                    "Encountered unknown key '${compoundEntryInfo.name}' (${compoundEntryInfo.type.friendlyName})"
-                ).withContext(parent.getPath())
-            } else {
-                index
-            }
+            do {
+                @OptIn(ExperimentalSerializationApi::class)
+                index = descriptor.getElementIndex(compoundEntryInfo.name)
+
+                if (index == CompositeDecoder.UNKNOWN_NAME) {
+                    handleUnknownKey(compoundEntryInfo)
+                    compoundEntryInfo = reader.beginCompoundEntry()
+                }
+            } while (index == CompositeDecoder.UNKNOWN_NAME)
+
+            index
         }
     }
 }

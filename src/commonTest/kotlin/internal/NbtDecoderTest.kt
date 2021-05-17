@@ -10,11 +10,11 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.LoggingNbtReader
 import net.benwoodworth.knbt.Nbt
+import net.benwoodworth.knbt.NbtDecodingException
+import net.benwoodworth.knbt.decodeFromNbtTag
 import net.benwoodworth.knbt.tag.*
-import kotlin.test.Test
-import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
+import kotlin.math.PI
+import kotlin.test.*
 
 class NbtDecoderTest {
     private fun <T> assertDecodesCorrectly(
@@ -302,5 +302,38 @@ class NbtDecoderTest {
                 readDouble() -> 3.14
             """,
         )
+    }
+
+    @Serializable
+    private data class UnknownKeys(
+        val int: Int,
+        val string: String,
+    ) {
+        companion object {
+            val expected = UnknownKeys(int = 42, string = "String!")
+        }
+    }
+
+    private val unknownKeysTag = buildNbtCompound {
+        put("int", UnknownKeys.expected.int)
+        put("double", PI)
+        put("string", UnknownKeys.expected.string)
+    }
+
+    @Test
+    fun Decoding_should_fail_on_unknown_key_if_not_ignoring() {
+        val nbt = Nbt { ignoreUnknownKeys = false }
+
+        assertFailsWith<NbtDecodingException> {
+            nbt.decodeFromNbtTag(UnknownKeys.serializer(), unknownKeysTag)
+        }
+    }
+
+    @Test
+    fun Decoding_should_not_fail_on_unknown_key_if_ignoring() {
+        val nbt = Nbt { ignoreUnknownKeys = true }
+
+        val actual = nbt.decodeFromNbtTag(UnknownKeys.serializer(), unknownKeysTag)
+        assertEquals(UnknownKeys.expected, actual)
     }
 }
