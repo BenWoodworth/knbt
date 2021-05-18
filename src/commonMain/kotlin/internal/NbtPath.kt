@@ -10,7 +10,13 @@ internal class NbtPath(private val path: List<Node>) : List<NbtPath.Node> by pat
         fun String.isSafeName(): Boolean =
             isNotEmpty() && all { it.isSafeNameChar() }
 
-        path.forEachIndexed { i, node ->
+        val trimmedPath = if (path.size > 1 && path[0] is RootNode) {
+            path.subList(1, path.size)
+        } else {
+            path
+        }
+
+        trimmedPath.forEachIndexed { i, node ->
             when (node) {
                 is RootNode -> {
                     append("{root}")
