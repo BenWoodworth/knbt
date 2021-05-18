@@ -37,121 +37,103 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
 
         return NbtPath(path.asReversed())
     }
-
-    protected fun Throwable.withContext(path: NbtPath = getPath()): Throwable {
-        val message = buildString {
-            append("Error while decoding '$path'")
-            message?.let { append(": ").append(it) }
-        }
-
-        return when (this) {
-            is SerializationException -> NbtDecodingException(message, this)
-            is Exception -> Exception(message, this)
-            is Error -> Error(message, this)
-            else -> Throwable(message, this)
-        }
-    }
-
-    protected inline fun <T> tryWithContext(decode: () -> T): T {
-        try {
-            return decode()
-        } catch (t: Throwable) {
-            throw t.withContext()
-        }
-    }
+    
+    protected inline fun <R> tryWithPath(block: () -> R): R = tryWithPath(::getPath, block)
 
     private fun expectTagType(expected: NbtTagType) {
         val actual = entryType
         if (expected != actual) {
-            throw NbtDecodingException("Expected ${expected.friendlyName}, but was ${actual.friendlyName}")
+            throw NbtDecodingException("Expected ${expected.friendlyName}, but was ${actual.friendlyName}", getPath())
         }
     }
 
     //region Primitive NBT types
-    override fun decodeByte(): Byte = tryWithContext {
+    override fun decodeByte(): Byte {
         expectTagType(TAG_Byte)
-        return reader.readByte()
+        return tryWithPath { reader.readByte() }
     }
 
-    override fun decodeShort(): Short = tryWithContext {
+    override fun decodeShort(): Short {
         expectTagType(TAG_Short)
-        return reader.readShort()
+        return tryWithPath { reader.readShort() }
     }
 
-    override fun decodeInt(): Int = tryWithContext {
+    override fun decodeInt(): Int {
         expectTagType(TAG_Int)
-        return reader.readInt()
+        return tryWithPath { reader.readInt() }
     }
 
-    override fun decodeLong(): Long = tryWithContext {
+    override fun decodeLong(): Long {
         expectTagType(TAG_Long)
-        return reader.readLong()
+        return tryWithPath { reader.readLong() }
     }
 
-    override fun decodeFloat(): Float = tryWithContext {
+    override fun decodeFloat(): Float {
         expectTagType(TAG_Float)
-        return reader.readFloat()
+        return tryWithPath { reader.readFloat() }
     }
 
-    override fun decodeDouble(): Double = tryWithContext {
+    override fun decodeDouble(): Double {
         expectTagType(TAG_Double)
-        return reader.readDouble()
+        return tryWithPath { reader.readDouble() }
     }
 
-    override fun decodeString(): String = tryWithContext {
+    override fun decodeString(): String {
         expectTagType(TAG_String)
-        return reader.readString()
+        return tryWithPath { reader.readString() }
     }
 
-    override fun decodeByteArray(): ByteArray = tryWithContext {
+    override fun decodeByteArray(): ByteArray {
         expectTagType(TAG_Byte_Array)
-        return reader.readByteArray()
+        return tryWithPath { reader.readByteArray() }
     }
 
-    override fun decodeIntArray(): IntArray = tryWithContext {
+    override fun decodeIntArray(): IntArray {
         expectTagType(TAG_Int_Array)
-        return reader.readIntArray()
+        return tryWithPath { reader.readIntArray() }
     }
 
-    override fun decodeLongArray(): LongArray = tryWithContext {
+    override fun decodeLongArray(): LongArray {
         expectTagType(TAG_Long_Array)
-        return reader.readLongArray()
+        return tryWithPath { reader.readLongArray() }
     }
     //endregion
 
     //region Structure begin*() functions
-    override fun beginCompound(descriptor: SerialDescriptor): CompositeNbtDecoder = tryWithContext {
+    override fun beginCompound(descriptor: SerialDescriptor): CompositeNbtDecoder {
         expectTagType(TAG_Compound)
-        return if (descriptor.kind == StructureKind.MAP) {
-            MapNbtDecoder(nbt, reader, this)
-        } else {
-            ClassNbtDecoder(nbt, reader, this)
+        return tryWithPath {
+            if (descriptor.kind == StructureKind.MAP) {
+                MapNbtDecoder(nbt, reader, this)
+            } else {
+                ClassNbtDecoder(nbt, reader, this)
+            }
         }
     }
 
-    override fun beginList(descriptor: SerialDescriptor): CompositeNbtDecoder = tryWithContext {
+    override fun beginList(descriptor: SerialDescriptor): CompositeNbtDecoder {
         expectTagType(TAG_List)
-        return ListNbtDecoder(nbt, reader, this)
+        return tryWithPath { ListNbtDecoder(nbt, reader, this) }
     }
 
-    override fun beginByteArray(descriptor: SerialDescriptor): CompositeNbtDecoder = tryWithContext {
+    override fun beginByteArray(descriptor: SerialDescriptor): CompositeNbtDecoder {
         expectTagType(TAG_Byte_Array)
-        return ByteArrayNbtDecoder(nbt, reader, this)
+        return tryWithPath { ByteArrayNbtDecoder(nbt, reader, this) }
     }
 
-    override fun beginIntArray(descriptor: SerialDescriptor): CompositeNbtDecoder = tryWithContext {
+    override fun beginIntArray(descriptor: SerialDescriptor): CompositeNbtDecoder {
         expectTagType(TAG_Int_Array)
-        return IntArrayNbtDecoder(nbt, reader, this)
+        return tryWithPath { IntArrayNbtDecoder(nbt, reader, this) }
     }
 
-    override fun beginLongArray(descriptor: SerialDescriptor): CompositeNbtDecoder = tryWithContext {
+    override fun beginLongArray(descriptor: SerialDescriptor): CompositeNbtDecoder {
         expectTagType(TAG_Long_Array)
-        return LongArrayNbtDecoder(nbt, reader, this)
+        return tryWithPath { LongArrayNbtDecoder(nbt, reader, this) }
     }
     //endregion
 
     final override fun decodeNbtTag(): NbtTag = when (entryType) {
-        TAG_End -> throw NbtDecodingException("Expected a value, but was Nothing")
+        TAG_End -> throw NbtDecodingException("Expected a value, but was Nothing", getPath())
         TAG_Byte -> NbtByte(decodeByte())
         TAG_Short -> NbtShort(decodeShort())
         TAG_Int -> NbtInt(decodeInt())
@@ -167,17 +149,17 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     }
 
     //region Unsupported types
-    private fun notSupported(type: String): NbtDecodingException =
-        NbtDecodingException("Decoding $type values is not supported by the NBT format")
+    private fun notSupported(type: String, path: NbtPath? = null): NbtDecodingException =
+        NbtDecodingException("Decoding $type values is not supported by the NBT format", path ?: getPath())
 
     final override fun decodeBoolean(): Boolean =
-        throw notSupported("Boolean").withContext()
+        throw notSupported("Boolean")
 
     final override fun decodeChar(): Char =
-        throw notSupported("Char").withContext()
+        throw notSupported("Char")
 
     final override fun decodeEnum(enumDescriptor: SerialDescriptor): Int =
-        throw notSupported("Enum").withContext()
+        throw notSupported("Enum")
     //endregion
 
     //region Final super implementations
@@ -266,7 +248,7 @@ private class ClassNbtDecoder(
         if (!nbt.configuration.ignoreUnknownKeys) {
             val discardedType = discardTagAndGetTypeName()
             val message = "Encountered unknown key '${info.name}' ($discardedType)"
-            throw NbtDecodingException(message).withContext(parent.getPath())
+            throw NbtDecodingException(message, parent.getPath())
         }
 
         reader.discardTag(info.type)

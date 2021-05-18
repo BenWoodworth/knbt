@@ -27,7 +27,7 @@ public sealed interface NbtEncoder : Encoder {
 }
 
 public fun Encoder.asNbtEncoder(): NbtEncoder =
-    this as? NbtEncoder ?: throw NbtException(
+    this as? NbtEncoder ?: throw NbtEncodingException(
         "This serializer can be used only with NBT format. Expected Encoder to be NbtEncoder, got ${this::class}"
     )
 

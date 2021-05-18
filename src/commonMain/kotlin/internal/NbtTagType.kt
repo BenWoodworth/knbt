@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.InternalNbtApi
+import net.benwoodworth.knbt.NbtDecodingException
 import net.benwoodworth.knbt.NbtException
 
 @Suppress("EnumEntryName")
@@ -42,7 +43,7 @@ public enum class NbtTagType(internal val id: Byte) {
             12.toByte() -> TAG_Long_Array
             else -> {
                 val hex = id.toUByte().toString(16).uppercase().padStart(2, '0')
-                throw NbtException("Unknown NBT tag type ID: 0x$hex")
+                throw NbtDecodingException("Unknown NBT tag type ID: 0x$hex")
             }
         }
     }
