@@ -23,7 +23,6 @@ class MinecraftFilesTest {
         }
 
         val files = listOf(
-            "/uncompressed-nbt/java/level.nbt",
             "/uncompressed-nbt/java/level-0.nbt",
             "/uncompressed-nbt/java/level-1.nbt",
             "/uncompressed-nbt/java/map-0.nbt",
