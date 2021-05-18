@@ -57,67 +57,6 @@ public sealed class Nbt constructor(
             NbtDecoder(nbt, reader).decodeSerializableValue(fileSerializer)
         }
     }
-
-    /**
-     * Encode NBT to a [Sink].
-     *
-     * *Note*: It is the caller's responsibility to close the [sink].
-     */
-    @OkioApi
-    public fun <T> encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
-        BinaryNbtWriter(this, sink).use { writer ->
-            encodeToNbtWriter(writer, serializer, value)
-        }
-
-    /**
-     * Decode NBT from a [Source].
-     *
-     * *Note*: It is the caller's responsibility to close the [source].
-     */
-    @OkioApi
-    public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
-        BinaryNbtReader(source).use { reader ->
-            decodeFromNbtReader(reader, deserializer)
-        }
-
-
-    /**
-     * Encode NBT to a [ByteArray].
-     */
-    @OptIn(OkioApi::class)
-    public fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
-        Buffer().apply { encodeTo(this, serializer, value) }.readByteArray()
-
-    /**
-     * Decode NBT from a [ByteArray].
-     */
-    @OptIn(OkioApi::class)
-    public fun <T> decodeFromByteArray(deserializer: DeserializationStrategy<T>, byteArray: ByteArray): T =
-        decodeFrom(Buffer().apply { write(byteArray) }, deserializer)
-
-    /**
-     * Encode to Stringified NBT.
-     */
-    @ExperimentalNbtApi
-    public fun <T> encodeToStringifiedNbt(serializer: SerializationStrategy<T>, value: T): String =
-        buildString {
-            encodeToNbtWriter(StringifiedNbtWriter(this), serializer, value)
-        }
-
-    /**
-     * Encode to [NbtTag].
-     */
-    public fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag {
-        var result: NbtTag? = null
-        encodeToNbtWriter(TreeNbtWriter { result = it }, serializer, value)
-        return result!!
-    }
-
-    /**
-     * Decode from [NbtTag].
-     */
-    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
-        decodeFromNbtReader(TreeNbtReader(tag), deserializer)
 }
 
 /**
@@ -192,8 +131,30 @@ private class NbtImpl(
  * *Note*: It is the caller's responsibility to close the [sink].
  */
 @OkioApi
+public fun <T> Nbt.encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
+    BinaryNbtWriter(this, sink).use { writer ->
+        encodeToNbtWriter(writer, serializer, value)
+    }
+
+/**
+ * Encode NBT to a [Sink].
+ *
+ * *Note*: It is the caller's responsibility to close the [sink].
+ */
+@OkioApi
 public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
     encodeTo(sink, serializer(), value)
+
+/**
+ * Decode NBT from a [Source].
+ *
+ * *Note*: It is the caller's responsibility to close the [source].
+ */
+@OkioApi
+public fun <T> Nbt.decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
+    BinaryNbtReader(source).use { reader ->
+        decodeFromNbtReader(reader, deserializer)
+    }
 
 /**
  * Decode NBT from a [Source].
@@ -207,8 +168,22 @@ public inline fun <reified T> Nbt.decodeFrom(source: Source): T =
 /**
  * Encode NBT to a [ByteArray].
  */
+@OptIn(OkioApi::class)
+public fun <T> Nbt.encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
+    Buffer().apply { encodeTo(this, serializer, value) }.readByteArray()
+
+/**
+ * Encode NBT to a [ByteArray].
+ */
 public inline fun <reified T> Nbt.encodeToByteArray(value: T): ByteArray =
     encodeToByteArray(serializer(), value)
+
+/**
+ * Decode NBT from a [ByteArray].
+ */
+@OptIn(OkioApi::class)
+public fun <T> Nbt.decodeFromByteArray(deserializer: DeserializationStrategy<T>, byteArray: ByteArray): T =
+    decodeFrom(Buffer().apply { write(byteArray) }, deserializer)
 
 /**
  * Decode NBT from a [ByteArray].
@@ -220,14 +195,38 @@ public inline fun <reified T> Nbt.decodeFromByteArray(byteArray: ByteArray): T =
  * Encode to Stringified NBT.
  */
 @ExperimentalNbtApi
+public fun <T> Nbt.encodeToStringifiedNbt(serializer: SerializationStrategy<T>, value: T): String =
+    buildString {
+        encodeToNbtWriter(StringifiedNbtWriter(this), serializer, value)
+    }
+
+/**
+ * Encode to Stringified NBT.
+ */
+@ExperimentalNbtApi
 public inline fun <reified T> Nbt.encodeToStringifiedNbt(value: T): String =
     encodeToStringifiedNbt(serializer(), value)
 
 /**
  * Encode to [NbtTag].
  */
+public fun <T> Nbt.encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag {
+    var result: NbtTag? = null
+    encodeToNbtWriter(TreeNbtWriter { result = it }, serializer, value)
+    return result!!
+}
+
+/**
+ * Encode to [NbtTag].
+ */
 public inline fun <reified T> Nbt.encodeToNbtTag(value: T): NbtTag =
     encodeToNbtTag(serializer(), value)
+
+/**
+ * Decode from [NbtTag].
+ */
+public fun <T> Nbt.decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
+    decodeFromNbtReader(TreeNbtReader(tag), deserializer)
 
 /**
  * Decode from [NbtTag].
