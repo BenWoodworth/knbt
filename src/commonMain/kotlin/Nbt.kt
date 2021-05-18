@@ -5,7 +5,10 @@ import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 import net.benwoodworth.knbt.tag.NbtTag
-import okio.*
+import okio.Buffer
+import okio.Sink
+import okio.Source
+import okio.use
 import kotlin.native.concurrent.ThreadLocal
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -27,6 +30,34 @@ public sealed class Nbt constructor(
         serializersModule = EmptySerializersModule,
     )
 
+    @OptIn(ExperimentalNbtApi::class)
+    internal fun <T> encodeToNbtWriter(writer: NbtWriter, serializer: SerializationStrategy<T>, value: T) {
+        val nbtFile = serializer.descriptor.annotations
+            .firstOrNull { it is NbtFile } as NbtFile?
+
+        if (nbtFile == null) {
+            DefaultNbtEncoder(this, writer).encodeSerializableValue(serializer, value)
+        } else {
+            val nbt = nbtFile.getFileNbt(this)
+            val fileSerializer = NbtFileSerializer(nbtFile, serializer)
+            DefaultNbtEncoder(nbt, writer).encodeSerializableValue(fileSerializer, value)
+        }
+    }
+
+    @OptIn(ExperimentalNbtApi::class)
+    internal fun <T> decodeFromNbtReader(reader: NbtReader, deserializer: DeserializationStrategy<T>): T {
+        val nbtFile = deserializer.descriptor.annotations
+            .firstOrNull { it is NbtFile } as NbtFile?
+
+        return if (nbtFile == null) {
+            NbtDecoder(this, reader).decodeSerializableValue(deserializer)
+        } else {
+            val nbt = nbtFile.getFileNbt(this)
+            val fileSerializer = NbtFileDeserializer(nbtFile, deserializer)
+            NbtDecoder(nbt, reader).decodeSerializableValue(fileSerializer)
+        }
+    }
+
     /**
      * Encode NBT to a [Sink].
      *
@@ -35,7 +66,7 @@ public sealed class Nbt constructor(
     @OkioApi
     public fun <T> encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
         BinaryNbtWriter(this, sink).use { writer ->
-            DefaultNbtEncoder(this, writer).encodeSerializableValue(serializer, value)
+            encodeToNbtWriter(writer, serializer, value)
         }
 
     /**
@@ -46,7 +77,7 @@ public sealed class Nbt constructor(
     @OkioApi
     public fun <T> decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
         BinaryNbtReader(source).use { reader ->
-            NbtDecoder(this, reader).decodeSerializableValue(deserializer)
+            decodeFromNbtReader(reader, deserializer)
         }
 
 
@@ -68,16 +99,17 @@ public sealed class Nbt constructor(
      * Encode to Stringified NBT.
      */
     @ExperimentalNbtApi
-    public fun <T> encodeToStringifiedNbt(serializer: SerializationStrategy<T>, value: T): String = buildString {
-        DefaultNbtEncoder(this@Nbt, StringifiedNbtWriter(this)).encodeSerializableValue(serializer, value)
-    }
+    public fun <T> encodeToStringifiedNbt(serializer: SerializationStrategy<T>, value: T): String =
+        buildString {
+            encodeToNbtWriter(StringifiedNbtWriter(this), serializer, value)
+        }
 
     /**
      * Encode to [NbtTag].
      */
     public fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag {
         var result: NbtTag? = null
-        DefaultNbtEncoder(this, TreeNbtWriter { result = it }).encodeSerializableValue(serializer, value)
+        encodeToNbtWriter(TreeNbtWriter { result = it }, serializer, value)
         return result!!
     }
 
@@ -85,7 +117,7 @@ public sealed class Nbt constructor(
      * Decode from [NbtTag].
      */
     public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
-        NbtDecoder(this, TreeNbtReader(tag)).decodeSerializableValue(deserializer)
+        decodeFromNbtReader(TreeNbtReader(tag), deserializer)
 }
 
 /**
