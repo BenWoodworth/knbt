@@ -27,6 +27,10 @@ import kotlinx.serialization.encoding.encodeStructure
  * // Encodes to {root:{string:"Hello, world!",int:42}}
  * val encoded = Nbt.encodeToNbtTag(ExampleFile("Hello, world!", 42))
  * ```
+ *
+ * *Note*: There are issues with Kotlin 1.5.0's serialization plugin:
+ * [KT-46739](https://youtrack.jetbrains.com/issue/KT-46739)
+ * [KT-46740](https://youtrack.jetbrains.com/issue/KT-46740)
  */
 @ExperimentalNbtApi
 @SerialInfo
