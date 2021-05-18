@@ -211,9 +211,9 @@ public inline fun <reified T> Nbt.encodeToStringifiedNbt(value: T): String =
  * Encode to [NbtTag].
  */
 public fun <T> Nbt.encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag {
-    var result: NbtTag? = null
+    lateinit var result: NbtTag
     encodeToNbtWriter(TreeNbtWriter { result = it }, serializer, value)
-    return result!!
+    return result
 }
 
 /**
