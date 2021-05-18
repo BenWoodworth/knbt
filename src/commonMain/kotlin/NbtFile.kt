@@ -90,8 +90,10 @@ internal class NbtFileDeserializer<T>(
             }
         }
 
-        require(rootDecoded) { // TODO Message needed?
-            "Field 'beans' is required for type with serial name 'files.LevelFile.Root', but it was missing"
+        require(rootDecoded) {
+            val fieldName = descriptor.getElementName(0)
+            val typeName = descriptor.serialName
+            "Field '$fieldName' is required for type with serial name '$typeName', but it was missing"
         }
 
         @Suppress("UNCHECKED_CAST")
