@@ -1,0 +1,50 @@
+name: Test
+
+on: [ push, pull_request ]
+
+jobs:
+  ubuntu:
+    name: "Test: jvm, js, linux"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Clean
+        run: ./gradlew clean
+      - name: Test
+        run: ./gradlew jvmTest jsTest linuxX64Test
+
+  windows:
+    name: "Test: mingw"
+    runs-on: windows-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Clean
+        run: .\gradlew.bat clean
+      - name: Test
+        run: .\gradlew.bat mingwX64Test
+
+  macos:
+    name: "Test: macos, ios, watchos"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Clean
+        run: ./gradlew clean
+      - name: Test # TODO Arm tests: iosArm64Test watchosArm32Test watchosArm64Test
+        run: ./gradlew macosX64Test iosX64Test watchosX86Test

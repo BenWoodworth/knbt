@@ -3,6 +3,14 @@ import org.jetbrains.dokka.gradle.DokkaTask
 val kotlinx_serialization_version: String by extra
 val okio_version: String by extra
 
+System.getenv("GIT_REF")?.let { gitRef ->
+    Regex("refs/tags/v(.*)").matchEntire(gitRef)?.let { gitVersionMatch ->
+        version = gitVersionMatch.groupValues[1]
+    }
+}
+
+val isSnapshot = version.toString().contains("SNAPSHOT", true)
+
 plugins {
     kotlin("multiplatform") version "1.5.0"
     kotlin("plugin.serialization") version "1.5.0"
@@ -21,26 +29,27 @@ kotlin {
 
     jvm {
     }
+
     js {
         browser {
             testTask {
                 useKarma {
-                    useFirefox()
-//                    useChrome()
-//                    useSafari()
+                    useFirefoxHeadless()
+                    useChromeHeadless()
                 }
             }
         }
         nodejs()
     }
-    val hostOs = System.getProperty("os.name")
-    val isMingwX64 = hostOs.startsWith("Windows")
-    val nativeTarget = when {
-        hostOs == "Mac OS X" -> macosX64("native")
-        hostOs == "Linux" -> linuxX64("native")
-        isMingwX64 -> mingwX64("native")
-        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
-    }
+
+    linuxX64()
+    macosX64()
+    iosArm64()
+    iosX64()
+    watchosArm32()
+    watchosArm64()
+    watchosX86()
+    mingwX64()
 
     sourceSets {
         configureEach {
@@ -62,7 +71,6 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-        val jvmMain by getting
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("reflect"))
@@ -73,9 +81,6 @@ kotlin {
                 implementation(npm("pako", "2.0.3"))
             }
         }
-        val jsTest by getting
-        val nativeMain by getting
-        val nativeTest by getting
     }
 }
 
@@ -86,8 +91,22 @@ tasks.withType<DokkaTask> {
     }
 }
 
-val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
+val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
+}
+
+signing {
+    gradle.taskGraph.whenReady {
+        isRequired = allTasks.any { it is PublishToMavenRepository }
+    }
+
+    useInMemoryPgpKeys(
+        System.getenv("SIGNING_KEY_ID"),
+        System.getenv("SIGNING_KEY"),
+        System.getenv("SIGNING_PASSWORD"),
+    )
+
+    sign(publishing.publications)
 }
 
 publishing {
@@ -95,11 +114,11 @@ publishing {
         maven {
             val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
             val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            url = if (version.toString().contains("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+            url = if (isSnapshot) snapshotsRepoUrl else releasesRepoUrl
 
             credentials {
-                username = properties["ossrh.username"]?.toString()
-                password = properties["ossrh.password"]?.toString()
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_TOKEN")
             }
         }
     }
@@ -132,8 +151,4 @@ publishing {
             }
         }
     }
-}
-
-signing {
-    sign(publishing.publications)
 }
