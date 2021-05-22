@@ -102,7 +102,7 @@ val bigtest = buildNbt("Level") {
     put("longTest", 9223372036854775807L)
     put("shortTest", 32767.toShort())
     put("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")
-    put("floatTest", 0.49823147058486938f)
+    put("floatTest", 0.49823147f)
     put("intTest", 2147483647)
     putNbtCompound("nested compound test") {
         putNbtCompound("ham") {
@@ -130,7 +130,7 @@ val bigtest = buildNbt("Level") {
         "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
         ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() }
     )
-    put("doubleTest", 0.49312871321823148)
+    put("doubleTest", 0.4931287132182315)
 }
 ```
 
@@ -139,15 +139,16 @@ val bigtest = buildNbt("Level") {
 ```kotlin
 plugins {
     kotlin("jvm") version "1.5.0" // or kotlin("multiplatform"), etc.
-    kotlin("plugin.serialization") version "1.5.0"
+    //kotlin("plugin.serialization") version "1.5.0"
 }
 
 repositories {
     mavenCentral()
+    //maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.0")
     implementation("net.benwoodworth.knbt:knbt:$knbt_version")
+    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.0")
 }
 ```
