@@ -22,7 +22,7 @@ public sealed class Nbt constructor(
     @ThreadLocal
     public companion object Default : Nbt(
         configuration = NbtConfiguration(
-            variant = NbtVariant.Java,
+            variant = null,
             compression = NbtCompression.None,
             encodeDefaults = false,
             ignoreUnknownKeys = false,
@@ -74,9 +74,10 @@ public fun Nbt(from: Nbt = Nbt.Default, builderAction: NbtBuilder.() -> Unit): N
  */
 public class NbtBuilder internal constructor(nbt: Nbt) {
     /**
-     * The variant of NBT binary format to use.
+     * The variant of NBT binary format to use. Must not be `null` when serializing binary.
+     * `null` by default.
      */
-    public var variant: NbtVariant = nbt.configuration.variant
+    public var variant: NbtVariant? = nbt.configuration.variant
 
     /**
      * The compression method to use when writing NBT binary.
@@ -101,9 +102,9 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
      */
     public var serializersModule: SerializersModule = nbt.serializersModule
 
-    @OptIn(ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
     internal fun build(): Nbt {
-        if (variant != NbtVariant.Java) {
+        if (variant == NbtVariant.Bedrock) {
             throw UnsupportedOperationException("Currently only the Java NBT variant is supported")
         }
 
