@@ -17,11 +17,6 @@ public class NbtConfiguration internal constructor(
 
 public enum class NbtVariant {
     Java,
-
-    /**
-     * Currently only [Java] is supported.
-     */
-    @ExperimentalNbtApi
     Bedrock,
 }
 

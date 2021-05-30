@@ -3,9 +3,9 @@ package net.benwoodworth.knbt.internal
 import net.benwoodworth.knbt.Nbt
 import net.benwoodworth.knbt.NbtCompression
 import net.benwoodworth.knbt.NbtEncodingException
+import net.benwoodworth.knbt.NbtVariant
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_Compound
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_End
-import okio.BufferedSink
 import okio.Closeable
 import okio.Sink
 import okio.buffer
@@ -14,24 +14,26 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
     private var compoundNesting = 0
     private var wroteRootEntry = false
 
-    private val sink = when (nbt.configuration.compression) {
-        NbtCompression.None -> NonClosingSink(sink).buffer()
-        NbtCompression.Gzip -> NonClosingSink(sink).asGzipSink().buffer()
-        NbtCompression.Zlib -> NonClosingSink(sink).asZlibSink().buffer()
+    private val sink: BinarySink
+
+    init {
+        val compressingSink = when (nbt.configuration.compression) {
+            NbtCompression.None -> NonClosingSink(sink).buffer()
+            NbtCompression.Gzip -> NonClosingSink(sink).asGzipSink().buffer()
+            NbtCompression.Zlib -> NonClosingSink(sink).asZlibSink().buffer()
+        }
+
+        this.sink = when (nbt.configuration.variant) {
+            null -> throw NbtEncodingException("NBT variant must be set when serializing NBT binary")
+            NbtVariant.Java -> BigEndianBinarySink(compressingSink)
+            NbtVariant.Bedrock -> LittleEndianBinarySink(compressingSink)
+        }
     }
 
     override fun close(): Unit = sink.close()
 
-    private fun BufferedSink.writeNbtString(value: String) {
-        val bytes = value.encodeToByteArray()
-        if (bytes.size > UShort.MAX_VALUE.toInt()) throw NbtEncodingException("String too long to encode")
-
-        writeShort(bytes.size.toShort())
-        write(bytes)
-    }
-
-    private fun BufferedSink.writeNbtTagType(value: NbtTagType) {
-        writeByte(value.id.toInt())
+    private fun BinarySink.writeNbtTagType(value: NbtTagType) {
+        writeByte(value.id)
     }
 
     override fun beginRootTag(type: NbtTagType) {
@@ -48,8 +50,8 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
             wroteRootEntry = true
         }
 
-        sink.writeByte(type.id.toInt())
-        sink.writeNbtString(name)
+        sink.writeByte(type.id)
+        sink.writeString(name)
     }
 
     override fun endCompound() {
@@ -58,8 +60,6 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
         compoundNesting--
         if (compoundNesting > 0) {
             sink.writeNbtTagType(TAG_End)
-        } else {
-            sink.flush()
         }
     }
 
@@ -97,11 +97,11 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
     override fun endLongArray(): Unit = Unit
 
     override fun writeByte(value: Byte) {
-        sink.writeByte(value.toInt())
+        sink.writeByte(value)
     }
 
     override fun writeShort(value: Short) {
-        sink.writeShort(value.toInt())
+        sink.writeShort(value)
     }
 
     override fun writeInt(value: Int) {
@@ -121,6 +121,6 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
     }
 
     override fun writeString(value: String) {
-        sink.writeNbtString(value)
+        sink.writeString(value)
     }
 }

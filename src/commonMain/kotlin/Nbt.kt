@@ -5,10 +5,7 @@ import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 import net.benwoodworth.knbt.tag.NbtTag
-import okio.Buffer
-import okio.Sink
-import okio.Source
-import okio.use
+import okio.*
 import kotlin.native.concurrent.ThreadLocal
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -104,10 +101,6 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
 
     @OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
     internal fun build(): Nbt {
-        if (variant == NbtVariant.Bedrock) {
-            throw UnsupportedOperationException("Currently only the Java NBT variant is supported")
-        }
-
         return NbtImpl(
             configuration = NbtConfiguration(
                 variant = variant,
@@ -153,7 +146,7 @@ public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
  */
 @OkioApi
 public fun <T> Nbt.decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
-    BinaryNbtReader(source).use { reader ->
+    BinaryNbtReader(this, source).use { reader ->
         decodeFromNbtReader(reader, deserializer)
     }
 

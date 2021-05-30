@@ -1,26 +1,33 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.NbtCompression
-import net.benwoodworth.knbt.NbtDecodingException
-import net.benwoodworth.knbt.NbtEncodingException
+import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
-import okio.BufferedSource
 import okio.Closeable
 import okio.Source
 import okio.buffer
 
-internal class BinaryNbtReader(source: Source) : NbtReader, Closeable {
+internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable {
     private var compoundNesting = 0
     private var readRootEntry = false
 
     private val tagTypeStack = ArrayDeque<NbtTagType>()
     private val elementsRemainingStack = ArrayDeque<Int>()
 
-    private val source = NonClosingSource(source).buffer().let { bufferedSource ->
-        when (bufferedSource.peekNbtCompression()) {
-            NbtCompression.None -> bufferedSource
-            NbtCompression.Gzip -> bufferedSource.asGzipSource().buffer()
-            NbtCompression.Zlib -> bufferedSource.asZlibSource().buffer()
+    private val source: BinarySource
+
+    init {
+        val uncompressedSource = NonClosingSource(source).buffer().let { bufferedSource ->
+            when (bufferedSource.peekNbtCompression()) {
+                NbtCompression.None -> bufferedSource
+                NbtCompression.Gzip -> bufferedSource.asGzipSource().buffer()
+                NbtCompression.Zlib -> bufferedSource.asZlibSource().buffer()
+            }
+        }
+
+        this.source = when (nbt.configuration.variant) {
+            null -> throw NbtEncodingException("NBT variant must be set when serializing NBT binary")
+            NbtVariant.Java -> BigEndianBinarySource(uncompressedSource)
+            NbtVariant.Bedrock -> LittleEndianBinarySource(uncompressedSource)
         }
     }
 
@@ -28,10 +35,7 @@ internal class BinaryNbtReader(source: Source) : NbtReader, Closeable {
 
     private fun <T> ArrayDeque<T>.replaceLast(element: T): T = set(lastIndex, element)
 
-    private fun BufferedSource.readNbtString(): String =
-        readUtf8(readShort().toUShort().toLong())
-
-    private fun BufferedSource.readNbtTagType(): NbtTagType =
+    private fun BinarySource.readNbtTagType(): NbtTagType =
         NbtTagType.fromId(readByte())
 
     private fun checkTagType(expected: NbtTagType) {
@@ -61,7 +65,7 @@ internal class BinaryNbtReader(source: Source) : NbtReader, Closeable {
             NbtReader.CompoundEntryInfo.End
         } else {
             tagTypeStack.replaceLast(type)
-            NbtReader.CompoundEntryInfo(type, source.readNbtString())
+            NbtReader.CompoundEntryInfo(type, source.readString())
         }
     }
 
@@ -176,6 +180,6 @@ internal class BinaryNbtReader(source: Source) : NbtReader, Closeable {
 
     override fun readString(): String {
         checkTagType(TAG_String)
-        return source.readNbtString()
+        return source.readString()
     }
 }

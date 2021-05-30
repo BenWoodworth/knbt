@@ -1,17 +1,22 @@
-package net.benwoodworth.knbt
+package net.benwoodworth.knbt.file
 
 import data.*
 import kotlinx.serialization.KSerializer
+import net.benwoodworth.knbt.Nbt
+import net.benwoodworth.knbt.NbtCompression
+import net.benwoodworth.knbt.NbtVariant
+import net.benwoodworth.knbt.asSource
 import net.benwoodworth.knbt.tag.NbtTag
 import okio.Source
 
 class NbtTestFile<T>(
     val description: String,
-    val compression: NbtCompression,
+    val nbt: Nbt,
     val valueSerializer: KSerializer<T>,
     val value: T,
     val nbtTag: NbtTag,
     contentHex: String,
+    val headerLength: Long = 0,
 ) {
     private val bytes = contentHex
         .filterNot { it.isWhitespace() }
@@ -25,14 +30,22 @@ class NbtTestFile<T>(
 
 val nbtFiles = listOf(
     NbtTestFile(
-        "test.nbt (uncompressed)", NbtCompression.None,
+        "test.nbt (uncompressed)",
+        Nbt {
+            variant = NbtVariant.Java
+            compression = NbtCompression.None
+        },
         TestNbt.serializer(), testClass, testTag,
         """
             0A000B68656C6C6F20776F726C640800046E616D65000942616E616E72616D6100
         """
     ),
     NbtTestFile(
-        "test.nbt (compressed gzip)", NbtCompression.Gzip,
+        "test.nbt (compressed gzip)",
+        Nbt {
+            variant = NbtVariant.Java
+            compression = NbtCompression.Gzip
+        },
         TestNbt.serializer(), testClass, testTag,
         """
             1F8B080803FB03600203746573742D677A69702E6E627400E362E0CE48CDC9C95728CF2FCA49E16060C94BCC4D65E0744ACC4BCC2B4A
@@ -40,14 +53,22 @@ val nbtFiles = listOf(
         """
     ),
     NbtTestFile(
-        "test.nbt (compressed zlib)", NbtCompression.Zlib,
+        "test.nbt (compressed zlib)",
+        Nbt {
+            variant = NbtVariant.Java
+            compression = NbtCompression.Zlib
+        },
         TestNbt.serializer(), testClass, testTag,
         """
             78DAE362E0CE48CDC9C95728CF2FCA49E16060C94BCC4D65E0744ACC4BCC2B4ACC4D6400009CE809A9
         """
     ),
     NbtTestFile(
-        "bigtest.nbt (uncompressed)", NbtCompression.None,
+        "bigtest.nbt (uncompressed)",
+        Nbt {
+            variant = NbtVariant.Java
+            compression = NbtCompression.None
+        },
         BigTestNbt.serializer(), bigTestClass, bigTestTag,
         """
             0A00054C6576656C0400086C6F6E67546573747FFFFFFFFFFFFFFF02000973686F7274546573747FFF08000A737472696E6754657374
@@ -82,7 +103,11 @@ val nbtFiles = listOf(
         """
     ),
     NbtTestFile(
-        "bigtest.nbt (gzip compressed)", NbtCompression.Gzip,
+        "bigtest.nbt (gzip compressed)",
+        Nbt {
+            variant = NbtVariant.Java
+            compression = NbtCompression.Gzip
+        },
         BigTestNbt.serializer(), bigTestClass, bigTestTag,
         """
             1F8B0800000000000000ED54CF4F1A41147EC202CB9682B1C41063CCABB584A5DBCD421189B188162C9A0D1AD8A83186B82BC3822EBB
@@ -98,7 +123,11 @@ val nbtFiles = listOf(
         """
     ),
     NbtTestFile(
-        "bigtest.nbt (zlib compressed)", NbtCompression.Zlib,
+        "bigtest.nbt (zlib compressed)",
+        Nbt {
+            variant = NbtVariant.Java
+            compression = NbtCompression.Zlib
+        },
         BigTestNbt.serializer(), bigTestClass, bigTestTag,
         """
             78DAED54CF4F1A41147EC202CB9682B1C41063CCABB584A5DBCD421189B188162C9A0D1AD8A83186B82BC3822EBB6677B0F1D44B7B6C

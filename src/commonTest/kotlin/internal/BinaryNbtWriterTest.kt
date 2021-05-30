@@ -4,6 +4,7 @@ package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.KSerializer
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.file.nbtFiles
 import net.benwoodworth.knbt.tag.NbtTag
 import okio.blackholeSink
 import okio.buffer
@@ -15,10 +16,8 @@ class BinaryNbtWriterTest {
     @Test
     fun Should_encode_from_class_correctly() {
         nbtFiles.assertForEach { file ->
-            val nbt = Nbt { compression = file.compression }
-
             @Suppress("UNCHECKED_CAST")
-            val out = nbt.encodeToByteArray(file.valueSerializer as KSerializer<Any>, file.value)
+            val out = file.nbt.encodeToByteArray(file.valueSerializer as KSerializer<Any>, file.value)
 
             val outCompression = try {
                 out.asSource().buffer().peekNbtCompression()
@@ -26,10 +25,14 @@ class BinaryNbtWriterTest {
                 throw Exception("Unable to check compression type", t)
             }
 
-            assertEquals(file.compression, outCompression, "Encoded with wrong compression: ${file.description}")
+            assertEquals(
+                file.nbt.configuration.compression,
+                outCompression,
+                "Encoded with wrong compression: ${file.description}",
+            )
 
             val tag = try {
-                nbt.decodeFromByteArray(NbtTag.serializer(), out)
+                file.nbt.decodeFromByteArray(NbtTag.serializer(), out)
             } catch (t: Throwable) {
                 throw Exception("Unable to decode compressed value", t)
             }
@@ -41,9 +44,7 @@ class BinaryNbtWriterTest {
     @Test
     fun Should_encode_from_NbtTag_correctly() {
         nbtFiles.assertForEach { file ->
-            val nbt = Nbt { compression = file.compression }
-
-            val out = nbt.encodeToByteArray(NbtTag.serializer(), file.nbtTag)
+            val out = file.nbt.encodeToByteArray(NbtTag.serializer(), file.nbtTag)
 
             val outCompression = try {
                 out.asSource().buffer().peekNbtCompression()
@@ -51,10 +52,14 @@ class BinaryNbtWriterTest {
                 throw Exception("Unable to check compression type", t)
             }
 
-            assertEquals(file.compression, outCompression, "Encoded with wrong compression: ${file.description}")
+            assertEquals(
+                file.nbt.configuration.compression,
+                outCompression,
+                "Encoded with wrong compression: ${file.description}",
+            )
 
             val tag = try {
-                nbt.decodeFromByteArray(NbtTag.serializer(), out)
+                file.nbt.decodeFromByteArray(NbtTag.serializer(), out)
             } catch (t: Throwable) {
                 throw Exception("Unable to decode compressed value", t)
             }
@@ -143,11 +148,9 @@ class BinaryNbtWriterTest {
     @Test
     fun Should_not_close_sink() {
         nbtFiles.assertForEach { file ->
-            val nbt = Nbt { compression = file.compression }
-
             TestSink(blackholeSink()).use { sink ->
                 @Suppress("UNCHECKED_CAST")
-                nbt.encodeTo(sink, file.valueSerializer as KSerializer<Any>, file.value)
+                file.nbt.encodeTo(sink, file.valueSerializer as KSerializer<Any>, file.value)
                 assertFalse(sink.isClosed, "Sink closed while decoding ${file.description}")
             }
         }
