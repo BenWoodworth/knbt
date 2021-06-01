@@ -15,11 +15,6 @@ public class NbtConfiguration internal constructor(
                 ")"
 }
 
-public enum class NbtVariant {
-    Java,
-    Bedrock,
-}
-
 public enum class NbtCompression {
     None,
     Gzip,

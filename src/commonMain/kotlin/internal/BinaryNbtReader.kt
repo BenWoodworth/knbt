@@ -24,11 +24,9 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
             }
         }
 
-        this.source = when (nbt.configuration.variant) {
-            null -> throw NbtEncodingException("NBT variant must be set when serializing NBT binary")
-            NbtVariant.Java -> BigEndianBinarySource(uncompressedSource)
-            NbtVariant.Bedrock -> LittleEndianBinarySource(uncompressedSource)
-        }
+        this.source = nbt.configuration.variant
+            ?.getBinarySource(uncompressedSource)
+            ?: throw NbtDecodingException("NBT variant must be set when serializing NBT binary")
     }
 
     override fun close(): Unit = source.close()

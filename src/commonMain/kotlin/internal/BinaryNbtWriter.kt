@@ -1,9 +1,6 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.Nbt
-import net.benwoodworth.knbt.NbtCompression
-import net.benwoodworth.knbt.NbtEncodingException
-import net.benwoodworth.knbt.NbtVariant
+import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_Compound
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_End
 import okio.Closeable
@@ -23,11 +20,8 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
             NbtCompression.Zlib -> NonClosingSink(sink).asZlibSink().buffer()
         }
 
-        this.sink = when (nbt.configuration.variant) {
-            null -> throw NbtEncodingException("NBT variant must be set when serializing NBT binary")
-            NbtVariant.Java -> BigEndianBinarySink(compressingSink)
-            NbtVariant.Bedrock -> LittleEndianBinarySink(compressingSink)
-        }
+        this.sink = nbt.configuration.variant?.getBinarySink(compressingSink)
+            ?: throw NbtEncodingException("NBT variant must be set when serializing NBT binary")
     }
 
     override fun close(): Unit = sink.close()
