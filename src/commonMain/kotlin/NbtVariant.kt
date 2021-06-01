@@ -14,6 +14,8 @@ public sealed class NbtVariant {
 
         override fun getBinarySink(sink: BufferedSink): BinarySink =
             BigEndianBinarySink(sink)
+
+        override fun toString(): String = "Java"
     }
 
     public object Bedrock : NbtVariant() {
@@ -22,5 +24,7 @@ public sealed class NbtVariant {
 
         override fun getBinarySink(sink: BufferedSink): BinarySink =
             LittleEndianBinarySink(sink)
+
+        override fun toString(): String = "Bedrock"
     }
 }
