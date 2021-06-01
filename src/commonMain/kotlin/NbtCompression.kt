@@ -13,7 +13,8 @@ public sealed class NbtCompression {
 
     public companion object {
         @Deprecated("Use null instead.", ReplaceWith("null"))
-        public val None: Nothing? = null
+        public inline val None: NbtCompression?
+            get() = null
     }
 
     public object Gzip : NbtCompression() {
