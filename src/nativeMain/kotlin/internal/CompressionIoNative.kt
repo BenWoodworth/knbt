@@ -12,14 +12,14 @@ import platform.zlib.*
 internal actual fun Source.asGzipSource(): Source =
     ZlibSource(this.buffer())
 
-internal actual fun Sink.asGzipSink(): Sink =
-    ZlibSink(this.buffer(), true)
+internal actual fun Sink.asGzipSink(level: Int): Sink =
+    ZlibSink(this.buffer(), true, level)
 
 internal actual fun Source.asZlibSource(): Source =
     ZlibSource(this.buffer())
 
-internal actual fun Sink.asZlibSink(): Sink =
-    ZlibSink(this.buffer(), false)
+internal actual fun Sink.asZlibSink(level: Int): Sink =
+    ZlibSink(this.buffer(), false, level)
 
 // TODO Check this over. It worked 1st try after porting from C and I'm suspicious...
 private class ZlibSource(private val source: BufferedSource) : Source by source {
@@ -118,7 +118,7 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
     }
 }
 
-private class ZlibSink(private val sink: BufferedSink, gzip: Boolean) : Sink by sink {
+private class ZlibSink(private val sink: BufferedSink, gzip: Boolean, level: Int) : Sink by sink {
     private companion object {
         const val outputBufferSize = 1024u
     }
@@ -139,7 +139,7 @@ private class ZlibSink(private val sink: BufferedSink, gzip: Boolean) : Sink by 
         avail_out = outputBufferSize
 
         deflateInit2(
-            level = Z_BEST_COMPRESSION,
+            level = level,
             windowBits = 15 + (if (gzip) 16 else 0),
         )
 

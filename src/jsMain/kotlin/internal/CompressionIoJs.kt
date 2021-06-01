@@ -11,11 +11,11 @@ import org.khronos.webgl.set
 
 internal actual fun Source.asGzipSource(): Source = ZlibSource(this.buffer())
 
-internal actual fun Sink.asGzipSink(): Sink = ZlibSink(this.buffer(), true)
+internal actual fun Sink.asGzipSink(level: Int): Sink = ZlibSink(this.buffer(), true, level)
 
 internal actual fun Source.asZlibSource(): Source = ZlibSource(this.buffer())
 
-internal actual fun Sink.asZlibSink(): Sink = ZlibSink(this.buffer(), false)
+internal actual fun Sink.asZlibSink(level: Int): Sink = ZlibSink(this.buffer(), false, level)
 
 private class ZlibSource(private val source: BufferedSource) : Source by source {
     private val inbuf = Uint8Array(1)
@@ -67,11 +67,11 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
     }
 }
 
-private class ZlibSink(private val sink: BufferedSink, gzip: Boolean) : Sink by sink {
+private class ZlibSink(private val sink: BufferedSink, gzip: Boolean, level: Int) : Sink by sink {
     private val inbuf = Uint8Array(1)
 
     private val deflate = Deflate(
-        level = ZLevel.BEST_COMPRESSION,
+        level = ZLevel(level),
         windowBits = 15 + (if (gzip) 16 else 0),
     ).apply {
         onData = { data ->
