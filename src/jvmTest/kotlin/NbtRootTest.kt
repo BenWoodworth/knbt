@@ -10,9 +10,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
-class NbtFileTest {
+class NbtRootTest {
     @Serializable(TestNbtClassSerializer::class)
-    @NbtFile(NbtVariant.Java, NbtCompression.Gzip, "root-name")
+    @NbtRoot("root-name")
     private data class TestNbtClass(
         val string: String,
         val int: Int,
@@ -22,8 +22,6 @@ class NbtFileTest {
         string = "string",
         int = 42,
     )
-
-
 
     private val testNbtTag = buildNbt("root-name") {
         put("string", "string")
@@ -46,7 +44,7 @@ class NbtFileTest {
     //region TestNbtClassSerializer
     private object TestNbtClassSerializer : KSerializer<TestNbtClass> {
         override val descriptor: SerialDescriptor = buildClassSerialDescriptor("TestNbtClass") {
-            annotations = listOf(TestNbtClass::class.annotations.single { it is NbtFile })
+            annotations = listOf(TestNbtClass::class.annotations.single { it is NbtRoot })
             element("string", String.serializer().descriptor)
             element("int", Int.serializer().descriptor)
         }

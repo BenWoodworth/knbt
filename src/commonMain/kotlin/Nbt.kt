@@ -29,30 +29,30 @@ public sealed class Nbt constructor(
 
     @OptIn(ExperimentalNbtApi::class)
     internal fun <T> encodeToNbtWriter(writer: NbtWriter, serializer: SerializationStrategy<T>, value: T) {
-        val nbtFile = serializer.descriptor.annotations
-            .firstOrNull { it is NbtFile } as NbtFile?
+        val nbtRoot = serializer.descriptor.annotations
+            .firstOrNull { it is NbtRoot } as NbtRoot?
 
-        if (nbtFile == null) {
-            DefaultNbtEncoder(this, writer).encodeSerializableValue(serializer, value)
+        val rootSerializer = if (nbtRoot == null) {
+            serializer
         } else {
-            val nbt = nbtFile.getFileNbt(this)
-            val fileSerializer = NbtFileSerializer(nbtFile, serializer)
-            DefaultNbtEncoder(nbt, writer).encodeSerializableValue(fileSerializer, value)
+            NbtRootSerializer(nbtRoot, serializer)
         }
+
+        return DefaultNbtEncoder(this, writer).encodeSerializableValue(rootSerializer, value)
     }
 
     @OptIn(ExperimentalNbtApi::class)
     internal fun <T> decodeFromNbtReader(reader: NbtReader, deserializer: DeserializationStrategy<T>): T {
-        val nbtFile = deserializer.descriptor.annotations
-            .firstOrNull { it is NbtFile } as NbtFile?
+        val nbtRoot = deserializer.descriptor.annotations
+            .firstOrNull { it is NbtRoot } as NbtRoot?
 
-        return if (nbtFile == null) {
-            NbtDecoder(this, reader).decodeSerializableValue(deserializer)
+        val rootDeserializer = if (nbtRoot == null) {
+            deserializer
         } else {
-            val nbt = nbtFile.getFileNbt(this)
-            val fileSerializer = NbtFileDeserializer(nbtFile, deserializer)
-            NbtDecoder(nbt, reader).decodeSerializableValue(fileSerializer)
+            NbtRootDeserializer(nbtRoot, deserializer)
         }
+
+        return NbtDecoder(this, reader).decodeSerializableValue(rootDeserializer)
     }
 }
 

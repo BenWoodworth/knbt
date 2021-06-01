@@ -47,20 +47,17 @@ nbt.encodeTo(outputStream, value)
 value = nbt.decodeFrom(inputStream)
 ```
 
-### @NbtFile
-Serializable classes can be marked with `@NbtFile` to make them suitable for serializing NBT files.
-The `NbtConfiguration`'s `variant` and `compression` will be overridden,
-and the root tag will be named with tag with the given `tagName`.
+### @NbtRoot
+Serializable classes marked with `@NbtRoot` will be nested in a compound tag with the given `name`. 
 
 Example usage:
 ```kotlin
 @Serializable
-@NbtFile(variant = Java, compression = None, tagName = "root")
-class ExampleFile(val string: String, val int: Int)
+@NbtRoot(name = "root")
+class Example(val string: String, val int: Int)
 
-// Encodes to {root : {string : "Hello, world!", int : 42}}
-val file = ExampleFile(string = "Hello, World!", int = 42)
-Nbt.encodeToNbtTag(file)
+// Serializes to: {root : {string : "Hello, world!", int : 42}}
+Nbt.encodeToNbtTag(Example(string = "Hello, World!", int = 42))
 ```
 
 ## NbtTag classes
