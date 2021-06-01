@@ -17,7 +17,7 @@ import kotlin.test.assertFalse
 @OptIn(OkioApi::class)
 class BinaryNbtWriterTest {
     val nbt = Nbt {
-        variant = NbtVariant.Java
+        variant = NbtVariant.BigEndian
     }
 
     @Test

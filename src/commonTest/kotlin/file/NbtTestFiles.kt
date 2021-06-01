@@ -32,7 +32,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "test.nbt (uncompressed)",
         Nbt {
-            variant = NbtVariant.Java
+            variant = NbtVariant.BigEndian
         },
         TestNbt.serializer(), testClass, testTag,
         """
@@ -42,7 +42,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "test.nbt (compressed gzip)",
         Nbt {
-            variant = NbtVariant.Java
+            variant = NbtVariant.BigEndian
             compression = NbtCompression.Gzip
         },
         TestNbt.serializer(), testClass, testTag,
@@ -54,7 +54,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "test.nbt (compressed zlib)",
         Nbt {
-            variant = NbtVariant.Java
+            variant = NbtVariant.BigEndian
             compression = NbtCompression.Zlib
         },
         TestNbt.serializer(), testClass, testTag,
@@ -65,7 +65,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "bigtest.nbt (uncompressed)",
         Nbt {
-            variant = NbtVariant.Java
+            variant = NbtVariant.BigEndian
         },
         BigTestNbt.serializer(), bigTestClass, bigTestTag,
         """
@@ -103,7 +103,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "bigtest.nbt (gzip compressed)",
         Nbt {
-            variant = NbtVariant.Java
+            variant = NbtVariant.BigEndian
             compression = NbtCompression.Gzip
         },
         BigTestNbt.serializer(), bigTestClass, bigTestTag,
@@ -123,7 +123,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "bigtest.nbt (zlib compressed)",
         Nbt {
-            variant = NbtVariant.Java
+            variant = NbtVariant.BigEndian
             compression = NbtCompression.Zlib
         },
         BigTestNbt.serializer(), bigTestClass, bigTestTag,
