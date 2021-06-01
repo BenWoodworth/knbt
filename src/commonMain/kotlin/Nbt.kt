@@ -72,6 +72,7 @@ public fun Nbt(from: Nbt = Nbt.Default, builderAction: NbtBuilder.() -> Unit): N
 /**
  * Builder of the [Nbt] instance provided by `Nbt { ... }` factory function.
  */
+@NbtDslMarker
 public class NbtBuilder internal constructor(nbt: Nbt) {
     /**
      * The variant of NBT binary format to use. Must not be `null` when serializing binary.
