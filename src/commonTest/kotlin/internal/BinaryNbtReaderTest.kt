@@ -2,7 +2,10 @@
 
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.OkioApi
+import net.benwoodworth.knbt.TestSource
+import net.benwoodworth.knbt.assertForEach
+import net.benwoodworth.knbt.decodeFrom
 import net.benwoodworth.knbt.file.nbtFiles
 import net.benwoodworth.knbt.tag.NbtTag
 import okio.use

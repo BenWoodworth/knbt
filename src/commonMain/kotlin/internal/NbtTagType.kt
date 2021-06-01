@@ -2,7 +2,6 @@ package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.InternalNbtApi
 import net.benwoodworth.knbt.NbtDecodingException
-import net.benwoodworth.knbt.NbtException
 
 @Suppress("EnumEntryName")
 @InternalNbtApi

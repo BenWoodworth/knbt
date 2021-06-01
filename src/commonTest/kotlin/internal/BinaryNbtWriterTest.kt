@@ -9,7 +9,10 @@ import net.benwoodworth.knbt.tag.NbtTag
 import okio.blackholeSink
 import okio.buffer
 import okio.use
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 
 @OptIn(OkioApi::class)
 class BinaryNbtWriterTest {

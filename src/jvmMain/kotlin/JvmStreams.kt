@@ -3,8 +3,6 @@ package net.benwoodworth.knbt
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.serializer
-import okio.Sink
-import okio.Source
 import okio.sink
 import okio.source
 import java.io.InputStream

@@ -1,6 +1,8 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.Nbt
+import net.benwoodworth.knbt.NbtDecodingException
+import net.benwoodworth.knbt.NbtEncodingException
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import okio.Closeable
 import okio.Source
