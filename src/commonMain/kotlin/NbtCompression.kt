@@ -11,11 +11,9 @@ public sealed class NbtCompression {
     internal abstract fun getUncompressedSource(source: Source): Source
     internal abstract fun getCompressingSink(sink: Sink): Sink
 
-    public object None : NbtCompression() {
-        override fun getUncompressedSource(source: Source): Source = source
-        override fun getCompressingSink(sink: Sink): Sink = sink
-
-        override fun toString(): String = "None"
+    public companion object {
+        @Deprecated("Use null instead.", ReplaceWith("null"))
+        public val None: Nothing? = null
     }
 
     public object Gzip : NbtCompression() {

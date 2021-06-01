@@ -8,10 +8,10 @@ import okio.Sink
 import okio.Source
 
 @OptIn(ExperimentalNbtApi::class)
-internal fun BufferedSource.peekNbtCompression(): NbtCompression =
+internal fun BufferedSource.peekNbtCompression(): NbtCompression? =
     when (val byte = peek().readByte()) {
         // NBT Tag type IDs
-        in 0..12 -> NbtCompression.None
+        in 0..12 -> null
 
         // Gzip header: 0x1F8B
         0x1F.toByte() -> NbtCompression.Gzip

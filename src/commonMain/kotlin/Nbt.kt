@@ -5,7 +5,10 @@ import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 import net.benwoodworth.knbt.tag.NbtTag
-import okio.*
+import okio.Buffer
+import okio.Sink
+import okio.Source
+import okio.use
 import kotlin.native.concurrent.ThreadLocal
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -20,7 +23,7 @@ public sealed class Nbt constructor(
     public companion object Default : Nbt(
         configuration = NbtConfiguration(
             variant = null,
-            compression = NbtCompression.None,
+            compression = null,
             encodeDefaults = false,
             ignoreUnknownKeys = false,
         ),
@@ -79,7 +82,7 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
     /**
      * The compression method to use when writing NBT binary.
      */
-    public var compression: NbtCompression = nbt.configuration.compression
+    public var compression: NbtCompression? = nbt.configuration.compression
 
     /**
      * Specifies whether default values of Kotlin properties should be encoded.
