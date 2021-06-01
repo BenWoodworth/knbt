@@ -26,7 +26,7 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
 
         this.source = nbt.configuration.variant
             ?.getBinarySource(uncompressedSource)
-            ?: throw NbtDecodingException("NBT variant must be set when serializing NBT binary")
+            ?: throw IllegalArgumentException("NBT variant must be set when serializing NBT binary")
     }
 
     override fun close(): Unit = source.close()

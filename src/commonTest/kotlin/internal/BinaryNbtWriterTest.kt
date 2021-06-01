@@ -13,6 +13,10 @@ import kotlin.test.*
 
 @OptIn(OkioApi::class)
 class BinaryNbtWriterTest {
+    val nbt = Nbt {
+        variant = NbtVariant.Java
+    }
+
     @Test
     fun Should_encode_from_class_correctly() {
         nbtFiles.assertForEach { file ->
@@ -71,77 +75,77 @@ class BinaryNbtWriterTest {
     @Test
     fun Should_fail_when_decoding_Byte() {
         assertFailsWith<NbtEncodingException> {
-            Nbt.encodeToByteArray<Byte>(0)
+            nbt.encodeToByteArray<Byte>(0)
         }
     }
 
     @Test
     fun Should_fail_when_decoding_Short() {
         assertFailsWith<NbtEncodingException> {
-            Nbt.encodeToByteArray<Short>(0)
+            nbt.encodeToByteArray<Short>(0)
         }
     }
 
     @Test
     fun Should_fail_when_decoding_Int() {
         assertFailsWith<NbtEncodingException> {
-            Nbt.encodeToByteArray(0)
+            nbt.encodeToByteArray(0)
         }
     }
 
     @Test
     fun Should_fail_when_decoding_Long() {
         assertFailsWith<NbtEncodingException> {
-            Nbt.encodeToByteArray(0L)
+            nbt.encodeToByteArray(0L)
         }
     }
 
     @Test
     fun Should_fail_when_decoding_Float() {
         assertFailsWith<NbtEncodingException> {
-            Nbt.encodeToByteArray(0.0f)
+            nbt.encodeToByteArray(0.0f)
         }
     }
 
     @Test
     fun Should_fail_when_decoding_Double() {
         assertFailsWith<NbtEncodingException> {
-            Nbt.encodeToByteArray(0.0)
+            nbt.encodeToByteArray(0.0)
         }
     }
 
     @Test
     fun Should_fail_when_decoding_String() {
         assertFailsWith<NbtEncodingException> {
-            Nbt.encodeToByteArray("string")
+            nbt.encodeToByteArray("string")
         }
     }
 
     @Test
     fun Should_fail_when_decoding_ByteArray() {
         assertFailsWith<NbtEncodingException> {
-            Nbt.encodeToByteArray(byteArrayOf(1, 2, 3))
+            nbt.encodeToByteArray(byteArrayOf(1, 2, 3))
         }
     }
 
     @Test
     fun Should_fail_when_decoding_IntArray() {
         assertFailsWith<NbtEncodingException> {
-            Nbt.encodeToByteArray(intArrayOf(1, 2, 3))
+            nbt.encodeToByteArray(intArrayOf(1, 2, 3))
         }
     }
 
     @Test
     fun Should_fail_when_decoding_LongArray() {
         assertFailsWith<NbtEncodingException> {
-            Nbt.encodeToByteArray(longArrayOf(1, 2, 3))
+            nbt.encodeToByteArray(longArrayOf(1, 2, 3))
         }
     }
 
     @Test
     fun Should_fail_when_decoding_List() {
         assertFailsWith<NbtEncodingException> {
-            Nbt.encodeToByteArray(listOf<Byte>(1, 2, 3))
+            nbt.encodeToByteArray(listOf<Byte>(1, 2, 3))
         }
     }
 

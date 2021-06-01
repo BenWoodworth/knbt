@@ -21,7 +21,7 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
         }
 
         this.sink = nbt.configuration.variant?.getBinarySink(compressingSink)
-            ?: throw NbtEncodingException("NBT variant must be set when serializing NBT binary")
+            ?: throw IllegalArgumentException("NBT variant must be set when serializing NBT binary")
     }
 
     override fun close(): Unit = sink.close()

@@ -4,7 +4,7 @@ import net.benwoodworth.knbt.internal.*
 import okio.BufferedSink
 import okio.BufferedSource
 
-public abstract class NbtVariant private constructor() {
+public sealed class NbtVariant {
     internal abstract fun getBinarySource(source: BufferedSource): BinarySource
     internal abstract fun getBinarySink(sink: BufferedSink): BinarySink
 
