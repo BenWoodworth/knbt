@@ -14,9 +14,3 @@ public class NbtConfiguration internal constructor(
                 ", ignoreUnknownKeys=$ignoreUnknownKeys" +
                 ")"
 }
-
-public enum class NbtCompression {
-    None,
-    Gzip,
-    Zlib,
-}

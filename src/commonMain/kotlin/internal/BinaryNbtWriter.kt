@@ -14,13 +14,9 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
     private val sink: BinarySink
 
     init {
-        val compressingSink = when (nbt.configuration.compression) {
-            NbtCompression.None -> NonClosingSink(sink).buffer()
-            NbtCompression.Gzip -> NonClosingSink(sink).asGzipSink().buffer()
-            NbtCompression.Zlib -> NonClosingSink(sink).asZlibSink().buffer()
-        }
+        val compressingSink = nbt.configuration.compression.getCompressingSink(NonClosingSink(sink))
 
-        this.sink = nbt.configuration.variant?.getBinarySink(compressingSink)
+        this.sink = nbt.configuration.variant?.getBinarySink(compressingSink.buffer())
             ?: throw IllegalArgumentException("NBT variant must be set when serializing NBT binary")
     }
 

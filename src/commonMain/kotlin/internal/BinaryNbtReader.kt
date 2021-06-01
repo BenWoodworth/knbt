@@ -16,16 +16,11 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
     private val source: BinarySource
 
     init {
-        val uncompressedSource = NonClosingSource(source).buffer().let { bufferedSource ->
-            when (bufferedSource.peekNbtCompression()) {
-                NbtCompression.None -> bufferedSource
-                NbtCompression.Gzip -> bufferedSource.asGzipSource().buffer()
-                NbtCompression.Zlib -> bufferedSource.asZlibSource().buffer()
-            }
-        }
+        val uncompressedSource = NonClosingSource(source).buffer()
+            .let { it.peekNbtCompression().getUncompressedSource(it) }
 
         this.source = nbt.configuration.variant
-            ?.getBinarySource(uncompressedSource)
+            ?.getBinarySource(uncompressedSource.buffer())
             ?: throw IllegalArgumentException("NBT variant must be set when serializing NBT binary")
     }
 
