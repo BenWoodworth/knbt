@@ -8,40 +8,41 @@ import net.benwoodworth.knbt.fix
 import net.benwoodworth.knbt.tag.*
 import net.benwoodworth.knbt.toBinary
 
-val bigTestTag get() = buildNbt("Level") {
-    put("longTest", 9223372036854775807L)
-    put("shortTest", 32767.toShort())
-    put("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")
-    put("floatTest", 0.49823147f.fix())
-    put("intTest", 2147483647)
-    putNbtCompound("nested compound test") {
-        putNbtCompound("ham") {
-            put("name", "Hampus")
-            put("value", 0.75f)
+val bigTestTag
+    get() = buildNbt("Level") {
+        put("longTest", 9223372036854775807L)
+        put("shortTest", 32767.toShort())
+        put("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")
+        put("floatTest", 0.49823147f.fix())
+        put("intTest", 2147483647)
+        putNbtCompound("nested compound test") {
+            putNbtCompound("ham") {
+                put("name", "Hampus")
+                put("value", 0.75f)
+            }
+            putNbtCompound("egg") {
+                put("name", "Eggbert")
+                put("value", 0.5f)
+            }
         }
-        putNbtCompound("egg") {
-            put("name", "Eggbert")
-            put("value", 0.5f)
+        put("listTest (long)", listOf(11L, 12L, 13L, 14L, 15L).toNbtList())
+        putNbtList<NbtCompound<NbtTag>>("listTest (compound)") {
+            addNbtCompound {
+                put("name", "Compound tag #0")
+                put("created-on", 1264099775885L)
+            }
+            addNbtCompound {
+                put("name", "Compound tag #1")
+                put("created-on", 1264099775885L)
+            }
         }
+        put("byteTest", 127.toByte())
+        put(
+            "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
+            ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() }
+        )
+        put("doubleTest", 0.4931287132182315)
     }
-    put("listTest (long)", listOf(11L, 12L, 13L, 14L, 15L).toNbtList())
-    putNbtList<NbtCompound<NbtTag>>("listTest (compound)") {
-        addNbtCompound {
-            put("name", "Compound tag #0")
-            put("created-on", 1264099775885L)
-        }
-        addNbtCompound {
-            put("name", "Compound tag #1")
-            put("created-on", 1264099775885L)
-        }
-    }
-    put("byteTest", 127.toByte())
-    put(
-        "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
-        ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() }
-    )
-    put("doubleTest", 0.4931287132182315)
-}
 
 @Serializable
 data class BigTestNbt(
@@ -149,36 +150,37 @@ fun assertStructureEquals(expected: BigTestNbt, actual: BigTestNbt, message: Str
         property("level.doubleTest") { level.doubleTest.toBinary() }
     }
 
-val bigTestClass get() = BigTestNbt(
-    level = BigTestNbt.Level(
-        longTest = 9223372036854775807L,
-        shortTest = 32767,
-        stringTest = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!",
-        floatTest = 0.49823147f.fix(),
-        intTest = 2147483647,
-        nestedCompoundTest = BigTestNbt.Level.NestedCompoundTest(
-            ham = BigTestNbt.Level.NestedCompoundTest.Entry(
-                name = "Hampus",
-                value = 0.75f,
+val bigTestClass
+    get() = BigTestNbt(
+        level = BigTestNbt.Level(
+            longTest = 9223372036854775807L,
+            shortTest = 32767,
+            stringTest = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!",
+            floatTest = 0.49823147f.fix(),
+            intTest = 2147483647,
+            nestedCompoundTest = BigTestNbt.Level.NestedCompoundTest(
+                ham = BigTestNbt.Level.NestedCompoundTest.Entry(
+                    name = "Hampus",
+                    value = 0.75f,
+                ),
+                egg = BigTestNbt.Level.NestedCompoundTest.Entry(
+                    name = "Eggbert",
+                    value = 0.5f,
+                )
             ),
-            egg = BigTestNbt.Level.NestedCompoundTest.Entry(
-                name = "Eggbert",
-                value = 0.5f,
-            )
-        ),
-        listTestLong = listOf(11L, 12L, 13L, 14L, 15L),
-        listTestCompound = listOf(
-            BigTestNbt.Level.ListTestCompoundEntry(
-                name = "Compound tag #0",
-                createdOn = 1264099775885L,
+            listTestLong = listOf(11L, 12L, 13L, 14L, 15L),
+            listTestCompound = listOf(
+                BigTestNbt.Level.ListTestCompoundEntry(
+                    name = "Compound tag #0",
+                    createdOn = 1264099775885L,
+                ),
+                BigTestNbt.Level.ListTestCompoundEntry(
+                    name = "Compound tag #1",
+                    createdOn = 1264099775885L,
+                ),
             ),
-            BigTestNbt.Level.ListTestCompoundEntry(
-                name = "Compound tag #1",
-                createdOn = 1264099775885L,
-            ),
-        ),
-        byteTest = 127,
-        byteArrayTest = ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() },
-        doubleTest = 0.4931287132182315,
+            byteTest = 127,
+            byteArrayTest = ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() },
+            doubleTest = 0.4931287132182315,
+        )
     )
-)

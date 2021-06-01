@@ -4,11 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.assertStructureEquals
 import net.benwoodworth.knbt.buildNbt
+import net.benwoodworth.knbt.tag.NbtTag
 import net.benwoodworth.knbt.tag.put
 
-val testTag get() = buildNbt("hello world") {
-    put("name", "Bananrama")
-}
+val testTag: NbtTag
+    get() = buildNbt("hello world") {
+        put("name", "Bananrama")
+    }
 
 @Serializable
 data class TestNbt(
@@ -26,8 +28,9 @@ fun assertStructureEquals(expected: TestNbt, actual: TestNbt, message: String? =
         property("helloWorld.name") { helloWorld.name }
     }
 
-val testClass get() = TestNbt(
-    helloWorld = TestNbt.HelloWorld(
-        name = "Bananrama",
-    ),
-)
+val testClass: TestNbt
+    get() = TestNbt(
+        helloWorld = TestNbt.HelloWorld(
+            name = "Bananrama",
+        ),
+    )

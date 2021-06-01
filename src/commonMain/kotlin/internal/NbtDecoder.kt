@@ -36,7 +36,7 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
 
         return NbtPath(path.asReversed())
     }
-    
+
     protected inline fun <R> tryWithPath(block: () -> R): R = tryWithPath(::getPath, block)
 
     private fun expectTagType(expected: NbtTagType) {

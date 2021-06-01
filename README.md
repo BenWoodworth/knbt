@@ -1,4 +1,5 @@
 # knbt
+
 [![Maven Central](https://img.shields.io/maven-central/v/net.benwoodworth.knbt/knbt)](https://search.maven.org/artifact/net.benwoodworth.knbt/knbt)
 [![KDoc](https://img.shields.io/badge/api-KDoc-blue)](https://benwoodworth.github.io/knbt)
 [![Kotlin](https://img.shields.io/badge/kotlin-1.5.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
@@ -13,6 +14,7 @@ Using the same version of kotlinx.serialization is recommended since parts of it
 still experimental, and newer versions may have binary-incompatible changes that could break knbt's implementation.
 
 ## Configuration
+
 ```kotlin
 val nbt = Nbt {
     variant = null // Java, Bedrock
@@ -24,10 +26,12 @@ val nbt = Nbt {
 ```
 
 ## Serialization
-An `Nbt` instance can be used to encode/decode `@Serializable` data.
-When serializing to/from NBT binary, the data must be a structure with a single named element (as per the NBT spec).
 
-When deserializing, the compression will be automatically detected and decompressed. When serializing, the compression method set in the configuration will be used.
+An `Nbt` instance can be used to encode/decode `@Serializable` data. When serializing to/from NBT binary, the data must
+be a structure with a single named element (as per the NBT spec).
+
+When deserializing, the compression will be automatically detected and decompressed. When serializing, the compression
+method set in the configuration will be used.
 
 ```kotlin
 // ByteArray
@@ -48,9 +52,11 @@ value = nbt.decodeFrom(inputStream)
 ```
 
 ### @NbtRoot
-Serializable classes marked with `@NbtRoot` will be nested in a compound tag with the given `name`. 
+
+Serializable classes marked with `@NbtRoot` will be nested in a compound tag with the given `name`.
 
 Example usage:
+
 ```kotlin
 @Serializable
 @NbtRoot(name = "root")
@@ -63,6 +69,7 @@ Nbt.encodeToNbtTag(Example(string = "Hello, World!", int = 42))
 ## NbtTag classes
 
 The sealed `NbtTag` interface has the following immutable implementations:
+
 ```kotlin
 value class NbtByte : NbtTag
 value class NbtShort : NbtTag
@@ -79,6 +86,7 @@ class NbtCompound<T : NbtTag> : NbtTag, Map<String, T>
 ```
 
 `NbtTag`s can be created with factory/conversion/builder functions:
+
 ```kotlin
 val nbtByte = 5.toNbtByte()
 
@@ -132,7 +140,9 @@ val bigtest = buildNbt("Level") {
 ```
 
 # Setup
+
 ## Gradle
+
 ```kotlin
 plugins {
     kotlin("jvm") version "1.5.0" // or kotlin("multiplatform"), etc.
