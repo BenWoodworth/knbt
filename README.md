@@ -15,8 +15,8 @@ still experimental, and newer versions may have binary-incompatible changes that
 ## Configuration
 ```kotlin
 val nbt = Nbt {
-    variant = Java // Java, Bedrock
-    compression = None // None, Gzip, Zlib
+    variant = null // Java, Bedrock
+    compression = null // Gzip, Zlib
     encodeDefaults = false
     ignoreUnknownKeys = false
     serializersModule = EmptySerializersModule
