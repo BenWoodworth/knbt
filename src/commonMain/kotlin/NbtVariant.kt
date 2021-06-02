@@ -38,4 +38,14 @@ public sealed class NbtVariant {
 
         override fun toString(): String = "LittleEndian"
     }
+
+    public object LittleEndianBase128 : NbtVariant() {
+        override fun getBinarySource(source: BufferedSource): BinarySource =
+            LittleEndianBase128BinarySource(source)
+
+        override fun getBinarySink(sink: BufferedSink): BinarySink =
+            LittleEndianBase128BinarySink(sink)
+
+        override fun toString(): String = "LittleEndianBase128"
+    }
 }

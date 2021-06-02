@@ -67,3 +67,18 @@ internal class LittleEndianBinarySource(private val source: BufferedSource) : Bi
         return source.readUtf8(byteCount)
     }
 }
+
+internal class LittleEndianBase128BinarySource(private val source: BufferedSource) :
+    BinarySource by LittleEndianBinarySource(source) {
+
+    override fun readInt(): Int =
+        source.readLEB128(5).zigZagDecode().toInt()
+
+    override fun readLong(): Long =
+        source.readLEB128(10).zigZagDecode()
+
+    override fun readString(): String {
+        val byteCount = source.readLEB128(5).toLong()
+        return source.readUtf8(byteCount)
+    }
+}

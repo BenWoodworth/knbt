@@ -87,3 +87,22 @@ internal class LittleEndianBinarySink(private val sink: BufferedSink) : BinarySi
         sink.write(bytes)
     }
 }
+
+internal class LittleEndianBase128BinarySink(private val sink: BufferedSink) :
+    BinarySink by LittleEndianBinarySink(sink) {
+
+    override fun writeInt(value: Int) {
+        sink.writeLEB128(value.toLong().zigZagEncode())
+    }
+
+    override fun writeLong(value: Long) {
+        sink.writeLEB128(value.zigZagEncode())
+    }
+
+    override fun writeString(value: String) {
+        val bytes = value.encodeToByteArray()
+
+        sink.writeLEB128(bytes.size.toULong())
+        sink.write(bytes)
+    }
+}
