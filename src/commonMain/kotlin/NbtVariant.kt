@@ -8,15 +8,24 @@ public sealed class NbtVariant {
     internal abstract fun getBinarySource(source: BufferedSource): BinarySource
     internal abstract fun getBinarySink(sink: BufferedSink): BinarySink
 
-    @Deprecated("Use BigEndian instead.", ReplaceWith("BigEndian"))
-    public object Java : NbtVariant() {
-        override fun getBinarySource(source: BufferedSource): BinarySource =
-            BigEndian.getBinarySource(source)
+    public companion object {
+        /**
+         * Alias for [BigEndian].
+         */
+        public inline val Java: BigEndian
+            get() = BigEndian
 
-        override fun getBinarySink(sink: BufferedSink): BinarySink =
-            BigEndian.getBinarySink(sink)
+        /**
+         * Alias for [LittleEndian].
+         */
+        public inline val Bedrock: LittleEndian
+            get() = LittleEndian
 
-        override fun toString(): String = "Java"
+        /**
+         * Alias for [LittleEndianBase128].
+         */
+        public inline val BedrockNetwork: LittleEndianBase128
+            get() = LittleEndianBase128
     }
 
     public object BigEndian : NbtVariant() {
