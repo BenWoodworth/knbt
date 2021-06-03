@@ -30,7 +30,10 @@ class MinecraftFilesTest {
     @Test
     fun Encoding_Java_NBT_file_to_NbtTag_and_back_should_be_identical() {
         testFiles(
-            nbt = Nbt { variant = NbtVariant.BigEndian },
+            nbt = Nbt {
+                variant = NbtVariant.BigEndian
+                compression = NbtCompression.None
+            },
             resources = listOf(
                 "/uncompressed-nbt/java/level-0.nbt",
                 "/uncompressed-nbt/java/level-1.nbt",
@@ -46,7 +49,10 @@ class MinecraftFilesTest {
     @Test
     fun Encoding_Bedrock_NBT_file_to_NbtTag_and_back_should_be_identical() {
         testFiles(
-            nbt = Nbt { variant = NbtVariant.LittleEndian },
+            nbt = Nbt {
+                variant = NbtVariant.LittleEndian
+                compression = NbtCompression.None
+            },
             resources = listOf(
                 "/uncompressed-nbt/bedrock/level-headerless-0.nbt",
                 "/uncompressed-nbt/bedrock/level-headerless-1.nbt",

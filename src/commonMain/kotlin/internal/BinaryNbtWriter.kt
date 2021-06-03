@@ -15,11 +15,20 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
     private val sink: BinarySink
 
     init {
-        val compressingSink = NonClosingSink(sink)
-            .let { nbt.configuration.compression?.getCompressingSink(it) ?: it }
+        val variant = nbt.configuration.variant
+        val compression = nbt.configuration.compression
 
-        this.sink = nbt.configuration.variant?.getBinarySink(compressingSink.buffer())
-            ?: throw IllegalArgumentException("NBT variant must be set when serializing NBT binary")
+        require(variant != null && compression != null) {
+            val unset = mutableListOf<String>()
+            if (variant == null) unset += "variant"
+            if (compression == null) unset += "compression"
+
+            "NBT variant and compression must be set when serializing binary. Not set: ${unset.joinToString()}."
+        }
+
+        this.sink = NonClosingSink(sink)
+            .let { compression.getCompressingSink(it) }
+            .let { variant.getBinarySink(it.buffer()) }
     }
 
     override fun close(): Unit = sink.close()

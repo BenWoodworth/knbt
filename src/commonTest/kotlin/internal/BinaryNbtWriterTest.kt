@@ -18,6 +18,7 @@ import kotlin.test.assertFalse
 class BinaryNbtWriterTest {
     val nbt = Nbt {
         variant = NbtVariant.BigEndian
+        compression = NbtCompression.None
     }
 
     @Test
