@@ -33,7 +33,8 @@ public sealed class NbtCompression(internal val name: String) {
         override fun getUncompressedSource(source: Source): Source = source.asGzipSource()
         override fun getCompressingSink(sink: Sink): Sink = sink.asGzipSink(level ?: -1)
 
-        override fun toString(): String = "Gzip(level = $level)"
+        override fun toString(): String =
+            if (this == Gzip) "Gzip" else "Gzip(level = $level)"
 
         public companion object Default : Gzip(level = null)
 
@@ -65,7 +66,8 @@ public sealed class NbtCompression(internal val name: String) {
         override fun getUncompressedSource(source: Source): Source = source.asZlibSource()
         override fun getCompressingSink(sink: Sink): Sink = sink.asZlibSink(level ?: -1)
 
-        override fun toString(): String = "Zlib(level = $level)"
+        override fun toString(): String =
+            if (this == Zlib) "Zlib" else "Zlib(level = $level)"
 
         public companion object Default : Zlib(level = null)
 
