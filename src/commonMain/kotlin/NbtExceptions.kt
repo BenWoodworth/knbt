@@ -3,7 +3,11 @@ package net.benwoodworth.knbt
 import kotlinx.serialization.SerializationException
 import net.benwoodworth.knbt.internal.NbtPath
 
-public sealed class NbtException(message: String, internal var path: NbtPath?) : SerializationException(message) {
+public sealed class NbtException(
+    message: String,
+    internal var path: NbtPath?,
+    cause: Throwable? = null,
+) : SerializationException(message, cause) {
     protected abstract val coding: String
 
     override val message: String?
@@ -13,7 +17,8 @@ public sealed class NbtException(message: String, internal var path: NbtPath?) :
 public class NbtEncodingException internal constructor(
     message: String,
     path: NbtPath? = null,
-) : NbtException(message, path) {
+    cause: Throwable? = null,
+) : NbtException(message, path, cause) {
     override val coding: String
         get() = "encoding"
 }
@@ -21,7 +26,8 @@ public class NbtEncodingException internal constructor(
 public class NbtDecodingException internal constructor(
     message: String,
     path: NbtPath? = null,
-) : NbtException(message, path) {
+    cause: Throwable? = null,
+) : NbtException(message, path, cause) {
     override val coding: String
         get() = "decoding"
 }
