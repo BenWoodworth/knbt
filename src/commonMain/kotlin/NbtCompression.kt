@@ -12,6 +12,12 @@ public sealed class NbtCompression(internal val name: String) {
     internal abstract fun getUncompressedSource(source: Source): Source
     internal abstract fun getCompressingSink(sink: Sink): Sink
 
+    internal fun equalsType(other: NbtCompression): Boolean = when (this) {
+        None -> other == None
+        is Gzip -> other is Gzip
+        is Zlib -> other is Zlib
+    }
+
     public companion object {
         public inline fun Gzip(from: Gzip = Gzip.Default, builderAction: Gzip.Builder.() -> Unit): Gzip =
             Gzip.Builder(from).apply(builderAction).build()

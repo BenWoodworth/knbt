@@ -30,12 +30,14 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
 
         val nonClosingSource = NonClosingSource(source).buffer()
 
-        try {
-            val detectedCompression = NbtCompression.detect(nonClosingSource)
-            if (compression != detectedCompression) {
-                throw NbtDecodingException("Expected compression to be ${compression.name}, but was ${detectedCompression.name}")
-            }
+        val detectedCompression = try {
+            NbtCompression.detect(nonClosingSource)
         } catch (e: NbtDecodingException) {
+            null
+        }
+
+        if (detectedCompression != null && !compression.equalsType(detectedCompression)) {
+            throw NbtDecodingException("Expected compression to be ${compression.name}, but was ${detectedCompression.name}")
         }
 
         this.source = nonClosingSource
