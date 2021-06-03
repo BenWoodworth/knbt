@@ -10,28 +10,32 @@ for [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization).
 
 Technical information about NBT can be found [here](https://wiki.vg/NBT).
 
-Using the same version of kotlinx.serialization is recommended since parts of its API required for custom formats are
-still experimental, and newer versions may have binary-incompatible changes that could break knbt's implementation.
+### Features
 
-## Configuration
+- Kotlin Multiplatform: JVM, JS, Linux, Windows, macOS, iOS, watchOS
+- Supports all NBT variants: Java, Bedrock Files, Bedrock Network
+- Supports all NBT compressions: gzip, zlib
+- Binary-identical round trip serialization of uncompressed NBT
+- Type-safe sealed NbtTag hierarchy, and convenient builder DSLs
+
+## Serialization
+
+An `Nbt` instance can be used to encode/decode `@Serializable` data. When serializing to/from NBT binary, `variant` and
+`compression` must be configured, and the data must be a structure with a single named element, as per the NBT spec.
+
+### Configuration
 
 ```kotlin
 val nbt = Nbt {
-    variant = null // Java, Bedrock
-    compression = null // Gzip, Zlib
+    variant = null // Java, Bedrock, BedrockNetwork
+    compression = null // None, Gzip, Zlib
     encodeDefaults = false
     ignoreUnknownKeys = false
     serializersModule = EmptySerializersModule
 }
 ```
 
-## Serialization
-
-An `Nbt` instance can be used to encode/decode `@Serializable` data. When serializing to/from NBT binary, the data must
-be a structure with a single named element (as per the NBT spec).
-
-When deserializing, the compression will be automatically detected and decompressed. When serializing, the compression
-method set in the configuration will be used.
+### Encoding and Decoding
 
 ```kotlin
 // ByteArray
@@ -55,8 +59,6 @@ value = nbt.decodeFrom(inputStream)
 
 Serializable classes marked with `@NbtRoot` will be nested in a compound tag with the given `name`.
 
-Example usage:
-
 ```kotlin
 @Serializable
 @NbtRoot(name = "root")
@@ -71,13 +73,13 @@ Nbt.encodeToNbtTag(Example(string = "Hello, World!", int = 42))
 The sealed `NbtTag` interface has the following immutable implementations:
 
 ```kotlin
-value class NbtByte : NbtTag
-value class NbtShort : NbtTag
-value class NbtInt : NbtTag
-value class NbtLong : NbtTag
-value class NbtFloat : NbtTag
-value class NbtDouble : NbtTag
-value class NbtString : NbtTag
+class NbtByte : NbtTag
+class NbtShort : NbtTag
+class NbtInt : NbtTag
+class NbtLong : NbtTag
+class NbtFloat : NbtTag
+class NbtDouble : NbtTag
+class NbtString : NbtTag
 class NbtByteArray : NbtTag, List<Byte>
 class NbtIntArray : NbtTag, List<Int>
 class NbtLongArray : NbtTag, List<Long>
@@ -140,6 +142,9 @@ val bigtest = buildNbt("Level") {
 ```
 
 # Setup
+
+Using the same version of kotlinx.serialization is recommended since parts of its API required for custom formats are
+still experimental, and newer versions may have binary-incompatible changes that could break knbt's implementation.
 
 ## Gradle
 
