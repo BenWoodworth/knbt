@@ -23,7 +23,7 @@ public fun <T> Nbt.encodeTo(outputStream: OutputStream, serializer: Serializatio
  * *Note*: It is the caller's responsibility to close the [outputStream].
  */
 public inline fun <reified T> Nbt.encodeTo(outputStream: OutputStream, value: T): Unit =
-    encodeTo(outputStream, serializer(), value)
+    encodeTo(outputStream, serializersModule.serializer(), value)
 
 /**
  * Decode NBT from an [InputStream].
@@ -40,4 +40,4 @@ public fun <T> Nbt.decodeFrom(inputStream: InputStream, deserializer: Deserializ
  * *Note*: It is the caller's responsibility to close the [inputStream].
  */
 public inline fun <reified T> Nbt.decodeFrom(inputStream: InputStream): T =
-    decodeFrom(inputStream, serializer())
+    decodeFrom(inputStream, serializersModule.serializer())

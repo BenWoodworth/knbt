@@ -150,7 +150,7 @@ public fun <T> Nbt.encodeTo(sink: Sink, serializer: SerializationStrategy<T>, va
  */
 @OkioApi
 public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
-    encodeTo(sink, serializer(), value)
+    encodeTo(sink, serializersModule.serializer(), value)
 
 /**
  * Decode NBT from a [Source].
@@ -170,7 +170,7 @@ public fun <T> Nbt.decodeFrom(source: Source, deserializer: DeserializationStrat
  */
 @OkioApi
 public inline fun <reified T> Nbt.decodeFrom(source: Source): T =
-    decodeFrom(source, serializer())
+    decodeFrom(source, serializersModule.serializer())
 
 /**
  * Encode NBT to a [ByteArray].
@@ -183,7 +183,7 @@ public fun <T> Nbt.encodeToByteArray(serializer: SerializationStrategy<T>, value
  * Encode NBT to a [ByteArray].
  */
 public inline fun <reified T> Nbt.encodeToByteArray(value: T): ByteArray =
-    encodeToByteArray(serializer(), value)
+    encodeToByteArray(serializersModule.serializer(), value)
 
 /**
  * Decode NBT from a [ByteArray].
@@ -196,7 +196,7 @@ public fun <T> Nbt.decodeFromByteArray(deserializer: DeserializationStrategy<T>,
  * Decode NBT from a [ByteArray].
  */
 public inline fun <reified T> Nbt.decodeFromByteArray(byteArray: ByteArray): T =
-    decodeFromByteArray(serializer(), byteArray)
+    decodeFromByteArray(serializersModule.serializer(), byteArray)
 
 /**
  * Encode to Stringified NBT.
@@ -212,7 +212,7 @@ public fun <T> Nbt.encodeToStringifiedNbt(serializer: SerializationStrategy<T>, 
  */
 @ExperimentalNbtApi
 public inline fun <reified T> Nbt.encodeToStringifiedNbt(value: T): String =
-    encodeToStringifiedNbt(serializer(), value)
+    encodeToStringifiedNbt(serializersModule.serializer(), value)
 
 /**
  * Encode to [NbtTag].
@@ -227,7 +227,7 @@ public fun <T> Nbt.encodeToNbtTag(serializer: SerializationStrategy<T>, value: T
  * Encode to [NbtTag].
  */
 public inline fun <reified T> Nbt.encodeToNbtTag(value: T): NbtTag =
-    encodeToNbtTag(serializer(), value)
+    encodeToNbtTag(serializersModule.serializer(), value)
 
 /**
  * Decode from [NbtTag].
@@ -239,5 +239,5 @@ public fun <T> Nbt.decodeFromNbtTag(deserializer: DeserializationStrategy<T>, ta
  * Decode from [NbtTag].
  */
 public inline fun <reified T> Nbt.decodeFromNbtTag(tag: NbtTag): T =
-    decodeFromNbtTag(serializer(), tag)
+    decodeFromNbtTag(serializersModule.serializer(), tag)
 
