@@ -90,6 +90,7 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
 
     /**
      * The compression method to use when writing NBT binary.
+     * `null` by default.
      */
     public var compression: NbtCompression? = nbt.configuration.compression
 

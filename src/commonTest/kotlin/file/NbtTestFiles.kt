@@ -33,6 +33,7 @@ val nbtFiles = listOf(
         "test.nbt (uncompressed)",
         Nbt {
             variant = NbtVariant.BigEndian
+            compression = NbtCompression.None
         },
         TestNbt.serializer(), testClass, testTag,
         """
@@ -66,6 +67,7 @@ val nbtFiles = listOf(
         "bigtest.nbt (uncompressed)",
         Nbt {
             variant = NbtVariant.BigEndian
+            compression = NbtCompression.None
         },
         BigTestNbt.serializer(), bigTestClass, bigTestTag,
         """

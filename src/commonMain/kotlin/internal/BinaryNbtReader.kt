@@ -18,7 +18,7 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
 
     init {
         val uncompressedSource = NonClosingSource(source).buffer()
-            .let { NbtCompression.detect(it)?.getUncompressedSource(it) ?: it }
+            .let { NbtCompression.detect(it).getUncompressedSource(it) }
 
         this.source = nbt.configuration.variant
             ?.getBinarySource(uncompressedSource.buffer())

@@ -13,15 +13,18 @@ public sealed class NbtCompression {
     internal abstract fun getCompressingSink(sink: Sink): Sink
 
     public companion object {
-        @Deprecated("Use null instead.", ReplaceWith("null"))
-        public inline val None: NbtCompression?
-            get() = null
-
         public inline fun Gzip(from: Gzip = Gzip.Default, builderAction: Gzip.Builder.() -> Unit): Gzip =
             Gzip.Builder(from).apply(builderAction).build()
 
         public inline fun Zlib(from: Zlib = Zlib.Default, builderAction: Zlib.Builder.() -> Unit): Zlib =
             Zlib.Builder(from).apply(builderAction).build()
+    }
+
+    public object None : NbtCompression() {
+        override fun getUncompressedSource(source: Source): Source = source
+        override fun getCompressingSink(sink: Sink): Sink = sink
+
+        override fun toString(): String = "None"
     }
 
     public open class Gzip private constructor(
@@ -92,10 +95,10 @@ public sealed class NbtCompression {
 /**
  * @throws NbtDecodingException when unable to detect NbtCompression.
  */
-internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression? =
+internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression =
     when (firstByte) {
         // NBT Tag type IDs
-        in 0..12 -> null
+        in 0..12 -> NbtCompression.None
 
         // Gzip header: 0x1F8B
         0x1F.toByte() -> NbtCompression.Gzip
@@ -115,7 +118,7 @@ internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression? =
  * @throws NbtDecodingException when unable to detect NbtCompression.
  */
 @OkioApi
-public fun NbtCompression.Companion.detect(source: BufferedSource): NbtCompression? =
+public fun NbtCompression.Companion.detect(source: BufferedSource): NbtCompression =
     detect(source.peek().readByte())
 
 /**
@@ -123,5 +126,5 @@ public fun NbtCompression.Companion.detect(source: BufferedSource): NbtCompressi
  *
  * @throws NbtDecodingException when unable to detect NbtCompression.
  */
-public fun NbtCompression.Companion.detect(byteArray: ByteArray): NbtCompression? =
+public fun NbtCompression.Companion.detect(byteArray: ByteArray): NbtCompression =
     detect(byteArray[0])

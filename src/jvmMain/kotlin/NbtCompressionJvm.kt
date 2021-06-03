@@ -10,7 +10,7 @@ import java.io.InputStream
  *
  * @throws UnsupportedOperationException the [stream] does not support marking.
  */
-public fun NbtCompression.Companion.detect(stream: InputStream): NbtCompression? {
+public fun NbtCompression.Companion.detect(stream: InputStream): NbtCompression {
     if (!stream.markSupported()) throw UnsupportedOperationException("The stream must support marking")
 
     stream.mark(1)
