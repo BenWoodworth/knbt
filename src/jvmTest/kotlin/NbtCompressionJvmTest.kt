@@ -10,7 +10,7 @@ class NbtCompressionJvmTest {
     @Test
     fun Should_correctly_detect_compression_from_InputStream() {
         fun testStream(stream: InputStream, expected: NbtCompression) {
-            val bytes = stream.readAllBytes()
+            val bytes = stream.readBytes()
 
             bytes.inputStream().use { byteStream ->
                 val actual = NbtCompression.detect(byteStream)
