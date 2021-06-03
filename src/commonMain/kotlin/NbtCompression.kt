@@ -8,7 +8,7 @@ import okio.BufferedSource
 import okio.Sink
 import okio.Source
 
-public sealed class NbtCompression {
+public sealed class NbtCompression(internal val name: String) {
     internal abstract fun getUncompressedSource(source: Source): Source
     internal abstract fun getCompressingSink(sink: Sink): Sink
 
@@ -20,7 +20,7 @@ public sealed class NbtCompression {
             Zlib.Builder(from).apply(builderAction).build()
     }
 
-    public object None : NbtCompression() {
+    public object None : NbtCompression("None") {
         override fun getUncompressedSource(source: Source): Source = source
         override fun getCompressingSink(sink: Sink): Sink = sink
 
@@ -29,7 +29,7 @@ public sealed class NbtCompression {
 
     public open class Gzip private constructor(
         public val level: Int?,
-    ) : NbtCompression() {
+    ) : NbtCompression("Gzip") {
         override fun getUncompressedSource(source: Source): Source = source.asGzipSource()
         override fun getCompressingSink(sink: Sink): Sink = sink.asGzipSink(level ?: -1)
 
@@ -61,7 +61,7 @@ public sealed class NbtCompression {
 
     public open class Zlib private constructor(
         public val level: Int?,
-    ) : NbtCompression() {
+    ) : NbtCompression("Zlib") {
         override fun getUncompressedSource(source: Source): Source = source.asZlibSource()
         override fun getCompressingSink(sink: Sink): Sink = sink.asZlibSink(level ?: -1)
 

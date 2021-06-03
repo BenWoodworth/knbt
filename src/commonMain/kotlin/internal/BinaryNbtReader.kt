@@ -17,12 +17,30 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
     private val source: BinarySource
 
     init {
-        val uncompressedSource = NonClosingSource(source).buffer()
-            .let { NbtCompression.detect(it).getUncompressedSource(it) }
+        val variant = nbt.configuration.variant
+        val compression = nbt.configuration.compression
 
-        this.source = nbt.configuration.variant
-            ?.getBinarySource(uncompressedSource.buffer())
-            ?: throw IllegalArgumentException("NBT variant must be set when serializing NBT binary")
+        require(variant != null && compression != null) {
+            val unset = mutableListOf<String>()
+            if (variant == null) unset += "variant"
+            if (compression == null) unset += "compression"
+
+            "NBT variant and compression must be set when serializing binary. Not set: ${unset.joinToString()}."
+        }
+
+        val nonClosingSource = NonClosingSource(source).buffer()
+
+        try {
+            val detectedCompression = NbtCompression.detect(nonClosingSource)
+            if (compression != detectedCompression) {
+                throw NbtDecodingException("Expected compression to be ${compression.name}, but was ${detectedCompression.name}")
+            }
+        } catch (e: NbtDecodingException) {
+        }
+
+        this.source = nonClosingSource
+            .let { compression.getUncompressedSource(it) }
+            .let { variant.getBinarySource(it.buffer()) }
     }
 
     override fun close(): Unit = source.close()
