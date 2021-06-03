@@ -27,7 +27,7 @@ class BinaryNbtWriterTest {
             val out = file.nbt.encodeToByteArray(file.valueSerializer as KSerializer<Any>, file.value)
 
             val outCompression = try {
-                out.asSource().buffer().peekNbtCompression()
+                NbtCompression.detect(out.asSource().buffer())
             } catch (t: Throwable) {
                 throw Exception("Unable to check compression type", t)
             }
@@ -54,7 +54,7 @@ class BinaryNbtWriterTest {
             val out = file.nbt.encodeToByteArray(NbtTag.serializer(), file.nbtTag)
 
             val outCompression = try {
-                out.asSource().buffer().peekNbtCompression()
+                NbtCompression.detect(out.asSource().buffer())
             } catch (t: Throwable) {
                 throw Exception("Unable to check compression type", t)
             }

@@ -4,6 +4,7 @@ import net.benwoodworth.knbt.internal.asGzipSink
 import net.benwoodworth.knbt.internal.asGzipSource
 import net.benwoodworth.knbt.internal.asZlibSink
 import net.benwoodworth.knbt.internal.asZlibSource
+import okio.BufferedSource
 import okio.Sink
 import okio.Source
 
@@ -87,3 +88,40 @@ public sealed class NbtCompression {
         }
     }
 }
+
+/**
+ * @throws NbtDecodingException when unable to detect NbtCompression.
+ */
+internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression? =
+    when (firstByte) {
+        // NBT Tag type IDs
+        in 0..12 -> null
+
+        // Gzip header: 0x1F8B
+        0x1F.toByte() -> NbtCompression.Gzip
+
+        // Zlib headers: 0x7801, 0x789C, and 0x78DA
+        0x78.toByte() -> NbtCompression.Zlib
+
+        else -> {
+            val byteStr = firstByte.toUByte().toString(16).uppercase().padStart(2, '0')
+            throw NbtDecodingException("Unable to detect NbtCompression. Unexpected first byte: 0x$byteStr")
+        }
+    }
+
+/**
+ * Peek in the [source] and detect what [NbtCompression] is used.
+ *
+ * @throws NbtDecodingException when unable to detect NbtCompression.
+ */
+@OkioApi
+public fun NbtCompression.Companion.detect(source: BufferedSource): NbtCompression? =
+    detect(source.peek().readByte())
+
+/**
+ * Peek in the [byteArray] and detect what [NbtCompression] is used.
+ *
+ * @throws NbtDecodingException when unable to detect NbtCompression.
+ */
+public fun NbtCompression.Companion.detect(byteArray: ByteArray): NbtCompression? =
+    detect(byteArray[0])

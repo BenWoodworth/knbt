@@ -1,13 +1,12 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.Nbt
-import net.benwoodworth.knbt.NbtDecodingException
-import net.benwoodworth.knbt.NbtEncodingException
+import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import okio.Closeable
 import okio.Source
 import okio.buffer
 
+@OptIn(OkioApi::class)
 internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable {
     private var compoundNesting = 0
     private var readRootEntry = false
@@ -19,7 +18,7 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
 
     init {
         val uncompressedSource = NonClosingSource(source).buffer()
-            .let { it.peekNbtCompression()?.getUncompressedSource(it) ?: it }
+            .let { NbtCompression.detect(it)?.getUncompressedSource(it) ?: it }
 
         this.source = nbt.configuration.variant
             ?.getBinarySource(uncompressedSource.buffer())
