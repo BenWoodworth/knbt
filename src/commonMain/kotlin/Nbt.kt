@@ -25,6 +25,7 @@ public sealed class Nbt constructor(
         configuration = NbtConfiguration(
             variant = null,
             compression = null,
+            compressionLevel = null,
             encodeDefaults = false,
             ignoreUnknownKeys = false,
         ),
@@ -95,6 +96,21 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
     public var compression: NbtCompression? = nbt.configuration.compression
 
     /**
+     * The compression level, in `0..9` or `null`.
+     * `null` by default.
+     *
+     * - `0` gives no compression at all
+     * - `1` gives the best speed
+     * - `9` gives the best compression.
+     * - `null` requests a compromise between speed and compression.
+     */
+    public var compressionLevel: Int? = nbt.configuration.compressionLevel
+        set(value) {
+            require(value == null || value in 0..9) { "Compression level must be in 0..9 or null." }
+            field = value
+        }
+
+    /**
      * Specifies whether default values of Kotlin properties should be encoded.
      * `false` by default.
      */
@@ -118,6 +134,7 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
             configuration = NbtConfiguration(
                 variant = variant,
                 compression = compression,
+                compressionLevel = compressionLevel,
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
             ),

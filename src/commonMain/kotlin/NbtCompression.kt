@@ -8,94 +8,52 @@ import okio.BufferedSource
 import okio.Sink
 import okio.Source
 
-public sealed class NbtCompression(internal val name: String) {
+public abstract class NbtCompression private constructor() {
     internal abstract fun getUncompressedSource(source: Source): Source
-    internal abstract fun getCompressingSink(sink: Sink): Sink
-
-    internal fun equalsType(other: NbtCompression): Boolean = when (this) {
-        None -> other == None
-        is Gzip -> other is Gzip
-        is Zlib -> other is Zlib
-    }
+    internal abstract fun getCompressingSink(sink: Sink, level: Int?): Sink
 
     public companion object {
-        public inline fun Gzip(from: Gzip = Gzip.Default, builderAction: Gzip.Builder.() -> Unit): Gzip =
-            Gzip.Builder(from).apply(builderAction).build()
+        @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith", "UNUSED_PARAMETER")
+        @Deprecated("Compression level moved to NbtConfigureation.compressionLevel", level = DeprecationLevel.ERROR)
+        public fun Gzip(from: Gzip = Gzip, builderAction: Gzip.Builder.() -> Unit): Gzip =
+            throw UnsupportedOperationException("Compression level moved to NbtConfigureation.compressionLevel")
 
-        public inline fun Zlib(from: Zlib = Zlib.Default, builderAction: Zlib.Builder.() -> Unit): Zlib =
-            Zlib.Builder(from).apply(builderAction).build()
+        @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith", "UNUSED_PARAMETER")
+        @Deprecated("Compression level moved to NbtConfigureation.compressionLevel", level = DeprecationLevel.ERROR)
+        public inline fun Zlib(from: Zlib = Zlib, builderAction: Gzip.Builder.() -> Unit): Zlib =
+            throw UnsupportedOperationException("Compression level moved to NbtConfigureation.compressionLevel")
     }
 
-    public object None : NbtCompression("None") {
+    public object None : NbtCompression() {
         override fun getUncompressedSource(source: Source): Source = source
-        override fun getCompressingSink(sink: Sink): Sink = sink
+        override fun getCompressingSink(sink: Sink, level: Int?): Sink = sink
 
         override fun toString(): String = "None"
     }
 
-    public open class Gzip private constructor(
-        public val level: Int?,
-    ) : NbtCompression("Gzip") {
+    public object Gzip : NbtCompression() {
         override fun getUncompressedSource(source: Source): Source = source.asGzipSource()
-        override fun getCompressingSink(sink: Sink): Sink = sink.asGzipSink(level ?: -1)
+        override fun getCompressingSink(sink: Sink, level: Int?): Sink = sink.asGzipSink(level ?: -1)
 
-        override fun toString(): String =
-            if (this == Gzip) "Gzip" else "Gzip(level = $level)"
+        override fun toString(): String = "Gzip"
 
-        public companion object Default : Gzip(level = null)
-
-        @NbtDslMarker
-        public class Builder @PublishedApi internal constructor(gzip: Gzip) {
-            /**
-             * The compression level, in `0..9` or `null`.
-             *
-             * `0` gives no compression at all, `1` gives the best speed, and `9` gives the best compression.
-             *
-             * `null` by default, which requests a compromise between speed and compression.
-             */
-            public var level: Int? = gzip.level
-                set(value) {
-                    require(value == null || value in 0..9) { "Must be in 0..9 or null." }
-                    field = value
-                }
-
-            @PublishedApi
-            internal fun build(): Gzip = Gzip(
-                level = level,
-            )
+        @Deprecated("Compression level moved to NbtConfigureation.compressionLevel")
+        public class Builder {
+            @Deprecated("Compression level moved to NbtConfiguration.compressionLevel", level = DeprecationLevel.ERROR)
+            public var level: Int? = null
         }
     }
 
-    public open class Zlib private constructor(
-        public val level: Int?,
-    ) : NbtCompression("Zlib") {
+    public object Zlib : NbtCompression() {
         override fun getUncompressedSource(source: Source): Source = source.asZlibSource()
-        override fun getCompressingSink(sink: Sink): Sink = sink.asZlibSink(level ?: -1)
+        override fun getCompressingSink(sink: Sink, level: Int?): Sink = sink.asZlibSink(level ?: -1)
 
-        override fun toString(): String =
-            if (this == Zlib) "Zlib" else "Zlib(level = $level)"
+        override fun toString(): String = "Zlib"
 
-        public companion object Default : Zlib(level = null)
-
-        @NbtDslMarker
-        public class Builder @PublishedApi internal constructor(zlib: Zlib) {
-            /**
-             * The compression level, in `0..9` or `null`.
-             *
-             * `0` gives no compression at all, `1` gives the best speed, and `9` gives the best compression.
-             *
-             * `null` by default, which requests a compromise between speed and compression.
-             */
-            public var level: Int? = zlib.level
-                set(value) {
-                    require(value == null || value in 0..9) { "Must be in 0..9 or null." }
-                    field = value
-                }
-
-            @PublishedApi
-            internal fun build(): Zlib = Zlib(
-                level = level,
-            )
+        @Deprecated("Compression level moved to NbtConfigureation.compressionLevel")
+        public class Builder {
+            @Deprecated("Compression level moved to NbtConfiguration.compressionLevel", level = DeprecationLevel.ERROR)
+            public var level: Int? = null
         }
     }
 }

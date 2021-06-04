@@ -36,8 +36,8 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
             null
         }
 
-        if (detectedCompression != null && !compression.equalsType(detectedCompression)) {
-            throw NbtDecodingException("Expected compression to be ${compression.name}, but was ${detectedCompression.name}")
+        if (detectedCompression != null && compression != detectedCompression) {
+            throw NbtDecodingException("Expected compression to be $compression, but was $detectedCompression")
         }
 
         this.source = nonClosingSource
