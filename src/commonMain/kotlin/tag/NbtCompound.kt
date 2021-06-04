@@ -27,8 +27,8 @@ public class NbtCompound<out T : NbtTag> internal constructor(
 
     override fun toString(): String = value.toString()
 
-    internal companion object {
-        val empty = NbtCompound<Nothing>(emptyMap())
+    public companion object {
+        internal val empty = NbtCompound<Nothing>(emptyMap())
     }
 }
 
