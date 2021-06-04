@@ -26,9 +26,11 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
             "NBT variant and compression must be set when serializing binary. Not set: ${unset.joinToString()}."
         }
 
-        this.sink = NonClosingSink(sink)
-            .let { compression.getCompressingSink(it, nbt.configuration.compressionLevel) }
-            .let { variant.getBinarySink(it.buffer()) }
+        this.sink = with(compression) {
+            NonClosingSink(sink)
+                .compress(nbt.configuration.compressionLevel)
+                .let { variant.getBinarySink(it.buffer()) }
+        }
     }
 
     override fun close(): Unit = sink.close()

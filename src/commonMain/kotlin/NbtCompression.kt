@@ -9,8 +9,8 @@ import okio.Sink
 import okio.Source
 
 public abstract class NbtCompression private constructor() {
-    internal abstract fun getUncompressedSource(source: Source): Source
-    internal abstract fun getCompressingSink(sink: Sink, level: Int?): Sink
+    internal abstract fun Source.decompress(): Source
+    internal abstract fun Sink.compress(level: Int?): Sink
 
     public companion object {
         @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith", "UNUSED_PARAMETER")
@@ -25,15 +25,15 @@ public abstract class NbtCompression private constructor() {
     }
 
     public object None : NbtCompression() {
-        override fun getUncompressedSource(source: Source): Source = source
-        override fun getCompressingSink(sink: Sink, level: Int?): Sink = sink
+        override fun Source.decompress(): Source = this
+        override fun Sink.compress(level: Int?): Sink = this
 
         override fun toString(): String = "None"
     }
 
     public object Gzip : NbtCompression() {
-        override fun getUncompressedSource(source: Source): Source = source.asGzipSource()
-        override fun getCompressingSink(sink: Sink, level: Int?): Sink = sink.asGzipSink(level ?: -1)
+        override fun Source.decompress(): Source = this.asGzipSource()
+        override fun Sink.compress(level: Int?): Sink = this.asGzipSink(level ?: -1)
 
         override fun toString(): String = "Gzip"
 
@@ -45,8 +45,8 @@ public abstract class NbtCompression private constructor() {
     }
 
     public object Zlib : NbtCompression() {
-        override fun getUncompressedSource(source: Source): Source = source.asZlibSource()
-        override fun getCompressingSink(sink: Sink, level: Int?): Sink = sink.asZlibSink(level ?: -1)
+        override fun Source.decompress(): Source = this.asZlibSource()
+        override fun Sink.compress(level: Int?): Sink = this.asZlibSink(level ?: -1)
 
         override fun toString(): String = "Zlib"
 
