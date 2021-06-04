@@ -41,9 +41,12 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
         }
 
         this.source = with(compression) {
-            nonClosingSource
-                .decompress()
-                .let { variant.getBinarySource(it.buffer()) }
+            with(variant) {
+                nonClosingSource
+                    .decompress()
+                    .buffer()
+                    .asBinarySource()
+            }
         }
     }
 

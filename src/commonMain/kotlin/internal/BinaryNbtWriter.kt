@@ -27,9 +27,12 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
         }
 
         this.sink = with(compression) {
-            NonClosingSink(sink)
-                .compress(nbt.configuration.compressionLevel)
-                .let { variant.getBinarySink(it.buffer()) }
+            with(variant) {
+                NonClosingSink(sink)
+                    .compress(nbt.configuration.compressionLevel)
+                    .buffer()
+                    .asBinarySink()
+            }
         }
     }
 
