@@ -30,7 +30,7 @@ public sealed interface NbtTag {
 }
 
 internal object NbtTagSerializer : KSerializer<NbtTag> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("net.benwoodworth.knbt.NbtTag")
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("net.benwoodworth.knbt.tag.NbtTag")
 
     override fun serialize(encoder: Encoder, value: NbtTag): Unit =
         encoder.asNbtEncoder().encodeNbtTag(value)

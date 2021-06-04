@@ -103,6 +103,6 @@ internal class NbtCompoundSerializer<T : NbtTag>(
         val elementDescriptor: SerialDescriptor,
     ) : SerialDescriptor by mapSerialDescriptor(String.serializer().descriptor, elementDescriptor) {
         @ExperimentalSerializationApi
-        override val serialName: String = "net.benwoodworth.knbt.NbtCompound"
+        override val serialName: String = "net.benwoodworth.knbt.tag.NbtCompound"
     }
 }

@@ -117,6 +117,6 @@ internal class NbtListSerializer<T : NbtTag>(
         val elementDescriptor: SerialDescriptor,
     ) : SerialDescriptor by listSerialDescriptor(elementDescriptor) {
         @ExperimentalSerializationApi
-        override val serialName: String = "net.benwoodworth.knbt.NbtList"
+        override val serialName: String = "net.benwoodworth.knbt.tag.NbtList"
     }
 }
