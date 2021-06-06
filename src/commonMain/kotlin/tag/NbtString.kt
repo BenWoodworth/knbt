@@ -25,7 +25,7 @@ public fun String.toNbtString(): NbtString = NbtString(this)
 
 internal object NbtStringSerializer : KSerializer<NbtString> {
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("net.benwoodworth.knbt.NbtString", PrimitiveKind.STRING)
+        PrimitiveSerialDescriptor("net.benwoodworth.knbt.tag.NbtString", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: NbtString): Unit =
         encoder.asNbtEncoder().encodeString(value.value)

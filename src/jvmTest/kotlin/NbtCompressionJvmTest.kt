@@ -14,7 +14,7 @@ class NbtCompressionJvmTest {
 
             bytes.inputStream().use { byteStream ->
                 val actual = NbtCompression.detect(byteStream)
-                assert(actual.equalsType(expected)) { "Expected ${expected.name}, but was ${actual.name}" }
+                assert(actual == expected) { "Expected $expected, but was $actual" }
 
                 val readBytes = byteStream.readBytes()
                 assertContentEquals(bytes, readBytes, "Detecting compression should not advance the stream")

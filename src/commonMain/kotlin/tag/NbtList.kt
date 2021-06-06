@@ -27,8 +27,8 @@ public class NbtList<out T : NbtTag> internal constructor(
 
     override fun toString(): String = value.toString()
 
-    internal companion object {
-        val empty: NbtList<Nothing> = NbtList(emptyList())
+    public companion object {
+        internal val empty: NbtList<Nothing> = NbtList(emptyList())
     }
 }
 
@@ -117,6 +117,6 @@ internal class NbtListSerializer<T : NbtTag>(
         val elementDescriptor: SerialDescriptor,
     ) : SerialDescriptor by listSerialDescriptor(elementDescriptor) {
         @ExperimentalSerializationApi
-        override val serialName: String = "net.benwoodworth.knbt.NbtList"
+        override val serialName: String = "net.benwoodworth.knbt.tag.NbtList"
     }
 }

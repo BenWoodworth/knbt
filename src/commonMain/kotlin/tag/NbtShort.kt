@@ -27,7 +27,7 @@ public fun NbtShort.toShort(): Short = value
 
 internal object NbtShortSerializer : KSerializer<NbtShort> {
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("net.benwoodworth.knbt.NbtShort", PrimitiveKind.SHORT)
+        PrimitiveSerialDescriptor("net.benwoodworth.knbt.tag.NbtShort", PrimitiveKind.SHORT)
 
     override fun serialize(encoder: Encoder, value: NbtShort): Unit =
         encoder.asNbtEncoder().encodeShort(value.value)

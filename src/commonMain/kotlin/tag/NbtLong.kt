@@ -27,7 +27,7 @@ public fun NbtLong.toLong(): Long = value
 
 internal object NbtLongSerializer : KSerializer<NbtLong> {
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("net.benwoodworth.knbt.NbtLong", PrimitiveKind.LONG)
+        PrimitiveSerialDescriptor("net.benwoodworth.knbt.tag.NbtLong", PrimitiveKind.LONG)
 
     override fun serialize(encoder: Encoder, value: NbtLong): Unit =
         encoder.asNbtEncoder().encodeLong(value.value)

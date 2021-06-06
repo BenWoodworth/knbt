@@ -26,7 +26,7 @@ public fun NbtInt.toInt(): Int = value
 
 internal object NbtIntSerializer : KSerializer<NbtInt> {
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("NbtInt", PrimitiveKind.INT)
+        PrimitiveSerialDescriptor("net.benwoodworth.knbt.tag.NbtInt", PrimitiveKind.INT)
 
     override fun serialize(encoder: Encoder, value: NbtInt): Unit =
         encoder.asNbtEncoder().encodeInt(value.value)

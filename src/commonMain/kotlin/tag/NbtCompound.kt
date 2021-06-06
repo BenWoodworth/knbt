@@ -27,8 +27,8 @@ public class NbtCompound<out T : NbtTag> internal constructor(
 
     override fun toString(): String = value.toString()
 
-    internal companion object {
-        val empty = NbtCompound<Nothing>(emptyMap())
+    public companion object {
+        internal val empty = NbtCompound<Nothing>(emptyMap())
     }
 }
 
@@ -103,6 +103,6 @@ internal class NbtCompoundSerializer<T : NbtTag>(
         val elementDescriptor: SerialDescriptor,
     ) : SerialDescriptor by mapSerialDescriptor(String.serializer().descriptor, elementDescriptor) {
         @ExperimentalSerializationApi
-        override val serialName: String = "net.benwoodworth.knbt.NbtCompound"
+        override val serialName: String = "net.benwoodworth.knbt.tag.NbtCompound"
     }
 }

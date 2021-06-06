@@ -5,8 +5,8 @@ import okio.BufferedSink
 import okio.BufferedSource
 
 public sealed class NbtVariant {
-    internal abstract fun getBinarySource(source: BufferedSource): BinarySource
-    internal abstract fun getBinarySink(sink: BufferedSink): BinarySink
+    internal abstract fun BufferedSource.asBinarySource(): BinarySource
+    internal abstract fun BufferedSink.asBinarySink(): BinarySink
 
     public companion object {
         /**
@@ -29,31 +29,31 @@ public sealed class NbtVariant {
     }
 
     public object BigEndian : NbtVariant() {
-        override fun getBinarySource(source: BufferedSource): BinarySource =
-            BigEndianBinarySource(source)
+        override fun BufferedSource.asBinarySource(): BinarySource =
+            BigEndianBinarySource(this)
 
-        override fun getBinarySink(sink: BufferedSink): BinarySink =
-            BigEndianBinarySink(sink)
+        override fun BufferedSink.asBinarySink(): BinarySink =
+            BigEndianBinarySink(this)
 
         override fun toString(): String = "BigEndian"
     }
 
     public object LittleEndian : NbtVariant() {
-        override fun getBinarySource(source: BufferedSource): BinarySource =
-            LittleEndianBinarySource(source)
+        override fun BufferedSource.asBinarySource(): BinarySource =
+            LittleEndianBinarySource(this)
 
-        override fun getBinarySink(sink: BufferedSink): BinarySink =
-            LittleEndianBinarySink(sink)
+        override fun BufferedSink.asBinarySink(): BinarySink =
+            LittleEndianBinarySink(this)
 
         override fun toString(): String = "LittleEndian"
     }
 
     public object LittleEndianBase128 : NbtVariant() {
-        override fun getBinarySource(source: BufferedSource): BinarySource =
-            LittleEndianBase128BinarySource(source)
+        override fun BufferedSource.asBinarySource(): BinarySource =
+            LittleEndianBase128BinarySource(this)
 
-        override fun getBinarySink(sink: BufferedSink): BinarySink =
-            LittleEndianBase128BinarySink(sink)
+        override fun BufferedSink.asBinarySink(): BinarySink =
+            LittleEndianBase128BinarySink(this)
 
         override fun toString(): String = "LittleEndianBase128"
     }

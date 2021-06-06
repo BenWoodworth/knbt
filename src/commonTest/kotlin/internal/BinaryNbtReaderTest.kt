@@ -90,10 +90,14 @@ class BinaryNbtReaderTest {
             assertNotNull(errorMessage)
             assertContains(
                 errorMessage,
-                configured.name,
+                configured.toString(),
                 message = "Error message should contain configured compression name"
             )
-            assertContains(errorMessage, actual.name, message = "Error message should contain actual compression name")
+            assertContains(
+                errorMessage,
+                actual.toString(),
+                message = "Error message should contain actual compression name"
+            )
         }
 
         compressions

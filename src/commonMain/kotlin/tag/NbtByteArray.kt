@@ -38,7 +38,7 @@ public fun Collection<Byte>.toNbtByteArray(): NbtByteArray = NbtByteArray(this.t
 internal object NbtByteArraySerializer : KSerializer<NbtByteArray> {
     private object NbtByteArrayDescriptor : SerialDescriptor by serialDescriptor<ByteArray>() {
         @ExperimentalSerializationApi
-        override val serialName: String = "net.benwoodworth.knbt.NbtByteArray"
+        override val serialName: String = "net.benwoodworth.knbt.tag.NbtByteArray"
     }
 
     override val descriptor: SerialDescriptor = NbtByteArrayDescriptor

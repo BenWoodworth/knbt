@@ -30,6 +30,7 @@ An `Nbt` instance can be used to encode/decode `@Serializable` data. When serial
 val nbt = Nbt {
     variant = null // Java, Bedrock, BedrockNetwork
     compression = null // None, Gzip, Zlib
+    compressionLevel = null // in 0..9
     encodeDefaults = false
     ignoreUnknownKeys = false
     serializersModule = EmptySerializersModule
