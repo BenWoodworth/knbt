@@ -89,11 +89,13 @@ public final class net/benwoodworth/knbt/NbtBuilder {
 	public fun <init> (Lnet/benwoodworth/knbt/Nbt;)V
 	public final fun build$knbt ()Lnet/benwoodworth/knbt/Nbt;
 	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
+	public final fun getCompressionLevel ()Ljava/lang/Integer;
 	public final fun getEncodeDefaults ()Z
 	public final fun getIgnoreUnknownKeys ()Z
 	public final fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
 	public final fun getVariant ()Lnet/benwoodworth/knbt/NbtVariant;
 	public final fun setCompression (Lnet/benwoodworth/knbt/NbtCompression;)V
+	public final fun setCompressionLevel (Ljava/lang/Integer;)V
 	public final fun setEncodeDefaults (Z)V
 	public final fun setIgnoreUnknownKeys (Z)V
 	public final fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
@@ -106,11 +108,8 @@ public final class net/benwoodworth/knbt/NbtBuilderKt {
 
 public abstract class net/benwoodworth/knbt/NbtCompression {
 	public static final field Companion Lnet/benwoodworth/knbt/NbtCompression$Companion;
-	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun equalsType$knbt (Lnet/benwoodworth/knbt/NbtCompression;)Z
-	public abstract fun getCompressingSink$knbt (Lokio/Sink;)Lokio/Sink;
-	public final fun getName$knbt ()Ljava/lang/String;
-	public abstract fun getUncompressedSource$knbt (Lokio/Source;)Lokio/Source;
+	public abstract fun compress$knbt (Lokio/Sink;Ljava/lang/Integer;)Lokio/Sink;
+	public abstract fun decompress$knbt (Lokio/Source;)Lokio/Source;
 }
 
 public final class net/benwoodworth/knbt/NbtCompression$Companion {
@@ -120,49 +119,37 @@ public final class net/benwoodworth/knbt/NbtCompression$Companion {
 	public static synthetic fun Zlib$default (Lnet/benwoodworth/knbt/NbtCompression$Companion;Lnet/benwoodworth/knbt/NbtCompression$Zlib;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtCompression$Zlib;
 }
 
-public class net/benwoodworth/knbt/NbtCompression$Gzip : net/benwoodworth/knbt/NbtCompression {
-	public static final field Default Lnet/benwoodworth/knbt/NbtCompression$Gzip$Default;
-	public synthetic fun <init> (Ljava/lang/Integer;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun getCompressingSink$knbt (Lokio/Sink;)Lokio/Sink;
-	public final fun getLevel ()Ljava/lang/Integer;
-	public fun getUncompressedSource$knbt (Lokio/Source;)Lokio/Source;
+public final class net/benwoodworth/knbt/NbtCompression$Gzip : net/benwoodworth/knbt/NbtCompression {
+	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtCompression$Gzip;
+	public fun compress$knbt (Lokio/Sink;Ljava/lang/Integer;)Lokio/Sink;
+	public fun decompress$knbt (Lokio/Source;)Lokio/Source;
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtCompression$Gzip$Builder {
-	public fun <init> (Lnet/benwoodworth/knbt/NbtCompression$Gzip;)V
-	public final fun build ()Lnet/benwoodworth/knbt/NbtCompression$Gzip;
+	public fun <init> ()V
 	public final fun getLevel ()Ljava/lang/Integer;
 	public final fun setLevel (Ljava/lang/Integer;)V
-}
-
-public final class net/benwoodworth/knbt/NbtCompression$Gzip$Default : net/benwoodworth/knbt/NbtCompression$Gzip {
 }
 
 public final class net/benwoodworth/knbt/NbtCompression$None : net/benwoodworth/knbt/NbtCompression {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtCompression$None;
-	public fun getCompressingSink$knbt (Lokio/Sink;)Lokio/Sink;
-	public fun getUncompressedSource$knbt (Lokio/Source;)Lokio/Source;
+	public fun compress$knbt (Lokio/Sink;Ljava/lang/Integer;)Lokio/Sink;
+	public fun decompress$knbt (Lokio/Source;)Lokio/Source;
 	public fun toString ()Ljava/lang/String;
 }
 
-public class net/benwoodworth/knbt/NbtCompression$Zlib : net/benwoodworth/knbt/NbtCompression {
-	public static final field Default Lnet/benwoodworth/knbt/NbtCompression$Zlib$Default;
-	public synthetic fun <init> (Ljava/lang/Integer;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun getCompressingSink$knbt (Lokio/Sink;)Lokio/Sink;
-	public final fun getLevel ()Ljava/lang/Integer;
-	public fun getUncompressedSource$knbt (Lokio/Source;)Lokio/Source;
+public final class net/benwoodworth/knbt/NbtCompression$Zlib : net/benwoodworth/knbt/NbtCompression {
+	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtCompression$Zlib;
+	public fun compress$knbt (Lokio/Sink;Ljava/lang/Integer;)Lokio/Sink;
+	public fun decompress$knbt (Lokio/Source;)Lokio/Source;
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtCompression$Zlib$Builder {
-	public fun <init> (Lnet/benwoodworth/knbt/NbtCompression$Zlib;)V
-	public final fun build ()Lnet/benwoodworth/knbt/NbtCompression$Zlib;
+	public fun <init> ()V
 	public final fun getLevel ()Ljava/lang/Integer;
 	public final fun setLevel (Ljava/lang/Integer;)V
-}
-
-public final class net/benwoodworth/knbt/NbtCompression$Zlib$Default : net/benwoodworth/knbt/NbtCompression$Zlib {
 }
 
 public final class net/benwoodworth/knbt/NbtCompressionJvmKt {
@@ -176,8 +163,9 @@ public final class net/benwoodworth/knbt/NbtCompressionKt {
 }
 
 public final class net/benwoodworth/knbt/NbtConfiguration {
-	public fun <init> (Lnet/benwoodworth/knbt/NbtVariant;Lnet/benwoodworth/knbt/NbtCompression;ZZ)V
+	public fun <init> (Lnet/benwoodworth/knbt/NbtVariant;Lnet/benwoodworth/knbt/NbtCompression;Ljava/lang/Integer;ZZ)V
 	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
+	public final fun getCompressionLevel ()Ljava/lang/Integer;
 	public final fun getEncodeDefaults ()Z
 	public final fun getIgnoreUnknownKeys ()Z
 	public final fun getVariant ()Lnet/benwoodworth/knbt/NbtVariant;
@@ -254,14 +242,6 @@ public final class net/benwoodworth/knbt/NbtExceptionsKt {
 	public static final fun tryWithPath (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 }
 
-public final class net/benwoodworth/knbt/NbtFile {
-	public fun <init> (Lnet/benwoodworth/knbt/NbtVariant;Lnet/benwoodworth/knbt/NbtCompression;Ljava/lang/String;)V
-	public synthetic fun <init> (Lnet/benwoodworth/knbt/NbtVariant;Lnet/benwoodworth/knbt/NbtCompression;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
-	public final fun getTagName ()Ljava/lang/String;
-	public final fun getVariant ()Lnet/benwoodworth/knbt/NbtVariant;
-}
-
 public final class net/benwoodworth/knbt/NbtKt {
 	public static final fun Nbt (Lnet/benwoodworth/knbt/Nbt;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/Nbt;
 	public static synthetic fun Nbt$default (Lnet/benwoodworth/knbt/Nbt;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lnet/benwoodworth/knbt/Nbt;
@@ -308,14 +288,14 @@ public final class net/benwoodworth/knbt/NbtRootSerializer : kotlinx/serializati
 
 public abstract class net/benwoodworth/knbt/NbtVariant {
 	public static final field Companion Lnet/benwoodworth/knbt/NbtVariant$Companion;
-	public abstract fun getBinarySink$knbt (Lokio/BufferedSink;)Lnet/benwoodworth/knbt/internal/BinarySink;
-	public abstract fun getBinarySource$knbt (Lokio/BufferedSource;)Lnet/benwoodworth/knbt/internal/BinarySource;
+	public abstract fun asBinarySink$knbt (Lokio/BufferedSink;)Lnet/benwoodworth/knbt/internal/BinarySink;
+	public abstract fun asBinarySource$knbt (Lokio/BufferedSource;)Lnet/benwoodworth/knbt/internal/BinarySource;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$BigEndian : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$BigEndian;
-	public fun getBinarySink$knbt (Lokio/BufferedSink;)Lnet/benwoodworth/knbt/internal/BinarySink;
-	public fun getBinarySource$knbt (Lokio/BufferedSource;)Lnet/benwoodworth/knbt/internal/BinarySource;
+	public fun asBinarySink$knbt (Lokio/BufferedSink;)Lnet/benwoodworth/knbt/internal/BinarySink;
+	public fun asBinarySource$knbt (Lokio/BufferedSource;)Lnet/benwoodworth/knbt/internal/BinarySource;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -327,15 +307,15 @@ public final class net/benwoodworth/knbt/NbtVariant$Companion {
 
 public final class net/benwoodworth/knbt/NbtVariant$LittleEndian : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$LittleEndian;
-	public fun getBinarySink$knbt (Lokio/BufferedSink;)Lnet/benwoodworth/knbt/internal/BinarySink;
-	public fun getBinarySource$knbt (Lokio/BufferedSource;)Lnet/benwoodworth/knbt/internal/BinarySource;
+	public fun asBinarySink$knbt (Lokio/BufferedSink;)Lnet/benwoodworth/knbt/internal/BinarySink;
+	public fun asBinarySource$knbt (Lokio/BufferedSource;)Lnet/benwoodworth/knbt/internal/BinarySource;
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$LittleEndianBase128 : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$LittleEndianBase128;
-	public fun getBinarySink$knbt (Lokio/BufferedSink;)Lnet/benwoodworth/knbt/internal/BinarySink;
-	public fun getBinarySource$knbt (Lokio/BufferedSource;)Lnet/benwoodworth/knbt/internal/BinarySource;
+	public fun asBinarySink$knbt (Lokio/BufferedSink;)Lnet/benwoodworth/knbt/internal/BinarySink;
+	public fun asBinarySource$knbt (Lokio/BufferedSource;)Lnet/benwoodworth/knbt/internal/BinarySource;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -996,7 +976,7 @@ public final class net/benwoodworth/knbt/tag/NbtCompound : java/util/Map, kotlin
 }
 
 public final class net/benwoodworth/knbt/tag/NbtCompound$Companion {
-	public final fun getEmpty ()Lnet/benwoodworth/knbt/tag/NbtCompound;
+	public final fun getEmpty$knbt ()Lnet/benwoodworth/knbt/tag/NbtCompound;
 	public final fun serializer (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;
 }
 
@@ -1263,7 +1243,7 @@ public final class net/benwoodworth/knbt/tag/NbtList : java/util/List, kotlin/jv
 }
 
 public final class net/benwoodworth/knbt/tag/NbtList$Companion {
-	public final fun getEmpty ()Lnet/benwoodworth/knbt/tag/NbtList;
+	public final fun getEmpty$knbt ()Lnet/benwoodworth/knbt/tag/NbtList;
 	public final fun serializer (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;
 }
 
