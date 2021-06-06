@@ -28,3 +28,4 @@ jobs:
         with:
           branch: gh-pages
           folder: build/dokka/html
+          token: ${{ GITHUB_TOKEN }}
