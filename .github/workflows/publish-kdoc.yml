@@ -1,10 +1,76 @@
-name: Publish KDoc
-on: [ push ]
+name: Publish Release
+
+#on:
+#  push:
+#    tags: [ 'v*' ]
+#    branches: [ '[0-9]+.[0-9]+', '[0-9]+.[0-9]+.[0-9]+' ]
+on: push
+
+env:
+  GIT_REF: ${{ github.ref }}
+  SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+  SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+  SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+  OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+  OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
 
 jobs:
-  ubuntu:
-    name: "Publish KDoc"
+  publish:
+    name: "Publish: multiplatform, jvm, js, linux, mingw"
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2.1.0
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+
+      - name: Build and Check Tests/API
+        run: ./gradlew clean build check
+
+  #      - name: Publish Artifacts to Maven
+  #        run: >-
+  #          .\gradlew.bat clean
+  #          publishKotlinMultiplatformPublicationToMavenRepository
+  #          publishJvmPublicationToMavenRepository
+  #          publishJsPublicationToMavenRepository
+  #          publishLinuxX64PublicationToMavenRepository
+  #          publishMingwX64PublicationToMavenRepository
+
+  publish-macos:
+    name: "Publish: macos, ios, watchos"
+    runs-on: macos-latest
+    needs: publish
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+
+      - name: Build and Check Tests/API
+        run: ./gradlew clean build check
+
+  #      - name: Publish Artifacts to Maven
+  #        run: >-
+  #          ./gradlew
+  #          publishMacosX64PublicationToMavenRepository
+  #          publishIosArm64PublicationToMavenRepository
+  #          publishIosX64PublicationToMavenRepository
+  #          publishWatchosArm32PublicationToMavenRepository
+  #          publishWatchosArm64PublicationToMavenRepository
+  #          publishWatchosX86PublicationToMavenRepository
+
+  publish-kdoc:
+    name: "Publish: KDoc"
     runs-on: ubuntu-latest
+    needs: publish-macos
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4

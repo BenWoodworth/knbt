@@ -1,3 +1,4 @@
+FAIL
 public abstract class net/benwoodworth/knbt/AbstractNbtDecoder : kotlinx/serialization/encoding/AbstractDecoder, net/benwoodworth/knbt/CompositeNbtDecoder, net/benwoodworth/knbt/NbtDecoder {
 	public fun <init> ()V
 	public fun beginByteArray (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lnet/benwoodworth/knbt/CompositeNbtDecoder;
