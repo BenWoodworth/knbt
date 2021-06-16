@@ -148,6 +148,12 @@ val bigtest = buildNbt("Level") {
 Using the same version of kotlinx.serialization is recommended since parts of its API required for custom formats are
 still experimental, and newer versions may have binary-incompatible changes that could break knbt's implementation.
 
+### Upgrading knbt
+
+While knbt is in beta (0.#.#), minor releases may have some breaking changes. To gracefully update, change the minor
+version one at a time (e.g. 0.1.0 -> 0.2.0 -> 0.3.0) and fix any deprecated/broken code. Replacement refactorings will
+be provided where possible to make these fixes easier to do.
+
 ## Gradle
 
 ```kotlin
