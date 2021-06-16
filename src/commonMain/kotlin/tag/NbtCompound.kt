@@ -102,7 +102,7 @@ public fun Map<String, LongArray>.toNbtCompound(): NbtCompound =
 
 
 internal object NbtCompoundSerializer : KSerializer<NbtCompound> {
-    override val descriptor: SerialDescriptor = NbtListDescriptor(NbtTag.serializer().descriptor)
+    override val descriptor: SerialDescriptor = NbtCompoundDescriptor(NbtTag.serializer().descriptor)
     private val mapSerializer = MapSerializer(String.serializer(), NbtTag.serializer())
 
     override fun serialize(encoder: Encoder, value: NbtCompound): Unit =
@@ -114,7 +114,7 @@ internal object NbtCompoundSerializer : KSerializer<NbtCompound> {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    private class NbtListDescriptor(
+    private class NbtCompoundDescriptor(
         val elementDescriptor: SerialDescriptor,
     ) : SerialDescriptor by mapSerialDescriptor(String.serializer().descriptor, elementDescriptor) {
         @ExperimentalSerializationApi
