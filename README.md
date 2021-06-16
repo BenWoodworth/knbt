@@ -86,7 +86,7 @@ class NbtByteArray : NbtTag, List<Byte>
 class NbtIntArray : NbtTag, List<Int>
 class NbtLongArray : NbtTag, List<Long>
 class NbtList<T : NbtTag> : NbtTag, List<T> // Only contains entries of a single type
-class NbtCompound<T : NbtTag> : NbtTag, Map<String, T>
+class NbtCompound : NbtTag, Map<String, NbtTag>
 ```
 
 `NbtTag`s can be created with factory/conversion/builder functions:
@@ -124,7 +124,7 @@ val bigtest = buildNbt("Level") {
         }
     }
     put("listTest (long)", listOf(11L, 12L, 13L, 14L, 15L).toNbtList())
-    putNbtList<NbtCompound<*>>("listTest (compound)") {
+    putNbtList<NbtCompound>("listTest (compound)") {
         addNbtCompound {
             put("name", "Compound tag #0")
             put("created-on", 1264099775885L)

@@ -142,7 +142,7 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         TAG_Byte_Array -> NbtByteArray(decodeByteArray())
         TAG_String -> NbtString(decodeString())
         TAG_List -> decodeSerializableValue(NbtList.serializer(NbtTag.serializer()))
-        TAG_Compound -> decodeSerializableValue(NbtCompound.serializer(NbtTag.serializer()))
+        TAG_Compound -> decodeSerializableValue(NbtCompound.serializer())
         TAG_Int_Array -> NbtIntArray(decodeIntArray())
         TAG_Long_Array -> NbtLongArray(decodeLongArray())
     }
