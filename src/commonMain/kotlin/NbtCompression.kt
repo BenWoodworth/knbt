@@ -12,17 +12,7 @@ public abstract class NbtCompression private constructor() {
     internal abstract fun Source.decompress(): Source
     internal abstract fun Sink.compress(level: Int?): Sink
 
-    public companion object {
-        @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith", "UNUSED_PARAMETER")
-        @Deprecated("Compression level moved to NbtConfigureation.compressionLevel", level = DeprecationLevel.ERROR)
-        public fun Gzip(from: Gzip = Gzip, builderAction: Gzip.Builder.() -> Unit): Gzip =
-            throw UnsupportedOperationException("Compression level moved to NbtConfigureation.compressionLevel")
-
-        @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith", "UNUSED_PARAMETER")
-        @Deprecated("Compression level moved to NbtConfigureation.compressionLevel", level = DeprecationLevel.ERROR)
-        public inline fun Zlib(from: Zlib = Zlib, builderAction: Gzip.Builder.() -> Unit): Zlib =
-            throw UnsupportedOperationException("Compression level moved to NbtConfigureation.compressionLevel")
-    }
+    public companion object;
 
     public object None : NbtCompression() {
         override fun Source.decompress(): Source = this
@@ -36,12 +26,6 @@ public abstract class NbtCompression private constructor() {
         override fun Sink.compress(level: Int?): Sink = this.asGzipSink(level ?: -1)
 
         override fun toString(): String = "Gzip"
-
-        @Deprecated("Compression level moved to NbtConfigureation.compressionLevel")
-        public class Builder {
-            @Deprecated("Compression level moved to NbtConfiguration.compressionLevel", level = DeprecationLevel.ERROR)
-            public var level: Int? = null
-        }
     }
 
     public object Zlib : NbtCompression() {
@@ -49,12 +33,6 @@ public abstract class NbtCompression private constructor() {
         override fun Sink.compress(level: Int?): Sink = this.asZlibSink(level ?: -1)
 
         override fun toString(): String = "Zlib"
-
-        @Deprecated("Compression level moved to NbtConfigureation.compressionLevel")
-        public class Builder {
-            @Deprecated("Compression level moved to NbtConfiguration.compressionLevel", level = DeprecationLevel.ERROR)
-            public var level: Int? = null
-        }
     }
 }
 
