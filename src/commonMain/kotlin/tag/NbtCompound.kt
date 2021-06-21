@@ -20,8 +20,11 @@ public class NbtCompound internal constructor(
 
     override val type: NbtTagType get() = NbtTagType.TAG_Compound
 
-    override fun equals(other: Any?): Boolean =
-        this === other || (other is NbtCompound && value == other.value)
+    override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other is NbtTag -> other is NbtCompound && value == other.value
+        else -> value == other
+    }
 
     override fun hashCode(): Int = value.hashCode()
 
