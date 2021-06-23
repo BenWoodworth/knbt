@@ -13,13 +13,20 @@ import net.benwoodworth.knbt.internal.NbtTagType
 
 @Suppress("OVERRIDE_BY_INLINE")
 @Serializable(NbtLongArraySerializer::class)
-public class NbtLongArray @PublishedApi internal constructor(
+public class NbtLongArray private constructor(
     internal val value: LongArray,
-) : NbtTag, List<Long> by value.asList() {
+    private val list: List<Long>,
+) : NbtTag, List<Long> by list {
     override val type: NbtTagType get() = NbtTagType.TAG_Long_Array
 
-    override fun equals(other: Any?): Boolean =
-        this === other || (other is NbtLongArray && value.contentEquals(other.value))
+    @PublishedApi
+    internal constructor(value: LongArray) : this(value, value.asList())
+
+    override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other is NbtTag -> other is NbtLongArray && value.contentEquals(other.value)
+        else -> list == other
+    }
 
     override fun hashCode(): Int = value.contentHashCode()
 

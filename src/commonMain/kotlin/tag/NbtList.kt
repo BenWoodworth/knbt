@@ -20,8 +20,11 @@ public class NbtList<out T : NbtTag> internal constructor(
 ) : NbtTag, List<T> by value {
     override val type: NbtTagType get() = TAG_List
 
-    override fun equals(other: Any?): Boolean =
-        this === other || (other is NbtList<*> && value == other.value)
+    override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other is NbtTag -> other is NbtList<*> && value == other.value
+        else -> value == other
+    }
 
     override fun hashCode(): Int = value.hashCode()
 

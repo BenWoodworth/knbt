@@ -60,7 +60,7 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         override fun beginRootTag(): RootTagInfo = RootTagInfo(tag.type)
 
         override fun beginCompound() {
-            reader = NbtCompoundReader(this, tag as NbtCompound<*>)
+            reader = NbtCompoundReader(this, tag as NbtCompound)
         }
 
         override fun beginList(): ListInfo {
@@ -92,7 +92,7 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         override fun readString(): String = (tag as NbtString).value
     }
 
-    private inner class NbtCompoundReader(val parent: NbtTagReader, tag: NbtCompound<*>) : NbtTagReader {
+    private inner class NbtCompoundReader(val parent: NbtTagReader, tag: NbtCompound) : NbtTagReader {
         private val iterator = tag.iterator()
         private var next = if (iterator.hasNext()) iterator.next() else null
 
@@ -109,7 +109,7 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         }
 
         override fun beginCompound() {
-            val entry = readEntry<NbtCompound<*>>()
+            val entry = readEntry<NbtCompound>()
             reader = NbtCompoundReader(this, entry)
         }
 
@@ -162,7 +162,7 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         }
 
         override fun beginCompound() {
-            val entry = readEntry<NbtCompound<*>>()
+            val entry = readEntry<NbtCompound>()
             reader = NbtCompoundReader(this, entry)
         }
 

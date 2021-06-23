@@ -9,8 +9,8 @@ import net.benwoodworth.knbt.tag.*
  */
 public inline fun buildNbt(
     name: String,
-    builderAction: NbtCompoundBuilder<NbtTag>.() -> Unit,
-): NbtCompound<NbtCompound<NbtTag>> =
-    buildNbtCompound<NbtCompound<NbtTag>> {
+    builderAction: NbtCompoundBuilder.() -> Unit,
+): NbtCompound =
+    buildNbtCompound {
         putNbtCompound(name, builderAction)
     }

@@ -26,7 +26,7 @@ val bigTestTag
             }
         }
         put("listTest (long)", listOf(11L, 12L, 13L, 14L, 15L).toNbtList())
-        putNbtList<NbtCompound<NbtTag>>("listTest (compound)") {
+        putNbtList<NbtCompound>("listTest (compound)") {
             addNbtCompound {
                 put("name", "Compound tag #0")
                 put("created-on", 1264099775885L)

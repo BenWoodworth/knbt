@@ -94,7 +94,7 @@ internal class TreeNbtWriter(tagConsumer: (NbtTag) -> Unit) : NbtWriter {
     }
 
     private inner class NbtCompoundWriter(private val parent: NbtTagWriter) : NbtTagWriter {
-        private val builder = NbtCompoundBuilder<NbtTag>()
+        private val builder = NbtCompoundBuilder()
         private lateinit var entryName: String
 
         override fun consumeTag(tag: NbtTag) {

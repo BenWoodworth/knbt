@@ -48,7 +48,7 @@ public inline fun <T : NbtTag> buildNbtList(
 
 public fun NbtListBuilder<NbtByte>.add(element: NbtByte): Unit = addInternal(element)
 public fun NbtListBuilder<NbtByteArray>.add(element: NbtByteArray): Unit = addInternal(element)
-public fun <T : NbtTag> NbtListBuilder<NbtCompound<T>>.add(element: NbtCompound<T>): Unit = addInternal(element)
+public fun NbtListBuilder<NbtCompound>.add(element: NbtCompound): Unit = addInternal(element)
 public fun NbtListBuilder<NbtDouble>.add(element: NbtDouble): Unit = addInternal(element)
 public fun NbtListBuilder<NbtFloat>.add(element: NbtFloat): Unit = addInternal(element)
 public fun NbtListBuilder<NbtInt>.add(element: NbtInt): Unit = addInternal(element)
@@ -58,6 +58,11 @@ public fun NbtListBuilder<NbtLong>.add(element: NbtLong): Unit = addInternal(ele
 public fun NbtListBuilder<NbtLongArray>.add(element: NbtLongArray): Unit = addInternal(element)
 public fun NbtListBuilder<NbtShort>.add(element: NbtShort): Unit = addInternal(element)
 public fun NbtListBuilder<NbtString>.add(element: NbtString): Unit = addInternal(element)
+
+@Suppress("unused")
+@JvmName("add\$T")
+@Deprecated("NbtCompound no longer has a type parameter", ReplaceWith("add(element)"))
+public inline fun <T : NbtTag> NbtListBuilder<NbtCompound>.add(element: NbtCompound): Unit = add(element)
 
 public fun NbtListBuilder<NbtByte>.add(element: Byte): Unit = addInternal(NbtByte(element))
 public fun NbtListBuilder<NbtShort>.add(element: Short): Unit = addInternal(NbtShort(element))
@@ -85,16 +90,18 @@ public inline fun <T : NbtTag> NbtListBuilder<NbtList<T>>.addNbtList(
     return add(buildNbtList(builderAction))
 }
 
-public inline fun NbtListBuilder<NbtCompound<NbtTag>>.addNbtCompound(
-    builderAction: NbtCompoundBuilder<NbtTag>.() -> Unit,
+public inline fun NbtListBuilder<NbtCompound>.addNbtCompound(
+    builderAction: NbtCompoundBuilder.() -> Unit,
 ) {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return add(buildNbtCompound(builderAction))
 }
 
+@Suppress("unused")
 @JvmName("addNbtCompound\$T")
-public inline fun <T : NbtTag> NbtListBuilder<NbtCompound<T>>.addNbtCompound(
-    builderAction: NbtCompoundBuilder<T>.() -> Unit,
+@Deprecated("NbtCompound no longer has a type parameter", ReplaceWith("addNbtCompound(builderAction)"))
+public inline fun <T : NbtTag> NbtListBuilder<NbtCompound>.addNbtCompound(
+    builderAction: NbtCompoundBuilder.() -> Unit,
 ) {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return add(buildNbtCompound(builderAction))

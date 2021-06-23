@@ -2,6 +2,7 @@ package net.benwoodworth.knbt
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
@@ -76,6 +77,10 @@ internal abstract class AbstractNbtDecoder : AbstractDecoder(), NbtDecoder, Comp
             ByteArraySerializer() -> decodeByteArray() as T
             IntArraySerializer() -> decodeIntArray() as T
             LongArraySerializer() -> decodeLongArray() as T
+            is PolymorphicSerializer<*> -> when (deserializer.baseClass) {
+                NbtTag::class -> decodeNbtTag() as T
+                else -> throw NbtDecodingException("Polymorphic serialization is not yet supported")
+            }
             else -> super<AbstractDecoder>.decodeSerializableValue(deserializer)
         }
 }
