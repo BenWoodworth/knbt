@@ -27,7 +27,12 @@ class StructureAsserter<T>(private val expected: T, private val actual: T, priva
         val actualProperty = actual.property()
 
         if (expectedProperty != actualProperty) {
-            stringBuilder.append("\n$propertyName: Expected <$expectedProperty>, actual <$actualProperty>.")
+            fun Any?.className() = if (this == null) "null" else this::class.simpleName
+
+            stringBuilder
+                .append("\n$propertyName: ")
+                .append("Expected <${expectedProperty}> (${expectedProperty.className()}), ")
+                .append("actual <${actualProperty}> (${actualProperty.className()}).")
         }
     }
 }
