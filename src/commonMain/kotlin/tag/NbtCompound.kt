@@ -32,36 +32,16 @@ public class NbtCompound internal constructor(
 
     public companion object {
         internal val empty = NbtCompound(emptyMap())
-
-        @Suppress("UNUSED_PARAMETER")
-        @Deprecated(
-            "NbtCompound no longer has a type parameter",
-            ReplaceWith("NbtCompound.serializer()", "net.benwoodworth.knbt.tag.NbtCompound"),
-        )
-        public inline fun <T0> serializer(typeSerial0: KSerializer<T0>): KSerializer<NbtCompound> = serializer()
     }
 }
 
 public fun nbtCompoundOf(): NbtCompound = NbtCompound.empty
 
-@Suppress("unused")
-@Deprecated("NbtCompound no longer has a type parameter", ReplaceWith("nbtCompoundOf()"))
-@JvmName("nbtCompoundOf\$T")
-public inline fun <T : NbtTag> nbtCompoundOf(): NbtCompound = nbtCompoundOf()
-
 public fun nbtCompoundOf(vararg pairs: Pair<String, NbtTag>): NbtCompound =
     if (pairs.isEmpty()) NbtCompound.empty else NbtCompound(linkedMapOf(*pairs))
 
-@Deprecated("NbtCompound no longer has a type parameter", ReplaceWith("nbtCompoundOf(*pairs)"))
-@JvmName("nbtCompoundOf\$T")
-public inline fun <T : NbtTag> nbtCompoundOf(vararg pairs: Pair<String, T>): NbtCompound = nbtCompoundOf(*pairs)
-
 public fun Map<String, NbtTag>.toNbtCompound(): NbtCompound =
     if (isEmpty()) NbtCompound.empty else NbtCompound(this.toMap())
-
-@Deprecated("NbtCompound no longer has a type parameter", ReplaceWith("toNbtCompound()"))
-@JvmName("toNbtCompound\$T")
-public fun <T : NbtTag> Map<String, T>.toNbtCompound(): NbtCompound = toNbtCompound()
 
 @JvmName("toNbtCompound\$Byte")
 public fun Map<String, Byte>.toNbtCompound(): NbtCompound =

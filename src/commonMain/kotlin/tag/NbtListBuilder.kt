@@ -59,11 +59,6 @@ public fun NbtListBuilder<NbtLongArray>.add(element: NbtLongArray): Unit = addIn
 public fun NbtListBuilder<NbtShort>.add(element: NbtShort): Unit = addInternal(element)
 public fun NbtListBuilder<NbtString>.add(element: NbtString): Unit = addInternal(element)
 
-@Suppress("unused")
-@JvmName("add\$T")
-@Deprecated("NbtCompound no longer has a type parameter", ReplaceWith("add(element)"))
-public inline fun <T : NbtTag> NbtListBuilder<NbtCompound>.add(element: NbtCompound): Unit = add(element)
-
 public fun NbtListBuilder<NbtByte>.add(element: Byte): Unit = addInternal(NbtByte(element))
 public fun NbtListBuilder<NbtShort>.add(element: Short): Unit = addInternal(NbtShort(element))
 public fun NbtListBuilder<NbtInt>.add(element: Int): Unit = addInternal(NbtInt(element))
@@ -91,16 +86,6 @@ public inline fun <T : NbtTag> NbtListBuilder<NbtList<T>>.addNbtList(
 }
 
 public inline fun NbtListBuilder<NbtCompound>.addNbtCompound(
-    builderAction: NbtCompoundBuilder.() -> Unit,
-) {
-    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return add(buildNbtCompound(builderAction))
-}
-
-@Suppress("unused")
-@JvmName("addNbtCompound\$T")
-@Deprecated("NbtCompound no longer has a type parameter", ReplaceWith("addNbtCompound(builderAction)"))
-public inline fun <T : NbtTag> NbtListBuilder<NbtCompound>.addNbtCompound(
     builderAction: NbtCompoundBuilder.() -> Unit,
 ) {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }

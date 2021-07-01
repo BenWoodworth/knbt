@@ -29,14 +29,6 @@ public inline fun buildNbtCompound(builderAction: NbtCompoundBuilder.() -> Unit)
     return NbtCompoundBuilder().apply(builderAction).build()
 }
 
-@Suppress("unused")
-@Deprecated("NbtCompound no longer has a type parameter")
-@JvmName("buildNbtCompound\$T")
-public inline fun <T : NbtTag> buildNbtCompound(builderAction: NbtCompoundBuilder.() -> Unit): NbtCompound {
-    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return NbtCompoundBuilder().apply(builderAction).build()
-}
-
 public fun NbtCompoundBuilder.put(key: String, value: Byte): Unit = put(key, NbtByte(value))
 public fun NbtCompoundBuilder.put(key: String, value: Short): Unit = put(key, NbtShort(value))
 public fun NbtCompoundBuilder.put(key: String, value: Int): Unit = put(key, NbtInt(value))
@@ -63,17 +55,6 @@ public inline fun <T : NbtTag> NbtCompoundBuilder.putNbtList(
 ) {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return put(key, buildNbtList(builderAction))
-}
-
-@Suppress("unused")
-@Deprecated("NbtCompound no longer has a type parameter", ReplaceWith("putNbtCompound()"))
-@JvmName("putNbtCompound\$T")
-public inline fun <T : NbtTag> NbtCompoundBuilder.putNbtCompound(
-    key: String,
-    builderAction: NbtCompoundBuilder.() -> Unit,
-) {
-    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return put(key, buildNbtCompound(builderAction))
 }
 
 public inline fun NbtCompoundBuilder.putNbtCompound(
