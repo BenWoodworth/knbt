@@ -6,6 +6,18 @@ import okio.Timeout
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
+infix fun Int.pow(x: Int): Int {
+    var result = 1
+    repeat(x) { result *= this }
+    return result
+}
+
+infix fun Long.pow(x: Int): Long {
+    var result = 1L
+    repeat(x) { result *= this }
+    return result
+}
+
 infix fun <T> T.shouldReturn(expected: T): Unit =
     assertEquals(expected, this, "Incorrect return value.")
 

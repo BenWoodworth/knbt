@@ -28,6 +28,8 @@ public sealed class Nbt constructor(
             compressionLevel = null,
             encodeDefaults = false,
             ignoreUnknownKeys = false,
+            prettyPrint = false,
+            prettyPrintIndent = "    ",
         ),
         serializersModule = EmptySerializersModule,
     )
@@ -124,12 +126,39 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
     public var ignoreUnknownKeys: Boolean = nbt.configuration.ignoreUnknownKeys
 
     /**
+     * Specifies whether resulting Stringified NBT should be pretty-printed.
+     *  `false` by default.
+     */
+    public var prettyPrint: Boolean = nbt.configuration.prettyPrint
+
+    /**
+     * Specifies indent string to use with [prettyPrint] mode
+     * 4 spaces by default.
+     * Experimentality note: this API is experimental because
+     * it is not clear whether this option has compelling use-cases.
+     */
+    @ExperimentalNbtApi
+    public var prettyPrintIndent: String = nbt.configuration.prettyPrintIndent
+
+    /**
      * Module with contextual and polymorphic serializers to be used in the resulting [Nbt] instance.
      */
     public var serializersModule: SerializersModule = nbt.serializersModule
 
     @OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
     internal fun build(): Nbt {
+        if (!prettyPrint) {
+            require(prettyPrintIndent == Nbt.configuration.prettyPrintIndent) {
+                "Indent should not be specified when default printing mode is used"
+            }
+        } else if (prettyPrintIndent != Nbt.configuration.prettyPrintIndent) {
+            // Values allowed by JSON specification as whitespaces
+            val allWhitespaces = prettyPrintIndent.all { it == ' ' || it == '\t' || it == '\r' || it == '\n' }
+            require(allWhitespaces) {
+                "Only whitespace, tab, newline and carriage return are allowed as pretty print symbols. Had $prettyPrintIndent"
+            }
+        }
+
         return NbtImpl(
             configuration = NbtConfiguration(
                 variant = variant,
@@ -137,6 +166,8 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
                 compressionLevel = compressionLevel,
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
+                prettyPrint = prettyPrint,
+                prettyPrintIndent = prettyPrintIndent,
             ),
             serializersModule = serializersModule,
         )
@@ -221,7 +252,7 @@ public inline fun <reified T> Nbt.decodeFromByteArray(byteArray: ByteArray): T =
 @ExperimentalNbtApi
 public fun <T> Nbt.encodeToStringifiedNbt(serializer: SerializationStrategy<T>, value: T): String =
     buildString {
-        encodeToNbtWriter(StringifiedNbtWriter(this), serializer, value)
+        encodeToNbtWriter(StringifiedNbtWriter(this@encodeToStringifiedNbt, this), serializer, value)
     }
 
 /**

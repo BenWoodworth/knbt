@@ -33,6 +33,7 @@ val nbt = Nbt {
     compressionLevel = null // in 0..9
     encodeDefaults = false
     ignoreUnknownKeys = false
+    prettyPrint = false
     serializersModule = EmptySerializersModule
 }
 ```
