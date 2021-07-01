@@ -158,7 +158,7 @@ class BinaryNbtWriterTest {
         nbtFiles.assertForEach { file ->
             TestSink(blackholeSink()).use { sink ->
                 @Suppress("UNCHECKED_CAST")
-                file.nbt.encodeTo(sink, file.valueSerializer as KSerializer<Any>, file.value)
+                file.nbt.encodeToSink(file.valueSerializer as KSerializer<Any>, file.value, sink)
                 assertFalse(sink.isClosed, "Sink closed while decoding ${file.description}")
             }
         }

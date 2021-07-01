@@ -189,7 +189,7 @@ private class NbtImpl(
  * *Note*: It is the caller's responsibility to close the [sink].
  */
 @OkioApi
-public fun <T> Nbt.encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
+public fun <T> Nbt.encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit =
     BinaryNbtWriter(this, sink).use { writer ->
         encodeToNbtWriter(writer, serializer, value)
     }
@@ -200,8 +200,35 @@ public fun <T> Nbt.encodeTo(sink: Sink, serializer: SerializationStrategy<T>, va
  * *Note*: It is the caller's responsibility to close the [sink].
  */
 @OkioApi
+@Deprecated(
+    "Replaced with encodeToSink(...)",
+    ReplaceWith("encodeToSink<T>(serializer, value, sink)", "net.benwoodworth.knbt.encodeToSink"),
+)
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> Nbt.encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
+    encodeToSink(serializer, value, sink)
+
+/**
+ * Encode NBT to a [Sink].
+ *
+ * *Note*: It is the caller's responsibility to close the [sink].
+ */
+@OkioApi
+public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
+    encodeToSink(serializersModule.serializer(), value, sink)
+
+/**
+ * Encode NBT to a [Sink].
+ *
+ * *Note*: It is the caller's responsibility to close the [sink].
+ */
+@OkioApi
+@Deprecated(
+    "Replaced with encodeToSink(...)",
+    ReplaceWith("encodeToSink<T>(value, sink)", "net.benwoodworth.knbt.encodeToSink"),
+)
 public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
-    encodeTo(sink, serializersModule.serializer(), value)
+    encodeToSink(value, sink)
 
 /**
  * Decode NBT from a [Source].
@@ -209,7 +236,7 @@ public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
  * *Note*: It is the caller's responsibility to close the [source].
  */
 @OkioApi
-public fun <T> Nbt.decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
+public fun <T> Nbt.decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T =
     BinaryNbtReader(this, source).use { reader ->
         decodeFromNbtReader(reader, deserializer)
     }
@@ -220,15 +247,42 @@ public fun <T> Nbt.decodeFrom(source: Source, deserializer: DeserializationStrat
  * *Note*: It is the caller's responsibility to close the [source].
  */
 @OkioApi
+@Deprecated(
+    "Replaced with decodeFromSource(...)",
+    ReplaceWith("this.decodeFromSource<T>(deserializer, source)", "net.benwoodworth.knbt.decodeFromSource"),
+)
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> Nbt.decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
+    decodeFromSource(deserializer, source)
+
+/**
+ * Decode NBT from a [Source].
+ *
+ * *Note*: It is the caller's responsibility to close the [source].
+ */
+@OkioApi
+public inline fun <reified T> Nbt.decodeFromSource(source: Source): T =
+    decodeFromSource(serializersModule.serializer(), source)
+
+/**
+ * Decode NBT from a [Source].
+ *
+ * *Note*: It is the caller's responsibility to close the [source].
+ */
+@OkioApi
+@Deprecated(
+    "Replaced with decodeFromSource(...)",
+    ReplaceWith("this.decodeFromSource<T>(source)", "net.benwoodworth.knbt.decodeFromSource"),
+)
 public inline fun <reified T> Nbt.decodeFrom(source: Source): T =
-    decodeFrom(source, serializersModule.serializer())
+    decodeFromSource(source)
 
 /**
  * Encode NBT to a [ByteArray].
  */
 @OptIn(OkioApi::class)
 public fun <T> Nbt.encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
-    Buffer().apply { encodeTo(this, serializer, value) }.readByteArray()
+    Buffer().apply { encodeToSink(serializer, value, this) }.readByteArray()
 
 /**
  * Encode NBT to a [ByteArray].
@@ -241,7 +295,7 @@ public inline fun <reified T> Nbt.encodeToByteArray(value: T): ByteArray =
  */
 @OptIn(OkioApi::class)
 public fun <T> Nbt.decodeFromByteArray(deserializer: DeserializationStrategy<T>, byteArray: ByteArray): T =
-    decodeFrom(Buffer().apply { write(byteArray) }, deserializer)
+    decodeFromSource(deserializer, Buffer().apply { write(byteArray) })
 
 /**
  * Decode NBT from a [ByteArray].

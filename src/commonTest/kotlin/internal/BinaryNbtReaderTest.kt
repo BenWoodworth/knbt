@@ -18,7 +18,7 @@ class BinaryNbtReaderTest {
             assertEquals(
                 expected = file.value,
                 actual = file.asSource().use { source ->
-                    file.nbt.decodeFrom(source, file.valueSerializer)
+                    file.nbt.decodeFromSource(file.valueSerializer, source)
                 },
                 message = "Read class incorrectly while decoding ${file.description}"
             )
@@ -31,7 +31,7 @@ class BinaryNbtReaderTest {
             assertEquals(
                 expected = file.nbtTag,
                 actual = file.asSource().use { source ->
-                    file.nbt.decodeFrom(source, NbtTag.serializer())
+                    file.nbt.decodeFromSource(NbtTag.serializer(), source)
                 },
                 message = "Read NbtTag incorrectly while decoding ${file.description}"
             )
@@ -42,7 +42,7 @@ class BinaryNbtReaderTest {
     fun Should_not_read_more_from_source_than_necessary() {
         nbtFiles.assertForEach { file ->
             TestSource(file.asSource()).use { source ->
-                file.nbt.decodeFrom(source, NbtTag.serializer())
+                file.nbt.decodeFromSource(NbtTag.serializer(), source)
                 assertFalse(source.readPastEnd, "Source read past end while decoding ${file.description}")
             }
         }
@@ -52,7 +52,7 @@ class BinaryNbtReaderTest {
     fun Should_not_close_source() {
         nbtFiles.assertForEach { file ->
             TestSource(file.asSource()).use { source ->
-                file.nbt.decodeFrom(source, NbtTag.serializer())
+                file.nbt.decodeFromSource(NbtTag.serializer(), source)
                 assertFalse(source.isClosed, "Source closed while decoding ${file.description}")
             }
         }
