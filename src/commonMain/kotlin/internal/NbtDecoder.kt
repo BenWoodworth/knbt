@@ -231,6 +231,7 @@ private class ClassNbtDecoder(
         reader.beginCompound()
     }
 
+    @OptIn(ExperimentalNbtApi::class)
     private fun handleUnknownKey(info: NbtReader.CompoundEntryInfo) {
         fun discardTagAndGetTypeName(): String =
             if (info.type == TAG_List) {

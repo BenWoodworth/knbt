@@ -6,6 +6,7 @@ import java.io.InputStream
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
+@OptIn(ExperimentalNbtApi::class)
 class NbtCompressionJvmTest {
     @Test
     fun Should_correctly_detect_compression_from_InputStream() {

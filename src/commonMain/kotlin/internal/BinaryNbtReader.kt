@@ -6,7 +6,7 @@ import okio.Closeable
 import okio.Source
 import okio.buffer
 
-@OptIn(OkioApi::class)
+@OptIn(OkioApi::class, ExperimentalNbtApi::class)
 internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable {
     private var compoundNesting = 0
     private var readRootEntry = false
