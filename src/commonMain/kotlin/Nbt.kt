@@ -17,8 +17,8 @@ public sealed class Nbt constructor(
     @ExperimentalNbtApi
     public val configuration: NbtConfiguration,
 
-    public val serializersModule: SerializersModule,
-) {
+    override val serializersModule: SerializersModule,
+) : BinaryFormat, StringFormat {
     /**
      * The default instance of [Nbt] with default configuration.
      */
@@ -63,6 +63,61 @@ public sealed class Nbt constructor(
 
         return NbtDecoder(this, reader).decodeSerializableValue(rootDeserializer)
     }
+
+    /**
+     * Serializes and encodes the given [value] to the [sink] using the given [serializer].
+     *
+     * *Note*: It is the caller's responsibility to close the [sink].
+     */
+    @OkioApi
+    public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit =
+        BinaryNbtWriter(this, sink).use { writer ->
+            encodeToNbtWriter(writer, serializer, value)
+        }
+
+    /**
+     * Decodes and deserializes from the given [source] to a value of type [T] using the given [deserializer].
+     *
+     * *Note*: It is the caller's responsibility to close the [source].
+     */
+    @OkioApi
+    public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T =
+        BinaryNbtReader(this, source).use { reader ->
+            decodeFromNbtReader(reader, deserializer)
+        }
+
+    @OptIn(OkioApi::class)
+    override fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
+        Buffer().apply { encodeToSink(serializer, value, this) }.readByteArray()
+
+    @OptIn(OkioApi::class)
+    override fun <T> decodeFromByteArray(deserializer: DeserializationStrategy<T>, bytes: ByteArray): T =
+        decodeFromSource(deserializer, Buffer().apply { write(bytes) })
+
+    override fun <T> encodeToString(serializer: SerializationStrategy<T>, value: T): String =
+        buildString {
+            encodeToNbtWriter(StringifiedNbtWriter(this@Nbt, this), serializer, value)
+        }
+
+    @Deprecated("Decoding from Stringified NBT is not yet supported", level = DeprecationLevel.HIDDEN)
+    override fun <T> decodeFromString(deserializer: DeserializationStrategy<T>, string: String): T {
+        TODO("Decoding from Stringified NBT is not yet supported")
+    }
+
+    /**
+     * Serializes and encodes the given [value] to an [NbtTag] using the given [serializer].
+     */
+    public fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag {
+        lateinit var result: NbtTag
+        encodeToNbtWriter(TreeNbtWriter { result = it }, serializer, value)
+        return result
+    }
+
+    /**
+     * Decodes and deserializes the given [tag] to a value of type [T] using the given [deserializer].
+     */
+    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
+        decodeFromNbtReader(TreeNbtReader(tag), deserializer)
 }
 
 /**
@@ -189,20 +244,9 @@ private class NbtImpl(
  * *Note*: It is the caller's responsibility to close the [sink].
  */
 @OkioApi
-public fun <T> Nbt.encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit =
-    BinaryNbtWriter(this, sink).use { writer ->
-        encodeToNbtWriter(writer, serializer, value)
-    }
-
-/**
- * Encode NBT to a [Sink].
- *
- * *Note*: It is the caller's responsibility to close the [sink].
- */
-@OkioApi
 @Deprecated(
     "Replaced with encodeToSink(...)",
-    ReplaceWith("encodeToSink<T>(serializer, value, sink)", "net.benwoodworth.knbt.encodeToSink"),
+    ReplaceWith("this.encodeToSink<T>(serializer, value, sink)", "net.benwoodworth.knbt.encodeToSink"),
 )
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Nbt.encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
@@ -225,21 +269,10 @@ public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
 @OkioApi
 @Deprecated(
     "Replaced with encodeToSink(...)",
-    ReplaceWith("encodeToSink<T>(value, sink)", "net.benwoodworth.knbt.encodeToSink"),
+    ReplaceWith("this.encodeToSink<T>(value, sink)", "net.benwoodworth.knbt.encodeToSink"),
 )
 public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
     encodeToSink(value, sink)
-
-/**
- * Decode NBT from a [Source].
- *
- * *Note*: It is the caller's responsibility to close the [source].
- */
-@OkioApi
-public fun <T> Nbt.decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T =
-    BinaryNbtReader(this, source).use { reader ->
-        decodeFromNbtReader(reader, deserializer)
-    }
 
 /**
  * Decode NBT from a [Source].
@@ -280,9 +313,13 @@ public inline fun <reified T> Nbt.decodeFrom(source: Source): T =
 /**
  * Encode NBT to a [ByteArray].
  */
-@OptIn(OkioApi::class)
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@Deprecated(
+    "Use NBT member function instead",
+    ReplaceWith("this.encodeToByteArray<T>(serializer, value)"),
+)
 public fun <T> Nbt.encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
-    Buffer().apply { encodeToSink(serializer, value, this) }.readByteArray()
+    encodeToByteArray(serializer, value)
 
 /**
  * Encode NBT to a [ByteArray].
@@ -293,40 +330,52 @@ public inline fun <reified T> Nbt.encodeToByteArray(value: T): ByteArray =
 /**
  * Decode NBT from a [ByteArray].
  */
-@OptIn(OkioApi::class)
-public fun <T> Nbt.decodeFromByteArray(deserializer: DeserializationStrategy<T>, byteArray: ByteArray): T =
-    decodeFromSource(deserializer, Buffer().apply { write(byteArray) })
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@Deprecated(
+    "Use NBT member function instead",
+    ReplaceWith(
+        "this.decodeFromByteArray<T>(serializer, byteArray)",
+        "kotlinx.serialization.BinaryFormat",
+    ),
+)
+public inline fun <T> Nbt.decodeFromByteArray(deserializer: DeserializationStrategy<T>, byteArray: ByteArray): T =
+    decodeFromByteArray(deserializer, byteArray)
 
 /**
  * Decode NBT from a [ByteArray].
  */
+@OptIn(ExperimentalSerializationApi::class)
+@Deprecated(
+    "Use kotlinx.serialization function instead",
+    ReplaceWith(
+        "this.decodeFromByteArray<T>(serializer, byteArray)",
+        "kotlinx.serialization.decodeFromByteArray",
+    ),
+)
 public inline fun <reified T> Nbt.decodeFromByteArray(byteArray: ByteArray): T =
-    decodeFromByteArray(serializersModule.serializer(), byteArray)
+    (this as BinaryFormat).decodeFromByteArray(byteArray)
 
 /**
  * Encode to Stringified NBT.
  */
 @ExperimentalNbtApi
+@Deprecated(
+    "Replaced with encodeToString(...)",
+    ReplaceWith("this.encodeToString<T>(serializer, value)"),
+)
 public fun <T> Nbt.encodeToStringifiedNbt(serializer: SerializationStrategy<T>, value: T): String =
-    buildString {
-        encodeToNbtWriter(StringifiedNbtWriter(this@encodeToStringifiedNbt, this), serializer, value)
-    }
+    encodeToString(serializer, value)
 
 /**
  * Encode to Stringified NBT.
  */
 @ExperimentalNbtApi
+@Deprecated(
+    "Replaced with encodeToString(...)",
+    ReplaceWith("this.encodeToString<T>(value)", "kotlinx.serialization.encodeToString"),
+)
 public inline fun <reified T> Nbt.encodeToStringifiedNbt(value: T): String =
-    encodeToStringifiedNbt(serializersModule.serializer(), value)
-
-/**
- * Encode to [NbtTag].
- */
-public fun <T> Nbt.encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag {
-    lateinit var result: NbtTag
-    encodeToNbtWriter(TreeNbtWriter { result = it }, serializer, value)
-    return result
-}
+    encodeToString(value)
 
 /**
  * Encode to [NbtTag].
@@ -337,12 +386,5 @@ public inline fun <reified T> Nbt.encodeToNbtTag(value: T): NbtTag =
 /**
  * Decode from [NbtTag].
  */
-public fun <T> Nbt.decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
-    decodeFromNbtReader(TreeNbtReader(tag), deserializer)
-
-/**
- * Decode from [NbtTag].
- */
 public inline fun <reified T> Nbt.decodeFromNbtTag(tag: NbtTag): T =
     decodeFromNbtTag(serializersModule.serializer(), tag)
-
