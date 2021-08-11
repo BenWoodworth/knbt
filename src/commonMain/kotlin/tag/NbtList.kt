@@ -1,125 +1,111 @@
 package net.benwoodworth.knbt.tag
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.listSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import net.benwoodworth.knbt.asNbtEncoder
-import net.benwoodworth.knbt.internal.NbtTagType
-import net.benwoodworth.knbt.internal.NbtTagType.TAG_End
-import net.benwoodworth.knbt.internal.NbtTagType.TAG_List
+import net.benwoodworth.knbt.NbtByte
+import net.benwoodworth.knbt.NbtByteArray
+import net.benwoodworth.knbt.NbtDouble
+import net.benwoodworth.knbt.NbtFloat
+import net.benwoodworth.knbt.NbtInt
+import net.benwoodworth.knbt.NbtIntArray
+import net.benwoodworth.knbt.NbtList
+import net.benwoodworth.knbt.NbtLong
+import net.benwoodworth.knbt.NbtLongArray
+import net.benwoodworth.knbt.NbtShort
+import net.benwoodworth.knbt.NbtString
+import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.nbtListOf
+import net.benwoodworth.knbt.toNbtList
 import kotlin.jvm.JvmName
 
-@Serializable(NbtListSerializer::class)
-public class NbtList<out T : NbtTag> internal constructor(
-    internal val value: List<T>,
-) : NbtTag, List<T> by value {
-    override val type: NbtTagType get() = TAG_List
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.NbtList<T>",
+    ReplaceWith("NbtList<T>", "net.benwoodworth.knbt.NbtList<T>"),
+)
+public typealias NbtList<T> = NbtList<T>
 
-    override fun equals(other: Any?): Boolean = when {
-        this === other -> true
-        other is NbtTag -> other is NbtList<*> && value == other.value
-        else -> value == other
-    }
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.nbtListOf",
+    ReplaceWith("nbtListOf()", "net.benwoodworth.knbt.nbtListOf"),
+)
+public fun <T : NbtTag> nbtListOf(): NbtList<T> = nbtListOf()
 
-    override fun hashCode(): Int = value.hashCode()
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.nbtListOf",
+    ReplaceWith("nbtListOf(*elements)", "net.benwoodworth.knbt.nbtListOf"),
+)
+public fun <T : NbtTag> nbtListOf(vararg elements: T): NbtList<T> = nbtListOf(*elements)
 
-    override fun toString(): String = value.toString()
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtList",
+    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+)
+public fun <T : NbtTag> List<T>.toNbtList(): NbtList<T> = toNbtList()
 
-    public companion object {
-        internal val empty: NbtList<Nothing> = NbtList(emptyList())
-    }
-}
-
-internal val NbtList<*>.elementType: NbtTagType
-    get() = if (value.isEmpty()) TAG_End else value.first().type
-
-public fun <T : NbtTag> nbtListOf(): NbtList<T> = NbtList.empty
-
-public fun <T : NbtTag> nbtListOf(vararg elements: T): NbtList<T> =
-    if (elements.isEmpty()) NbtList.empty else NbtList(elements.asList())
-
-public fun <T : NbtTag> List<T>.toNbtList(): NbtList<T> = when (size) {
-    0 -> NbtList.empty
-    1 -> NbtList(listOf(first()))
-    else -> {
-        var elementType = TAG_End
-        val elements = map { element ->
-            if (elementType == TAG_End) {
-                elementType = element.type
-            } else {
-                require(element.type == elementType) { "NbtList elements must all have the same type" }
-            }
-            element
-        }
-        NbtList(elements)
-    }
-}
-
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtList",
+    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+)
 @JvmName("toNbtList\$Byte")
-public fun List<Byte>.toNbtList(): NbtList<NbtByte> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtByte() })
+public fun List<Byte>.toNbtList(): NbtList<NbtByte> = toNbtList()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtList",
+    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+)
 @JvmName("toNbtList\$Short")
-public fun List<Short>.toNbtList(): NbtList<NbtShort> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtShort() })
+public fun List<Short>.toNbtList(): NbtList<NbtShort> = toNbtList()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtList",
+    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+)
 @JvmName("toNbtList\$Int")
-public fun List<Int>.toNbtList(): NbtList<NbtInt> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtInt() })
+public fun List<Int>.toNbtList(): NbtList<NbtInt> = toNbtList()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtList",
+    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+)
 @JvmName("toNbtList\$Long")
-public fun List<Long>.toNbtList(): NbtList<NbtLong> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtLong() })
+public fun List<Long>.toNbtList(): NbtList<NbtLong> = toNbtList()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtList",
+    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+)
 @JvmName("toNbtList\$Float")
-public fun List<Float>.toNbtList(): NbtList<NbtFloat> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtFloat() })
+public fun List<Float>.toNbtList(): NbtList<NbtFloat> = toNbtList()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtList",
+    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+)
 @JvmName("toNbtList\$Double")
-public fun List<Double>.toNbtList(): NbtList<NbtDouble> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtDouble() })
+public fun List<Double>.toNbtList(): NbtList<NbtDouble> = toNbtList()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtList",
+    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+)
 @JvmName("toNbtList\$String")
-public fun List<String>.toNbtList(): NbtList<NbtString> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtString() })
+public fun List<String>.toNbtList(): NbtList<NbtString> = toNbtList()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtList",
+    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+)
 @JvmName("toNbtList\$ByteArray")
-public fun List<ByteArray>.toNbtList(): NbtList<NbtByteArray> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtByteArray() })
+public fun List<ByteArray>.toNbtList(): NbtList<NbtByteArray> = toNbtList()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtList",
+    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+)
 @JvmName("toNbtList\$IntArray")
-public fun List<IntArray>.toNbtList(): NbtList<NbtIntArray> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtIntArray() })
+public fun List<IntArray>.toNbtList(): NbtList<NbtIntArray> = toNbtList()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtList",
+    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+)
 @JvmName("toNbtList\$LongArray")
-public fun List<LongArray>.toNbtList(): NbtList<NbtLongArray> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtLongArray() })
-
-
-internal class NbtListSerializer<T : NbtTag>(
-    elementSerializer: KSerializer<T>,
-) : KSerializer<NbtList<T>> {
-    override val descriptor: SerialDescriptor = NbtListDescriptor(elementSerializer.descriptor)
-    private val listSerializer = ListSerializer(elementSerializer)
-
-    override fun serialize(encoder: Encoder, value: NbtList<T>): Unit =
-        encoder.asNbtEncoder().encodeNbtTag(value)
-
-    override fun deserialize(decoder: Decoder): NbtList<T> {
-        val list = listSerializer.deserialize(decoder)
-        return if (list.isEmpty()) NbtList.empty else NbtList(list)
-    }
-
-    @OptIn(ExperimentalSerializationApi::class)
-    private class NbtListDescriptor(
-        val elementDescriptor: SerialDescriptor,
-    ) : SerialDescriptor by listSerialDescriptor(elementDescriptor) {
-        @ExperimentalSerializationApi
-        override val serialName: String = "net.benwoodworth.knbt.tag.NbtList"
-    }
-}
+public fun List<LongArray>.toNbtList(): NbtList<NbtLongArray> = toNbtList()

@@ -5,7 +5,6 @@ package net.benwoodworth.knbt.internal
 import kotlinx.serialization.KSerializer
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.file.nbtFiles
-import net.benwoodworth.knbt.tag.NbtTag
 import okio.blackholeSink
 import okio.buffer
 import okio.use

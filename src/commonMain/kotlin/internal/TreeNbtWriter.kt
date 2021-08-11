@@ -1,6 +1,6 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.tag.*
+import net.benwoodworth.knbt.*
 
 internal class TreeNbtWriter(tagConsumer: (NbtTag) -> Unit) : NbtWriter {
     private var writer: NbtTagWriter = RootNbtTagWriter(tagConsumer)

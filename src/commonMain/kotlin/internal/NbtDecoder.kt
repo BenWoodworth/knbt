@@ -9,7 +9,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
-import net.benwoodworth.knbt.tag.*
 
 internal fun NbtDecoder(nbt: Nbt, reader: NbtReader): NbtDecoder = RootNbtDecoder(nbt, reader)
 

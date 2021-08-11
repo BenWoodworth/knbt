@@ -2,11 +2,7 @@ package data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.assertStructureEquals
-import net.benwoodworth.knbt.buildNbt
-import net.benwoodworth.knbt.fix
-import net.benwoodworth.knbt.tag.*
-import net.benwoodworth.knbt.toBinary
+import net.benwoodworth.knbt.*
 
 val bigTestTag
     get() = buildNbt("Level") {

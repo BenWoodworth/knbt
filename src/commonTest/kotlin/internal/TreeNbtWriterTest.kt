@@ -4,11 +4,8 @@ package net.benwoodworth.knbt.internal
 
 import data.testClass
 import data.testTag
-import net.benwoodworth.knbt.Nbt
-import net.benwoodworth.knbt.TestValues
-import net.benwoodworth.knbt.encodeToNbtTag
+import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
-import net.benwoodworth.knbt.tag.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

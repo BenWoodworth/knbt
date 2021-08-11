@@ -5,8 +5,6 @@ package net.benwoodworth.knbt.internal
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.NbtVariant.Companion.Java
 import net.benwoodworth.knbt.file.nbtFiles
-import net.benwoodworth.knbt.tag.NbtTag
-import net.benwoodworth.knbt.tag.put
 import okio.use
 import kotlin.test.*
 

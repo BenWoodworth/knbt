@@ -11,7 +11,6 @@ import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.AbstractDecoder
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
-import net.benwoodworth.knbt.tag.NbtTag
 
 public sealed interface NbtDecoder : Decoder {
     public fun decodeByteArray(): ByteArray
@@ -55,7 +54,8 @@ internal abstract class AbstractNbtDecoder : AbstractDecoder(), NbtDecoder, Comp
     final override fun decodeLongArrayElement(descriptor: SerialDescriptor, index: Int): LongArray =
         decodeLongArray()
 
-    final override fun decodeNbtTagElement(descriptor: SerialDescriptor, index: Int): NbtTag = decodeNbtTag()
+    final override fun decodeNbtTagElement(descriptor: SerialDescriptor, index: Int): NbtTag =
+        decodeNbtTag()
 
     @ExperimentalSerializationApi
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder =

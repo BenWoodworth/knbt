@@ -1,35 +1,17 @@
 package net.benwoodworth.knbt.tag
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import net.benwoodworth.knbt.asNbtDecoder
-import net.benwoodworth.knbt.asNbtEncoder
-import net.benwoodworth.knbt.internal.NbtTagType
-import kotlin.jvm.JvmInline
+import net.benwoodworth.knbt.NbtString
+import net.benwoodworth.knbt.toNbtString
 
-@JvmInline
-@Serializable(NbtStringSerializer::class)
-public value class NbtString internal constructor(internal val value: String) : NbtTag {
-    override val type: NbtTagType get() = NbtTagType.TAG_String
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.NbtString",
+    ReplaceWith("NbtString", "net.benwoodworth.knbt.NbtString"),
+)
+public typealias NbtString = NbtString
 
-    override fun toString(): String = value
-}
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtString",
+    ReplaceWith("this.toNbtString()", "net.benwoodworth.knbt.toNbtString"),
+)
+public fun String.toNbtString(): NbtString = toNbtString()
 
-public fun String.toNbtString(): NbtString = NbtString(this)
-
-
-internal object NbtStringSerializer : KSerializer<NbtString> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("net.benwoodworth.knbt.tag.NbtString", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: NbtString): Unit =
-        encoder.asNbtEncoder().encodeString(value.value)
-
-    override fun deserialize(decoder: Decoder): NbtString =
-        NbtString(decoder.asNbtDecoder().decodeString())
-}

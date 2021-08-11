@@ -1,106 +1,101 @@
 package net.benwoodworth.knbt.tag
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.MapSerializer
-import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.mapSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import net.benwoodworth.knbt.asNbtEncoder
-import net.benwoodworth.knbt.internal.NbtTagType
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.nbtCompoundOf
+import net.benwoodworth.knbt.toNbtCompound
 import kotlin.jvm.JvmName
 
-@Serializable(NbtCompoundSerializer::class)
-public class NbtCompound internal constructor(
-    internal val value: Map<String, NbtTag>
-) : NbtTag, Map<String, NbtTag> by value {
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.NbtCompound",
+    ReplaceWith("NbtCompound", "net.benwoodworth.knbt.NbtCompound"),
+)
+public typealias NbtCompound = NbtCompound
 
-    override val type: NbtTagType get() = NbtTagType.TAG_Compound
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.nbtCompoundOf",
+    ReplaceWith("nbtCompoundOf()", "net.benwoodworth.knbt.nbtCompoundOf"),
+)
+public fun nbtCompoundOf(): NbtCompound = nbtCompoundOf()
 
-    override fun equals(other: Any?): Boolean = when {
-        this === other -> true
-        other is NbtTag -> other is NbtCompound && value == other.value
-        else -> value == other
-    }
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("nbtCompoundOf(*pairs)", "net.benwoodworth.knbt.nbtCompoundOf"),
+)
+public fun nbtCompoundOf(vararg pairs: Pair<String, NbtTag>): NbtCompound = nbtCompoundOf(*pairs)
 
-    override fun hashCode(): Int = value.hashCode()
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("this.toNbtCompound()", "net.benwoodworth.knbt.toNbtCompound"),
+)
+public fun Map<String, NbtTag>.toNbtCompound(): NbtCompound = toNbtCompound()
 
-    override fun toString(): String = value.toString()
-
-    public companion object {
-        internal val empty = NbtCompound(emptyMap())
-    }
-}
-
-public fun nbtCompoundOf(): NbtCompound = NbtCompound.empty
-
-public fun nbtCompoundOf(vararg pairs: Pair<String, NbtTag>): NbtCompound =
-    if (pairs.isEmpty()) NbtCompound.empty else NbtCompound(linkedMapOf(*pairs))
-
-public fun Map<String, NbtTag>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(this.toMap())
-
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("this.toNbtCompound()", "net.benwoodworth.knbt.toNbtCompound"),
+)
 @JvmName("toNbtCompound\$Byte")
-public fun Map<String, Byte>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtByte() })
+public fun Map<String, Byte>.toNbtCompound(): NbtCompound = toNbtCompound()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("this.toNbtCompound()", "net.benwoodworth.knbt.toNbtCompound"),
+)
 @JvmName("toNbtCompound\$Short")
-public fun Map<String, Short>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtShort() })
+public fun Map<String, Short>.toNbtCompound(): NbtCompound = toNbtCompound()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("this.toNbtCompound()", "net.benwoodworth.knbt.toNbtCompound"),
+)
 @JvmName("toNbtCompound\$Int")
-public fun Map<String, Int>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtInt() })
+public fun Map<String, Int>.toNbtCompound(): NbtCompound = toNbtCompound()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("this.toNbtCompound()", "net.benwoodworth.knbt.toNbtCompound"),
+)
 @JvmName("toNbtCompound\$Long")
-public fun Map<String, Long>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtLong() })
+public fun Map<String, Long>.toNbtCompound(): NbtCompound = toNbtCompound()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("this.toNbtCompound()", "net.benwoodworth.knbt.toNbtCompound"),
+)
 @JvmName("toNbtCompound\$Float")
-public fun Map<String, Float>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtFloat() })
+public fun Map<String, Float>.toNbtCompound(): NbtCompound = toNbtCompound()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("this.toNbtCompound()", "net.benwoodworth.knbt.toNbtCompound"),
+)
 @JvmName("toNbtCompound\$Double")
-public fun Map<String, Double>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtDouble() })
+public fun Map<String, Double>.toNbtCompound(): NbtCompound = toNbtCompound()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("this.toNbtCompound()", "net.benwoodworth.knbt.toNbtCompound"),
+)
 @JvmName("toNbtCompound\$String")
-public fun Map<String, String>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtString() })
+public fun Map<String, String>.toNbtCompound(): NbtCompound = toNbtCompound()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("this.toNbtCompound()", "net.benwoodworth.knbt.toNbtCompound"),
+)
 @JvmName("toNbtCompound\$ByteArray")
-public fun Map<String, ByteArray>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtByteArray() })
+public fun Map<String, ByteArray>.toNbtCompound(): NbtCompound = toNbtCompound()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("this.toNbtCompound()", "net.benwoodworth.knbt.toNbtCompound"),
+)
 @JvmName("toNbtCompound\$IntArray")
-public fun Map<String, IntArray>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtIntArray() })
+public fun Map<String, IntArray>.toNbtCompound(): NbtCompound = toNbtCompound()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtCompound",
+    ReplaceWith("this.toNbtCompound()", "net.benwoodworth.knbt.toNbtCompound"),
+)
 @JvmName("toNbtCompound\$LongArray")
-public fun Map<String, LongArray>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtLongArray() })
-
-
-internal object NbtCompoundSerializer : KSerializer<NbtCompound> {
-    override val descriptor: SerialDescriptor = NbtCompoundDescriptor(NbtTag.serializer().descriptor)
-    private val mapSerializer = MapSerializer(String.serializer(), NbtTag.serializer())
-
-    override fun serialize(encoder: Encoder, value: NbtCompound): Unit =
-        encoder.asNbtEncoder().encodeNbtTag(value)
-
-    override fun deserialize(decoder: Decoder): NbtCompound {
-        val map = mapSerializer.deserialize(decoder)
-        return if (map.isEmpty()) NbtCompound.empty else NbtCompound(map)
-    }
-
-    @OptIn(ExperimentalSerializationApi::class)
-    private class NbtCompoundDescriptor(
-        val elementDescriptor: SerialDescriptor,
-    ) : SerialDescriptor by mapSerialDescriptor(String.serializer().descriptor, elementDescriptor) {
-        @ExperimentalSerializationApi
-        override val serialName: String = "net.benwoodworth.knbt.tag.NbtCompound"
-    }
-}
+public fun Map<String, LongArray>.toNbtCompound(): NbtCompound = toNbtCompound()

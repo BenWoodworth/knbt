@@ -6,7 +6,6 @@ import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
-import net.benwoodworth.knbt.tag.*
 
 @ExperimentalSerializationApi
 internal class DefaultNbtEncoder(

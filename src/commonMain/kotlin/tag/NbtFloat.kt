@@ -1,36 +1,23 @@
 package net.benwoodworth.knbt.tag
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import net.benwoodworth.knbt.asNbtDecoder
-import net.benwoodworth.knbt.asNbtEncoder
-import net.benwoodworth.knbt.internal.NbtTagType
-import kotlin.jvm.JvmInline
+import net.benwoodworth.knbt.NbtFloat
+import net.benwoodworth.knbt.toFloat
+import net.benwoodworth.knbt.toNbtFloat
 
-@JvmInline
-@Serializable(NbtFloatSerializer::class)
-public value class NbtFloat internal constructor(internal val value: Float) : NbtTag {
-    override val type: NbtTagType get() = NbtTagType.TAG_Float
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.NbtFloat",
+    ReplaceWith("NbtFloat", "net.benwoodworth.knbt.NbtFloat"),
+)
+public typealias NbtFloat = NbtFloat
 
-    override fun toString(): String = value.toString()
-}
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtFloat",
+    ReplaceWith("this.toNbtFloat()", "net.benwoodworth.knbt.toNbtFloat"),
+)
+public fun Float.toNbtFloat(): NbtFloat = toNbtFloat()
 
-public fun Float.toNbtFloat(): NbtFloat = NbtFloat(this)
-public fun NbtFloat.toFloat(): Float = value
-
-
-internal object NbtFloatSerializer : KSerializer<NbtFloat> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("net.benwoodworth.knbt.tag.NbtFloat", PrimitiveKind.FLOAT)
-
-    override fun serialize(encoder: Encoder, value: NbtFloat): Unit =
-        encoder.asNbtEncoder().encodeFloat(value.value)
-
-    override fun deserialize(decoder: Decoder): NbtFloat =
-        NbtFloat(decoder.asNbtDecoder().decodeFloat())
-}
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toFloat",
+    ReplaceWith("this.toFloat()", "net.benwoodworth.knbt.toFloat"),
+)
+public fun NbtFloat.toFloat(): Float = toFloat()

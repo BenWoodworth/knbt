@@ -2,10 +2,10 @@ package data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.benwoodworth.knbt.NbtCompound
 import net.benwoodworth.knbt.assertStructureEquals
 import net.benwoodworth.knbt.buildNbt
-import net.benwoodworth.knbt.tag.NbtCompound
-import net.benwoodworth.knbt.tag.put
+import net.benwoodworth.knbt.put
 
 val testTag: NbtCompound
     get() = buildNbt("hello world") {

@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt
 
-import net.benwoodworth.knbt.tag.NbtTag
 import org.junit.Test
 import java.io.IOException
 

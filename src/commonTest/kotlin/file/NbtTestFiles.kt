@@ -9,7 +9,6 @@ import net.benwoodworth.knbt.asSource
 import net.benwoodworth.knbt.data.BigTestExtendedNbt
 import net.benwoodworth.knbt.data.bigTestExtendedClass
 import net.benwoodworth.knbt.data.bigTestExtendedTag
-import net.benwoodworth.knbt.tag.NbtTag
 import okio.Source
 
 class NbtTestFile<T>(
@@ -17,7 +16,7 @@ class NbtTestFile<T>(
     val nbt: Nbt,
     val valueSerializer: KSerializer<T>,
     val value: T,
-    val nbtTag: NbtTag,
+    val nbtTag: net.benwoodworth.knbt.NbtTag,
     contentHex: String,
     val headerLength: Long = 0,
 ) {

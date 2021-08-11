@@ -1,10 +1,10 @@
 package net.benwoodworth.knbt.internal
 
 import data.testTag
+import kotlinx.serialization.encodeToString
 import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.Nbt
 import net.benwoodworth.knbt.data.bigTestExtendedTag
-import net.benwoodworth.knbt.encodeToStringifiedNbt
 import net.benwoodworth.knbt.fix
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,7 +30,7 @@ class StringifiedNbtWriterTest {
                 }
             """.trimIndent().replace("    ", "\t"),
 
-            actual = indentNbt.encodeToStringifiedNbt(testTag),
+            actual = indentNbt.encodeToString(testTag),
         )
     }
 
@@ -81,7 +81,7 @@ class StringifiedNbtWriterTest {
                 }
             """.trimIndent(),
 
-            actual = nbt.encodeToStringifiedNbt(bigTestExtendedTag),
+            actual = nbt.encodeToString(bigTestExtendedTag),
         )
     }
 }

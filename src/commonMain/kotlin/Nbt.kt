@@ -5,7 +5,6 @@ import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.NbtVariant.*
 import net.benwoodworth.knbt.internal.*
-import net.benwoodworth.knbt.tag.NbtTag
 import okio.Buffer
 import okio.Sink
 import okio.Source
@@ -330,7 +329,7 @@ public inline fun <reified T> Nbt.encodeToByteArray(value: T): ByteArray =
 /**
  * Decode NBT from a [ByteArray].
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
 @Deprecated(
     "Use NBT member function instead",
     ReplaceWith(

@@ -4,9 +4,7 @@ package net.benwoodworth.knbt.internal
 
 import data.testTag
 import kotlinx.serialization.ExperimentalSerializationApi
-import net.benwoodworth.knbt.LoggingNbtWriter
-import net.benwoodworth.knbt.Nbt
-import net.benwoodworth.knbt.tag.*
+import net.benwoodworth.knbt.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -1,37 +1,30 @@
 package net.benwoodworth.knbt.tag
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import net.benwoodworth.knbt.asNbtDecoder
-import net.benwoodworth.knbt.asNbtEncoder
-import net.benwoodworth.knbt.internal.NbtTagType
-import kotlin.jvm.JvmInline
+import net.benwoodworth.knbt.NbtLong
+import net.benwoodworth.knbt.toLong
+import net.benwoodworth.knbt.toNbtLong
 
-@JvmInline
-@Serializable(NbtLongSerializer::class)
-public value class NbtLong internal constructor(internal val value: Long) : NbtTag {
-    override val type: NbtTagType get() = NbtTagType.TAG_Long
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.NbtLong",
+    ReplaceWith("NbtLong", "net.benwoodworth.knbt.NbtLong"),
+)
+public typealias NbtLong = NbtLong
 
-    override fun toString(): String = value.toString()
-}
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtLong",
+    ReplaceWith("this.toNbtLong()", "net.benwoodworth.knbt.toNbtLong"),
+)
+public fun Long.toNbtLong(): NbtLong = toNbtLong()
 
-public fun Long.toNbtLong(): NbtLong = NbtLong(this)
-public fun Int.toNbtLong(): NbtLong = NbtLong(toLong())
-public fun NbtLong.toLong(): Long = value
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtLong",
+    ReplaceWith("this.toNbtLong()", "net.benwoodworth.knbt.toNbtLong"),
+)
+public fun Int.toNbtLong(): NbtLong = toNbtLong()
 
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toLong",
+    ReplaceWith("this.toLong()", "net.benwoodworth.knbt.toLong"),
+)
+public fun NbtLong.toLong(): Long = toLong()
 
-internal object NbtLongSerializer : KSerializer<NbtLong> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("net.benwoodworth.knbt.tag.NbtLong", PrimitiveKind.LONG)
-
-    override fun serialize(encoder: Encoder, value: NbtLong): Unit =
-        encoder.asNbtEncoder().encodeLong(value.value)
-
-    override fun deserialize(decoder: Decoder): NbtLong =
-        NbtLong(decoder.asNbtDecoder().decodeLong())
-}

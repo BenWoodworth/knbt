@@ -1,36 +1,23 @@
 package net.benwoodworth.knbt.tag
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import net.benwoodworth.knbt.asNbtDecoder
-import net.benwoodworth.knbt.asNbtEncoder
-import net.benwoodworth.knbt.internal.NbtTagType
-import kotlin.jvm.JvmInline
+import net.benwoodworth.knbt.NbtDouble
+import net.benwoodworth.knbt.toDouble
+import net.benwoodworth.knbt.toNbtDouble
 
-@JvmInline
-@Serializable(NbtDoubleSerializer::class)
-public value class NbtDouble internal constructor(internal val value: Double) : NbtTag {
-    override val type: NbtTagType get() = NbtTagType.TAG_Double
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.NbtDouble",
+    ReplaceWith("NbtDouble", "net.benwoodworth.knbt.NbtDouble"),
+)
+public typealias NbtDouble = NbtDouble
 
-    override fun toString(): String = value.toString()
-}
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toNbtDouble",
+    ReplaceWith("this.toNbtDouble()", "net.benwoodworth.knbt.toNbtDouble"),
+)
+public fun Double.toNbtDouble(): NbtDouble = this.toNbtDouble()
 
-public fun Double.toNbtDouble(): NbtDouble = NbtDouble(this)
-public fun NbtDouble.toDouble(): Double = value
-
-
-internal object NbtDoubleSerializer : KSerializer<NbtDouble> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("net.benwoodworth.knbt.tag.NbtDouble", PrimitiveKind.DOUBLE)
-
-    override fun serialize(encoder: Encoder, value: NbtDouble): Unit =
-        encoder.asNbtEncoder().encodeDouble(value.value)
-
-    override fun deserialize(decoder: Decoder): NbtDouble =
-        NbtDouble(decoder.asNbtDecoder().decodeDouble())
-}
+@Deprecated(
+    "Moved to net.benwoodworth.knbt.toDouble",
+    ReplaceWith("this.toDouble()", "net.benwoodworth.knbt.toDouble"),
+)
+public fun NbtDouble.toDouble(): Double = this.toDouble()

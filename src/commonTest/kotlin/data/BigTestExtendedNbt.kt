@@ -3,7 +3,6 @@ package net.benwoodworth.knbt.data
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.tag.*
 
 val bigTestExtendedTag
     get() = buildNbt("Level") {
