@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.internal.NbtTagType
 import kotlin.jvm.JvmInline
 import kotlin.jvm.JvmName
+import kotlin.reflect.KClass
 
 @Polymorphic
 public sealed interface NbtTag {
@@ -356,4 +357,100 @@ public fun nbtLongArrayOf(vararg elements: Long): NbtLongArray = NbtLongArray(el
 
 public fun LongArray.toNbtLongArray(): NbtLongArray = NbtLongArray(this.copyOf())
 public fun Collection<Long>.toNbtLongArray(): NbtLongArray = NbtLongArray(this.toLongArray())
+//endregion
+
+//region NbtTag casting methods
+private inline fun <reified T : NbtTag> NbtTag.cast(): T =
+    this as? T ?: throw IllegalArgumentException("Element ${this::class.simpleName} is not an ${T::class.simpleName}")
+
+/**
+ * Convenience method to get this element as an [NbtByte]
+ * @throws IllegalArgumentException if this element is not an [NbtByte]
+ */
+public val NbtTag.nbtByte: NbtByte get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtShort]
+ * @throws IllegalArgumentException if this element is not an [NbtShort]
+ */
+public val NbtTag.nbtShort: NbtShort get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtInt]
+ * @throws IllegalArgumentException if this element is not an [NbtInt]
+ */
+public val NbtTag.nbtInt: NbtInt get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtLong]
+ * @throws IllegalArgumentException if this element is not an [NbtLong]
+ */
+public val NbtTag.nbtLong: NbtLong get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtFloat]
+ * @throws IllegalArgumentException if this element is not an [NbtFloat]
+ */
+public val NbtTag.nbtFloat: NbtFloat get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtDouble]
+ * @throws IllegalArgumentException if this element is not an [NbtDouble]
+ */
+public val NbtTag.nbtDouble: NbtDouble get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtByteArray]
+ * @throws IllegalArgumentException if this element is not an [NbtByteArray]
+ */
+public val NbtTag.nbtByteArray: NbtByteArray get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtString]
+ * @throws IllegalArgumentException if this element is not an [NbtString]
+ */
+public val NbtTag.nbtString: NbtString get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtList]
+ * @throws IllegalArgumentException if this element is not an [NbtList]
+ */
+public val NbtTag.nbtList: NbtList<*> get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtCompound]
+ * @throws IllegalArgumentException if this element is not an [NbtCompound]
+ */
+public val NbtTag.nbtCompound: NbtCompound get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtIntArray]
+ * @throws IllegalArgumentException if this element is not an [NbtIntArray]
+ */
+public val NbtTag.nbtIntArray: NbtIntArray get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtLongArray]
+ * @throws IllegalArgumentException if this element is not an [NbtLongArray]
+ */
+public val NbtTag.nbtLongArray: NbtLongArray get() = cast()
+
+/**
+ * Convenience method to get this element as an [NbtList]<[T]>
+ * @throws IllegalArgumentException if this element is not an [NbtList]<[T]>
+ */
+@ExperimentalNbtApi
+public inline fun <reified T : NbtTag> NbtTag.nbtList(): NbtList<T> = nbtList(T::class)
+
+@PublishedApi
+@Suppress("UNCHECKED_CAST")
+internal fun <T : NbtTag> NbtTag.nbtList(type: KClass<T>): NbtList<T> = when {
+    this !is NbtList<*> -> {
+        throw IllegalArgumentException("Element ${this::class.simpleName} is not an NbtList<${type.simpleName}>")
+    }
+    isNotEmpty() && !type.isInstance(first()) -> {
+        throw IllegalArgumentException("Element NbtList<${first()::class.simpleName}> is not an NbtList<${type.simpleName}>")
+    }
+    else -> this as NbtList<T>
+}
 //endregion
