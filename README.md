@@ -50,12 +50,12 @@ nbtTag = nbt.encodeToNbtTag(value)
 value = nbt.decodeFromNbtTag(nbtTag)
 
 // Okio Sink/Source (Multiplatform)
-nbt.encodeTo(sink, value)
-value = nbt.decodeFrom(source)
+nbt.encodeToSink(value, sink)
+value = nbt.decodeFromSource(source)
 
 // OutputStream/InputStream (JVM)
-nbt.encodeTo(outputStream, value)
-value = nbt.decodeFrom(inputStream)
+nbt.encodeToStream(value, outputStream)
+value = nbt.decodeFromStream(inputStream)
 ```
 
 ### @NbtRoot
