@@ -3,6 +3,7 @@
 package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.file.nbtFiles
 import okio.blackholeSink
