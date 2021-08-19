@@ -3,6 +3,7 @@ package net.benwoodworth.knbt
 import net.benwoodworth.knbt.internal.NbtTagType
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.experimental.ExperimentalTypeInference
 import kotlin.jvm.JvmName
 
 /**
@@ -50,8 +51,9 @@ public class NbtListBuilder<T : NbtTag> @PublishedApi internal constructor(size:
     }
 }
 
+@OptIn(ExperimentalTypeInference::class)
 public inline fun <T : NbtTag> buildNbtList(
-    builderAction: NbtListBuilder<T>.() -> Unit,
+    @BuilderInference builderAction: NbtListBuilder<T>.() -> Unit,
 ): NbtList<T> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return NbtListBuilder<T>().apply(builderAction).build()
@@ -81,16 +83,18 @@ public fun NbtListBuilder<NbtString>.add(element: String): Boolean = addInternal
 public fun NbtListBuilder<NbtIntArray>.add(element: IntArray): Boolean = addInternal(NbtIntArray(element))
 public fun NbtListBuilder<NbtLongArray>.add(element: LongArray): Boolean = addInternal(NbtLongArray(element))
 
+@OptIn(ExperimentalTypeInference::class)
 public inline fun <T : NbtTag> NbtListBuilder<NbtList<NbtTag>>.addNbtList(
-    builderAction: NbtListBuilder<T>.() -> Unit,
+    @BuilderInference builderAction: NbtListBuilder<T>.() -> Unit,
 ): Boolean {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return add(buildNbtList(builderAction))
 }
 
+@OptIn(ExperimentalTypeInference::class)
 @JvmName("addNbtList\$T")
 public inline fun <T : NbtTag> NbtListBuilder<NbtList<T>>.addNbtList(
-    builderAction: NbtListBuilder<T>.() -> Unit,
+    @BuilderInference builderAction: NbtListBuilder<T>.() -> Unit,
 ): Boolean {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return add(buildNbtList(builderAction))
@@ -140,18 +144,11 @@ public fun NbtCompoundBuilder.put(key: String, value: String): NbtTag? = put(key
 public fun NbtCompoundBuilder.put(key: String, value: IntArray): NbtTag? = put(key, NbtIntArray(value))
 public fun NbtCompoundBuilder.put(key: String, value: LongArray): NbtTag? = put(key, NbtLongArray(value))
 
-public inline fun NbtCompoundBuilder.putNbtList(
-    key: String,
-    builderAction: NbtListBuilder<NbtList<NbtTag>>.() -> Unit,
-): NbtTag? {
-    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return put(key, buildNbtList(builderAction))
-}
-
+@OptIn(ExperimentalTypeInference::class)
 @JvmName("putNbtList\$T")
 public inline fun <T : NbtTag> NbtCompoundBuilder.putNbtList(
     key: String,
-    builderAction: NbtListBuilder<T>.() -> Unit,
+    @BuilderInference builderAction: NbtListBuilder<T>.() -> Unit,
 ): NbtTag? {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return put(key, buildNbtList(builderAction))

@@ -95,7 +95,7 @@ class NbtCompound : NbtTag, Map<String, NbtTag>
 ```kotlin
 val nbtByte = NbtByte(5)
 
-val nbtIntArray = NbtIntArray(listOf(1, 2, 3, 4, 5))
+val nbtIntArray = NbtIntArray(intArrayOf(1, 2, 3, 4, 5))
 
 val nbtListOfStrings = buildNbtList<NbtString> {
     add("these")
@@ -126,14 +126,14 @@ val bigtest = buildNbt("Level") {
             put("value", 0.5f)
         }
     }
-    putNbtList<NbtLong>("listTest (long)") {
+    putNbtList("listTest (long)") {
         add(11L)
         add(12L)
         add(13L)
         add(14L)
         add(15L)
     }
-    putNbtList<NbtCompound>("listTest (compound)") {
+    putNbtList("listTest (compound)") {
         addNbtCompound {
             put("name", "Compound tag #0")
             put("created-on", 1264099775885L)
