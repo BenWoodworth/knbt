@@ -190,7 +190,7 @@ internal class TreeNbtWriter(tagConsumer: (NbtTag) -> Unit) : NbtWriter {
 
         override fun endByteArray() {
             writer = parent
-            parent.consumeTag(NbtByteArray(array))
+            parent.consumeTag(NbtByteArray(array.asList()))
         }
 
         override fun writeByte(value: Byte) {
@@ -206,7 +206,7 @@ internal class TreeNbtWriter(tagConsumer: (NbtTag) -> Unit) : NbtWriter {
 
         override fun endIntArray() {
             writer = parent
-            parent.consumeTag(NbtIntArray(array))
+            parent.consumeTag(NbtIntArray(array.asList()))
         }
 
         override fun writeInt(value: Int) {
@@ -222,7 +222,7 @@ internal class TreeNbtWriter(tagConsumer: (NbtTag) -> Unit) : NbtWriter {
 
         override fun endLongArray() {
             writer = parent
-            parent.consumeTag(NbtLongArray(array))
+            parent.consumeTag(NbtLongArray(array.asList()))
         }
 
         override fun writeLong(value: Long) {

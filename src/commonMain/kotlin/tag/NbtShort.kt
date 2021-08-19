@@ -1,8 +1,6 @@
 package net.benwoodworth.knbt.tag
 
 import net.benwoodworth.knbt.NbtShort
-import net.benwoodworth.knbt.toNbtShort
-import net.benwoodworth.knbt.toShort
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtShort",
@@ -11,20 +9,19 @@ import net.benwoodworth.knbt.toShort
 public typealias NbtShort = NbtShort
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtShort",
-    ReplaceWith("this.toNbtShort()", "net.benwoodworth.knbt.toNbtShort"),
+    "Replaced with NbtShort.value",
+    ReplaceWith("this.value"),
 )
-public fun Short.toNbtShort(): NbtShort = toNbtShort()
+public fun NbtShort.toShort(): Short = this.value
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtShort",
-    ReplaceWith("this.toNbtShort()", "net.benwoodworth.knbt.toNbtShort"),
+    "Replaced with NbtShort constructor",
+    ReplaceWith("NbtShort(this.toShort())", "net.benwoodworth.knbt.NbtShort"),
 )
-public fun Int.toNbtShort(): NbtShort = toNbtShort()
+public fun Int.toNbtShort(): NbtShort = NbtShort(this.toShort())
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toShort",
-    ReplaceWith("this.toShort()", "net.benwoodworth.knbt.toShort"),
+    "Replaced with NbtShort constructor",
+    ReplaceWith("NbtShort(this)", "net.benwoodworth.knbt.NbtShort"),
 )
-public fun NbtShort.toShort(): Short = toShort()
-
+public fun Short.toNbtShort(): NbtShort = NbtShort(this)

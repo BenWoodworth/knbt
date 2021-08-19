@@ -5,6 +5,8 @@ import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.internal.NbtTagType
+import net.benwoodworth.knbt.internal.appendNbtString
+import net.benwoodworth.knbt.internal.toNbtString
 import kotlin.jvm.JvmInline
 import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
@@ -25,23 +27,23 @@ public sealed interface NbtTag {
 
 @JvmInline
 @Serializable(with = NbtByteSerializer::class)
-public value class NbtByte internal constructor(internal val value: Byte) : NbtTag {
+public value class NbtByte(public val value: Byte) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Byte
 
-    override fun toString(): String = value.toString()
+    override fun toString(): String = "${value}b"
 }
 
 @JvmInline
 @Serializable(NbtShortSerializer::class)
-public value class NbtShort internal constructor(internal val value: Short) : NbtTag {
+public value class NbtShort(public val value: Short) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Short
 
-    override fun toString(): String = value.toString()
+    override fun toString(): String = "${value}s"
 }
 
 @JvmInline
 @Serializable(NbtIntSerializer::class)
-public value class NbtInt internal constructor(internal val value: Int) : NbtTag {
+public value class NbtInt(public val value: Int) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Int
 
     override fun toString(): String = value.toString()
@@ -49,315 +51,185 @@ public value class NbtInt internal constructor(internal val value: Int) : NbtTag
 
 @JvmInline
 @Serializable(NbtLongSerializer::class)
-public value class NbtLong internal constructor(internal val value: Long) : NbtTag {
+public value class NbtLong(public val value: Long) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Long
 
-    override fun toString(): String = value.toString()
+    override fun toString(): String = "${value}L"
 }
 
 @JvmInline
 @Serializable(NbtFloatSerializer::class)
-public value class NbtFloat internal constructor(internal val value: Float) : NbtTag {
+public value class NbtFloat(public val value: Float) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Float
 
-    override fun toString(): String = value.toString()
+    override fun toString(): String = "${value}f"
 }
 
 @JvmInline
 @Serializable(NbtDoubleSerializer::class)
-public value class NbtDouble internal constructor(internal val value: Double) : NbtTag {
+public value class NbtDouble(public val value: Double) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Double
 
-    override fun toString(): String = value.toString()
+    override fun toString(): String = "${value}d"
 }
 
 @Suppress("OVERRIDE_BY_INLINE")
 @Serializable(NbtByteArraySerializer::class)
-public class NbtByteArray private constructor(
-    internal val value: ByteArray,
-    private val list: List<Byte>,
-) : NbtTag, List<Byte> by list {
+public class NbtByteArray(
+    private val content: List<Byte>,
+) : NbtTag, List<Byte> by content {
     override val type: NbtTagType get() = NbtTagType.TAG_Byte_Array
 
-    @PublishedApi
-    internal constructor(value: ByteArray) : this(value, value.asList())
+    public constructor(content: ByteArray) : this(content.asList())
 
-    override fun equals(other: Any?): Boolean = when {
-        this === other -> true
-        other is NbtTag -> other is NbtByteArray && value.contentEquals(other.value)
-        else -> list == other
-    }
+    override fun equals(other: Any?): Boolean =
+        if (content.isEmpty() && other is NbtTag) {
+            other is NbtByteArray && other.isEmpty()
+        } else {
+            content == other
+        }
 
-    override fun hashCode(): Int = value.contentHashCode()
+    override fun hashCode(): Int = content.hashCode()
 
-    override fun toString(): String = value.contentToString()
+    override fun toString(): String =
+        content.joinToString(separator = ",", prefix = "[B;", postfix = "]") { "${it}B" }
 }
 
 @JvmInline
 @Serializable(NbtStringSerializer::class)
-public value class NbtString internal constructor(internal val value: String) : NbtTag {
+public value class NbtString(public val value: String) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_String
 
-    override fun toString(): String = value
+    override fun toString(): String = value.toNbtString()
 }
 
 @Serializable(NbtListSerializer::class)
-public class NbtList<out T : NbtTag> internal constructor(
-    internal val value: List<T>,
-) : NbtTag, List<T> by value {
+public class NbtList<out T : NbtTag> private constructor(
+    private val content: List<T>,
+) : NbtTag, List<T> by content {
     override val type: NbtTagType get() = NbtTagType.TAG_List
 
-    override fun equals(other: Any?): Boolean = when {
-        this === other -> true
-        other is NbtTag -> other is NbtList<*> && value == other.value
-        else -> value == other
-    }
+    internal val elementType: NbtTagType
+        get() = if (isEmpty()) NbtTagType.TAG_End else first().type
 
-    override fun hashCode(): Int = value.hashCode()
+    override fun equals(other: Any?): Boolean =
+        if (content.isEmpty() && other is NbtTag) {
+            other is NbtList<*> && other.isEmpty()
+        } else {
+            content == other
+        }
 
-    override fun toString(): String = value.toString()
+    override fun hashCode(): Int = content.hashCode()
 
+    override fun toString(): String =
+        content.joinToString(prefix = "[", postfix = "]", separator = ",")
+
+    @OptIn(UnsafeNbtApi::class)
     public companion object {
-        internal val empty: NbtList<Nothing> = NbtList(emptyList())
+        @UnsafeNbtApi
+        internal operator fun <T : NbtTag> invoke(content: List<T>): NbtList<T> = NbtList(content)
+
+        // Specific constructors, since NbtLists can only contain a single tag type
+        @JvmName("invoke\$NbtByte")
+        public operator fun invoke(content: List<NbtByte>): NbtList<NbtByte> = NbtList(content)
+
+        @JvmName("invoke\$NbtShort")
+        public operator fun invoke(content: List<NbtShort>): NbtList<NbtShort> = NbtList(content)
+
+        @JvmName("invoke\$NbtInt")
+        public operator fun invoke(content: List<NbtInt>): NbtList<NbtInt> = NbtList(content)
+
+        @JvmName("invoke\$NbtLong")
+        public operator fun invoke(content: List<NbtLong>): NbtList<NbtLong> = NbtList(content)
+
+        @JvmName("invoke\$NbtFloat")
+        public operator fun invoke(content: List<NbtFloat>): NbtList<NbtFloat> = NbtList(content)
+
+        @JvmName("invoke\$NbtDouble")
+        public operator fun invoke(content: List<NbtDouble>): NbtList<NbtDouble> = NbtList(content)
+
+        @JvmName("invoke\$NbtByteArray")
+        public operator fun invoke(content: List<NbtByteArray>): NbtList<NbtByteArray> = NbtList(content)
+
+        @JvmName("invoke\$NbtString")
+        public operator fun invoke(content: List<NbtString>): NbtList<NbtString> = NbtList(content)
+
+        @JvmName("invoke\$NbtList")
+        public operator fun invoke(content: List<NbtList<*>>): NbtList<NbtList<*>> = NbtList(content)
+
+        @JvmName("invoke\$NbtCompound")
+        public operator fun invoke(content: List<NbtCompound>): NbtList<NbtCompound> = NbtList(content)
+
+        @JvmName("invoke\$NbtIntArray")
+        public operator fun invoke(content: List<NbtIntArray>): NbtList<NbtIntArray> = NbtList(content)
+
+        @JvmName("invoke\$NbtLongArray")
+        public operator fun invoke(content: List<NbtLongArray>): NbtList<NbtLongArray> = NbtList(content)
     }
 }
 
 @Serializable(NbtCompoundSerializer::class)
-public class NbtCompound internal constructor(
-    internal val value: Map<String, NbtTag>
-) : NbtTag, Map<String, NbtTag> by value {
-
+public class NbtCompound(
+    private val content: Map<String, NbtTag>
+) : NbtTag, Map<String, NbtTag> by content {
     override val type: NbtTagType get() = NbtTagType.TAG_Compound
 
-    override fun equals(other: Any?): Boolean = when {
-        this === other -> true
-        other is NbtTag -> other is NbtCompound && value == other.value
-        else -> value == other
-    }
+    override fun equals(other: Any?): Boolean = content == other
 
-    override fun hashCode(): Int = value.hashCode()
+    override fun hashCode(): Int = content.hashCode()
 
-    override fun toString(): String = value.toString()
-
-    public companion object {
-        internal val empty = NbtCompound(emptyMap())
-    }
+    override fun toString(): String =
+        content.entries.joinToString(separator = ",", prefix = "{", postfix = "}") { (name, value) ->
+            buildString {
+                appendNbtString(name)
+                append(':')
+                append(value)
+            }
+        }
 }
 
 @Suppress("OVERRIDE_BY_INLINE")
 @Serializable(NbtIntArraySerializer::class)
-public class NbtIntArray private constructor(
-    internal val value: IntArray,
-    private val list: List<Int>,
-) : NbtTag, List<Int> by list {
+public class NbtIntArray(
+    private val content: List<Int>,
+) : NbtTag, List<Int> by content {
     override val type: NbtTagType get() = NbtTagType.TAG_Int_Array
 
-    @PublishedApi
-    internal constructor(value: IntArray) : this(value, value.asList())
+    public constructor(content: IntArray) : this(content.asList())
 
-    override fun equals(other: Any?): Boolean = when {
-        this === other -> true
-        other is NbtTag -> other is NbtIntArray && value.contentEquals(other.value)
-        else -> list == other
-    }
+    override fun equals(other: Any?): Boolean =
+        if (content.isEmpty() && other is NbtTag) {
+            other is NbtIntArray && other.isEmpty()
+        } else {
+            content == other
+        }
 
-    override fun hashCode(): Int = value.contentHashCode()
+    override fun hashCode(): Int = content.hashCode()
 
-    override fun toString(): String = value.contentToString()
+    override fun toString(): String =
+        content.joinToString(separator = ",", prefix = "[I;", postfix = "]")
 }
 
-@Suppress("OVERRIDE_BY_INLINE")
 @Serializable(NbtLongArraySerializer::class)
-public class NbtLongArray private constructor(
-    internal val value: LongArray,
-    private val list: List<Long>,
-) : NbtTag, List<Long> by list {
+public class NbtLongArray(
+    private val content: List<Long>,
+) : NbtTag, List<Long> by content {
     override val type: NbtTagType get() = NbtTagType.TAG_Long_Array
 
-    @PublishedApi
-    internal constructor(value: LongArray) : this(value, value.asList())
+    public constructor(content: LongArray) : this(content.asList())
 
-    override fun equals(other: Any?): Boolean = when {
-        this === other -> true
-        other is NbtTag -> other is NbtLongArray && value.contentEquals(other.value)
-        else -> list == other
-    }
-
-    override fun hashCode(): Int = value.contentHashCode()
-
-    override fun toString(): String = value.contentToString()
-}
-
-
-public fun NbtByte.toByte(): Byte = value
-public fun Int.toNbtByte(): NbtByte = NbtByte(toByte())
-public fun Byte.toNbtByte(): NbtByte = NbtByte(this)
-
-public fun Short.toNbtShort(): NbtShort = NbtShort(this)
-public fun Int.toNbtShort(): NbtShort = NbtShort(toShort())
-public fun NbtShort.toShort(): Short = value
-
-public fun Int.toNbtInt(): NbtInt = NbtInt(this)
-public fun NbtInt.toInt(): Int = value
-
-public fun Long.toNbtLong(): NbtLong = NbtLong(this)
-public fun Int.toNbtLong(): NbtLong = NbtLong(toLong())
-public fun NbtLong.toLong(): Long = value
-
-public fun Float.toNbtFloat(): NbtFloat = NbtFloat(this)
-public fun NbtFloat.toFloat(): Float = value
-
-public fun Double.toNbtDouble(): NbtDouble = NbtDouble(this)
-public fun NbtDouble.toDouble(): Double = value
-
-//region NbtByteArray helpers
-public inline fun NbtByteArray(size: Int, init: (index: Int) -> Byte): NbtByteArray =
-    NbtByteArray(ByteArray(size) { index -> init(index) })
-
-public fun nbtByteArrayOf(vararg elements: Byte): NbtByteArray = NbtByteArray(elements)
-
-public fun ByteArray.toNbtByteArray(): NbtByteArray = NbtByteArray(this.copyOf())
-public fun Collection<Byte>.toNbtByteArray(): NbtByteArray = NbtByteArray(this.toByteArray())
-//endregion
-
-public fun String.toNbtString(): NbtString = NbtString(this)
-
-//region NbtList helpers
-internal val NbtList<*>.elementType: NbtTagType
-    get() = if (value.isEmpty()) NbtTagType.TAG_End else value.first().type
-
-public fun <T : NbtTag> nbtListOf(): NbtList<T> = NbtList.empty
-
-public fun <T : NbtTag> nbtListOf(vararg elements: T): NbtList<T> =
-    if (elements.isEmpty()) NbtList.empty else NbtList(elements.asList())
-
-public fun <T : NbtTag> List<T>.toNbtList(): NbtList<T> = when (size) {
-    0 -> NbtList.empty
-    1 -> NbtList(listOf(first()))
-    else -> {
-        var elementType = NbtTagType.TAG_End
-        val elements = map { element ->
-            if (elementType == NbtTagType.TAG_End) {
-                elementType = element.type
-            } else {
-                require(element.type == elementType) { "NbtList elements must all have the same type" }
-            }
-            element
+    override fun equals(other: Any?): Boolean =
+        if (content.isEmpty() && other is NbtTag) {
+            other is NbtLongArray && other.isEmpty()
+        } else {
+            content == other
         }
-        NbtList(elements)
-    }
+
+    override fun hashCode(): Int = content.hashCode()
+
+    override fun toString(): String =
+        content.joinToString(separator = ",", prefix = "[L;", postfix = "]") { "${it}L" }
 }
-
-@JvmName("toNbtList\$Byte")
-public fun List<Byte>.toNbtList(): NbtList<NbtByte> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtByte() })
-
-@JvmName("toNbtList\$Short")
-public fun List<Short>.toNbtList(): NbtList<NbtShort> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtShort() })
-
-@JvmName("toNbtList\$Int")
-public fun List<Int>.toNbtList(): NbtList<NbtInt> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtInt() })
-
-@JvmName("toNbtList\$Long")
-public fun List<Long>.toNbtList(): NbtList<NbtLong> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtLong() })
-
-@JvmName("toNbtList\$Float")
-public fun List<Float>.toNbtList(): NbtList<NbtFloat> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtFloat() })
-
-@JvmName("toNbtList\$Double")
-public fun List<Double>.toNbtList(): NbtList<NbtDouble> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtDouble() })
-
-@JvmName("toNbtList\$String")
-public fun List<String>.toNbtList(): NbtList<NbtString> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtString() })
-
-@JvmName("toNbtList\$ByteArray")
-public fun List<ByteArray>.toNbtList(): NbtList<NbtByteArray> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtByteArray() })
-
-@JvmName("toNbtList\$IntArray")
-public fun List<IntArray>.toNbtList(): NbtList<NbtIntArray> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtIntArray() })
-
-@JvmName("toNbtList\$LongArray")
-public fun List<LongArray>.toNbtList(): NbtList<NbtLongArray> =
-    if (size == 0) NbtList.empty else NbtList(map { it.toNbtLongArray() })
-//endregion
-
-//region NbtCompound helpers
-public fun nbtCompoundOf(): NbtCompound = NbtCompound.empty
-
-public fun nbtCompoundOf(vararg pairs: Pair<String, NbtTag>): NbtCompound =
-    if (pairs.isEmpty()) NbtCompound.empty else NbtCompound(linkedMapOf(*pairs))
-
-public fun Map<String, NbtTag>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(this.toMap())
-
-@JvmName("toNbtCompound\$Byte")
-public fun Map<String, Byte>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtByte() })
-
-@JvmName("toNbtCompound\$Short")
-public fun Map<String, Short>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtShort() })
-
-@JvmName("toNbtCompound\$Int")
-public fun Map<String, Int>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtInt() })
-
-@JvmName("toNbtCompound\$Long")
-public fun Map<String, Long>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtLong() })
-
-@JvmName("toNbtCompound\$Float")
-public fun Map<String, Float>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtFloat() })
-
-@JvmName("toNbtCompound\$Double")
-public fun Map<String, Double>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtDouble() })
-
-@JvmName("toNbtCompound\$String")
-public fun Map<String, String>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtString() })
-
-@JvmName("toNbtCompound\$ByteArray")
-public fun Map<String, ByteArray>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtByteArray() })
-
-@JvmName("toNbtCompound\$IntArray")
-public fun Map<String, IntArray>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtIntArray() })
-
-@JvmName("toNbtCompound\$LongArray")
-public fun Map<String, LongArray>.toNbtCompound(): NbtCompound =
-    if (isEmpty()) NbtCompound.empty else NbtCompound(mapValues { it.value.toNbtLongArray() })
-//endregion
-
-//region NbtIntArray helpers
-public inline fun NbtIntArray(size: Int, init: (index: Int) -> Int): NbtIntArray =
-    NbtIntArray(IntArray(size) { index -> init(index) })
-
-public fun nbtIntArrayOf(vararg elements: Int): NbtIntArray = NbtIntArray(elements)
-
-public fun IntArray.toNbtIntArray(): NbtIntArray = NbtIntArray(this.copyOf())
-public fun Collection<Int>.toNbtIntArray(): NbtIntArray = NbtIntArray(this.toIntArray())
-//endregion
-
-//region NbtLongArray helpers
-public inline fun NbtLongArray(size: Int, init: (index: Int) -> Long): NbtLongArray =
-    NbtLongArray(LongArray(size) { index -> init(index) })
-
-public fun nbtLongArrayOf(vararg elements: Long): NbtLongArray = NbtLongArray(elements)
-
-public fun LongArray.toNbtLongArray(): NbtLongArray = NbtLongArray(this.copyOf())
-public fun Collection<Long>.toNbtLongArray(): NbtLongArray = NbtLongArray(this.toLongArray())
-//endregion
 
 //region NbtTag casting methods
 private inline fun <reified T : NbtTag> NbtTag.cast(): T =

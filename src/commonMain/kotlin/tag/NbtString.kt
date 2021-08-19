@@ -1,7 +1,6 @@
 package net.benwoodworth.knbt.tag
 
 import net.benwoodworth.knbt.NbtString
-import net.benwoodworth.knbt.toNbtString
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtString",
@@ -10,8 +9,8 @@ import net.benwoodworth.knbt.toNbtString
 public typealias NbtString = NbtString
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtString",
-    ReplaceWith("this.toNbtString()", "net.benwoodworth.knbt.toNbtString"),
+    "Replaced with NbtString constructor",
+    ReplaceWith("NbtString(this)", "net.benwoodworth.knbt.NbtString"),
 )
-public fun String.toNbtString(): NbtString = toNbtString()
+public fun String.toNbtString(): NbtString = NbtString(this)
 

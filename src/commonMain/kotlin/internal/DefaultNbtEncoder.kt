@@ -196,7 +196,7 @@ internal class DefaultNbtEncoder(
             TAG_String -> writer.writeString((value as NbtString).value)
             TAG_Compound -> {
                 writer.beginCompound()
-                (value as NbtCompound).value.forEach { entry ->
+                (value as NbtCompound).forEach { entry ->
                     writer.beginCompoundEntry(entry.value.type, entry.key)
                     writeTag(entry.value)
                 }
@@ -214,7 +214,7 @@ internal class DefaultNbtEncoder(
                 writer.endList()
             }
             TAG_Byte_Array -> {
-                val bytes = (value as NbtByteArray).value
+                val bytes = value as NbtByteArray
                 writer.beginByteArray(bytes.size)
                 bytes.forEach { byte ->
                     writer.beginByteArrayEntry()
@@ -223,7 +223,7 @@ internal class DefaultNbtEncoder(
                 writer.endByteArray()
             }
             TAG_Int_Array -> {
-                val ints = (value as NbtIntArray).value
+                val ints = value as NbtIntArray
                 writer.beginIntArray(ints.size)
                 ints.forEach { int ->
                     writer.beginIntArrayEntry()
@@ -232,7 +232,7 @@ internal class DefaultNbtEncoder(
                 writer.endIntArray()
             }
             TAG_Long_Array -> {
-                val longs = (value as NbtLongArray).value
+                val longs = value as NbtLongArray
                 writer.beginLongArray(longs.size)
                 longs.forEach { long ->
                     writer.beginLongArrayEntry()

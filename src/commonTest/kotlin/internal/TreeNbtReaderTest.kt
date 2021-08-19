@@ -88,7 +88,7 @@ class TreeNbtReaderTest {
     @Test
     fun Should_read_ByteArray_correctly() {
         TestValues.byteArrays.forEach { value ->
-            expectNbtReaderCalls(value.toNbtByteArray()) {
+            expectNbtReaderCalls(NbtByteArray(value)) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Byte_Array)
                 beginByteArray() shouldReturn ArrayInfo(value.size)
                 repeat(value.size) { index ->
@@ -104,7 +104,7 @@ class TreeNbtReaderTest {
     @Test
     fun Should_read_IntArray_correctly() {
         TestValues.intArrays.forEach { value ->
-            expectNbtReaderCalls(value.toNbtIntArray()) {
+            expectNbtReaderCalls(NbtIntArray(value)) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Int_Array)
                 beginIntArray() shouldReturn ArrayInfo(value.size)
                 repeat(value.size) { index ->
@@ -120,7 +120,7 @@ class TreeNbtReaderTest {
     @Test
     fun Should_read_LongArray_correctly() {
         TestValues.longArrays.forEach { value ->
-            expectNbtReaderCalls(value.toNbtLongArray()) {
+            expectNbtReaderCalls(NbtLongArray(value)) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Long_Array)
                 beginLongArray() shouldReturn ArrayInfo(value.size)
                 repeat(value.size) { index ->
@@ -159,7 +159,7 @@ class TreeNbtReaderTest {
 
     @Test
     fun Should_read_List_with_no_entries_correctly() {
-        expectNbtReaderCalls(nbtListOf<NbtTag>()) {
+        expectNbtReaderCalls(NbtList(emptyList<NbtByte>())) {
             beginRootTag() shouldReturn RootTagInfo(TAG_List)
             beginList() shouldReturn ListInfo(TAG_End, 0)
             beginListEntry() shouldReturn false
@@ -169,7 +169,7 @@ class TreeNbtReaderTest {
 
     @Test
     fun Should_read_List_with_one_entry_correctly() {
-        expectNbtReaderCalls(listOf("entry").toNbtList()) {
+        expectNbtReaderCalls(NbtList(listOf("entry").map { NbtString(it) })) {
             beginRootTag() shouldReturn RootTagInfo(TAG_List)
             beginList() shouldReturn ListInfo(TAG_String, 1)
             beginListEntry() shouldReturn true

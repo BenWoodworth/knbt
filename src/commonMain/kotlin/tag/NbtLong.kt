@@ -1,8 +1,6 @@
 package net.benwoodworth.knbt.tag
 
 import net.benwoodworth.knbt.NbtLong
-import net.benwoodworth.knbt.toLong
-import net.benwoodworth.knbt.toNbtLong
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtLong",
@@ -11,20 +9,20 @@ import net.benwoodworth.knbt.toNbtLong
 public typealias NbtLong = NbtLong
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtLong",
-    ReplaceWith("this.toNbtLong()", "net.benwoodworth.knbt.toNbtLong"),
+    "Replaced with NbtLong constructor",
+    ReplaceWith("NbtLong(this)", "net.benwoodworth.knbt.NbtLong"),
 )
-public fun Long.toNbtLong(): NbtLong = toNbtLong()
+public fun Long.toNbtLong(): NbtLong = NbtLong(this)
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtLong",
-    ReplaceWith("this.toNbtLong()", "net.benwoodworth.knbt.toNbtLong"),
+    "Replaced with NbtLong constructor",
+    ReplaceWith("NbtLong(this.toLong())", "net.benwoodworth.knbt.NbtLong"),
 )
-public fun Int.toNbtLong(): NbtLong = toNbtLong()
+public fun Int.toNbtLong(): NbtLong = NbtLong(this.toLong())
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toLong",
-    ReplaceWith("this.toLong()", "net.benwoodworth.knbt.toLong"),
+    "Replaced with NbtLong constructor",
+    ReplaceWith("this.value"),
 )
-public fun NbtLong.toLong(): Long = toLong()
+public fun NbtLong.toLong(): Long = this.value
 

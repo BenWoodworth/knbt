@@ -1,8 +1,6 @@
 package net.benwoodworth.knbt.tag
 
 import net.benwoodworth.knbt.NbtDouble
-import net.benwoodworth.knbt.toDouble
-import net.benwoodworth.knbt.toNbtDouble
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtDouble",
@@ -12,12 +10,12 @@ public typealias NbtDouble = NbtDouble
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.toNbtDouble",
-    ReplaceWith("this.toNbtDouble()", "net.benwoodworth.knbt.toNbtDouble"),
+    ReplaceWith("NbtDouble(this)", "net.benwoodworth.knbt.NbtDouble"),
 )
-public fun Double.toNbtDouble(): NbtDouble = this.toNbtDouble()
+public fun Double.toNbtDouble(): NbtDouble = NbtDouble(this)
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.toDouble",
-    ReplaceWith("this.toDouble()", "net.benwoodworth.knbt.toDouble"),
+    ReplaceWith("this.value"),
 )
-public fun NbtDouble.toDouble(): Double = this.toDouble()
+public fun NbtDouble.toDouble(): Double = this.value

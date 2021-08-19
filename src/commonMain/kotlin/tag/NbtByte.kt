@@ -1,8 +1,6 @@
 package net.benwoodworth.knbt.tag
 
 import net.benwoodworth.knbt.NbtByte
-import net.benwoodworth.knbt.toByte
-import net.benwoodworth.knbt.toNbtByte
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtByte",
@@ -11,19 +9,19 @@ import net.benwoodworth.knbt.toNbtByte
 public typealias NbtByte = NbtByte
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toByte",
-    ReplaceWith("this.toByte()", "net.benwoodworth.knbt.toByte"),
+    "Replaced with NbtByte.value",
+    ReplaceWith("this.value"),
 )
-public fun NbtByte.toByte(): Byte = toByte()
+public fun NbtByte.toByte(): Byte = this.value
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtByte",
-    ReplaceWith("this.toNbtByte()", "net.benwoodworth.knbt.toNbtByte"),
+    "Replaced with NbtByte constructor",
+    ReplaceWith("NbtByte(this.toByte())", "net.benwoodworth.knbt.NbtByte"),
 )
-public fun Int.toNbtByte(): NbtByte = toNbtByte()
+public fun Int.toNbtByte(): NbtByte = NbtByte(this.toByte())
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtByte",
-    ReplaceWith("this.toNbtByte()", "net.benwoodworth.knbt.toNbtByte"),
+    "Replaced with NbtByte constructor",
+    ReplaceWith("NbtByte(this)", "net.benwoodworth.knbt.NbtByte"),
 )
-public fun Byte.toNbtByte(): NbtByte = toNbtByte()
+public fun Byte.toNbtByte(): NbtByte = NbtByte(this)

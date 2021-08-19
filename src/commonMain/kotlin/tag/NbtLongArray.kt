@@ -1,8 +1,6 @@
 package net.benwoodworth.knbt.tag
 
 import net.benwoodworth.knbt.NbtLongArray
-import net.benwoodworth.knbt.nbtLongArrayOf
-import net.benwoodworth.knbt.toNbtLongArray
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtLongArray",
@@ -11,25 +9,26 @@ import net.benwoodworth.knbt.toNbtLongArray
 public typealias NbtLongArray = NbtLongArray
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.NbtLongArray",
-    ReplaceWith("NbtLongArray(size, init)", "net.benwoodworth.knbt.NbtLongArray"),
+    "Replaced with NbtLongArray constructor",
+    ReplaceWith("NbtLongArray(LongArray(size, init))", "net.benwoodworth.knbt.NbtLongArray"),
 )
-public inline fun NbtLongArray(size: Int, init: (index: Int) -> Long): NbtLongArray = NbtLongArray(size, init)
+public inline fun NbtLongArray(size: Int, init: (index: Int) -> Long): NbtLongArray =
+    NbtLongArray(LongArray(size) { init(it) })
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.nbtLongArrayOf",
-    ReplaceWith("nbtLongArrayOf(*elements)", "net.benwoodworth.knbt.nbtLongArrayOf"),
+    "Replaced with NbtLongArray constructor",
+    ReplaceWith("NbtLongArray(longArrayOf(*elements))", "net.benwoodworth.knbt.NbtLongArray"),
 )
-public fun nbtLongArrayOf(vararg elements: Long): NbtLongArray = nbtLongArrayOf(*elements)
+public fun nbtLongArrayOf(vararg elements: Long): NbtLongArray = NbtLongArray(longArrayOf(*elements))
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtLongArray",
-    ReplaceWith("this.toNbtLongArray()", "net.benwoodworth.knbt.toNbtLongArray"),
+    "Replaced with NbtLongArray constructor",
+    ReplaceWith("NbtLongArray(this)", "net.benwoodworth.knbt.NbtLongArray"),
 )
-public fun LongArray.toNbtLongArray(): NbtLongArray = toNbtLongArray()
+public fun LongArray.toNbtLongArray(): NbtLongArray = NbtLongArray(this)
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtLongArray",
-    ReplaceWith("this.toNbtLongArray()", "net.benwoodworth.knbt.toNbtLongArray"),
+    "Replaced with NbtLongArray constructor",
+    ReplaceWith("NbtLongArray(this.toList())", "net.benwoodworth.knbt.NbtLongArray"),
 )
-public fun Collection<Long>.toNbtLongArray(): NbtLongArray = toNbtLongArray()
+public fun Collection<Long>.toNbtLongArray(): NbtLongArray = NbtLongArray(this.toList())

@@ -1,5 +1,6 @@
 package net.benwoodworth.knbt.tag
 
+import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.NbtByte
 import net.benwoodworth.knbt.NbtByteArray
 import net.benwoodworth.knbt.NbtDouble
@@ -12,8 +13,6 @@ import net.benwoodworth.knbt.NbtLongArray
 import net.benwoodworth.knbt.NbtShort
 import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.nbtListOf
-import net.benwoodworth.knbt.toNbtList
 import kotlin.jvm.JvmName
 
 @Deprecated(
@@ -22,90 +21,134 @@ import kotlin.jvm.JvmName
 )
 public typealias NbtList<T> = NbtList<T>
 
+@OptIn(UnsafeNbtApi::class)
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.nbtListOf",
-    ReplaceWith("nbtListOf()", "net.benwoodworth.knbt.nbtListOf"),
+    "Replaced with NbtList constructor",
+    ReplaceWith("NbtList(emptyList<T>())", "net.benwoodworth.knbt.NbtList"),
 )
-public fun <T : NbtTag> nbtListOf(): NbtList<T> = nbtListOf()
+public fun <T : NbtTag> nbtListOf(): NbtList<T> =
+    NbtList(emptyList<T>())
+
+@OptIn(UnsafeNbtApi::class)
+@Deprecated(
+    "Replaced with NbtList constructor",
+    ReplaceWith("NbtList(listOf(*elements))", "net.benwoodworth.knbt.NbtList"),
+)
+public fun <T : NbtTag> nbtListOf(vararg elements: T): NbtList<T> = NbtList(listOf(*elements))
+
+@OptIn(UnsafeNbtApi::class)
+@Deprecated(
+    "Replaced with NbtList constructor",
+    ReplaceWith("NbtList(this)", "net.benwoodworth.knbt.NbtList"),
+)
+public fun <T : NbtTag> List<T>.toNbtList(): NbtList<T> = NbtList(this)
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.nbtListOf",
-    ReplaceWith("nbtListOf(*elements)", "net.benwoodworth.knbt.nbtListOf"),
-)
-public fun <T : NbtTag> nbtListOf(vararg elements: T): NbtList<T> = nbtListOf(*elements)
-
-@Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtList",
-    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
-)
-public fun <T : NbtTag> List<T>.toNbtList(): NbtList<T> = toNbtList()
-
-@Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtList",
-    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+    "Replaced with NbtList constructor",
+    ReplaceWith(
+        "NbtList(this.map { NbtByte(it) })",
+        "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtByte",
+    ),
 )
 @JvmName("toNbtList\$Byte")
-public fun List<Byte>.toNbtList(): NbtList<NbtByte> = toNbtList()
+public fun List<Byte>.toNbtList(): NbtList<NbtByte> =
+    NbtList(this.map { NbtByte(it) })
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtList",
-    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+    "Replaced with NbtList constructor",
+    ReplaceWith(
+        "NbtList(this.map { NbtShort(it) })",
+        "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtShort",
+    ),
 )
 @JvmName("toNbtList\$Short")
-public fun List<Short>.toNbtList(): NbtList<NbtShort> = toNbtList()
+public fun List<Short>.toNbtList(): NbtList<NbtShort> =
+    NbtList(this.map { NbtShort(it) })
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtList",
-    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+    "Replaced with NbtList constructor",
+    ReplaceWith(
+        "NbtList(this.map { NbtInt(it) })",
+        "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtInt",
+    ),
 )
 @JvmName("toNbtList\$Int")
-public fun List<Int>.toNbtList(): NbtList<NbtInt> = toNbtList()
+public fun List<Int>.toNbtList(): NbtList<NbtInt> =
+    NbtList(this.map { NbtInt(it) })
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtList",
-    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+    "Replaced with NbtList constructor",
+    ReplaceWith(
+        "NbtList(this.map { NbtLong(it) })",
+        "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtLong",
+    ),
 )
 @JvmName("toNbtList\$Long")
-public fun List<Long>.toNbtList(): NbtList<NbtLong> = toNbtList()
+public fun List<Long>.toNbtList(): NbtList<NbtLong> =
+    NbtList(this.map { NbtLong(it) })
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtList",
-    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+    "Replaced with NbtList constructor",
+    ReplaceWith(
+        "NbtList(this.map { NbtFloat(it) })",
+        "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtFloat",
+    ),
 )
 @JvmName("toNbtList\$Float")
-public fun List<Float>.toNbtList(): NbtList<NbtFloat> = toNbtList()
+public fun List<Float>.toNbtList(): NbtList<NbtFloat> =
+    NbtList(this.map { NbtFloat(it) })
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtList",
-    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+    "Replaced with NbtList constructor",
+    ReplaceWith(
+        "NbtList(this.map { NbtDouble(it) })",
+        "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtDouble",
+    ),
 )
 @JvmName("toNbtList\$Double")
-public fun List<Double>.toNbtList(): NbtList<NbtDouble> = toNbtList()
+public fun List<Double>.toNbtList(): NbtList<NbtDouble> =
+    NbtList(this.map { NbtDouble(it) })
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtList",
-    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+    "Replaced with NbtList constructor",
+    ReplaceWith(
+        "NbtList(this.map { NbtString(it) })",
+        "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtString",
+    ),
 )
 @JvmName("toNbtList\$String")
-public fun List<String>.toNbtList(): NbtList<NbtString> = toNbtList()
+public fun List<String>.toNbtList(): NbtList<NbtString> =
+    NbtList(this.map { NbtString(it) })
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtList",
-    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+    "Replaced with NbtList constructor",
+    ReplaceWith(
+        "NbtList(this.map { NbtByteArray(it) })",
+        "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtByteArray",
+    ),
 )
 @JvmName("toNbtList\$ByteArray")
-public fun List<ByteArray>.toNbtList(): NbtList<NbtByteArray> = toNbtList()
+public fun List<ByteArray>.toNbtList(): NbtList<NbtByteArray> =
+    NbtList(this.map { NbtByteArray(it) })
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtList",
-    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+    "Replaced with NbtList constructor",
+    ReplaceWith(
+        "NbtList(this.map { NbtIntArray(it) })",
+        "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtIntArray",
+    ),
 )
 @JvmName("toNbtList\$IntArray")
-public fun List<IntArray>.toNbtList(): NbtList<NbtIntArray> = toNbtList()
+public fun List<IntArray>.toNbtList(): NbtList<NbtIntArray> =
+    NbtList(this.map { NbtIntArray(it) })
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtList",
-    ReplaceWith("this.toNbtList()", "net.benwoodworth.knbt.toNbtList"),
+    "Replaced with NbtList constructor",
+    ReplaceWith(
+        "NbtList(this.map { NbtLongArray(it) })",
+        "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtLongArray",
+    ),
 )
 @JvmName("toNbtList\$LongArray")
-public fun List<LongArray>.toNbtList(): NbtList<NbtLongArray> = toNbtList()
+public fun List<LongArray>.toNbtList(): NbtList<NbtLongArray> =
+    NbtList(this.map { NbtLongArray(it) })

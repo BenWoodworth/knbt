@@ -33,61 +33,81 @@ public inline fun buildNbtCompound(builderAction: NbtCompoundBuilder.() -> Unit)
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
 )
-public fun NbtCompoundBuilder.put(key: String, value: Byte): Unit = put(key, value)
+public fun NbtCompoundBuilder.put(key: String, value: Byte) {
+    put(key, value)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
 )
-public fun NbtCompoundBuilder.put(key: String, value: Short): Unit = put(key, value)
+public fun NbtCompoundBuilder.put(key: String, value: Short) {
+    put(key, value)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
 )
-public fun NbtCompoundBuilder.put(key: String, value: Int): Unit = put(key, value)
+public fun NbtCompoundBuilder.put(key: String, value: Int) {
+    put(key, value)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
 )
-public fun NbtCompoundBuilder.put(key: String, value: Long): Unit = put(key, value)
+public fun NbtCompoundBuilder.put(key: String, value: Long) {
+    put(key, value)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
 )
-public fun NbtCompoundBuilder.put(key: String, value: Float): Unit = put(key, value)
+public fun NbtCompoundBuilder.put(key: String, value: Float) {
+    put(key, value)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
 )
-public fun NbtCompoundBuilder.put(key: String, value: Double): Unit = put(key, value)
+public fun NbtCompoundBuilder.put(key: String, value: Double) {
+    put(key, value)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
 )
-public fun NbtCompoundBuilder.put(key: String, value: ByteArray): Unit = put(key, value)
+public fun NbtCompoundBuilder.put(key: String, value: ByteArray) {
+    put(key, value)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
 )
-public fun NbtCompoundBuilder.put(key: String, value: String): Unit = put(key, value)
+public fun NbtCompoundBuilder.put(key: String, value: String) {
+    put(key, value)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
 )
-public fun NbtCompoundBuilder.put(key: String, value: IntArray): Unit = put(key, value)
+public fun NbtCompoundBuilder.put(key: String, value: IntArray) {
+    put(key, value)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
 )
-public fun NbtCompoundBuilder.put(key: String, value: LongArray): Unit = put(key, NbtLongArray(value))
+public fun NbtCompoundBuilder.put(key: String, value: LongArray) {
+    put(key, NbtLongArray(value))
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.putNbtList",
@@ -98,7 +118,7 @@ public inline fun NbtCompoundBuilder.putNbtList(
     builderAction: NbtListBuilder<NbtList<NbtTag>>.() -> Unit,
 ) {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return putNbtList(key, builderAction)
+    putNbtList(key, builderAction)
 }
 
 @Deprecated(
@@ -111,7 +131,7 @@ public inline fun <T : NbtTag> NbtCompoundBuilder.putNbtList(
     builderAction: NbtListBuilder<T>.() -> Unit,
 ) {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return putNbtList(key, builderAction)
+    putNbtList(key, builderAction)
 }
 
 @Deprecated(
@@ -123,5 +143,5 @@ public inline fun NbtCompoundBuilder.putNbtCompound(
     builderAction: NbtCompoundBuilder.() -> Unit,
 ) {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return putNbtCompound(key, builderAction)
+    putNbtCompound(key, builderAction)
 }

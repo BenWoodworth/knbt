@@ -138,8 +138,8 @@ class NbtDecoderTest {
     fun Decoding_List_should_read_correctly() {
         assertDecodesCorrectly(
             tag = buildNbtList<NbtList<*>> {
-                add(nbtListOf(1.toNbtByte()))
-                add(nbtListOf())
+                add(NbtList(listOf(NbtByte(1))))
+                add(NbtList(emptyList<NbtByte>()))
             },
             expectedValue = listOf(listOf(1.toByte()), listOf()),
             expectedLog = """
@@ -158,7 +158,7 @@ class NbtDecoderTest {
     @Test
     fun Decoding_ByteArray_should_read_correctly() {
         assertDecodesCorrectly(
-            tag = nbtByteArrayOf(1, 2, 3),
+            tag = NbtByteArray(listOf(1, 2, 3)),
             expectedValue = byteArrayOf(1, 2, 3),
             expectedLog = """
                 beginRootTag() -> RootTagInfo(type=TAG_Byte_Array)
@@ -174,7 +174,7 @@ class NbtDecoderTest {
     @Test
     fun Decoding_IntArray_should_read_correctly() {
         assertDecodesCorrectly(
-            tag = nbtIntArrayOf(1, 2, 3),
+            tag = NbtIntArray(listOf(1, 2, 3)),
             expectedValue = intArrayOf(1, 2, 3),
             expectedLog = """
                 beginRootTag() -> RootTagInfo(type=TAG_Int_Array)
@@ -190,7 +190,7 @@ class NbtDecoderTest {
     @Test
     fun Decoding_LongArray_should_read_correctly() {
         assertDecodesCorrectly(
-            tag = nbtLongArrayOf(1, 2, 3),
+            tag = NbtLongArray(listOf(1, 2, 3)),
             expectedValue = longArrayOf(1, 2, 3),
             expectedLog = """
                 beginRootTag() -> RootTagInfo(type=TAG_Long_Array)

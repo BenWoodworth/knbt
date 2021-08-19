@@ -15,29 +15,6 @@ internal class StringifiedNbtWriter(
     private val prettySpace: String =
         if (nbt.configuration.prettyPrint) " " else ""
 
-    private fun Appendable.appendNbtString(value: String, forceQuote: Boolean = false): Appendable {
-        fun Appendable.appendQuoted(): Appendable = apply {
-            append('"')
-            value.forEach {
-                if (it == '"') append("\\\"") else append(it)
-            }
-            append('"')
-        }
-
-        fun Char.isSafeCharacter(): Boolean = when (this) {
-            '-', '_', in 'a'..'z', in 'A'..'Z', in '0'..'9' -> true
-            else -> false
-        }
-
-        return when {
-            forceQuote -> appendQuoted()
-            value.all { it.isSafeCharacter() } -> append(value)
-            !value.contains('"') -> append('"').append(value).append('"')
-            !value.contains('\'') -> append('\'').append(value).append('\'')
-            else -> appendQuoted()
-        }
-    }
-
     private fun Appendable.appendPrettyNewLine(): Appendable {
         if (nbt.configuration.prettyPrint) {
             appendable.appendLine()
@@ -133,3 +110,29 @@ internal class StringifiedNbtWriter(
         appendable.appendNbtString(value, forceQuote = true)
     }
 }
+
+internal fun Appendable.appendNbtString(value: String, forceQuote: Boolean = false): Appendable {
+    fun Appendable.appendQuoted(): Appendable = apply {
+        append('"')
+        value.forEach {
+            if (it == '"') append("\\\"") else append(it)
+        }
+        append('"')
+    }
+
+    fun Char.isSafeCharacter(): Boolean = when (this) {
+        '-', '_', in 'a'..'z', in 'A'..'Z', in '0'..'9' -> true
+        else -> false
+    }
+
+    return when {
+        forceQuote -> appendQuoted()
+        value.all { it.isSafeCharacter() } -> append(value)
+        !value.contains('"') -> append('"').append(value).append('"')
+        !value.contains('\'') -> append('\'').append(value).append('\'')
+        else -> appendQuoted()
+    }
+}
+
+internal fun String.toNbtString(forceQuote: Boolean = false): String =
+    buildString { appendNbtString(this@toNbtString, forceQuote) }

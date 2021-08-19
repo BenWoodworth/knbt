@@ -90,22 +90,24 @@ class NbtList<T : NbtTag> : NbtTag, List<T> // Only contains entries of a single
 class NbtCompound : NbtTag, Map<String, NbtTag>
 ```
 
-`NbtTag`s can be created with factory/conversion/builder functions:
+`NbtTag`s can be created with constructors and builder functions:
 
 ```kotlin
-val nbtByte = 5.toNbtByte()
+val nbtByte = NbtByte(5)
 
-val nbtIntArray = nbtIntArrayOf(1, 2, 3, 4, 5)
+val nbtIntArray = NbtIntArray(listOf(1, 2, 3, 4, 5))
 
-val nbtListOfInts = listOf(1L, 2L, 3L).toNbtList()
-
-val nbtListOfStrings = buildNbtList<NbtString> { 
+val nbtListOfStrings = buildNbtList<NbtString> {
     add("these")
     add("are")
     add("strings")
 }
 
-val nbtCompoundOfInts = mapOf("a" to 1, "b" to 2).toNbtCompound()
+val nbtCompound = buildNbtCompound {
+    put("int", 1)
+    put("string", ":)")
+    put("byteArray", byteArrayOf(1, 1, 2, 3, 5, 8))
+}
 
 // bigtest.nbt (https://wiki.vg/NBT#bigtest.nbt)
 val bigtest = buildNbt("Level") {
@@ -124,7 +126,13 @@ val bigtest = buildNbt("Level") {
             put("value", 0.5f)
         }
     }
-    put("listTest (long)", listOf(11L, 12L, 13L, 14L, 15L).toNbtList())
+    putNbtList<NbtLong>("listTest (long)") {
+        add(11L)
+        add(12L)
+        add(13L)
+        add(14L)
+        add(15L)
+    }
     putNbtList<NbtCompound>("listTest (compound)") {
         addNbtCompound {
             put("name", "Compound tag #0")

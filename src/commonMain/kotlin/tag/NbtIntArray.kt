@@ -1,8 +1,6 @@
 package net.benwoodworth.knbt.tag
 
 import net.benwoodworth.knbt.NbtIntArray
-import net.benwoodworth.knbt.nbtIntArrayOf
-import net.benwoodworth.knbt.toNbtIntArray
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtIntArray",
@@ -11,25 +9,26 @@ import net.benwoodworth.knbt.toNbtIntArray
 public typealias NbtIntArray = NbtIntArray
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.NbtIntArray",
-    ReplaceWith("NbtIntArray(size, init)", "net.benwoodworth.knbt.NbtIntArray"),
+    "Replaced with NbtIntArray constructor",
+    ReplaceWith("NbtIntArray(IntArray(size, init))", "net.benwoodworth.knbt.NbtIntArray"),
 )
-public inline fun NbtIntArray(size: Int, init: (index: Int) -> Int): NbtIntArray = NbtIntArray(size, init)
+public inline fun NbtIntArray(size: Int, init: (index: Int) -> Int): NbtIntArray =
+    NbtIntArray(IntArray(size) { init(it) })
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.nbtIntArrayOf",
-    ReplaceWith("nbtIntArrayOf(*elements)", "net.benwoodworth.knbt.NbtIntArray"),
+    "Replaced with NbtIntArray constructor",
+    ReplaceWith("NbtIntArray(intArrayOf(*elements))", "net.benwoodworth.knbt.NbtIntArray"),
 )
-public fun nbtIntArrayOf(vararg elements: Int): NbtIntArray = nbtIntArrayOf(*elements)
+public fun nbtIntArrayOf(vararg elements: Int): NbtIntArray = NbtIntArray(intArrayOf(*elements))
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtIntArray",
-    ReplaceWith("this.toNbtIntArray()", "net.benwoodworth.knbt.toNbtIntArray"),
+    "Replaced with NbtIntArray constructor",
+    ReplaceWith("NbtIntArray(this)", "net.benwoodworth.knbt.NbtIntArray"),
 )
-public fun IntArray.toNbtIntArray(): NbtIntArray = toNbtIntArray()
+public fun IntArray.toNbtIntArray(): NbtIntArray = NbtIntArray(this)
 
 @Deprecated(
-    "Moved to net.benwoodworth.knbt.toNbtIntArray",
-    ReplaceWith("this.toNbtIntArray()", "net.benwoodworth.knbt.toNbtIntArray"),
+    "Replaced with NbtIntArray constructor",
+    ReplaceWith("NbtIntArray(this.toList())", "net.benwoodworth.knbt.NbtIntArray"),
 )
-public fun Collection<Int>.toNbtIntArray(): NbtIntArray = toNbtIntArray()
+public fun Collection<Int>.toNbtIntArray(): NbtIntArray = NbtIntArray(this.toList())

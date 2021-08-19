@@ -44,134 +44,178 @@ public inline fun <T : NbtTag> buildNbtList(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtByte>.add(element: NbtByte): Unit = add(element)
+public fun NbtListBuilder<NbtByte>.add(element: NbtByte) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtByteArray>.add(element: NbtByteArray): Unit = add(element)
+public fun NbtListBuilder<NbtByteArray>.add(element: NbtByteArray) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtCompound>.add(element: NbtCompound): Unit = add(element)
+public fun NbtListBuilder<NbtCompound>.add(element: NbtCompound) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtDouble>.add(element: NbtDouble): Unit = add(element)
+public fun NbtListBuilder<NbtDouble>.add(element: NbtDouble) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtFloat>.add(element: NbtFloat): Unit = add(element)
+public fun NbtListBuilder<NbtFloat>.add(element: NbtFloat) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtInt>.add(element: NbtInt): Unit = add(element)
+public fun NbtListBuilder<NbtInt>.add(element: NbtInt) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtIntArray>.add(element: NbtIntArray): Unit = add(element)
+public fun NbtListBuilder<NbtIntArray>.add(element: NbtIntArray) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun <T : NbtTag> NbtListBuilder<NbtList<T>>.add(element: NbtList<T>): Unit = add(element)
+public fun <T : NbtTag> NbtListBuilder<NbtList<T>>.add(element: NbtList<T>) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtLong>.add(element: NbtLong): Unit = add(element)
+public fun NbtListBuilder<NbtLong>.add(element: NbtLong) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtLongArray>.add(element: NbtLongArray): Unit = add(element)
+public fun NbtListBuilder<NbtLongArray>.add(element: NbtLongArray) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtShort>.add(element: NbtShort): Unit = add(element)
+public fun NbtListBuilder<NbtShort>.add(element: NbtShort) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtString>.add(element: NbtString): Unit = add(element)
+public fun NbtListBuilder<NbtString>.add(element: NbtString) {
+    add(element)
+}
 
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtByte>.add(element: Byte): Unit = add(element)
+public fun NbtListBuilder<NbtByte>.add(element: Byte) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtShort>.add(element: Short): Unit = add(element)
+public fun NbtListBuilder<NbtShort>.add(element: Short) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtInt>.add(element: Int): Unit = add(element)
+public fun NbtListBuilder<NbtInt>.add(element: Int) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtLong>.add(element: Long): Unit = add(element)
+public fun NbtListBuilder<NbtLong>.add(element: Long) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtFloat>.add(element: Float): Unit = add(element)
+public fun NbtListBuilder<NbtFloat>.add(element: Float) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtDouble>.add(element: Double): Unit = add(element)
+public fun NbtListBuilder<NbtDouble>.add(element: Double) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtByteArray>.add(element: ByteArray): Unit = add(element)
+public fun NbtListBuilder<NbtByteArray>.add(element: ByteArray) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtString>.add(element: String): Unit = add(element)
+public fun NbtListBuilder<NbtString>.add(element: String) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtIntArray>.add(element: IntArray): Unit = add(element)
+public fun NbtListBuilder<NbtIntArray>.add(element: IntArray) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
 )
-public fun NbtListBuilder<NbtLongArray>.add(element: LongArray): Unit = add(element)
+public fun NbtListBuilder<NbtLongArray>.add(element: LongArray) {
+    add(element)
+}
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.addNbtList",
@@ -181,7 +225,7 @@ public inline fun <T : NbtTag> NbtListBuilder<NbtList<NbtTag>>.addNbtList(
     builderAction: NbtListBuilder<T>.() -> Unit,
 ) {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return addNbtList(builderAction)
+    addNbtList(builderAction)
 }
 
 @Deprecated(
@@ -193,7 +237,7 @@ public inline fun <T : NbtTag> NbtListBuilder<NbtList<T>>.addNbtList(
     builderAction: NbtListBuilder<T>.() -> Unit,
 ) {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return addNbtList(builderAction)
+    addNbtList(builderAction)
 }
 
 @Deprecated(
@@ -204,5 +248,5 @@ public inline fun NbtListBuilder<NbtCompound>.addNbtCompound(
     builderAction: NbtCompoundBuilder.() -> Unit,
 ) {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return addNbtCompound(builderAction)
+    addNbtCompound(builderAction)
 }

@@ -7,6 +7,9 @@ internal annotation class NbtDslMarker
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 internal annotation class InternalNbtApi
 
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+internal annotation class UnsafeNbtApi
+
 /**
  * @suppress
  */
