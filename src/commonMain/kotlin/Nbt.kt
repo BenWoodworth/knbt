@@ -323,6 +323,14 @@ public fun <T> Nbt.encodeToByteArray(serializer: SerializationStrategy<T>, value
 /**
  * Encode NBT to a [ByteArray].
  */
+@OptIn(ExperimentalSerializationApi::class)
+@Deprecated(
+    "Use kotlinx.serialization function instead",
+    ReplaceWith(
+        "this.encodeToByteArray<T>(value)",
+        "kotlinx.serialization.encodeToByteArray",
+    ),
+)
 public inline fun <reified T> Nbt.encodeToByteArray(value: T): ByteArray =
     encodeToByteArray(serializersModule.serializer(), value)
 
@@ -347,7 +355,7 @@ public inline fun <T> Nbt.decodeFromByteArray(deserializer: DeserializationStrat
 @Deprecated(
     "Use kotlinx.serialization function instead",
     ReplaceWith(
-        "this.decodeFromByteArray<T>(serializer, byteArray)",
+        "this.decodeFromByteArray<T>(byteArray)",
         "kotlinx.serialization.decodeFromByteArray",
     ),
 )
