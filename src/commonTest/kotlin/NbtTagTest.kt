@@ -45,8 +45,8 @@ class NbtTagToStringTest {
     @Test
     fun NbtString_toString() {
         assertEquals("\"\"", NbtString("").toString())
-        assertEquals("hello", NbtString("hello").toString())
-        assertEquals("'\"double-quoted\"'", NbtString("\"double-quoted\"").toString())
+        assertEquals("\"hello\"", NbtString("hello").toString())
+        assertEquals("\"\\\"double-quoted\\\"\"", NbtString("\"double-quoted\"").toString())
         assertEquals("\"'single-quoted'\"", NbtString("'single-quoted'").toString())
         assertEquals("\"\\\"'multi-quoted'\\\"\"", NbtString("\"'multi-quoted'\"").toString())
     }

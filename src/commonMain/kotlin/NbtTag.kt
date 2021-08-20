@@ -100,7 +100,7 @@ public class NbtByteArray(
 public value class NbtString(public val value: String) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_String
 
-    override fun toString(): String = value.toNbtString()
+    override fun toString(): String = value.toNbtString(true)
 }
 
 @Serializable(NbtListSerializer::class)
