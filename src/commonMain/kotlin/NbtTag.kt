@@ -73,26 +73,33 @@ public value class NbtDouble(public val value: Double) : NbtTag {
     override fun toString(): String = "${value}d"
 }
 
-@Suppress("OVERRIDE_BY_INLINE")
 @Serializable(NbtByteArraySerializer::class)
-public class NbtByteArray(
-    private val content: List<Byte>,
-) : NbtTag, List<Byte> by content {
+public class NbtByteArray private constructor(
+    internal val content: ByteArray,
+    private val list: List<Byte>,
+) : NbtTag, List<Byte> by list {
     override val type: NbtTagType get() = NbtTagType.TAG_Byte_Array
 
-    public constructor(content: ByteArray) : this(content.asList())
+    public constructor(content: ByteArray) : this(content, content.asList())
 
-    override fun equals(other: Any?): Boolean =
-        if (content.isEmpty() && other is NbtTag) {
-            other is NbtByteArray && other.isEmpty()
-        } else {
-            content == other
-        }
+    @Deprecated(
+        "Replaced with ByteArray constructor",
+        ReplaceWith("NbtByteArray(content.toByteArray())", "net.benwoodworth.knbt.NbtByteArray"),
+    )
+    public constructor(content: List<Byte>) : this(content.toByteArray())
+
+    override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other is NbtTag -> other is NbtByteArray && content.contentEquals(other.content)
+        else -> list == other
+    }
 
     override fun hashCode(): Int = content.hashCode()
 
     override fun toString(): String =
         content.joinToString(separator = ",", prefix = "[B;", postfix = "]") { "${it}B" }
+
+    override fun iterator(): ByteIterator = content.iterator()
 }
 
 @JvmInline
@@ -188,47 +195,62 @@ public class NbtCompound(
         }
 }
 
-@Suppress("OVERRIDE_BY_INLINE")
 @Serializable(NbtIntArraySerializer::class)
-public class NbtIntArray(
-    private val content: List<Int>,
-) : NbtTag, List<Int> by content {
+public class NbtIntArray private constructor(
+    internal val content: IntArray,
+    private val list: List<Int>,
+) : NbtTag, List<Int> by list {
     override val type: NbtTagType get() = NbtTagType.TAG_Int_Array
 
-    public constructor(content: IntArray) : this(content.asList())
+    public constructor(content: IntArray) : this(content, content.asList())
 
-    override fun equals(other: Any?): Boolean =
-        if (content.isEmpty() && other is NbtTag) {
-            other is NbtIntArray && other.isEmpty()
-        } else {
-            content == other
-        }
+    @Deprecated(
+        "Replaced with IntArray constructor",
+        ReplaceWith("NbtIntArray(content.toIntArray())", "net.benwoodworth.knbt.NbtIntArray"),
+    )
+    public constructor(content: List<Int>) : this(content.toIntArray())
+
+    override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other is NbtTag -> other is NbtIntArray && content.contentEquals(other.content)
+        else -> list == other
+    }
 
     override fun hashCode(): Int = content.hashCode()
 
     override fun toString(): String =
         content.joinToString(separator = ",", prefix = "[I;", postfix = "]")
+
+    override fun iterator(): IntIterator = content.iterator()
 }
 
 @Serializable(NbtLongArraySerializer::class)
-public class NbtLongArray(
-    private val content: List<Long>,
-) : NbtTag, List<Long> by content {
+public class NbtLongArray private constructor(
+    internal val content: LongArray,
+    private val list: List<Long>,
+) : NbtTag, List<Long> by list {
     override val type: NbtTagType get() = NbtTagType.TAG_Long_Array
 
-    public constructor(content: LongArray) : this(content.asList())
+    public constructor(content: LongArray) : this(content, content.asList())
 
-    override fun equals(other: Any?): Boolean =
-        if (content.isEmpty() && other is NbtTag) {
-            other is NbtLongArray && other.isEmpty()
-        } else {
-            content == other
-        }
+    @Deprecated(
+        "Replaced with LongArray constructor",
+        ReplaceWith("NbtLongArray(content.toLongArray())", "net.benwoodworth.knbt.NbtLongArray"),
+    )
+    public constructor(content: List<Long>) : this(content.toLongArray())
+
+    override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other is NbtTag -> other is NbtLongArray && content.contentEquals(other.content)
+        else -> list == other
+    }
 
     override fun hashCode(): Int = content.hashCode()
 
     override fun toString(): String =
         content.joinToString(separator = ",", prefix = "[L;", postfix = "]") { "${it}L" }
+
+    override fun iterator(): LongIterator = content.iterator()
 }
 
 //region NbtTag casting methods

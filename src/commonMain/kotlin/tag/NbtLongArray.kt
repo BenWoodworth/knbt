@@ -29,6 +29,6 @@ public fun LongArray.toNbtLongArray(): NbtLongArray = NbtLongArray(this)
 
 @Deprecated(
     "Replaced with NbtLongArray constructor",
-    ReplaceWith("NbtLongArray(this.toList())", "net.benwoodworth.knbt.NbtLongArray"),
+    ReplaceWith("NbtLongArray(this.toLongArray())", "net.benwoodworth.knbt.NbtLongArray"),
 )
-public fun Collection<Long>.toNbtLongArray(): NbtLongArray = NbtLongArray(this.toList())
+public fun Collection<Long>.toNbtLongArray(): NbtLongArray = NbtLongArray(this.toLongArray())

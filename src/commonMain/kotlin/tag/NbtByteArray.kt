@@ -29,6 +29,6 @@ public fun ByteArray.toNbtByteArray(): NbtByteArray = NbtByteArray(this)
 
 @Deprecated(
     "Replaced with NbtByteArray constructor",
-    ReplaceWith("NbtByteArray(this.toList())", "net.benwoodworth.knbt.NbtByteArray"),
+    ReplaceWith("NbtByteArray(this.toByteArray())", "net.benwoodworth.knbt.NbtByteArray"),
 )
-public fun Collection<Byte>.toNbtByteArray(): NbtByteArray = NbtByteArray(this.toList())
+public fun Collection<Byte>.toNbtByteArray(): NbtByteArray = NbtByteArray(this.toByteArray())

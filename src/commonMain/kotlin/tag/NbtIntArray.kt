@@ -29,6 +29,6 @@ public fun IntArray.toNbtIntArray(): NbtIntArray = NbtIntArray(this)
 
 @Deprecated(
     "Replaced with NbtIntArray constructor",
-    ReplaceWith("NbtIntArray(this.toList())", "net.benwoodworth.knbt.NbtIntArray"),
+    ReplaceWith("NbtIntArray(this.toIntArray())", "net.benwoodworth.knbt.NbtIntArray"),
 )
-public fun Collection<Int>.toNbtIntArray(): NbtIntArray = NbtIntArray(this.toList())
+public fun Collection<Int>.toNbtIntArray(): NbtIntArray = NbtIntArray(this.toIntArray())

@@ -121,7 +121,7 @@ class DefaultNbtEncoderTest {
     @Test
     fun Encoding_ByteArray_should_write_correctly() {
         assertEncodesCorrectly(
-            tag = NbtByteArray(listOf(1, 2, 3)),
+            tag = NbtByteArray(byteArrayOf(1, 2, 3)),
             expectedLog = """
                 beginRootTag(TAG_Byte_Array)
                 beginByteArray(3)
@@ -139,7 +139,7 @@ class DefaultNbtEncoderTest {
     @Test
     fun Encoding_IntArray_should_write_correctly() {
         assertEncodesCorrectly(
-            tag = NbtIntArray(listOf(1, 2, 3)),
+            tag = NbtIntArray(intArrayOf(1, 2, 3)),
             expectedLog = """
                 beginRootTag(TAG_Int_Array)
                 beginIntArray(3)
@@ -157,7 +157,7 @@ class DefaultNbtEncoderTest {
     @Test
     fun Encoding_LongArray_should_write_correctly() {
         assertEncodesCorrectly(
-            tag = NbtLongArray(listOf(1, 2, 3)),
+            tag = NbtLongArray(longArrayOf(1, 2, 3)),
             expectedLog = """
                 beginRootTag(TAG_Long_Array)
                 beginLongArray(3)
