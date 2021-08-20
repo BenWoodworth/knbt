@@ -28,16 +28,16 @@ public class NbtListBuilder<T : NbtTag> @PublishedApi internal constructor(size:
     private var elementType: NbtTagType = NbtTagType.TAG_End
     private var built = false
 
-    internal fun addInternal(element: T): Boolean {
+    internal fun addInternal(tag: T): Boolean {
         if (built) throw UnsupportedOperationException("List has already been built")
 
         if (elementType == NbtTagType.TAG_End) {
-            elementType = element.type
+            elementType = tag.type
         } else {
-            require(element.type == elementType) { "Cannot add a ${element.type} to a list of $elementType" }
+            require(tag.type == elementType) { "Cannot add a ${tag.type} to a list of $elementType" }
         }
 
-        elements.add(element)
+        elements.add(tag)
         return true
     }
 
@@ -72,29 +72,29 @@ public inline fun <T : NbtTag> buildNbtList(
         putNbtList(name, builderAction)
     }
 
-public fun NbtListBuilder<NbtByte>.add(element: NbtByte): Boolean = addInternal(element)
-public fun NbtListBuilder<NbtByteArray>.add(element: NbtByteArray): Boolean = addInternal(element)
-public fun NbtListBuilder<NbtCompound>.add(element: NbtCompound): Boolean = addInternal(element)
-public fun NbtListBuilder<NbtDouble>.add(element: NbtDouble): Boolean = addInternal(element)
-public fun NbtListBuilder<NbtFloat>.add(element: NbtFloat): Boolean = addInternal(element)
-public fun NbtListBuilder<NbtInt>.add(element: NbtInt): Boolean = addInternal(element)
-public fun NbtListBuilder<NbtIntArray>.add(element: NbtIntArray): Boolean = addInternal(element)
-public fun <T : NbtTag> NbtListBuilder<NbtList<T>>.add(element: NbtList<T>): Boolean = addInternal(element)
-public fun NbtListBuilder<NbtLong>.add(element: NbtLong): Boolean = addInternal(element)
-public fun NbtListBuilder<NbtLongArray>.add(element: NbtLongArray): Boolean = addInternal(element)
-public fun NbtListBuilder<NbtShort>.add(element: NbtShort): Boolean = addInternal(element)
-public fun NbtListBuilder<NbtString>.add(element: NbtString): Boolean = addInternal(element)
+public fun NbtListBuilder<NbtByte>.add(tag: NbtByte): Boolean = addInternal(tag)
+public fun NbtListBuilder<NbtByteArray>.add(tag: NbtByteArray): Boolean = addInternal(tag)
+public fun NbtListBuilder<NbtCompound>.add(tag: NbtCompound): Boolean = addInternal(tag)
+public fun NbtListBuilder<NbtDouble>.add(tag: NbtDouble): Boolean = addInternal(tag)
+public fun NbtListBuilder<NbtFloat>.add(tag: NbtFloat): Boolean = addInternal(tag)
+public fun NbtListBuilder<NbtInt>.add(tag: NbtInt): Boolean = addInternal(tag)
+public fun NbtListBuilder<NbtIntArray>.add(tag: NbtIntArray): Boolean = addInternal(tag)
+public fun <T : NbtTag> NbtListBuilder<NbtList<T>>.add(tag: NbtList<T>): Boolean = addInternal(tag)
+public fun NbtListBuilder<NbtLong>.add(tag: NbtLong): Boolean = addInternal(tag)
+public fun NbtListBuilder<NbtLongArray>.add(tag: NbtLongArray): Boolean = addInternal(tag)
+public fun NbtListBuilder<NbtShort>.add(tag: NbtShort): Boolean = addInternal(tag)
+public fun NbtListBuilder<NbtString>.add(tag: NbtString): Boolean = addInternal(tag)
 
-public fun NbtListBuilder<NbtByte>.add(element: Byte): Boolean = addInternal(NbtByte(element))
-public fun NbtListBuilder<NbtShort>.add(element: Short): Boolean = addInternal(NbtShort(element))
-public fun NbtListBuilder<NbtInt>.add(element: Int): Boolean = addInternal(NbtInt(element))
-public fun NbtListBuilder<NbtLong>.add(element: Long): Boolean = addInternal(NbtLong(element))
-public fun NbtListBuilder<NbtFloat>.add(element: Float): Boolean = addInternal(NbtFloat(element))
-public fun NbtListBuilder<NbtDouble>.add(element: Double): Boolean = addInternal(NbtDouble(element))
-public fun NbtListBuilder<NbtByteArray>.add(element: ByteArray): Boolean = addInternal(NbtByteArray(element))
-public fun NbtListBuilder<NbtString>.add(element: String): Boolean = addInternal(NbtString(element))
-public fun NbtListBuilder<NbtIntArray>.add(element: IntArray): Boolean = addInternal(NbtIntArray(element))
-public fun NbtListBuilder<NbtLongArray>.add(element: LongArray): Boolean = addInternal(NbtLongArray(element))
+public fun NbtListBuilder<NbtByte>.add(value: Byte): Boolean = addInternal(NbtByte(value))
+public fun NbtListBuilder<NbtShort>.add(value: Short): Boolean = addInternal(NbtShort(value))
+public fun NbtListBuilder<NbtInt>.add(value: Int): Boolean = addInternal(NbtInt(value))
+public fun NbtListBuilder<NbtLong>.add(value: Long): Boolean = addInternal(NbtLong(value))
+public fun NbtListBuilder<NbtFloat>.add(value: Float): Boolean = addInternal(NbtFloat(value))
+public fun NbtListBuilder<NbtDouble>.add(value: Double): Boolean = addInternal(NbtDouble(value))
+public fun NbtListBuilder<NbtByteArray>.add(value: ByteArray): Boolean = addInternal(NbtByteArray(value))
+public fun NbtListBuilder<NbtString>.add(value: String): Boolean = addInternal(NbtString(value))
+public fun NbtListBuilder<NbtIntArray>.add(value: IntArray): Boolean = addInternal(NbtIntArray(value))
+public fun NbtListBuilder<NbtLongArray>.add(value: LongArray): Boolean = addInternal(NbtLongArray(value))
 
 @OptIn(ExperimentalTypeInference::class)
 public inline fun <T : NbtTag> NbtListBuilder<NbtList<NbtTag>>.addNbtList(
@@ -128,10 +128,10 @@ public class NbtCompoundBuilder @PublishedApi internal constructor() {
     private var empty = true
     private var built = false
 
-    public fun put(key: String, value: NbtTag): NbtTag? {
+    public fun put(key: String, tag: NbtTag): NbtTag? {
         if (built) throw UnsupportedOperationException("Compound has already been built")
         empty = false
-        return tags.put(key, value)
+        return tags.put(key, tag)
     }
 
     @PublishedApi
