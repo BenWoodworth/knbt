@@ -11,13 +11,12 @@ import kotlin.jvm.JvmName
  *
  * @return a [name]d [NbtCompound] built using the [builderAction].
  */
-public inline fun buildNbt(
-    name: String,
-    builderAction: NbtCompoundBuilder.() -> Unit,
-): NbtCompound =
-    buildNbtCompound {
-        putNbtCompound(name, builderAction)
-    }
+@Deprecated(
+    "Replaced with buildNbtCompound(name)",
+    ReplaceWith("buildNbtCompound(name) { builderAction() }", "net.benwoodworth.knbt.buildNbtCompound"),
+)
+public inline fun buildNbt(name: String, builderAction: NbtCompoundBuilder.() -> Unit): NbtCompound =
+    buildNbtCompound(name, builderAction)
 
 //region NbtListBuilder
 @NbtDslMarker
@@ -132,6 +131,19 @@ public inline fun buildNbtCompound(builderAction: NbtCompoundBuilder.() -> Unit)
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return NbtCompoundBuilder().apply(builderAction).build()
 }
+
+/**
+ * Build an [NbtCompound] suitable for being written to an NBT file.
+ *
+ * @return a [name]d [NbtCompound] built using the [builderAction].
+ */
+public inline fun buildNbtCompound(
+    name: String,
+    builderAction: NbtCompoundBuilder.() -> Unit,
+): NbtCompound =
+    buildNbtCompound {
+        putNbtCompound(name, builderAction)
+    }
 
 public fun NbtCompoundBuilder.put(key: String, value: Byte): NbtTag? = put(key, NbtByte(value))
 public fun NbtCompoundBuilder.put(key: String, value: Short): NbtTag? = put(key, NbtShort(value))

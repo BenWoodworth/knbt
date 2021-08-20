@@ -25,7 +25,7 @@ class NbtRootTest {
         int = 42,
     )
 
-    private val testNbtTag = buildNbt("root-name") {
+    private val testNbtTag = buildNbtCompound("root-name") {
         put("string", "string")
         put("int", 42)
     }

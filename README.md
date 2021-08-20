@@ -110,7 +110,7 @@ val nbtCompound = buildNbtCompound {
 }
 
 // bigtest.nbt (https://wiki.vg/NBT#bigtest.nbt)
-val bigtest = buildNbt("Level") {
+val bigtest = buildNbtCompound("Level") {
     put("longTest", 9223372036854775807L)
     put("shortTest", 32767.toShort())
     put("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")

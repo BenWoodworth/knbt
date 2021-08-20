@@ -58,7 +58,7 @@ class BinaryNbtReaderTest {
 
     @Test
     fun Should_fail_with_incorrect_NbtCompression_and_specify_mismatched_compressions() {
-        val data = buildNbt("root") {
+        val data = buildNbtCompound("root") {
             put("string", "String!")
         }
 

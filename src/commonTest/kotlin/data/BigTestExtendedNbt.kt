@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.*
 
 val bigTestExtendedTag
-    get() = buildNbt("Level") {
+    get() = buildNbtCompound("Level") {
         put("longTest", 9223372036854775807L)
         put("shortTest", 32767.toShort())
         put("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")
