@@ -213,33 +213,9 @@ internal class DefaultNbtEncoder(
                 }
                 writer.endList()
             }
-            TAG_Byte_Array -> {
-                val bytes = value as NbtByteArray
-                writer.beginByteArray(bytes.size)
-                bytes.forEach { byte ->
-                    writer.beginByteArrayEntry()
-                    writer.writeByte(byte)
-                }
-                writer.endByteArray()
-            }
-            TAG_Int_Array -> {
-                val ints = value as NbtIntArray
-                writer.beginIntArray(ints.size)
-                ints.forEach { int ->
-                    writer.beginIntArrayEntry()
-                    writer.writeInt(int)
-                }
-                writer.endIntArray()
-            }
-            TAG_Long_Array -> {
-                val longs = value as NbtLongArray
-                writer.beginLongArray(longs.size)
-                longs.forEach { long ->
-                    writer.beginLongArrayEntry()
-                    writer.writeLong(long)
-                }
-                writer.endLongArray()
-            }
+            TAG_Byte_Array -> writer.writeByteArray((value as NbtByteArray).content)
+            TAG_Int_Array -> writer.writeIntArray((value as NbtIntArray).content)
+            TAG_Long_Array -> writer.writeLongArray((value as NbtLongArray).content)
         }
 
         beginEncodingValue(value.type)

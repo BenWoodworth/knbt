@@ -83,13 +83,8 @@ internal object NbtByteArraySerializer : KSerializer<NbtByteArray> {
 
     override val descriptor: SerialDescriptor = NbtByteArrayDescriptor
 
-    override fun serialize(encoder: Encoder, value: NbtByteArray) {
-        val composite = encoder.asNbtEncoder().beginList(descriptor, value.size)
-        value.forEachIndexed { index, element ->
-            composite.encodeByteElement(descriptor, index, element)
-        }
-        composite.endStructure(descriptor)
-    }
+    override fun serialize(encoder: Encoder, value: NbtByteArray): Unit =
+        encoder.asNbtEncoder().encodeByteArray(value.content)
 
     override fun deserialize(decoder: Decoder): NbtByteArray =
         NbtByteArray(decoder.asNbtDecoder().decodeByteArray())
@@ -157,13 +152,8 @@ internal object NbtIntArraySerializer : KSerializer<NbtIntArray> {
 
     override val descriptor: SerialDescriptor = NbtIntArrayDescriptor
 
-    override fun serialize(encoder: Encoder, value: NbtIntArray) {
-        val composite = encoder.asNbtEncoder().beginList(descriptor, value.size)
-        value.forEachIndexed { index, element ->
-            composite.encodeIntElement(descriptor, index, element)
-        }
-        composite.endStructure(descriptor)
-    }
+    override fun serialize(encoder: Encoder, value: NbtIntArray): Unit =
+        encoder.asNbtEncoder().encodeIntArray(value.content)
 
     override fun deserialize(decoder: Decoder): NbtIntArray =
         NbtIntArray(decoder.asNbtDecoder().decodeIntArray())
@@ -177,13 +167,8 @@ internal object NbtLongArraySerializer : KSerializer<NbtLongArray> {
 
     override val descriptor: SerialDescriptor = NbtLongArrayDescriptor
 
-    override fun serialize(encoder: Encoder, value: NbtLongArray) {
-        val composite = encoder.asNbtEncoder().beginList(descriptor, value.size)
-        value.forEachIndexed { index, element ->
-            composite.encodeLongElement(NbtIntArraySerializer.descriptor, index, element)
-        }
-        composite.endStructure(NbtIntArraySerializer.descriptor)
-    }
+    override fun serialize(encoder: Encoder, value: NbtLongArray): Unit =
+        encoder.asNbtEncoder().encodeLongArray(value.content)
 
     override fun deserialize(decoder: Decoder): NbtLongArray =
         NbtLongArray(decoder.asNbtDecoder().decodeLongArray())
