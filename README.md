@@ -97,7 +97,7 @@ val nbtByte = NbtByte(5)
 
 val nbtIntArray = NbtIntArray(intArrayOf(1, 2, 3, 4, 5))
 
-val nbtListOfStrings = buildNbtList<NbtString> {
+val nbtListOfStrings = buildNbtList {
     add("these")
     add("are")
     add("strings")
