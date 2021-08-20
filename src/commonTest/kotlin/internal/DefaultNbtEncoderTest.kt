@@ -99,8 +99,8 @@ class DefaultNbtEncoderTest {
     fun Encoding_List_should_write_correctly() {
         assertEncodesCorrectly(
             tag = buildNbtList<NbtList<*>> {
-                addInternal(NbtList(listOf(NbtByte(1))))
-                addInternal(NbtList(emptyList<NbtInt>()))
+                add(NbtList(listOf(NbtByte(1))))
+                add(NbtList(emptyList<NbtInt>()))
             },
             expectedLog = """
                 beginRootTag(TAG_List)

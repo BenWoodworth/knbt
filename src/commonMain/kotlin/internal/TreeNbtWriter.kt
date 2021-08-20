@@ -143,7 +143,7 @@ internal class TreeNbtWriter(tagConsumer: (NbtTag) -> Unit) : NbtWriter {
         private val builder = NbtListBuilder<NbtTag>(size)
 
         override fun consumeTag(tag: NbtTag) {
-            builder.addInternal(tag)
+            builder.add(tag)
         }
 
         override fun beginListEntry(): Unit = Unit
