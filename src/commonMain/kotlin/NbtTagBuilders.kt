@@ -58,6 +58,20 @@ public inline fun <T : NbtTag> buildNbtList(
     return NbtListBuilder<T>().apply(builderAction).build()
 }
 
+/**
+ * Build an [NbtList] suitable for being written to an NBT file.
+ *
+ * @return a [name]d [NbtList] built using the [builderAction].
+ */
+@OptIn(ExperimentalTypeInference::class)
+public inline fun <T : NbtTag> buildNbtList(
+    name: String,
+    @BuilderInference builderAction: NbtListBuilder<T>.() -> Unit,
+): NbtCompound =
+    buildNbtCompound {
+        putNbtList(name, builderAction)
+    }
+
 public fun NbtListBuilder<NbtByte>.add(element: NbtByte): Boolean = addInternal(element)
 public fun NbtListBuilder<NbtByteArray>.add(element: NbtByteArray): Boolean = addInternal(element)
 public fun NbtListBuilder<NbtCompound>.add(element: NbtCompound): Boolean = addInternal(element)
