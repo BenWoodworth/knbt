@@ -127,6 +127,7 @@ internal fun Appendable.appendNbtString(value: String, forceQuote: Boolean = fal
 
     return when {
         forceQuote -> appendQuoted()
+        value.isEmpty() -> append("\"\"")
         value.all { it.isSafeCharacter() } -> append(value)
         !value.contains('"') -> append('"').append(value).append('"')
         !value.contains('\'') -> append('\'').append(value).append('\'')
