@@ -159,9 +159,8 @@ still experimental, and newer versions may have binary-incompatible changes that
 
 ### Upgrading knbt
 
-While knbt is in beta (0.#.#), minor releases may have some breaking changes. To gracefully update, change the minor
-version one at a time (e.g. 0.1.0 -> 0.2.0 -> 0.3.0) and fix any deprecated/broken code. Replacement refactorings will
-be provided where possible to make these fixes easier to do.
+To gracefully update, change the minor version one at a time (e.g. 0.1.0 -> 0.2.0 -> 0.3.0) and fix any deprecated code
+using the provided replacement refactorings. Deprecated APIs will then be removed in 0.#.1 releases.
 
 ## Gradle
 
