@@ -15,7 +15,7 @@ plugins {
     kotlin("multiplatform") version "1.5.0"
     kotlin("plugin.serialization") version "1.5.0"
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.4.0"
-    id("org.jetbrains.dokka") version "1.4.32"
+    id("org.jetbrains.dokka") version "1.5.0"
     id("maven-publish")
     id("signing")
 }
