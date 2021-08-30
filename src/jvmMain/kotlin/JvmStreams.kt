@@ -70,7 +70,7 @@ public fun <T> Nbt.decodeFromStream(deserializer: DeserializationStrategy<T>, in
  */
 @Deprecated(
     "Replaced with decodeFromStream(...)",
-    ReplaceWith("this.decodeFromStream<T>(serializer, inputStream)", "net.benwoodworth.knbt.decodeFromStream"),
+    ReplaceWith("this.decodeFromStream<T>(deserializer, inputStream)", "net.benwoodworth.knbt.decodeFromStream"),
     DeprecationLevel.ERROR,
 )
 @OptIn(OkioApi::class)

@@ -243,7 +243,7 @@ public fun NbtListBuilder<NbtLongArray>.add(element: LongArray) {
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.addNbtList",
-    ReplaceWith("addNbtList(element)", "net.benwoodworth.knbt.addNbtList"),
+    ReplaceWith("addNbtList<T>(builderAction)", "net.benwoodworth.knbt.addNbtList"),
     DeprecationLevel.ERROR,
 )
 public inline fun <T : NbtTag> NbtListBuilder<NbtList<NbtTag>>.addNbtList(
@@ -255,7 +255,7 @@ public inline fun <T : NbtTag> NbtListBuilder<NbtList<NbtTag>>.addNbtList(
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.addNbtList",
-    ReplaceWith("addNbtList(element)", "net.benwoodworth.knbt.addNbtList"),
+    ReplaceWith("addNbtList<T>(builderAction)", "net.benwoodworth.knbt.addNbtList"),
     DeprecationLevel.ERROR,
 )
 @JvmName("addNbtList\$T")
@@ -268,7 +268,7 @@ public inline fun <T : NbtTag> NbtListBuilder<NbtList<T>>.addNbtList(
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.addNbtCompound",
-    ReplaceWith("addNbtCompound(element)", "net.benwoodworth.knbt.addNbtCompound"),
+    ReplaceWith("addNbtCompound(builderAction)", "net.benwoodworth.knbt.addNbtCompound"),
     DeprecationLevel.ERROR,
 )
 public inline fun NbtListBuilder<NbtCompound>.addNbtCompound(
