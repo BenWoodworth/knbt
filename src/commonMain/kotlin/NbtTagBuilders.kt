@@ -6,6 +6,19 @@ import kotlin.contracts.contract
 import kotlin.experimental.ExperimentalTypeInference
 import kotlin.jvm.JvmName
 
+/**
+ * Build an [NbtTag] suitable for being written to an NBT file.
+ *
+ * @return a [name]d [NbtCompound] built using the [builderAction].
+ */
+@Deprecated(
+    "Replaced with buildNbtCompound(name)",
+    ReplaceWith("buildNbtCompound(name) { builderAction() }", "net.benwoodworth.knbt.buildNbtCompound"),
+    DeprecationLevel.ERROR,
+)
+public inline fun buildNbt(name: String, builderAction: NbtCompoundBuilder.() -> Unit): NbtCompound =
+    buildNbtCompound(name, builderAction)
+
 //region NbtListBuilder
 @NbtDslMarker
 public class NbtListBuilder<T : NbtTag> @PublishedApi internal constructor(size: Int = -1) {
