@@ -243,52 +243,8 @@ private class NbtImpl(
  * *Note*: It is the caller's responsibility to close the [sink].
  */
 @OkioApi
-@Deprecated(
-    "Replaced with encodeToSink(...)",
-    ReplaceWith("this.encodeToSink<T>(serializer, value, sink)", "net.benwoodworth.knbt.encodeToSink"),
-    DeprecationLevel.ERROR,
-)
-@Suppress("NOTHING_TO_INLINE")
-public inline fun <T> Nbt.encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
-    encodeToSink(serializer, value, sink)
-
-/**
- * Encode NBT to a [Sink].
- *
- * *Note*: It is the caller's responsibility to close the [sink].
- */
-@OkioApi
 public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
     encodeToSink(serializersModule.serializer(), value, sink)
-
-/**
- * Encode NBT to a [Sink].
- *
- * *Note*: It is the caller's responsibility to close the [sink].
- */
-@OkioApi
-@Deprecated(
-    "Replaced with encodeToSink(...)",
-    ReplaceWith("this.encodeToSink<T>(value, sink)", "net.benwoodworth.knbt.encodeToSink"),
-    DeprecationLevel.ERROR,
-)
-public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
-    encodeToSink(value, sink)
-
-/**
- * Decode NBT from a [Source].
- *
- * *Note*: It is the caller's responsibility to close the [source].
- */
-@OkioApi
-@Deprecated(
-    "Replaced with decodeFromSource(...)",
-    ReplaceWith("this.decodeFromSource<T>(deserializer, source)", "net.benwoodworth.knbt.decodeFromSource"),
-    DeprecationLevel.ERROR,
-)
-@Suppress("NOTHING_TO_INLINE")
-public inline fun <T> Nbt.decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
-    decodeFromSource(deserializer, source)
 
 /**
  * Decode NBT from a [Source].
@@ -298,101 +254,6 @@ public inline fun <T> Nbt.decodeFrom(source: Source, deserializer: Deserializati
 @OkioApi
 public inline fun <reified T> Nbt.decodeFromSource(source: Source): T =
     decodeFromSource(serializersModule.serializer(), source)
-
-/**
- * Decode NBT from a [Source].
- *
- * *Note*: It is the caller's responsibility to close the [source].
- */
-@OkioApi
-@Deprecated(
-    "Replaced with decodeFromSource(...)",
-    ReplaceWith("this.decodeFromSource<T>(source)", "net.benwoodworth.knbt.decodeFromSource"),
-    DeprecationLevel.ERROR,
-)
-public inline fun <reified T> Nbt.decodeFrom(source: Source): T =
-    decodeFromSource(source)
-
-/**
- * Encode NBT to a [ByteArray].
- */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated(
-    "Use NBT member function instead",
-    ReplaceWith("this.encodeToByteArray<T>(serializer, value)"),
-    DeprecationLevel.ERROR,
-)
-public fun <T> Nbt.encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
-    encodeToByteArray(serializer, value)
-
-/**
- * Encode NBT to a [ByteArray].
- */
-@OptIn(ExperimentalSerializationApi::class)
-@Deprecated(
-    "Use kotlinx.serialization function instead",
-    ReplaceWith(
-        "this.encodeToByteArray<T>(value)",
-        "kotlinx.serialization.encodeToByteArray",
-    ),
-    DeprecationLevel.ERROR,
-)
-public inline fun <reified T> Nbt.encodeToByteArray(value: T): ByteArray =
-    encodeToByteArray(serializersModule.serializer(), value)
-
-/**
- * Decode NBT from a [ByteArray].
- */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
-@Deprecated(
-    "Use NBT member function instead",
-    ReplaceWith(
-        "this.decodeFromByteArray<T>(serializer, byteArray)",
-        "kotlinx.serialization.BinaryFormat",
-    ),
-    DeprecationLevel.ERROR,
-)
-public inline fun <T> Nbt.decodeFromByteArray(deserializer: DeserializationStrategy<T>, byteArray: ByteArray): T =
-    decodeFromByteArray(deserializer, byteArray)
-
-/**
- * Decode NBT from a [ByteArray].
- */
-@OptIn(ExperimentalSerializationApi::class)
-@Deprecated(
-    "Use kotlinx.serialization function instead",
-    ReplaceWith(
-        "this.decodeFromByteArray<T>(byteArray)",
-        "kotlinx.serialization.decodeFromByteArray",
-    ),
-    DeprecationLevel.ERROR,
-)
-public inline fun <reified T> Nbt.decodeFromByteArray(byteArray: ByteArray): T =
-    (this as BinaryFormat).decodeFromByteArray(byteArray)
-
-/**
- * Encode to Stringified NBT.
- */
-@ExperimentalNbtApi
-@Deprecated(
-    "Replaced with encodeToString(...)",
-    ReplaceWith("this.encodeToString<T>(serializer, value)"),
-    DeprecationLevel.ERROR,
-)
-public fun <T> Nbt.encodeToStringifiedNbt(serializer: SerializationStrategy<T>, value: T): String =
-    encodeToString(serializer, value)
-
-/**
- * Encode to Stringified NBT.
- */
-@ExperimentalNbtApi
-@Deprecated(
-    "Replaced with encodeToString(...)",
-    ReplaceWith("this.encodeToString<T>(value)", "kotlinx.serialization.encodeToString"),
-    DeprecationLevel.ERROR,
-)
-public inline fun <reified T> Nbt.encodeToStringifiedNbt(value: T): String =
-    encodeToString(value)
 
 /**
  * Encode to [NbtTag].
