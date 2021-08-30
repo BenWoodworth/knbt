@@ -14,6 +14,7 @@ import kotlin.jvm.JvmName
 @Deprecated(
     "Replaced with buildNbtCompound(name)",
     ReplaceWith("buildNbtCompound(name) { builderAction() }", "net.benwoodworth.knbt.buildNbtCompound"),
+    DeprecationLevel.ERROR,
 )
 public inline fun buildNbt(name: String, builderAction: NbtCompoundBuilder.() -> Unit): NbtCompound =
     buildNbtCompound(name, builderAction)

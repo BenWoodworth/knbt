@@ -246,6 +246,7 @@ private class NbtImpl(
 @Deprecated(
     "Replaced with encodeToSink(...)",
     ReplaceWith("this.encodeToSink<T>(serializer, value, sink)", "net.benwoodworth.knbt.encodeToSink"),
+    DeprecationLevel.ERROR,
 )
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Nbt.encodeTo(sink: Sink, serializer: SerializationStrategy<T>, value: T): Unit =
@@ -269,6 +270,7 @@ public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
 @Deprecated(
     "Replaced with encodeToSink(...)",
     ReplaceWith("this.encodeToSink<T>(value, sink)", "net.benwoodworth.knbt.encodeToSink"),
+    DeprecationLevel.ERROR,
 )
 public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
     encodeToSink(value, sink)
@@ -282,6 +284,7 @@ public inline fun <reified T> Nbt.encodeTo(sink: Sink, value: T): Unit =
 @Deprecated(
     "Replaced with decodeFromSource(...)",
     ReplaceWith("this.decodeFromSource<T>(deserializer, source)", "net.benwoodworth.knbt.decodeFromSource"),
+    DeprecationLevel.ERROR,
 )
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Nbt.decodeFrom(source: Source, deserializer: DeserializationStrategy<T>): T =
@@ -305,6 +308,7 @@ public inline fun <reified T> Nbt.decodeFromSource(source: Source): T =
 @Deprecated(
     "Replaced with decodeFromSource(...)",
     ReplaceWith("this.decodeFromSource<T>(source)", "net.benwoodworth.knbt.decodeFromSource"),
+    DeprecationLevel.ERROR,
 )
 public inline fun <reified T> Nbt.decodeFrom(source: Source): T =
     decodeFromSource(source)
@@ -316,6 +320,7 @@ public inline fun <reified T> Nbt.decodeFrom(source: Source): T =
 @Deprecated(
     "Use NBT member function instead",
     ReplaceWith("this.encodeToByteArray<T>(serializer, value)"),
+    DeprecationLevel.ERROR,
 )
 public fun <T> Nbt.encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
     encodeToByteArray(serializer, value)
@@ -330,6 +335,7 @@ public fun <T> Nbt.encodeToByteArray(serializer: SerializationStrategy<T>, value
         "this.encodeToByteArray<T>(value)",
         "kotlinx.serialization.encodeToByteArray",
     ),
+    DeprecationLevel.ERROR,
 )
 public inline fun <reified T> Nbt.encodeToByteArray(value: T): ByteArray =
     encodeToByteArray(serializersModule.serializer(), value)
@@ -344,6 +350,7 @@ public inline fun <reified T> Nbt.encodeToByteArray(value: T): ByteArray =
         "this.decodeFromByteArray<T>(serializer, byteArray)",
         "kotlinx.serialization.BinaryFormat",
     ),
+    DeprecationLevel.ERROR,
 )
 public inline fun <T> Nbt.decodeFromByteArray(deserializer: DeserializationStrategy<T>, byteArray: ByteArray): T =
     decodeFromByteArray(deserializer, byteArray)
@@ -358,6 +365,7 @@ public inline fun <T> Nbt.decodeFromByteArray(deserializer: DeserializationStrat
         "this.decodeFromByteArray<T>(byteArray)",
         "kotlinx.serialization.decodeFromByteArray",
     ),
+    DeprecationLevel.ERROR,
 )
 public inline fun <reified T> Nbt.decodeFromByteArray(byteArray: ByteArray): T =
     (this as BinaryFormat).decodeFromByteArray(byteArray)
@@ -369,6 +377,7 @@ public inline fun <reified T> Nbt.decodeFromByteArray(byteArray: ByteArray): T =
 @Deprecated(
     "Replaced with encodeToString(...)",
     ReplaceWith("this.encodeToString<T>(serializer, value)"),
+    DeprecationLevel.ERROR,
 )
 public fun <T> Nbt.encodeToStringifiedNbt(serializer: SerializationStrategy<T>, value: T): String =
     encodeToString(serializer, value)
@@ -380,6 +389,7 @@ public fun <T> Nbt.encodeToStringifiedNbt(serializer: SerializationStrategy<T>, 
 @Deprecated(
     "Replaced with encodeToString(...)",
     ReplaceWith("this.encodeToString<T>(value)", "kotlinx.serialization.encodeToString"),
+    DeprecationLevel.ERROR,
 )
 public inline fun <reified T> Nbt.encodeToStringifiedNbt(value: T): String =
     encodeToString(value)

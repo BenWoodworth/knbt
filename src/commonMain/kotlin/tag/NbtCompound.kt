@@ -17,24 +17,28 @@ import kotlin.jvm.JvmName
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtCompound",
     ReplaceWith("NbtCompound", "net.benwoodworth.knbt.NbtCompound"),
+    DeprecationLevel.ERROR,
 )
 public typealias NbtCompound = NbtCompound
 
 @Deprecated(
     "Replaced with NbtCompound constructor",
     ReplaceWith("NbtCompound(emptyMap())", "net.benwoodworth.knbt.NbtCompound"),
+    DeprecationLevel.ERROR,
 )
 public fun nbtCompoundOf(): NbtCompound = NbtCompound(emptyMap())
 
 @Deprecated(
     "Replaced with NbtCompound constructor",
     ReplaceWith("NbtCompound(mapOf(*pairs))", "net.benwoodworth.knbt.NbtCompound"),
+    DeprecationLevel.ERROR,
 )
 public fun nbtCompoundOf(vararg pairs: Pair<String, NbtTag>): NbtCompound = NbtCompound(mapOf(*pairs))
 
 @Deprecated(
     "Replaced with NbtCompound constructor",
     ReplaceWith("NbtCompound(this)", "net.benwoodworth.knbt.toNbtCompound"),
+    DeprecationLevel.ERROR,
 )
 public fun Map<String, NbtTag>.toNbtCompound(): NbtCompound = NbtCompound(this)
 
@@ -44,6 +48,7 @@ public fun Map<String, NbtTag>.toNbtCompound(): NbtCompound = NbtCompound(this)
         "NbtCompound(this.mapValues { (_, value) -> NbtByte(value) })",
         "net.benwoodworth.knbt.NbtCompound", "net.benwoodworth.knbt.NbtByte",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtCompound\$Byte")
 public fun Map<String, Byte>.toNbtCompound(): NbtCompound =
@@ -55,6 +60,7 @@ public fun Map<String, Byte>.toNbtCompound(): NbtCompound =
         "NbtCompound(this.mapValues { NbtShort(it.value) })",
         "net.benwoodworth.knbt.NbtCompound", "net.benwoodworth.knbt.NbtShort",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtCompound\$Short")
 public fun Map<String, Short>.toNbtCompound(): NbtCompound =
@@ -66,6 +72,7 @@ public fun Map<String, Short>.toNbtCompound(): NbtCompound =
         "NbtCompound(this.mapValues { (_, value) -> NbtInt(value) })",
         "net.benwoodworth.knbt.NbtCompound", "net.benwoodworth.knbt.NbtInt",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtCompound\$Int")
 public fun Map<String, Int>.toNbtCompound(): NbtCompound =
@@ -77,6 +84,7 @@ public fun Map<String, Int>.toNbtCompound(): NbtCompound =
         "NbtCompound(this.mapValues { NbtLong(it.value) })",
         "net.benwoodworth.knbt.NbtCompound", "net.benwoodworth.knbt.NbtLong",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtCompound\$Long")
 public fun Map<String, Long>.toNbtCompound(): NbtCompound =
@@ -88,6 +96,7 @@ public fun Map<String, Long>.toNbtCompound(): NbtCompound =
         "NbtCompound(this.mapValues { NbtFloat(it.value) })",
         "net.benwoodworth.knbt.NbtCompound", "net.benwoodworth.knbt.NbtFloat",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtCompound\$Float")
 public fun Map<String, Float>.toNbtCompound(): NbtCompound =
@@ -99,6 +108,7 @@ public fun Map<String, Float>.toNbtCompound(): NbtCompound =
         "NbtCompound(this.mapValues { NbtDouble(it.value) })",
         "net.benwoodworth.knbt.NbtCompound", "net.benwoodworth.knbt.NbtDouble",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtCompound\$Double")
 public fun Map<String, Double>.toNbtCompound(): NbtCompound =
@@ -110,6 +120,7 @@ public fun Map<String, Double>.toNbtCompound(): NbtCompound =
         "NbtCompound(this.mapValues { NbtString(it.value) })",
         "net.benwoodworth.knbt.NbtCompound", "net.benwoodworth.knbt.NbtString",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtCompound\$String")
 public fun Map<String, String>.toNbtCompound(): NbtCompound =
@@ -121,6 +132,7 @@ public fun Map<String, String>.toNbtCompound(): NbtCompound =
         "NbtCompound(this.mapValues { NbtByteArray(it.value) })",
         "net.benwoodworth.knbt.NbtCompound", "net.benwoodworth.knbt.NbtByteArray",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtCompound\$ByteArray")
 public fun Map<String, ByteArray>.toNbtCompound(): NbtCompound =
@@ -132,6 +144,7 @@ public fun Map<String, ByteArray>.toNbtCompound(): NbtCompound =
         "NbtCompound(this.mapValues { NbtIntArray(it.value) })",
         "net.benwoodworth.knbt.NbtCompound", "net.benwoodworth.knbt.NbtIntArray",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtCompound\$IntArray")
 public fun Map<String, IntArray>.toNbtCompound(): NbtCompound =
@@ -143,6 +156,7 @@ public fun Map<String, IntArray>.toNbtCompound(): NbtCompound =
         "NbtCompound(this.mapValues { NbtLongArray(it.value) })",
         "net.benwoodworth.knbt.NbtCompound", "net.benwoodworth.knbt.NbtLongArray",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtCompound\$LongArray")
 public fun Map<String, LongArray>.toNbtCompound(): NbtCompound =

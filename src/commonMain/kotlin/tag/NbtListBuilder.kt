@@ -26,12 +26,14 @@ import kotlin.jvm.JvmName
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtListBuilder",
     ReplaceWith("NbtListBuilder<T>", "net.benwoodworth.knbt.NbtListBuilder"),
+    DeprecationLevel.ERROR,
 )
 public typealias NbtListBuilder<T> = NbtListBuilder<T>
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.buildNbtList",
     ReplaceWith("buildNbtList(builderAction)", "net.benwoodworth.knbt.buildNbtList"),
+    DeprecationLevel.ERROR,
 )
 public inline fun <T : NbtTag> buildNbtList(
     builderAction: NbtListBuilder<T>.() -> Unit,
@@ -43,6 +45,7 @@ public inline fun <T : NbtTag> buildNbtList(
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtByte>.add(element: NbtByte) {
     add(element)
@@ -51,6 +54,7 @@ public fun NbtListBuilder<NbtByte>.add(element: NbtByte) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtByteArray>.add(element: NbtByteArray) {
     add(element)
@@ -59,6 +63,7 @@ public fun NbtListBuilder<NbtByteArray>.add(element: NbtByteArray) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtCompound>.add(element: NbtCompound) {
     add(element)
@@ -67,6 +72,7 @@ public fun NbtListBuilder<NbtCompound>.add(element: NbtCompound) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtDouble>.add(element: NbtDouble) {
     add(element)
@@ -75,6 +81,7 @@ public fun NbtListBuilder<NbtDouble>.add(element: NbtDouble) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtFloat>.add(element: NbtFloat) {
     add(element)
@@ -83,6 +90,7 @@ public fun NbtListBuilder<NbtFloat>.add(element: NbtFloat) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtInt>.add(element: NbtInt) {
     add(element)
@@ -91,6 +99,7 @@ public fun NbtListBuilder<NbtInt>.add(element: NbtInt) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtIntArray>.add(element: NbtIntArray) {
     add(element)
@@ -99,6 +108,7 @@ public fun NbtListBuilder<NbtIntArray>.add(element: NbtIntArray) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun <T : NbtTag> NbtListBuilder<NbtList<T>>.add(element: NbtList<T>) {
     add(element)
@@ -107,6 +117,7 @@ public fun <T : NbtTag> NbtListBuilder<NbtList<T>>.add(element: NbtList<T>) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtLong>.add(element: NbtLong) {
     add(element)
@@ -115,6 +126,7 @@ public fun NbtListBuilder<NbtLong>.add(element: NbtLong) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtLongArray>.add(element: NbtLongArray) {
     add(element)
@@ -123,6 +135,7 @@ public fun NbtListBuilder<NbtLongArray>.add(element: NbtLongArray) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtShort>.add(element: NbtShort) {
     add(element)
@@ -131,6 +144,7 @@ public fun NbtListBuilder<NbtShort>.add(element: NbtShort) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtString>.add(element: NbtString) {
     add(element)
@@ -140,6 +154,7 @@ public fun NbtListBuilder<NbtString>.add(element: NbtString) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtByte>.add(element: Byte) {
     add(element)
@@ -148,6 +163,7 @@ public fun NbtListBuilder<NbtByte>.add(element: Byte) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtShort>.add(element: Short) {
     add(element)
@@ -156,6 +172,7 @@ public fun NbtListBuilder<NbtShort>.add(element: Short) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtInt>.add(element: Int) {
     add(element)
@@ -164,6 +181,7 @@ public fun NbtListBuilder<NbtInt>.add(element: Int) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtLong>.add(element: Long) {
     add(element)
@@ -172,6 +190,7 @@ public fun NbtListBuilder<NbtLong>.add(element: Long) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtFloat>.add(element: Float) {
     add(element)
@@ -180,6 +199,7 @@ public fun NbtListBuilder<NbtFloat>.add(element: Float) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtDouble>.add(element: Double) {
     add(element)
@@ -188,6 +208,7 @@ public fun NbtListBuilder<NbtDouble>.add(element: Double) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtByteArray>.add(element: ByteArray) {
     add(element)
@@ -196,6 +217,7 @@ public fun NbtListBuilder<NbtByteArray>.add(element: ByteArray) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtString>.add(element: String) {
     add(element)
@@ -204,6 +226,7 @@ public fun NbtListBuilder<NbtString>.add(element: String) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtIntArray>.add(element: IntArray) {
     add(element)
@@ -212,6 +235,7 @@ public fun NbtListBuilder<NbtIntArray>.add(element: IntArray) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.add",
     ReplaceWith("add(element)", "net.benwoodworth.knbt.add"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtListBuilder<NbtLongArray>.add(element: LongArray) {
     add(element)
@@ -220,6 +244,7 @@ public fun NbtListBuilder<NbtLongArray>.add(element: LongArray) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.addNbtList",
     ReplaceWith("addNbtList(element)", "net.benwoodworth.knbt.addNbtList"),
+    DeprecationLevel.ERROR,
 )
 public inline fun <T : NbtTag> NbtListBuilder<NbtList<NbtTag>>.addNbtList(
     builderAction: NbtListBuilder<T>.() -> Unit,
@@ -231,6 +256,7 @@ public inline fun <T : NbtTag> NbtListBuilder<NbtList<NbtTag>>.addNbtList(
 @Deprecated(
     "Moved to net.benwoodworth.knbt.addNbtList",
     ReplaceWith("addNbtList(element)", "net.benwoodworth.knbt.addNbtList"),
+    DeprecationLevel.ERROR,
 )
 @JvmName("addNbtList\$T")
 public inline fun <T : NbtTag> NbtListBuilder<NbtList<T>>.addNbtList(
@@ -243,6 +269,7 @@ public inline fun <T : NbtTag> NbtListBuilder<NbtList<T>>.addNbtList(
 @Deprecated(
     "Moved to net.benwoodworth.knbt.addNbtCompound",
     ReplaceWith("addNbtCompound(element)", "net.benwoodworth.knbt.addNbtCompound"),
+    DeprecationLevel.ERROR,
 )
 public inline fun NbtListBuilder<NbtCompound>.addNbtCompound(
     builderAction: NbtCompoundBuilder.() -> Unit,

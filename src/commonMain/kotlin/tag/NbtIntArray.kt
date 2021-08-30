@@ -5,12 +5,14 @@ import net.benwoodworth.knbt.NbtIntArray
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtIntArray",
     ReplaceWith("NbtIntArray", "net.benwoodworth.knbt.NbtIntArray"),
+    DeprecationLevel.ERROR,
 )
 public typealias NbtIntArray = NbtIntArray
 
 @Deprecated(
     "Replaced with NbtIntArray constructor",
     ReplaceWith("NbtIntArray(IntArray(size, init))", "net.benwoodworth.knbt.NbtIntArray"),
+    DeprecationLevel.ERROR,
 )
 public inline fun NbtIntArray(size: Int, init: (index: Int) -> Int): NbtIntArray =
     NbtIntArray(IntArray(size) { init(it) })
@@ -18,17 +20,20 @@ public inline fun NbtIntArray(size: Int, init: (index: Int) -> Int): NbtIntArray
 @Deprecated(
     "Replaced with NbtIntArray constructor",
     ReplaceWith("NbtIntArray(intArrayOf(*elements))", "net.benwoodworth.knbt.NbtIntArray"),
+    DeprecationLevel.ERROR,
 )
 public fun nbtIntArrayOf(vararg elements: Int): NbtIntArray = NbtIntArray(intArrayOf(*elements))
 
 @Deprecated(
     "Replaced with NbtIntArray constructor",
     ReplaceWith("NbtIntArray(this)", "net.benwoodworth.knbt.NbtIntArray"),
+    DeprecationLevel.ERROR,
 )
 public fun IntArray.toNbtIntArray(): NbtIntArray = NbtIntArray(this)
 
 @Deprecated(
     "Replaced with NbtIntArray constructor",
     ReplaceWith("NbtIntArray(this.toIntArray())", "net.benwoodworth.knbt.NbtIntArray"),
+    DeprecationLevel.ERROR,
 )
 public fun Collection<Int>.toNbtIntArray(): NbtIntArray = NbtIntArray(this.toIntArray())

@@ -17,12 +17,14 @@ import kotlin.jvm.JvmName
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtCompoundBuilder",
     ReplaceWith("NbtCompoundBuilder", "net.benwoodworth.knbt.NbtCompoundBuilder"),
+    DeprecationLevel.ERROR,
 )
 public typealias NbtCompoundBuilder = NbtCompoundBuilder
 
 @Deprecated(
     "Moved to net.benwoodworth.knbt.buildNbtCompound",
-    ReplaceWith("buildNbtCompound(builderAction)", "net.benwoodworth.knbt.buildNbtCompound")
+    ReplaceWith("buildNbtCompound(builderAction)", "net.benwoodworth.knbt.buildNbtCompound"),
+    DeprecationLevel.ERROR,
 )
 public inline fun buildNbtCompound(builderAction: NbtCompoundBuilder.() -> Unit): NbtCompound {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
@@ -32,6 +34,7 @@ public inline fun buildNbtCompound(builderAction: NbtCompoundBuilder.() -> Unit)
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtCompoundBuilder.put(key: String, value: Byte) {
     put(key, value)
@@ -40,6 +43,7 @@ public fun NbtCompoundBuilder.put(key: String, value: Byte) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtCompoundBuilder.put(key: String, value: Short) {
     put(key, value)
@@ -48,6 +52,7 @@ public fun NbtCompoundBuilder.put(key: String, value: Short) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtCompoundBuilder.put(key: String, value: Int) {
     put(key, value)
@@ -56,6 +61,7 @@ public fun NbtCompoundBuilder.put(key: String, value: Int) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtCompoundBuilder.put(key: String, value: Long) {
     put(key, value)
@@ -64,6 +70,7 @@ public fun NbtCompoundBuilder.put(key: String, value: Long) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtCompoundBuilder.put(key: String, value: Float) {
     put(key, value)
@@ -72,6 +79,7 @@ public fun NbtCompoundBuilder.put(key: String, value: Float) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtCompoundBuilder.put(key: String, value: Double) {
     put(key, value)
@@ -80,6 +88,7 @@ public fun NbtCompoundBuilder.put(key: String, value: Double) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtCompoundBuilder.put(key: String, value: ByteArray) {
     put(key, value)
@@ -88,6 +97,7 @@ public fun NbtCompoundBuilder.put(key: String, value: ByteArray) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtCompoundBuilder.put(key: String, value: String) {
     put(key, value)
@@ -96,6 +106,7 @@ public fun NbtCompoundBuilder.put(key: String, value: String) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtCompoundBuilder.put(key: String, value: IntArray) {
     put(key, value)
@@ -104,6 +115,7 @@ public fun NbtCompoundBuilder.put(key: String, value: IntArray) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.put",
     ReplaceWith("this.put(key, value)", "net.benwoodworth.knbt.put"),
+    DeprecationLevel.ERROR,
 )
 public fun NbtCompoundBuilder.put(key: String, value: LongArray) {
     put(key, NbtLongArray(value))
@@ -112,6 +124,7 @@ public fun NbtCompoundBuilder.put(key: String, value: LongArray) {
 @Deprecated(
     "Moved to net.benwoodworth.knbt.putNbtList",
     ReplaceWith("this.putNbtList(key, builderAction)", "net.benwoodworth.knbt.putNbtList"),
+    DeprecationLevel.ERROR,
 )
 public inline fun NbtCompoundBuilder.putNbtList(
     key: String,
@@ -124,6 +137,7 @@ public inline fun NbtCompoundBuilder.putNbtList(
 @Deprecated(
     "Moved to net.benwoodworth.knbt.putNbtList",
     ReplaceWith("this.putNbtList<T>(key, builderAction)", "net.benwoodworth.knbt.putNbtList"),
+    DeprecationLevel.ERROR,
 )
 @JvmName("putNbtList\$T")
 public inline fun <T : NbtTag> NbtCompoundBuilder.putNbtList(
@@ -137,6 +151,7 @@ public inline fun <T : NbtTag> NbtCompoundBuilder.putNbtList(
 @Deprecated(
     "Moved to net.benwoodworth.knbt.putNbtCompound",
     ReplaceWith("this.putNbtCompound(key, builderAction)", "net.benwoodworth.knbt.putNbtCompound"),
+    DeprecationLevel.ERROR,
 )
 public inline fun NbtCompoundBuilder.putNbtCompound(
     key: String,

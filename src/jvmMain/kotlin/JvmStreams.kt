@@ -26,6 +26,7 @@ public fun <T> Nbt.encodeToStream(serializer: SerializationStrategy<T>, value: T
 @Deprecated(
     "Replaced with encodeToStream(...)",
     ReplaceWith("encodeToStream<T>(serializer, value, outputStream)", "net.benwoodworth.knbt.encodeToStream"),
+    DeprecationLevel.ERROR,
 )
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Nbt.encodeTo(outputStream: OutputStream, serializer: SerializationStrategy<T>, value: T): Unit =
@@ -47,6 +48,7 @@ public inline fun <reified T> Nbt.encodeToStream(value: T, output: OutputStream)
 @Deprecated(
     "Replaced with encodeToStream(...)",
     ReplaceWith("encodeToStream<T>(value, outputStream)", "net.benwoodworth.knbt.encodeToStream"),
+    DeprecationLevel.ERROR,
 )
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <reified T> Nbt.encodeTo(outputStream: OutputStream, value: T): Unit =
@@ -69,6 +71,7 @@ public fun <T> Nbt.decodeFromStream(deserializer: DeserializationStrategy<T>, in
 @Deprecated(
     "Replaced with decodeFromStream(...)",
     ReplaceWith("this.decodeFromStream<T>(serializer, inputStream)", "net.benwoodworth.knbt.decodeFromStream"),
+    DeprecationLevel.ERROR,
 )
 @OptIn(OkioApi::class)
 public fun <T> Nbt.decodeFrom(inputStream: InputStream, deserializer: DeserializationStrategy<T>): T =
@@ -90,6 +93,7 @@ public inline fun <reified T> Nbt.decodeFromStream(input: InputStream): T =
 @Deprecated(
     "Replaced with decodeFromStream(...)",
     ReplaceWith("this.decodeFromStream<T>(inputStream)", "net.benwoodworth.knbt.decodeFromStream"),
+    DeprecationLevel.ERROR,
 )
 public inline fun <reified T> Nbt.decodeFrom(inputStream: InputStream): T =
     decodeFromStream(inputStream)

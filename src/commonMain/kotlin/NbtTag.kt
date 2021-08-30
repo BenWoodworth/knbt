@@ -85,6 +85,7 @@ public class NbtByteArray private constructor(
     @Deprecated(
         "Replaced with ByteArray constructor",
         ReplaceWith("NbtByteArray(content.toByteArray())", "net.benwoodworth.knbt.NbtByteArray"),
+        DeprecationLevel.ERROR,
     )
     public constructor(content: List<Byte>) : this(content.toByteArray())
 
@@ -207,6 +208,7 @@ public class NbtIntArray private constructor(
     @Deprecated(
         "Replaced with IntArray constructor",
         ReplaceWith("NbtIntArray(content.toIntArray())", "net.benwoodworth.knbt.NbtIntArray"),
+        DeprecationLevel.ERROR,
     )
     public constructor(content: List<Int>) : this(content.toIntArray())
 
@@ -236,6 +238,7 @@ public class NbtLongArray private constructor(
     @Deprecated(
         "Replaced with LongArray constructor",
         ReplaceWith("NbtLongArray(content.toLongArray())", "net.benwoodworth.knbt.NbtLongArray"),
+        DeprecationLevel.ERROR,
     )
     public constructor(content: List<Long>) : this(content.toLongArray())
 

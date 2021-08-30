@@ -18,6 +18,7 @@ import kotlin.jvm.JvmName
 @Deprecated(
     "Moved to net.benwoodworth.knbt.NbtList<T>",
     ReplaceWith("NbtList<T>", "net.benwoodworth.knbt.NbtList<T>"),
+    DeprecationLevel.ERROR,
 )
 public typealias NbtList<T> = NbtList<T>
 
@@ -25,6 +26,7 @@ public typealias NbtList<T> = NbtList<T>
 @Deprecated(
     "Replaced with NbtList constructor",
     ReplaceWith("NbtList(emptyList<T>())", "net.benwoodworth.knbt.NbtList"),
+    DeprecationLevel.ERROR,
 )
 public fun <T : NbtTag> nbtListOf(): NbtList<T> =
     NbtList(emptyList<T>())
@@ -33,6 +35,7 @@ public fun <T : NbtTag> nbtListOf(): NbtList<T> =
 @Deprecated(
     "Replaced with NbtList constructor",
     ReplaceWith("NbtList(listOf(*elements))", "net.benwoodworth.knbt.NbtList"),
+    DeprecationLevel.ERROR,
 )
 public fun <T : NbtTag> nbtListOf(vararg elements: T): NbtList<T> = NbtList(listOf(*elements))
 
@@ -40,6 +43,7 @@ public fun <T : NbtTag> nbtListOf(vararg elements: T): NbtList<T> = NbtList(list
 @Deprecated(
     "Replaced with NbtList constructor",
     ReplaceWith("NbtList(this)", "net.benwoodworth.knbt.NbtList"),
+    DeprecationLevel.ERROR,
 )
 public fun <T : NbtTag> List<T>.toNbtList(): NbtList<T> = NbtList(this)
 
@@ -49,6 +53,7 @@ public fun <T : NbtTag> List<T>.toNbtList(): NbtList<T> = NbtList(this)
         "NbtList(this.map { NbtByte(it) })",
         "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtByte",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtList\$Byte")
 public fun List<Byte>.toNbtList(): NbtList<NbtByte> =
@@ -60,6 +65,7 @@ public fun List<Byte>.toNbtList(): NbtList<NbtByte> =
         "NbtList(this.map { NbtShort(it) })",
         "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtShort",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtList\$Short")
 public fun List<Short>.toNbtList(): NbtList<NbtShort> =
@@ -71,6 +77,7 @@ public fun List<Short>.toNbtList(): NbtList<NbtShort> =
         "NbtList(this.map { NbtInt(it) })",
         "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtInt",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtList\$Int")
 public fun List<Int>.toNbtList(): NbtList<NbtInt> =
@@ -82,6 +89,7 @@ public fun List<Int>.toNbtList(): NbtList<NbtInt> =
         "NbtList(this.map { NbtLong(it) })",
         "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtLong",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtList\$Long")
 public fun List<Long>.toNbtList(): NbtList<NbtLong> =
@@ -93,6 +101,7 @@ public fun List<Long>.toNbtList(): NbtList<NbtLong> =
         "NbtList(this.map { NbtFloat(it) })",
         "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtFloat",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtList\$Float")
 public fun List<Float>.toNbtList(): NbtList<NbtFloat> =
@@ -104,6 +113,7 @@ public fun List<Float>.toNbtList(): NbtList<NbtFloat> =
         "NbtList(this.map { NbtDouble(it) })",
         "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtDouble",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtList\$Double")
 public fun List<Double>.toNbtList(): NbtList<NbtDouble> =
@@ -115,6 +125,7 @@ public fun List<Double>.toNbtList(): NbtList<NbtDouble> =
         "NbtList(this.map { NbtString(it) })",
         "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtString",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtList\$String")
 public fun List<String>.toNbtList(): NbtList<NbtString> =
@@ -126,6 +137,7 @@ public fun List<String>.toNbtList(): NbtList<NbtString> =
         "NbtList(this.map { NbtByteArray(it) })",
         "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtByteArray",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtList\$ByteArray")
 public fun List<ByteArray>.toNbtList(): NbtList<NbtByteArray> =
@@ -137,6 +149,7 @@ public fun List<ByteArray>.toNbtList(): NbtList<NbtByteArray> =
         "NbtList(this.map { NbtIntArray(it) })",
         "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtIntArray",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtList\$IntArray")
 public fun List<IntArray>.toNbtList(): NbtList<NbtIntArray> =
@@ -148,6 +161,7 @@ public fun List<IntArray>.toNbtList(): NbtList<NbtIntArray> =
         "NbtList(this.map { NbtLongArray(it) })",
         "net.benwoodworth.knbt.NbtList", "net.benwoodworth.knbt.NbtLongArray",
     ),
+    DeprecationLevel.ERROR,
 )
 @JvmName("toNbtList\$LongArray")
 public fun List<LongArray>.toNbtList(): NbtList<NbtLongArray> =
