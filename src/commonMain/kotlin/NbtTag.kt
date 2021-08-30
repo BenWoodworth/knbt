@@ -82,13 +82,6 @@ public class NbtByteArray private constructor(
 
     public constructor(content: ByteArray) : this(content, content.asList())
 
-    @Deprecated(
-        "Replaced with ByteArray constructor",
-        ReplaceWith("NbtByteArray(content.toByteArray())", "net.benwoodworth.knbt.NbtByteArray"),
-        DeprecationLevel.ERROR,
-    )
-    public constructor(content: List<Byte>) : this(content.toByteArray())
-
     override fun equals(other: Any?): Boolean = when {
         this === other -> true
         other is NbtTag -> other is NbtByteArray && content.contentEquals(other.content)
@@ -205,13 +198,6 @@ public class NbtIntArray private constructor(
 
     public constructor(content: IntArray) : this(content, content.asList())
 
-    @Deprecated(
-        "Replaced with IntArray constructor",
-        ReplaceWith("NbtIntArray(content.toIntArray())", "net.benwoodworth.knbt.NbtIntArray"),
-        DeprecationLevel.ERROR,
-    )
-    public constructor(content: List<Int>) : this(content.toIntArray())
-
     override fun equals(other: Any?): Boolean = when {
         this === other -> true
         other is NbtTag -> other is NbtIntArray && content.contentEquals(other.content)
@@ -234,13 +220,6 @@ public class NbtLongArray private constructor(
     override val type: NbtTagType get() = NbtTagType.TAG_Long_Array
 
     public constructor(content: LongArray) : this(content, content.asList())
-
-    @Deprecated(
-        "Replaced with LongArray constructor",
-        ReplaceWith("NbtLongArray(content.toLongArray())", "net.benwoodworth.knbt.NbtLongArray"),
-        DeprecationLevel.ERROR,
-    )
-    public constructor(content: List<Long>) : this(content.toLongArray())
 
     override fun equals(other: Any?): Boolean = when {
         this === other -> true
