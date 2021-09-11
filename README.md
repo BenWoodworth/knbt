@@ -65,6 +65,30 @@ value = nbt.decodeFromSource(source)
 // OutputStream/InputStream (JVM)
 nbt.encodeToStream(value, outputStream)
 value = nbt.decodeFromStream(inputStream)
+
+// String
+string = snbt.encodeToString(value)
+value = snbt.decodeFromString(string)
+```
+
+### Reading/Writing NBT Files (JVM)
+
+```kotlin
+import kotlin.io.path.*
+import net.benwoodworth.knbt.*
+
+val file = Path("file.nbt")
+val nbt = Nbt { TODO() }
+
+// Read from file
+val tag: NbtTag = file.inputStream().use { input ->
+    nbt.decodeFromStream(input)
+}
+
+// Write to file
+file.outputStream().use { output ->
+    nbt.encodeToStream(tag, output)
+}
 ```
 
 ### @NbtRoot
@@ -85,6 +109,8 @@ Nbt.encodeToNbtTag(Example(string = "Hello, World!", int = 42))
 The sealed `NbtTag` interface has the following immutable implementations:
 
 ```kotlin
+interface NbtTag
+
 class NbtByte : NbtTag
 class NbtShort : NbtTag
 class NbtInt : NbtTag
