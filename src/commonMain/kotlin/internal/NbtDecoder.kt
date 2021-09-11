@@ -10,14 +10,14 @@ import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
 
-internal fun NbtDecoder(nbt: Nbt, reader: NbtReader): NbtDecoder = RootNbtDecoder(nbt, reader)
+internal fun NbtDecoder(nbt: NbtFormat, reader: NbtReader): NbtDecoder = RootNbtDecoder(nbt, reader)
 
 @OptIn(ExperimentalSerializationApi::class)
 private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     override val serializersModule: SerializersModule
         get() = nbt.serializersModule
 
-    protected abstract val nbt: Nbt
+    protected abstract val nbt: NbtFormat
     protected abstract val reader: NbtReader
     protected abstract val parent: BaseNbtDecoder?
     protected abstract val entryType: NbtTagType
@@ -186,7 +186,7 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
 }
 
 private class RootNbtDecoder(
-    override val nbt: Nbt,
+    override val nbt: NbtFormat,
     override val reader: NbtReader,
 ) : BaseNbtDecoder() {
     override val parent: Nothing? = null
@@ -217,7 +217,7 @@ private abstract class CompoundNbtDecoder : BaseNbtDecoder() {
 }
 
 private class ClassNbtDecoder(
-    override val nbt: Nbt,
+    override val nbt: NbtFormat,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
 ) : CompoundNbtDecoder() {
@@ -277,7 +277,7 @@ private class ClassNbtDecoder(
 }
 
 private class MapNbtDecoder(
-    override val nbt: Nbt,
+    override val nbt: NbtFormat,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
 ) : CompoundNbtDecoder() {
@@ -335,7 +335,7 @@ private abstract class ListLikeNbtDecoder : BaseNbtDecoder() {
 }
 
 private class ListNbtDecoder(
-    override val nbt: Nbt,
+    override val nbt: NbtFormat,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
 ) : ListLikeNbtDecoder() {
@@ -353,7 +353,7 @@ private class ListNbtDecoder(
 }
 
 private class ByteArrayNbtDecoder(
-    override val nbt: Nbt,
+    override val nbt: NbtFormat,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
 ) : ListLikeNbtDecoder() {
@@ -371,7 +371,7 @@ private class ByteArrayNbtDecoder(
 }
 
 private class IntArrayNbtDecoder(
-    override val nbt: Nbt,
+    override val nbt: NbtFormat,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
 ) : ListLikeNbtDecoder() {
@@ -389,7 +389,7 @@ private class IntArrayNbtDecoder(
 }
 
 private class LongArrayNbtDecoder(
-    override val nbt: Nbt,
+    override val nbt: NbtFormat,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
 ) : ListLikeNbtDecoder() {

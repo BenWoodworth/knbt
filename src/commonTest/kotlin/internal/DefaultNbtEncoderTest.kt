@@ -16,7 +16,7 @@ class DefaultNbtEncoderTest {
 
         try {
             @OptIn(ExperimentalSerializationApi::class)
-            DefaultNbtEncoder(Nbt, writer).encodeSerializableValue(NbtTag.serializer(), tag)
+            DefaultNbtEncoder(NbtFormat(), writer).encodeSerializableValue(NbtTag.serializer(), tag)
         } catch (e: Exception) {
             throw Exception("Error encoding. NbtWriter log: <\n$stringBuilder>", e)
         }

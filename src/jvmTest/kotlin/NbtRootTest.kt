@@ -32,12 +32,12 @@ class NbtRootTest {
 
     @Test
     fun Should_encode_correctly() {
-        assertEquals(testNbtTag, Nbt.encodeToNbtTag(TestNbtClass.serializer(), testNbt))
+        assertEquals(testNbtTag, NbtFormat().encodeToNbtTag(TestNbtClass.serializer(), testNbt))
     }
 
     @Test
     fun Should_decode_correctly() {
-        assertEquals(testNbt, Nbt.decodeFromNbtTag(TestNbtClass.serializer(), testNbtTag))
+        assertEquals(testNbt, NbtFormat().decodeFromNbtTag(TestNbtClass.serializer(), testNbtTag))
     }
 
     // TODO Move to common once these issues are fixed

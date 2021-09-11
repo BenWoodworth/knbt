@@ -1,11 +1,11 @@
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.ExperimentalNbtApi
-import net.benwoodworth.knbt.Nbt
+import net.benwoodworth.knbt.StringifiedNbt
 
 @OptIn(ExperimentalNbtApi::class)
 internal class StringifiedNbtWriter(
-    private val nbt: Nbt,
+    private val snbt: StringifiedNbt,
     private val appendable: Appendable,
 ) : NbtWriter {
     private var firstEntry = false
@@ -13,12 +13,12 @@ internal class StringifiedNbtWriter(
     private var level = 0
 
     private val prettySpace: String =
-        if (nbt.configuration.prettyPrint) " " else ""
+        if (snbt.configuration.prettyPrint) " " else ""
 
     private fun Appendable.appendPrettyNewLine(): Appendable {
-        if (nbt.configuration.prettyPrint) {
+        if (snbt.configuration.prettyPrint) {
             appendable.appendLine()
-            repeat(level) { appendable.append(nbt.configuration.prettyPrintIndent) }
+            repeat(level) { appendable.append(snbt.configuration.prettyPrintIndent) }
         }
         return this
     }

@@ -26,7 +26,7 @@ class NbtCompressionJvmTest {
             testStream(this::class.java.getResourceAsStream(resource)!!, expected)
 
         fun testFile(file: NbtTestFile<*>): Unit =
-            testStream(file.toByteArray().inputStream(), file.nbt.configuration.compression!!)
+            testStream(file.toByteArray().inputStream(), file.nbt.configuration.compression)
 
         testResource("/uncompressed-nbt/bedrock/level-headerless-0.nbt", NbtCompression.None)
         testResource("/uncompressed-nbt/bedrock/level-headerless-1.nbt", NbtCompression.None)

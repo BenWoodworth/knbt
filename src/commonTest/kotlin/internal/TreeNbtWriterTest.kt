@@ -19,13 +19,13 @@ class TreeNbtWriterTest {
     @Test
     fun Should_encode_test_from_class_correctly(): Unit = assertEquals(
         expected = testTag,
-        actual = Nbt.encodeToNbtTag(testClass),
+        actual = NbtFormat().encodeToNbtTag(testClass),
     )
 
     @Test
     fun Should_encode_bigtest_from_class_correctly(): Unit = assertEquals(
         expected = testTag,
-        actual = Nbt.encodeToNbtTag(testClass),
+        actual = NbtFormat().encodeToNbtTag(testClass),
     )
 
     @Test

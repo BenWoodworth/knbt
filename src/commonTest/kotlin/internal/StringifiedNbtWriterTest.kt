@@ -3,7 +3,7 @@ package net.benwoodworth.knbt.internal
 import data.testTag
 import kotlinx.serialization.encodeToString
 import net.benwoodworth.knbt.ExperimentalNbtApi
-import net.benwoodworth.knbt.Nbt
+import net.benwoodworth.knbt.StringifiedNbt
 import net.benwoodworth.knbt.data.bigTestExtendedTag
 import net.benwoodworth.knbt.fix
 import kotlin.test.Test
@@ -11,13 +11,13 @@ import kotlin.test.assertEquals
 
 @OptIn(ExperimentalNbtApi::class)
 class StringifiedNbtWriterTest {
-    private val nbt = Nbt {
+    private val snbt = StringifiedNbt {
         prettyPrint = true
     }
 
     @Test
     fun Should_use_prettyPrintIndent() {
-        val indentNbt = Nbt(nbt) {
+        val indentSnbt = StringifiedNbt(snbt) {
             prettyPrintIndent = "\t"
         }
 
@@ -30,7 +30,7 @@ class StringifiedNbtWriterTest {
                 }
             """.trimIndent().replace("    ", "\t"),
 
-            actual = indentNbt.encodeToString(testTag),
+            actual = indentSnbt.encodeToString(testTag),
         )
     }
 
@@ -81,7 +81,7 @@ class StringifiedNbtWriterTest {
                 }
             """.trimIndent(),
 
-            actual = nbt.encodeToString(bigTestExtendedTag),
+            actual = snbt.encodeToString(bigTestExtendedTag),
         )
     }
 }

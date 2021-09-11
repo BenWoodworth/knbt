@@ -20,14 +20,6 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
         val variant = nbt.configuration.variant
         val compression = nbt.configuration.compression
 
-        require(variant != null && compression != null) {
-            val unset = mutableListOf<String>()
-            if (variant == null) unset += "variant"
-            if (compression == null) unset += "compression"
-
-            "NBT variant and compression must be set when serializing binary. Not set: ${unset.joinToString()}."
-        }
-
         val nonClosingSource = NonClosingSource(source).buffer()
 
         val detectedCompression = try {

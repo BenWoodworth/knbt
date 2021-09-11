@@ -4,63 +4,228 @@ import kotlinx.serialization.*
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.NbtVariant.*
-import net.benwoodworth.knbt.internal.*
+import net.benwoodworth.knbt.internal.BinaryNbtReader
+import net.benwoodworth.knbt.internal.BinaryNbtWriter
 import okio.Buffer
 import okio.Sink
 import okio.Source
 import okio.use
 import kotlin.native.concurrent.ThreadLocal
 
+private const val requireConfig = "Configuring Nbt is now required"
+private const val nbtTodo = "Nbt {\n variant = NbtVariant.TODO\n compression = NbtCompression.TODO\n }"
+private const val knbt = "net.benwoodworth.knbt"
+private const val kxs = "kotlinx.serialization"
+
 @OptIn(ExperimentalSerializationApi::class)
 public sealed class Nbt constructor(
+    @Suppress("EXPERIMENTAL_OVERRIDE")
     @ExperimentalNbtApi
-    public val configuration: NbtConfiguration,
+    override val configuration: NbtConfiguration,
 
     override val serializersModule: SerializersModule,
-) : BinaryFormat, StringFormat {
+) : NbtFormat, BinaryFormat {
     /**
      * The default instance of [Nbt] with default configuration.
      */
     @ThreadLocal
-    public companion object Default : Nbt(
-        configuration = NbtConfiguration(
-            variant = null,
-            compression = null,
-            compressionLevel = null,
-            encodeDefaults = false,
-            ignoreUnknownKeys = false,
-            prettyPrint = false,
-            prettyPrintIndent = "    ",
+    @Deprecated(
+        "Configuring Nbt is now required",
+        ReplaceWith(
+            nbtTodo,
+            "net.benwoodworth.knbt.Nbt",
+            "net.benwoodworth.knbt.NbtVariant",
+            "net.benwoodworth.knbt.NbtCompression",
         ),
-        serializersModule = EmptySerializersModule,
+        level = DeprecationLevel.ERROR,
     )
+    public companion object Default {
+        //region deprecated methods
+        /**
+         * Serializes and encodes the given [value] to the [sink] using the given [serializer].
+         *
+         * *Note*: It is the caller's responsibility to close the [sink].
+         */
+        @OkioApi
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.encodeToSink<T>(serializer, value, sink)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression",
+            ),
+            DeprecationLevel.ERROR
+        )
+        public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit =
+            error(requireConfig)
 
-    @OptIn(ExperimentalNbtApi::class)
-    internal fun <T> encodeToNbtWriter(writer: NbtWriter, serializer: SerializationStrategy<T>, value: T) {
-        val nbtRoot = serializer.descriptor.annotations
-            .firstOrNull { it is NbtRoot } as NbtRoot?
+        /**
+         * Serializes and encodes the given [value] to the [sink] using the given [serializer].
+         *
+         * *Note*: It is the caller's responsibility to close the [sink].
+         */
+        @OkioApi
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.encodeToSink<T>(value, sink)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression", "$knbt.encodeToSink",
+            ),
+            DeprecationLevel.ERROR
+        )
+        public fun <T> encodeToSink(value: T, sink: Sink): Unit =
+            error(requireConfig)
 
-        val rootSerializer = if (nbtRoot == null) {
-            serializer
-        } else {
-            NbtRootSerializer(nbtRoot, serializer)
-        }
+        /**
+         * Decodes and deserializes from the given [source] to a value of type [T] using the given [deserializer].
+         *
+         * *Note*: It is the caller's responsibility to close the [source].
+         */
+        @OkioApi
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.decodeFromSource<T>(deserializer, source)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression", "$knbt.decodeFromSource",
+            ),
+            DeprecationLevel.ERROR
+        )
+        public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T =
+            error(requireConfig)
 
-        return DefaultNbtEncoder(this, writer).encodeSerializableValue(rootSerializer, value)
-    }
+        /**
+         * Decodes and deserializes from the given [source] to a value of type [T] using
+         * serializer retrieved from the reified type parameter.
+         *
+         * *Note*: It is the caller's responsibility to close the [source].
+         */
+        @OkioApi
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.decodeFromSource<T>(source)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression",
+            ),
+            DeprecationLevel.ERROR
+        )
+        public fun <T> decodeFromSource(source: Source): T =
+            error(requireConfig)
 
-    @OptIn(ExperimentalNbtApi::class)
-    internal fun <T> decodeFromNbtReader(reader: NbtReader, deserializer: DeserializationStrategy<T>): T {
-        val nbtRoot = deserializer.descriptor.annotations
-            .firstOrNull { it is NbtRoot } as NbtRoot?
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.encodeToByteArray<T>(serializer, value)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression",
+            ),
+            DeprecationLevel.ERROR
+        )
+        public fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
+            error(requireConfig)
 
-        val rootDeserializer = if (nbtRoot == null) {
-            deserializer
-        } else {
-            NbtRootDeserializer(nbtRoot, deserializer)
-        }
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.encodeToByteArray<T>(value)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression", "$kxs.encodeToByteArray",
+            ),
+            DeprecationLevel.ERROR
+        )
+        public fun <T> encodeToByteArray(value: T): ByteArray =
+            error(requireConfig)
 
-        return NbtDecoder(this, reader).decodeSerializableValue(rootDeserializer)
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.decodeFromByteArray<T>(deserializer, bytes)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression",
+            ),
+            DeprecationLevel.ERROR
+        )
+        @OptIn(OkioApi::class)
+        public fun <T> decodeFromByteArray(deserializer: DeserializationStrategy<T>, bytes: ByteArray): T =
+            error(requireConfig)
+
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.decodeFromByteArray<T>(bytes)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression", "$kxs.decodeFromByteArray",
+            ),
+            DeprecationLevel.ERROR
+        )
+        @OptIn(OkioApi::class)
+        public fun <T> decodeFromByteArray(bytes: ByteArray): T =
+            error(requireConfig)
+
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.encodeToHexString<T>(serializer, value)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression", "$kxs.encodeToHexString",
+            ),
+            DeprecationLevel.ERROR
+        )
+        @OptIn(OkioApi::class)
+        public fun <T> encodeToHexString(serializer: SerializationStrategy<T>, value: T): String =
+            error(requireConfig)
+
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.encodeToHexString<T>(value)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression", "$kxs.encodeToHexString",
+            ),
+            DeprecationLevel.ERROR
+        )
+        @OptIn(OkioApi::class)
+        public fun <T> encodeToHexString(value: T): String =
+            error(requireConfig)
+
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.decodeFromHexString<T>(deserializer, hex)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression", "$kxs.decodeFromHexString",
+            ),
+            DeprecationLevel.ERROR
+        )
+        @OptIn(OkioApi::class)
+        public fun <T> decodeFromHexString(deserializer: DeserializationStrategy<T>, hex: String): String =
+            error(requireConfig)
+
+        @Deprecated(
+            requireConfig,
+            ReplaceWith(
+                "$nbtTodo.decodeFromHexString<T>(hex)",
+                "$knbt.Nbt", "$knbt.NbtVariant", "$knbt.NbtCompression", "$kxs.decodeFromHexString",
+            ),
+            DeprecationLevel.ERROR
+        )
+        @OptIn(OkioApi::class)
+        public fun <T> decodeFromHexString(hex: String): String =
+            error(requireConfig)
+
+        @Deprecated(
+            "Use StringifiedNbt instead",
+            ReplaceWith(
+                "StringifiedNbt.encodeToString<T>(serializer, value)",
+                "$knbt.StringifiedNbt",
+            ),
+            DeprecationLevel.ERROR,
+        )
+        public fun <T> encodeToString(serializer: SerializationStrategy<T>, value: T): String =
+            error("Use StringifiedNbt instead")
+
+        @Deprecated(
+            "Use StringifiedNbt instead",
+            ReplaceWith(
+                "StringifiedNbt.encodeToString<T>(value)",
+                "$knbt.StringifiedNbt", "$kxs.encodeToString",
+            ),
+            DeprecationLevel.ERROR,
+        )
+        public fun <T> encodeToString(value: T): String =
+            error("Use StringifiedNbt instead")
+        //endregion
     }
 
     /**
@@ -92,38 +257,52 @@ public sealed class Nbt constructor(
     @OptIn(OkioApi::class)
     override fun <T> decodeFromByteArray(deserializer: DeserializationStrategy<T>, bytes: ByteArray): T =
         decodeFromSource(deserializer, Buffer().apply { write(bytes) })
+    //endregion
 
-    override fun <T> encodeToString(serializer: SerializationStrategy<T>, value: T): String =
-        buildString {
-            encodeToNbtWriter(StringifiedNbtWriter(this@Nbt, this), serializer, value)
-        }
+    //region SNBT
+    @Deprecated(
+        "Use StringifiedNbt instead",
+        ReplaceWith(
+            "StringifiedNbt {}.encodeToString<T>(serializer, value)",
+            "net.benwoodworth.knbt.StringifiedNbt",
+        ),
+        DeprecationLevel.ERROR,
+    )
+    public open fun <T> encodeToString(serializer: SerializationStrategy<T>, value: T): String =
+        error("Use StringifiedNbt instead")
 
-    @Deprecated("Decoding from Stringified NBT is not yet supported", level = DeprecationLevel.HIDDEN)
-    override fun <T> decodeFromString(deserializer: DeserializationStrategy<T>, string: String): T {
-        TODO("Decoding from Stringified NBT is not yet supported")
-    }
-
-    /**
-     * Serializes and encodes the given [value] to an [NbtTag] using the given [serializer].
-     */
-    public fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag {
-        lateinit var result: NbtTag
-        encodeToNbtWriter(TreeNbtWriter { result = it }, serializer, value)
-        return result
-    }
-
-    /**
-     * Decodes and deserializes the given [tag] to a value of type [T] using the given [deserializer].
-     */
-    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
-        decodeFromNbtReader(TreeNbtReader(tag), deserializer)
+    @Deprecated(
+        "Use StringifiedNbt instead",
+        ReplaceWith(
+            "StringifiedNbt {}.encodeToString<T>(value)",
+            "net.benwoodworth.knbt.StringifiedNbt",
+            "net.benwoodworth.knbt.encodeToString",
+        ),
+        DeprecationLevel.ERROR,
+    )
+    public open fun <T> encodeToString(value: T): String =
+        error("Use StringifiedNbt instead")
 }
+
+@OptIn(ExperimentalNbtApi::class, ExperimentalSerializationApi::class)
+private object DefaultNbt : Nbt(
+    configuration = NbtConfiguration(
+        variant = Companion.Java, // Will be ignored by NbtBuilder
+        compression = NbtCompression.None, // Will be ignored by NbtBuilder
+        compressionLevel = null,
+        encodeDefaults = false,
+        ignoreUnknownKeys = false,
+    ),
+    serializersModule = EmptySerializersModule,
+)
 
 /**
  * Creates an instance of [Nbt] configured from the optionally given [Nbt instance][from]
  * and adjusted with [builderAction].
+ *
+ * [variant][NbtBuilder.variant] and [compression][NbtBuilder.compression] are required.
  */
-public fun Nbt(from: Nbt = Nbt.Default, builderAction: NbtBuilder.() -> Unit): Nbt {
+public fun Nbt(from: Nbt = DefaultNbt, builderAction: NbtBuilder.() -> Unit): Nbt {
     val builder = NbtBuilder(from)
     builder.builderAction()
     return builder.build()
@@ -136,23 +315,23 @@ public fun Nbt(from: Nbt = Nbt.Default, builderAction: NbtBuilder.() -> Unit): N
 @OptIn(ExperimentalNbtApi::class)
 public class NbtBuilder internal constructor(nbt: Nbt) {
     /**
-     * The variant of NBT binary format to use. Must not be `null` when serializing binary.
-     * `null` by default.
+     * The variant of NBT binary format to use. Required.
      *
      * Java Edition only uses [BigEndian].
-
+     *
      * Bedrock Edition uses:
      * - [LittleEndian] for save files.
      * - [BigEndian] for resource files.
      * - [LittleEndianBase128] for network transport.
      */
-    public var variant: NbtVariant? = nbt.configuration.variant
+    public var variant: NbtVariant? =
+        if (nbt === DefaultNbt) null else nbt.configuration.variant
 
     /**
-     * The compression method to use when writing NBT binary.
-     * `null` by default.
+     * The compression method to use when writing NBT binary. Required.
      */
-    public var compression: NbtCompression? = nbt.configuration.compression
+    public var compression: NbtCompression? =
+        if (nbt === DefaultNbt) null else nbt.configuration.compression
 
     /**
      * The compression level, in `0..9` or `null`.
@@ -186,7 +365,10 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
      * Specifies whether resulting Stringified NBT should be pretty-printed.
      *  `false` by default.
      */
-    public var prettyPrint: Boolean = nbt.configuration.prettyPrint
+    @Deprecated("Use StringifiedNbt instead", level = DeprecationLevel.ERROR)
+    public var prettyPrint: Boolean
+        get() = error("Use StringifiedNbt instead")
+        set(_) = error("Use StringifiedNbt instead")
 
     /**
      * Specifies indent string to use with [prettyPrint] mode
@@ -194,8 +376,11 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
      * Experimentality note: this API is experimental because
      * it is not clear whether this option has compelling use-cases.
      */
+    @Deprecated("Use StringifiedNbt instead", level = DeprecationLevel.ERROR)
     @ExperimentalNbtApi
-    public var prettyPrintIndent: String = nbt.configuration.prettyPrintIndent
+    public var prettyPrintIndent: String
+        get() = error("Use StringifiedNbt instead")
+        set(_) = error("Use StringifiedNbt instead")
 
     /**
      * Module with contextual and polymorphic serializers to be used in the resulting [Nbt] instance.
@@ -204,15 +389,14 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
 
     @OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
     internal fun build(): Nbt {
-        if (!prettyPrint) {
-            require(prettyPrintIndent == Nbt.configuration.prettyPrintIndent) {
-                "Indent should not be specified when default printing mode is used"
-            }
-        } else if (prettyPrintIndent != Nbt.configuration.prettyPrintIndent) {
-            // Values allowed by JSON specification as whitespaces
-            val allWhitespaces = prettyPrintIndent.all { it == ' ' || it == '\t' || it == '\r' || it == '\n' }
-            require(allWhitespaces) {
-                "Only whitespace, tab, newline and carriage return are allowed as pretty print symbols. Had $prettyPrintIndent"
+        val variant = variant
+        val compression = compression
+
+        require(variant != null && compression != null) {
+            when {
+                variant == null && compression == null -> "Variant and compression are required but are null"
+                variant == null -> "Variant is required but is null"
+                else -> "Compression is required but is null"
             }
         }
 
@@ -223,8 +407,6 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
                 compressionLevel = compressionLevel,
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
-                prettyPrint = prettyPrint,
-                prettyPrintIndent = prettyPrintIndent,
             ),
             serializersModule = serializersModule,
         )
@@ -254,15 +436,3 @@ public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
 @OkioApi
 public inline fun <reified T> Nbt.decodeFromSource(source: Source): T =
     decodeFromSource(serializersModule.serializer(), source)
-
-/**
- * Encode to [NbtTag].
- */
-public inline fun <reified T> Nbt.encodeToNbtTag(value: T): NbtTag =
-    encodeToNbtTag(serializersModule.serializer(), value)
-
-/**
- * Decode from [NbtTag].
- */
-public inline fun <reified T> Nbt.decodeFromNbtTag(tag: NbtTag): T =
-    decodeFromNbtTag(serializersModule.serializer(), tag)

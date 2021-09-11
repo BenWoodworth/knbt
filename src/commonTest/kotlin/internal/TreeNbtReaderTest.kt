@@ -16,13 +16,13 @@ class TreeNbtReaderTest {
     @Test
     fun Should_decode_test_to_class_correctly(): Unit = assertStructureEquals(
         expected = testClass,
-        actual = Nbt.decodeFromNbtTag(testTag),
+        actual = NbtFormat().decodeFromNbtTag(testTag),
     )
 
     @Test
     fun Should_decode_bigtest_to_class_correctly(): Unit = assertStructureEquals(
         expected = bigTestClass,
-        actual = Nbt.decodeFromNbtTag(bigTestTag),
+        actual = NbtFormat().decodeFromNbtTag(bigTestTag),
     )
 
     @Test

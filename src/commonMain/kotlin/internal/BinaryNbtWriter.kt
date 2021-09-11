@@ -14,27 +14,12 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
     private var compoundNesting = 0
     private var wroteRootEntry = false
 
-    private val sink: BinarySink
-
-    init {
-        val variant = nbt.configuration.variant
-        val compression = nbt.configuration.compression
-
-        require(variant != null && compression != null) {
-            val unset = mutableListOf<String>()
-            if (variant == null) unset += "variant"
-            if (compression == null) unset += "compression"
-
-            "NBT variant and compression must be set when serializing binary. Not set: ${unset.joinToString()}."
-        }
-
-        this.sink = with(compression) {
-            with(variant) {
-                NonClosingSink(sink)
-                    .compress(nbt.configuration.compressionLevel)
-                    .buffer()
-                    .asBinarySink()
-            }
+    private val sink: BinarySink = with(nbt.configuration.compression) {
+        with(nbt.configuration.variant) {
+            NonClosingSink(sink)
+                .compress(nbt.configuration.compressionLevel)
+                .buffer()
+                .asBinarySink()
         }
     }
 

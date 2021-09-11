@@ -27,10 +27,19 @@ An `Nbt` instance can be used to encode/decode `@Serializable` data. When serial
 ### Configuration
 
 ```kotlin
+import net.benwoodworth.knbt.*
+
+// variant and compression are required
 val nbt = Nbt {
-    variant = null // Java, Bedrock, BedrockNetwork
-    compression = null // None, Gzip, Zlib
+    variant = NbtVariant.Java // Java, Bedrock, BedrockNetwork
+    compression = NbtCompression.None // None, Gzip, Zlib
     compressionLevel = null // in 0..9
+    encodeDefaults = false
+    ignoreUnknownKeys = false
+    serializersModule = EmptySerializersModule
+}
+
+val snbt = StringifiedNbt {
     encodeDefaults = false
     ignoreUnknownKeys = false
     prettyPrint = false
@@ -162,7 +171,7 @@ still experimental, and newer versions may have binary-incompatible changes that
 To gracefully update, change the minor version one at a time (e.g. 0.1.0 -> 0.2.0 -> 0.3.0) and fix any deprecated code
 using the provided replacement refactorings. Deprecated APIs will then be removed in 0.#.1 releases.
 
-## Gradle
+### Gradle
 
 ```kotlin
 plugins {

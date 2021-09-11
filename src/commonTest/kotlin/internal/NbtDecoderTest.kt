@@ -24,7 +24,7 @@ class NbtDecoderTest {
 
         val actualValue = try {
             @OptIn(ExperimentalSerializationApi::class)
-            NbtDecoder(Nbt, reader).decodeSerializableValue(serializer)
+            NbtDecoder(NbtFormat(), reader).decodeSerializableValue(serializer)
         } catch (e: Exception) {
             val log = stringBuilder.toString().trimIndent()
             val expectedLogTrimmed = expectedLog.trimIndent()
@@ -318,7 +318,7 @@ class NbtDecoderTest {
 
     @Test
     fun Decoding_should_fail_on_unknown_key_if_not_ignoring() {
-        val nbt = Nbt { ignoreUnknownKeys = false }
+        val nbt = NbtFormat(ignoreUnknownKeys = false)
 
         assertFailsWith<NbtDecodingException> {
             nbt.decodeFromNbtTag(UnknownKeys.serializer(), unknownKeysTag)
@@ -327,7 +327,7 @@ class NbtDecoderTest {
 
     @Test
     fun Decoding_should_not_fail_on_unknown_key_if_ignoring() {
-        val nbt = Nbt { ignoreUnknownKeys = true }
+        val nbt = NbtFormat(ignoreUnknownKeys = true)
 
         val actual = nbt.decodeFromNbtTag(UnknownKeys.serializer(), unknownKeysTag)
         assertEquals(UnknownKeys.expected, actual)
