@@ -163,10 +163,10 @@ internal class Deflate(
     val msg: String by deflate::msg
     val result: Uint8Array by deflate::result
 
-    @get:Deprecated("onData is write-only", level = DeprecationLevel.ERROR)
+    @get:Deprecated("onData is write-only", level = DeprecationLevel.HIDDEN)
     var onData: (chunk: Uint8Array) -> Unit by deflate::onData
 
-    @get:Deprecated("onEnd is write-only", level = DeprecationLevel.ERROR)
+    @get:Deprecated("onEnd is write-only", level = DeprecationLevel.HIDDEN)
     var onEnd: (status: ZStatus) -> Unit
         get() = error("onEnd is write-only")
         set(value) {
@@ -199,10 +199,10 @@ internal class Inflate(
     val msg: String by inflate::msg
     val result: Uint8Array by inflate::result
 
-    @get:Deprecated("onData is write-only", level = DeprecationLevel.ERROR)
+    @get:Deprecated("onData is write-only", level = DeprecationLevel.HIDDEN)
     var onData: (chunk: Uint8Array) -> Unit by inflate::onData
 
-    @get:Deprecated("onEnd is write-only", level = DeprecationLevel.ERROR)
+    @get:Deprecated("onEnd is write-only", level = DeprecationLevel.HIDDEN)
     var onEnd: (status: Int) -> Unit
         get() = error("onEnd is write-only")
         set(value) {
