@@ -34,12 +34,14 @@ public sealed class StringifiedNbt constructor(
             encodeToNbtWriter(StringifiedNbtWriter(this@StringifiedNbt, this), serializer, value)
         }
 
+    @Suppress("UNUSED_PARAMETER")
     @Deprecated("Decoding from Stringified NBT is not yet supported", level = DeprecationLevel.ERROR)
     override fun <T> decodeFromString(deserializer: DeserializationStrategy<T>, string: String): T {
         TODO("Decoding from Stringified NBT is not yet supported")
     }
 
     // Try to prevent usages of the StringFormat.decodeFromString(String) extension function
+    @Suppress("UNUSED_PARAMETER")
     @Deprecated("Decoding from Stringified NBT is not yet supported", level = DeprecationLevel.ERROR)
     public fun <T> decodeFromString(string: String): T {
         TODO("Decoding from Stringified NBT is not yet supported")
