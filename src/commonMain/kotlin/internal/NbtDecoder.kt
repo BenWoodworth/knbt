@@ -268,6 +268,10 @@ private class ClassNbtDecoder(
                 if (index == CompositeDecoder.UNKNOWN_NAME) {
                     handleUnknownKey(compoundEntryInfo)
                     compoundEntryInfo = reader.beginCompoundEntry()
+
+                    if (compoundEntryInfo.type == TAG_End) {
+                        index = CompositeDecoder.DECODE_DONE
+                    }
                 }
             } while (index == CompositeDecoder.UNKNOWN_NAME)
 
