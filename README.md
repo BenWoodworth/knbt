@@ -43,6 +43,7 @@ val snbt = StringifiedNbt {
     encodeDefaults = false
     ignoreUnknownKeys = false
     prettyPrint = false
+    prettyPrintIndent = "    "
     serializersModule = EmptySerializersModule
 }
 ```
