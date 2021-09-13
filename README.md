@@ -16,13 +16,12 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 - Kotlin Multiplatform: JVM, JS, Linux, Windows, macOS, iOS, watchOS
 - Supports all NBT variants: Java, Bedrock Files, Bedrock Network
 - Supports all NBT compressions: gzip, zlib
-- Binary-identical round trip serialization of uncompressed NBT
-- Type-safe sealed NbtTag hierarchy, and convenient builder DSLs
+- Type-safe NbtTag classes, and convenient builder DSLs
 
 ## Serialization
 
-An `Nbt` instance can be used to encode/decode `@Serializable` data. When serializing to/from NBT binary, `variant` and
-`compression` must be configured, and the data must be a structure with a single named element, as per the NBT spec.
+`Nbt` and `StringifiedNbt` instances can be used to encode/decode `@Serializable` data. When serializing to/from binary
+NBT, the data must be a structure with a single named element, as per the NBT spec.
 
 ### Configuration
 
@@ -40,10 +39,10 @@ val nbt = Nbt {
 }
 
 val snbt = StringifiedNbt {
-    encodeDefaults = false
-    ignoreUnknownKeys = false
     prettyPrint = false
     prettyPrintIndent = "    "
+    encodeDefaults = false
+    ignoreUnknownKeys = false
     serializersModule = EmptySerializersModule
 }
 ```
@@ -79,7 +78,10 @@ import kotlin.io.path.*
 import net.benwoodworth.knbt.*
 
 val file = Path("file.nbt")
-val nbt = Nbt { TODO() }
+
+val nbt = Nbt {
+    TODO()
+}
 
 // Read from file
 val tag: NbtTag = file.inputStream().use { input ->
@@ -107,10 +109,8 @@ Nbt.encodeToNbtTag(Example(string = "Hello, World!", int = 42))
 
 ## NbtTag classes
 
-The sealed `NbtTag` interface has the following immutable implementations:
-
 ```kotlin
-interface NbtTag
+sealed interface NbtTag
 
 class NbtByte : NbtTag
 class NbtShort : NbtTag
