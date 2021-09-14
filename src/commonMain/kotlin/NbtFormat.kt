@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.StructureKind
 import net.benwoodworth.knbt.internal.*
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -40,13 +41,10 @@ public inline fun <reified T> NbtFormat.decodeFromNbtTag(tag: NbtTag): T =
 
 @OptIn(ExperimentalNbtApi::class, ExperimentalSerializationApi::class)
 internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: SerializationStrategy<T>, value: T) {
-    val nbtRoot = serializer.descriptor.annotations
-        .firstOrNull { it is NbtRoot } as NbtRoot?
-
-    val rootSerializer = if (nbtRoot == null) {
-        serializer
+    val rootSerializer = if (serializer.descriptor.kind == StructureKind.CLASS) {
+        RootClassSerializer(serializer)
     } else {
-        NbtRootSerializer(nbtRoot, serializer)
+        serializer
     }
 
     return DefaultNbtEncoder(this, writer)
@@ -55,13 +53,10 @@ internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: Seri
 
 @OptIn(ExperimentalNbtApi::class, ExperimentalSerializationApi::class)
 internal fun <T> NbtFormat.decodeFromNbtReader(reader: NbtReader, deserializer: DeserializationStrategy<T>): T {
-    val nbtRoot = deserializer.descriptor.annotations
-        .firstOrNull { it is NbtRoot } as NbtRoot?
-
-    val rootDeserializer = if (nbtRoot == null) {
-        deserializer
+    val rootDeserializer = if (deserializer.descriptor.kind == StructureKind.CLASS) {
+        RootClassDeserializer(deserializer)
     } else {
-        NbtRootDeserializer(nbtRoot, deserializer)
+        deserializer
     }
 
     return NbtDecoder(this, reader).decodeSerializableValue(rootDeserializer)

@@ -20,8 +20,9 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 
 ## Serialization
 
-`Nbt` and `StringifiedNbt` instances can be used to encode/decode `@Serializable` data. When serializing to/from binary
-NBT, the data must be a structure with a single named element, as per the NBT spec.
+`Nbt` and `StringifiedNbt` instances can be used to encode/decode `@Serializable` data.
+
+When serializing to/from binary NBT, the resulting tag must be a compound with a single entry (as per the NBT spec).
 
 ### Configuration
 
@@ -71,6 +72,19 @@ string = snbt.encodeToString(value)
 value = snbt.decodeFromString(string)
 ```
 
+### Serializing Classes
+
+Serializable classes will have the class's `@SerialName` as the root tag's name.
+
+```kotlin
+@Serializable
+@SerialName("root")
+class Example(val string: String, val int: Int)
+
+// Serializes to: {root : {string : "Hello, world!", int : 42}}
+nbt.encodeToNbtTag(Example(string = "Hello, World!", int = 42))
+```
+
 ### Reading/Writing NBT Files (JVM)
 
 ```kotlin
@@ -92,19 +106,6 @@ val tag: NbtTag = file.inputStream().use { input ->
 file.outputStream().use { output ->
     nbt.encodeToStream(tag, output)
 }
-```
-
-### @NbtRoot
-
-Serializable classes marked with `@NbtRoot` will be nested in a compound tag with the given `name`.
-
-```kotlin
-@Serializable
-@NbtRoot(name = "root")
-class Example(val string: String, val int: Int)
-
-// Serializes to: {root : {string : "Hello, world!", int : 42}}
-Nbt.encodeToNbtTag(Example(string = "Hello, World!", int = 42))
 ```
 
 ## NbtTag classes
@@ -195,8 +196,11 @@ still experimental, and newer versions may have binary-incompatible changes that
 
 ### Upgrading knbt
 
-To gracefully update, change the minor version one at a time (e.g. 0.1.0 -> 0.2.0 -> 0.3.0) and fix any deprecated code
-using the provided replacement refactorings. Deprecated APIs will then be removed in 0.#.1 releases.
+While in beta, all new minor releases (v0.**#**.0) will have breaking API/functionality changes. Read
+the [release notes](https://github.com/BenWoodworth/knbt/releases) for information.
+
+Replacement refactorings will be provided where possible for broken APIs. Change the minor version one at a time
+(e.g. 0.1.0 -> 0.2.0 -> 0.3.0) and apply quick fixes. Deprecated APIs will then be removed in 0.#.1 releases.
 
 ### Gradle
 

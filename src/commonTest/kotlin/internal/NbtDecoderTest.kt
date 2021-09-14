@@ -3,11 +3,8 @@
 package net.benwoodworth.knbt.internal
 
 import data.testTag
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.*
 import kotlin.math.PI
 import kotlin.test.*
@@ -301,6 +298,7 @@ class NbtDecoderTest {
     }
 
     @Serializable
+    @SerialName("unknown-keys")
     private data class UnknownKeys(
         val int: Int,
         val string: String,
@@ -310,7 +308,7 @@ class NbtDecoderTest {
         }
     }
 
-    private val unknownKeysTag = buildNbtCompound {
+    private val unknownKeysTag = buildNbtCompound("unknown-keys") {
         put("int", UnknownKeys.expected.int)
         put("double", PI)
         put("string", UnknownKeys.expected.string)

@@ -13,24 +13,17 @@ val testTag: NbtCompound
     }
 
 @Serializable
+@SerialName("hello world")
 data class TestNbt(
-    @SerialName("hello world")
-    val helloWorld: HelloWorld,
-) {
-    @Serializable
-    data class HelloWorld(
-        val name: String,
-    )
-}
+    val name: String,
+)
 
 fun assertStructureEquals(expected: TestNbt, actual: TestNbt, message: String? = null): Unit =
     assertStructureEquals(expected, actual, message) {
-        property("helloWorld.name") { helloWorld.name }
+        property("name") { name }
     }
 
 val testClass: TestNbt
     get() = TestNbt(
-        helloWorld = TestNbt.HelloWorld(
-            name = "Bananrama",
-        ),
+        name = "Bananrama",
     )
