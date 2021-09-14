@@ -8,52 +8,99 @@ public sealed class NbtVariant {
     internal abstract fun BufferedSource.asBinarySource(): BinarySource
     internal abstract fun BufferedSink.asBinarySink(): BinarySink
 
-    public companion object {
-        /**
-         * Alias for [BigEndian].
-         */
-        public inline val Java: BigEndian
-            get() = BigEndian
+    @Deprecated(
+        "Aliases replaced with NbtVariant.* objects of the same name",
+        ReplaceWith("NbtVariant", "net.benwoodworth.knbt.NbtVariant"),
+        DeprecationLevel.ERROR,
+    )
+    public object Companion {
+        @Deprecated(
+            "Changed to object NbtVariant.Java",
+            ReplaceWith("NbtVariant.Java", "net.benwoodworth.knbt.NbtVariant"),
+            DeprecationLevel.ERROR,
+        )
+        public inline val Java: Java
+            get() = NbtVariant.Java
 
-        /**
-         * Alias for [LittleEndian].
-         */
-        public inline val Bedrock: LittleEndian
-            get() = LittleEndian
+        @Deprecated(
+            "Changed to object NbtVariant.Bedrock",
+            ReplaceWith("NbtVariant.Bedrock", "net.benwoodworth.knbt.NbtVariant"),
+            DeprecationLevel.ERROR,
+        )
+        public inline val Bedrock: Bedrock
+            get() = NbtVariant.Bedrock
 
-        /**
-         * Alias for [LittleEndianBase128].
-         */
-        public inline val BedrockNetwork: LittleEndianBase128
-            get() = LittleEndianBase128
+        @Deprecated(
+            "Changed to object NbtVariant.BedrockNetwork",
+            ReplaceWith("NbtVariant.BedrockNetwork", "net.benwoodworth.knbt.NbtVariant"),
+            DeprecationLevel.ERROR,
+        )
+        public inline val BedrockNetwork: BedrockNetwork
+            get() = NbtVariant.BedrockNetwork
     }
 
-    public object BigEndian : NbtVariant() {
+    public object Java : NbtVariant() {
         override fun BufferedSource.asBinarySource(): BinarySource =
             BigEndianBinarySource(this)
 
         override fun BufferedSink.asBinarySink(): BinarySink =
             BigEndianBinarySink(this)
 
-        override fun toString(): String = "BigEndian"
+        override fun toString(): String = "Java"
     }
 
-    public object LittleEndian : NbtVariant() {
+    public object Bedrock : NbtVariant() {
         override fun BufferedSource.asBinarySource(): BinarySource =
             LittleEndianBinarySource(this)
 
         override fun BufferedSink.asBinarySink(): BinarySink =
             LittleEndianBinarySink(this)
 
-        override fun toString(): String = "LittleEndian"
+        override fun toString(): String = "Bedrock"
     }
 
-    public object LittleEndianBase128 : NbtVariant() {
+    public object BedrockNetwork : NbtVariant() {
         override fun BufferedSource.asBinarySource(): BinarySource =
             LittleEndianBase128BinarySource(this)
 
         override fun BufferedSink.asBinarySink(): BinarySink =
             LittleEndianBase128BinarySink(this)
+
+        override fun toString(): String = "BedrockNetwork"
+    }
+
+    @Deprecated(
+        "Removed in favor of NbtVariant.Java",
+        ReplaceWith("NbtVariant.Java", "net.benwoodworth.knbt.NbtVariant"),
+        DeprecationLevel.ERROR,
+    )
+    public object BigEndian : NbtVariant() {
+        override fun BufferedSource.asBinarySource(): BinarySource = Java.run { asBinarySource() }
+        override fun BufferedSink.asBinarySink(): BinarySink = Java.run { asBinarySink() }
+
+        override fun toString(): String = "BigEndian"
+    }
+
+    @Deprecated(
+        "Removed in favor of NbtVariant.Bedrock",
+        ReplaceWith("NbtVariant.Bedrock", "net.benwoodworth.knbt.NbtVariant"),
+        DeprecationLevel.ERROR,
+    )
+    public object LittleEndian : NbtVariant() {
+        override fun BufferedSource.asBinarySource(): BinarySource = Bedrock.run { asBinarySource() }
+        override fun BufferedSink.asBinarySink(): BinarySink = Bedrock.run { asBinarySink() }
+
+        override fun toString(): String = "LittleEndian"
+    }
+
+    @Deprecated(
+        "Removed in favor of NbtVariant.BedrockNetwork",
+        ReplaceWith("NbtVariant.BedrockNetwork", "net.benwoodworth.knbt.NbtVariant"),
+        DeprecationLevel.ERROR,
+    )
+    public object LittleEndianBase128 : NbtVariant() {
+        override fun BufferedSource.asBinarySource(): BinarySource = BedrockNetwork.run { asBinarySource() }
+        override fun BufferedSink.asBinarySink(): BinarySink = BedrockNetwork.run { asBinarySink() }
 
         override fun toString(): String = "LittleEndianBase128"
     }

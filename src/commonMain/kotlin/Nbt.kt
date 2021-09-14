@@ -3,7 +3,6 @@ package net.benwoodworth.knbt
 import kotlinx.serialization.*
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
-import net.benwoodworth.knbt.NbtVariant.*
 import net.benwoodworth.knbt.internal.BinaryNbtReader
 import net.benwoodworth.knbt.internal.BinaryNbtWriter
 import okio.Buffer
@@ -53,7 +52,7 @@ public sealed class Nbt constructor(
 @OptIn(ExperimentalNbtApi::class, ExperimentalSerializationApi::class)
 private object DefaultNbt : Nbt(
     configuration = NbtConfiguration(
-        variant = Companion.Java, // Will be ignored by NbtBuilder
+        variant = NbtVariant.Java, // Will be ignored by NbtBuilder
         compression = NbtCompression.None, // Will be ignored by NbtBuilder
         compressionLevel = null,
         encodeDefaults = false,
@@ -82,13 +81,6 @@ public fun Nbt(from: Nbt = DefaultNbt, builderAction: NbtBuilder.() -> Unit): Nb
 public class NbtBuilder internal constructor(nbt: Nbt) {
     /**
      * The variant of NBT binary format to use. Required.
-     *
-     * Java Edition only uses [BigEndian].
-     *
-     * Bedrock Edition uses:
-     * - [LittleEndian] for save files.
-     * - [BigEndian] for resource files.
-     * - [LittleEndianBase128] for network transport.
      */
     public var variant: NbtVariant? =
         if (nbt === DefaultNbt) null else nbt.configuration.variant

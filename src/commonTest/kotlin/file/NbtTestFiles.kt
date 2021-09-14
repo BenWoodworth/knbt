@@ -34,7 +34,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "test.nbt (uncompressed)",
         Nbt {
-            variant = NbtVariant.BigEndian
+            variant = NbtVariant.Java
             compression = NbtCompression.None
         },
         TestNbt.serializer(), testClass, testTag,
@@ -45,7 +45,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "test.nbt (compressed gzip)",
         Nbt {
-            variant = NbtVariant.BigEndian
+            variant = NbtVariant.Java
             compression = NbtCompression.Gzip
         },
         TestNbt.serializer(), testClass, testTag,
@@ -57,7 +57,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "test.nbt (compressed zlib)",
         Nbt {
-            variant = NbtVariant.BigEndian
+            variant = NbtVariant.Java
             compression = NbtCompression.Zlib
         },
         TestNbt.serializer(), testClass, testTag,
@@ -68,7 +68,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "bigtest.nbt (uncompressed)",
         Nbt {
-            variant = NbtVariant.BigEndian
+            variant = NbtVariant.Java
             compression = NbtCompression.None
         },
         BigTestNbt.serializer(), bigTestClass, bigTestTag,
@@ -107,7 +107,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "bigtest.nbt (gzip compressed)",
         Nbt {
-            variant = NbtVariant.BigEndian
+            variant = NbtVariant.Java
             compression = NbtCompression.Gzip
         },
         BigTestNbt.serializer(), bigTestClass, bigTestTag,
@@ -127,7 +127,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "bigtest.nbt (zlib compressed)",
         Nbt {
-            variant = NbtVariant.BigEndian
+            variant = NbtVariant.Java
             compression = NbtCompression.Zlib
         },
         BigTestNbt.serializer(), bigTestClass, bigTestTag,
@@ -147,7 +147,7 @@ val nbtFiles = listOf(
     NbtTestFile(
         "bigtest-extended.nbt (gzip compressed)",
         Nbt {
-            variant = NbtVariant.BigEndian
+            variant = NbtVariant.Java
             compression = NbtCompression.Gzip
         },
         BigTestExtendedNbt.serializer(), bigTestExtendedClass, bigTestExtendedTag,

@@ -668,7 +668,16 @@ public final class net/benwoodworth/knbt/NbtTagKt {
 }
 
 public abstract class net/benwoodworth/knbt/NbtVariant {
-	public static final field Companion Lnet/benwoodworth/knbt/NbtVariant$Companion;
+}
+
+public final class net/benwoodworth/knbt/NbtVariant$Bedrock : net/benwoodworth/knbt/NbtVariant {
+	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Bedrock;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/benwoodworth/knbt/NbtVariant$BedrockNetwork : net/benwoodworth/knbt/NbtVariant {
+	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$BedrockNetwork;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$BigEndian : net/benwoodworth/knbt/NbtVariant {
@@ -677,9 +686,15 @@ public final class net/benwoodworth/knbt/NbtVariant$BigEndian : net/benwoodworth
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$Companion {
-	public final fun getBedrock ()Lnet/benwoodworth/knbt/NbtVariant$LittleEndian;
-	public final fun getBedrockNetwork ()Lnet/benwoodworth/knbt/NbtVariant$LittleEndianBase128;
-	public final fun getJava ()Lnet/benwoodworth/knbt/NbtVariant$BigEndian;
+	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Companion;
+	public final fun getBedrock ()Lnet/benwoodworth/knbt/NbtVariant$Bedrock;
+	public final fun getBedrockNetwork ()Lnet/benwoodworth/knbt/NbtVariant$BedrockNetwork;
+	public final fun getJava ()Lnet/benwoodworth/knbt/NbtVariant$Java;
+}
+
+public final class net/benwoodworth/knbt/NbtVariant$Java : net/benwoodworth/knbt/NbtVariant {
+	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Java;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$LittleEndian : net/benwoodworth/knbt/NbtVariant {
