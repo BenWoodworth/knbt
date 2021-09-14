@@ -4,9 +4,11 @@ import net.benwoodworth.knbt.internal.*
 import okio.BufferedSink
 import okio.BufferedSource
 
-public sealed class NbtVariant {
-    internal abstract fun BufferedSource.asBinarySource(): BinarySource
-    internal abstract fun BufferedSink.asBinarySink(): BinarySink
+public abstract class NbtVariant private constructor(private val name: String) {
+    internal abstract fun getBinarySource(source: BufferedSource): BinarySource
+    internal abstract fun getBinarySink(sink: BufferedSink): BinarySink
+
+    override fun toString(): String = name
 
     @Deprecated(
         "Aliases replaced with NbtVariant.* objects of the same name",
@@ -39,34 +41,28 @@ public sealed class NbtVariant {
             get() = NbtVariant.BedrockNetwork
     }
 
-    public object Java : NbtVariant() {
-        override fun BufferedSource.asBinarySource(): BinarySource =
-            BigEndianBinarySource(this)
+    public object Java : NbtVariant("Java") {
+        override fun getBinarySource(source: BufferedSource): BinarySource =
+            BigEndianBinarySource(source)
 
-        override fun BufferedSink.asBinarySink(): BinarySink =
-            BigEndianBinarySink(this)
-
-        override fun toString(): String = "Java"
+        override fun getBinarySink(sink: BufferedSink): BinarySink =
+            BigEndianBinarySink(sink)
     }
 
-    public object Bedrock : NbtVariant() {
-        override fun BufferedSource.asBinarySource(): BinarySource =
-            LittleEndianBinarySource(this)
+    public object Bedrock : NbtVariant("Bedrock") {
+        override fun getBinarySource(source: BufferedSource): BinarySource =
+            LittleEndianBinarySource(source)
 
-        override fun BufferedSink.asBinarySink(): BinarySink =
-            LittleEndianBinarySink(this)
-
-        override fun toString(): String = "Bedrock"
+        override fun getBinarySink(sink: BufferedSink): BinarySink =
+            LittleEndianBinarySink(sink)
     }
 
-    public object BedrockNetwork : NbtVariant() {
-        override fun BufferedSource.asBinarySource(): BinarySource =
-            LittleEndianBase128BinarySource(this)
+    public object BedrockNetwork : NbtVariant("BedrockNetwork") {
+        override fun getBinarySource(source: BufferedSource): BinarySource =
+            LittleEndianBase128BinarySource(source)
 
-        override fun BufferedSink.asBinarySink(): BinarySink =
-            LittleEndianBase128BinarySink(this)
-
-        override fun toString(): String = "BedrockNetwork"
+        override fun getBinarySink(sink: BufferedSink): BinarySink =
+            LittleEndianBase128BinarySink(sink)
     }
 
     @Deprecated(
@@ -74,11 +70,9 @@ public sealed class NbtVariant {
         ReplaceWith("NbtVariant.Java", "net.benwoodworth.knbt.NbtVariant"),
         DeprecationLevel.ERROR,
     )
-    public object BigEndian : NbtVariant() {
-        override fun BufferedSource.asBinarySource(): BinarySource = Java.run { asBinarySource() }
-        override fun BufferedSink.asBinarySink(): BinarySink = Java.run { asBinarySink() }
-
-        override fun toString(): String = "BigEndian"
+    public object BigEndian : NbtVariant("BigEndian") {
+        override fun getBinarySource(source: BufferedSource): BinarySource = Java.getBinarySource(source)
+        override fun getBinarySink(sink: BufferedSink): BinarySink = Java.getBinarySink(sink)
     }
 
     @Deprecated(
@@ -86,11 +80,9 @@ public sealed class NbtVariant {
         ReplaceWith("NbtVariant.Bedrock", "net.benwoodworth.knbt.NbtVariant"),
         DeprecationLevel.ERROR,
     )
-    public object LittleEndian : NbtVariant() {
-        override fun BufferedSource.asBinarySource(): BinarySource = Bedrock.run { asBinarySource() }
-        override fun BufferedSink.asBinarySink(): BinarySink = Bedrock.run { asBinarySink() }
-
-        override fun toString(): String = "LittleEndian"
+    public object LittleEndian : NbtVariant("LittleEndian") {
+        override fun getBinarySource(source: BufferedSource): BinarySource = Bedrock.getBinarySource(source)
+        override fun getBinarySink(sink: BufferedSink): BinarySink = Bedrock.getBinarySink(sink)
     }
 
     @Deprecated(
@@ -98,10 +90,8 @@ public sealed class NbtVariant {
         ReplaceWith("NbtVariant.BedrockNetwork", "net.benwoodworth.knbt.NbtVariant"),
         DeprecationLevel.ERROR,
     )
-    public object LittleEndianBase128 : NbtVariant() {
-        override fun BufferedSource.asBinarySource(): BinarySource = BedrockNetwork.run { asBinarySource() }
-        override fun BufferedSink.asBinarySink(): BinarySink = BedrockNetwork.run { asBinarySink() }
-
-        override fun toString(): String = "LittleEndianBase128"
+    public object LittleEndianBase128 : NbtVariant("LittleEndianBase128") {
+        override fun getBinarySource(source: BufferedSource): BinarySource = BedrockNetwork.getBinarySource(source)
+        override fun getBinarySink(sink: BufferedSink): BinarySink = BedrockNetwork.getBinarySink(sink)
     }
 }

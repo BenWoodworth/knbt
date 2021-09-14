@@ -668,21 +668,20 @@ public final class net/benwoodworth/knbt/NbtTagKt {
 }
 
 public abstract class net/benwoodworth/knbt/NbtVariant {
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$Bedrock : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Bedrock;
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$BedrockNetwork : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$BedrockNetwork;
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$BigEndian : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$BigEndian;
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$Companion {
@@ -694,17 +693,14 @@ public final class net/benwoodworth/knbt/NbtVariant$Companion {
 
 public final class net/benwoodworth/knbt/NbtVariant$Java : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Java;
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$LittleEndian : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$LittleEndian;
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$LittleEndianBase128 : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$LittleEndianBase128;
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface annotation class net/benwoodworth/knbt/OkioApi : java/lang/annotation/Annotation {
