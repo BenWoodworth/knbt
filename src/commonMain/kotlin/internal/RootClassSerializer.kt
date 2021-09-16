@@ -37,13 +37,14 @@ internal class RootClassDeserializer<T>(
         var rootDecoded = false
 
         decoder.decodeStructure(descriptor) {
-            while (true) {
+            // loop label: https://youtrack.jetbrains.com/issue/KT-43943
+            loop@ while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
                     0 -> {
                         root = decodeSerializableElement(descriptor, index, classDeserializer)
                         rootDecoded = true
                     }
-                    CompositeDecoder.DECODE_DONE -> break
+                    CompositeDecoder.DECODE_DONE -> break@loop
                     else -> error("Unexpected index: $index")
                 }
             }
