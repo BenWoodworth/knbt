@@ -13,11 +13,9 @@ internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
     private var compoundNesting = 0
     private var wroteRootEntry = false
 
-    private val sink: BinarySink = with(nbt.configuration.compression) {
-        nbt.configuration.variant.getBinarySink(
-            NonClosingSink(sink).compress(nbt.configuration.compressionLevel).buffer()
-        )
-    }
+    private val sink: BinarySink = nbt.configuration.variant.getBinarySink(
+        nbt.configuration.compression.compress(NonClosingSink(sink), nbt.configuration.compressionLevel).buffer()
+    )
 
     override fun close(): Unit = sink.close()
 

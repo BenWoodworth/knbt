@@ -8,30 +8,31 @@ import net.benwoodworth.knbt.internal.asZlibSource
 import okio.BufferedSource
 import okio.Sink
 import okio.Source
+import okio.buffer
 
 public abstract class NbtCompression private constructor() {
-    internal abstract fun Source.decompress(): Source
-    internal abstract fun Sink.compress(level: Int?): Sink
+    internal abstract fun decompress(source: Source): Source
+    internal abstract fun compress(sink: Sink, level: Int?): Sink
 
     public companion object;
 
     public object None : NbtCompression() {
-        override fun Source.decompress(): Source = this
-        override fun Sink.compress(level: Int?): Sink = this
+        override fun decompress(source: Source): Source = source
+        override fun compress(sink: Sink, level: Int?): Sink = sink
 
         override fun toString(): String = "None"
     }
 
     public object Gzip : NbtCompression() {
-        override fun Source.decompress(): Source = this.asGzipSource()
-        override fun Sink.compress(level: Int?): Sink = this.asGzipSink(level ?: -1)
+        override fun decompress(source: Source): Source = source.asGzipSource()
+        override fun compress(sink: Sink, level: Int?): Sink = sink.asGzipSink(level ?: -1)
 
         override fun toString(): String = "Gzip"
     }
 
     public object Zlib : NbtCompression() {
-        override fun Source.decompress(): Source = this.asZlibSource()
-        override fun Sink.compress(level: Int?): Sink = this.asZlibSink(level ?: -1)
+        override fun decompress(source: Source): Source = source.asZlibSource()
+        override fun compress(sink: Sink, level: Int?): Sink = sink.asZlibSink(level ?: -1)
 
         override fun toString(): String = "Zlib"
     }

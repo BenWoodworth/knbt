@@ -32,9 +32,9 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
             throw NbtDecodingException("Expected compression to be $compression, but was $detectedCompression")
         }
 
-        this.source = with(compression) {
-            variant.getBinarySource(nonClosingSource.decompress().buffer())
-        }
+        this.source = variant.getBinarySource(
+            compression.decompress(nonClosingSource).buffer()
+        )
     }
 
     override fun close(): Unit = source.close()
