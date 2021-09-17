@@ -24,14 +24,14 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: Cache build/
+      - name: Cache
         uses: actions/cache@v2
         with:
           path: |
             ~/.gradle/cache
             ~/.konan/cache
             ./build
-          key: ${{ github.run_id }}-${{ github.run_number }}
+          key: ${{ github.run_id }}
       - name: Build
         run: ./gradlew clean build
 
@@ -46,14 +46,14 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: Cache build/
+      - name: Cache
         uses: actions/cache@v2
         with:
           path: |
             ~/.gradle/cache
             ~/.konan/cache
             ./build
-          key: ${{ github.run_id }}-${{ github.run_number }}
+          key: ${{ github.run_id }}
       - name: Build
         run: .\gradlew.bat build
 
@@ -68,13 +68,13 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: Cache build/
+      - name: Cache
         uses: actions/cache@v2
         with:
           path: |
             ~/.gradle/cache
             ~/.konan/cache
             ./build
-          key: ${{ github.run_id }}-${{ github.run_number }}
+          key: ${{ github.run_id }}
       - name: Build
         run: ./gradlew build publish
