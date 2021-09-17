@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.NbtEncodingException
 import okio.BufferedSink
 import okio.Closeable
 

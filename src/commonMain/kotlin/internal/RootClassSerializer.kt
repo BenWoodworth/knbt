@@ -6,7 +6,6 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.*
-import net.benwoodworth.knbt.NbtDecodingException
 
 @OptIn(ExperimentalSerializationApi::class)
 private fun rootClassSerialDescriptor(classDescriptor: SerialDescriptor): SerialDescriptor =

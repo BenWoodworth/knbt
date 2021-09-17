@@ -1,7 +1,6 @@
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.InternalNbtApi
-import net.benwoodworth.knbt.NbtDecodingException
 
 @Suppress("EnumEntryName")
 @InternalNbtApi
@@ -47,20 +46,3 @@ public enum class NbtTagType(internal val id: Byte) {
         }
     }
 }
-
-internal val NbtTagType.friendlyName: String
-    get() = when (this) {
-        NbtTagType.TAG_End -> "Nothing"
-        NbtTagType.TAG_Byte -> "Byte"
-        NbtTagType.TAG_Short -> "Short"
-        NbtTagType.TAG_Int -> "Int"
-        NbtTagType.TAG_Long -> "Long"
-        NbtTagType.TAG_Float -> "Float"
-        NbtTagType.TAG_Double -> "Double"
-        NbtTagType.TAG_Byte_Array -> "ByteArray"
-        NbtTagType.TAG_String -> "String"
-        NbtTagType.TAG_List -> "List"
-        NbtTagType.TAG_Compound -> "Compound"
-        NbtTagType.TAG_Int_Array -> "IntArray"
-        NbtTagType.TAG_Long_Array -> "LongArray"
-    }

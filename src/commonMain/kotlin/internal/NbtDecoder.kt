@@ -41,7 +41,7 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     private fun expectTagType(expected: NbtTagType) {
         val actual = entryType
         if (expected != actual) {
-            throw NbtDecodingException("Expected ${expected.friendlyName}, but was ${actual.friendlyName}", getPath())
+            throw NbtDecodingException("Expected ${expected}, but was ${actual}", getPath())
         }
     }
 
@@ -236,12 +236,12 @@ private class ClassNbtDecoder(
             if (info.type == TAG_List) {
                 try {
                     val entryType = reader.discardListTag().type
-                    "${TAG_List.friendlyName}<${entryType.friendlyName}>"
+                    "${TAG_List}<${entryType}>"
                 } catch (e: Exception) {
-                    info.type.friendlyName
+                    info.type.toString()
                 }
             } else {
-                info.type.friendlyName
+                info.type.toString()
             }
 
         if (!nbt.configuration.ignoreUnknownKeys) {

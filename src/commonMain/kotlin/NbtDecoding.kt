@@ -11,6 +11,7 @@ import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.AbstractDecoder
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
+import net.benwoodworth.knbt.internal.NbtDecodingException
 
 public sealed interface NbtDecoder : Decoder {
     public fun decodeByteArray(): ByteArray

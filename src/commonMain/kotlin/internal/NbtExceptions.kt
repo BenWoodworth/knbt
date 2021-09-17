@@ -1,7 +1,6 @@
-package net.benwoodworth.knbt
+package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.SerializationException
-import net.benwoodworth.knbt.internal.NbtPath
 
 public sealed class NbtException(
     message: String,

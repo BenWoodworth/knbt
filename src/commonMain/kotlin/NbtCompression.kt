@@ -1,5 +1,6 @@
 package net.benwoodworth.knbt
 
+import net.benwoodworth.knbt.internal.NbtDecodingException
 import net.benwoodworth.knbt.internal.asGzipSink
 import net.benwoodworth.knbt.internal.asGzipSource
 import net.benwoodworth.knbt.internal.asZlibSink
