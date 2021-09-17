@@ -240,10 +240,7 @@ public final class net/benwoodworth/knbt/NbtDecoder$DefaultImpls {
 	public static fun decodeSerializableValue (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/DeserializationStrategy;)Ljava/lang/Object;
 }
 
-public final class net/benwoodworth/knbt/NbtDecodingException : net/benwoodworth/knbt/NbtException {
-}
-
-public final class net/benwoodworth/knbt/NbtDecodingKt {
+public final class net/benwoodworth/knbt/NbtDecoderKt {
 	public static final fun asNbtDecoder (Lkotlinx/serialization/encoding/Decoder;)Lnet/benwoodworth/knbt/NbtDecoder;
 }
 
@@ -287,18 +284,8 @@ public final class net/benwoodworth/knbt/NbtEncoder$DefaultImpls {
 	public static fun encodeSerializableValue (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V
 }
 
-public final class net/benwoodworth/knbt/NbtEncodingException : net/benwoodworth/knbt/NbtException {
-}
-
-public final class net/benwoodworth/knbt/NbtEncodingKt {
+public final class net/benwoodworth/knbt/NbtEncoderKt {
 	public static final fun asNbtEncoder (Lkotlinx/serialization/encoding/Encoder;)Lnet/benwoodworth/knbt/NbtEncoder;
-}
-
-public abstract class net/benwoodworth/knbt/NbtException : kotlinx/serialization/SerializationException {
-	public synthetic fun <init> (Ljava/lang/String;Lnet/benwoodworth/knbt/internal/NbtPath;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (Ljava/lang/String;Lnet/benwoodworth/knbt/internal/NbtPath;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	protected abstract fun getCoding ()Ljava/lang/String;
-	public fun getMessage ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtFloat : net/benwoodworth/knbt/NbtTag {
@@ -741,6 +728,19 @@ public final class net/benwoodworth/knbt/StringifiedNbtConfiguration : net/benwo
 public final class net/benwoodworth/knbt/StringifiedNbtKt {
 	public static final fun StringifiedNbt (Lnet/benwoodworth/knbt/StringifiedNbt;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/StringifiedNbt;
 	public static synthetic fun StringifiedNbt$default (Lnet/benwoodworth/knbt/StringifiedNbt;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lnet/benwoodworth/knbt/StringifiedNbt;
+}
+
+public final class net/benwoodworth/knbt/internal/NbtDecodingException : net/benwoodworth/knbt/internal/NbtException {
+}
+
+public final class net/benwoodworth/knbt/internal/NbtEncodingException : net/benwoodworth/knbt/internal/NbtException {
+}
+
+public abstract class net/benwoodworth/knbt/internal/NbtException : kotlinx/serialization/SerializationException {
+	public synthetic fun <init> (Ljava/lang/String;Lnet/benwoodworth/knbt/internal/NbtPath;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Lnet/benwoodworth/knbt/internal/NbtPath;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected abstract fun getCoding ()Ljava/lang/String;
+	public fun getMessage ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/internal/NbtTagType : java/lang/Enum {
