@@ -27,7 +27,7 @@ jobs:
           password: ${{ secrets.OSSRH_TOKEN }}
           staging_profile_id: ${{ secrets.SONATYPE_PROFILE_ID }}
   build-upload:
-    name: "Build, Check, and Publish"
+    needs: create-staging-repository
     runs-on: ubuntu-latest
     strategy:
       matrix:
