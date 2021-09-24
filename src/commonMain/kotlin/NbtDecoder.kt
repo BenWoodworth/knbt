@@ -58,7 +58,6 @@ internal abstract class AbstractNbtDecoder : AbstractDecoder(), NbtDecoder, Comp
     final override fun decodeNbtTagElement(descriptor: SerialDescriptor, index: Int): NbtTag =
         decodeNbtTag()
 
-    @ExperimentalSerializationApi
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder =
         if (descriptor.kind == StructureKind.LIST) {
             beginList(descriptor)

@@ -7,7 +7,7 @@ import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
 
-@ExperimentalSerializationApi
+@OptIn(ExperimentalSerializationApi::class)
 internal class DefaultNbtEncoder(
     private val nbt: NbtFormat,
     private val writer: NbtWriter,
@@ -124,7 +124,6 @@ internal class DefaultNbtEncoder(
         }
     }
 
-    @ExperimentalSerializationApi
     @OptIn(ExperimentalNbtApi::class)
     override fun shouldEncodeElementDefault(descriptor: SerialDescriptor, index: Int): Boolean =
         nbt.configuration.encodeDefaults

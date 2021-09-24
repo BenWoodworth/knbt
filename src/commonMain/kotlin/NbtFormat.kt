@@ -4,9 +4,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.StructureKind
 import net.benwoodworth.knbt.internal.*
 
-@OptIn(ExperimentalSerializationApi::class)
 public sealed interface NbtFormat : SerialFormat {
-    @ExperimentalNbtApi
     public val configuration: NbtFormatConfiguration
 
     /**

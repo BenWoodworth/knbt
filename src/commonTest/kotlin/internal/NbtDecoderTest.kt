@@ -20,7 +20,6 @@ class NbtDecoderTest {
         val reader = LoggingNbtReader(TreeNbtReader(tag), stringBuilder)
 
         val actualValue = try {
-            @OptIn(ExperimentalSerializationApi::class)
             NbtDecoder(NbtFormat(), reader).decodeSerializableValue(serializer)
         } catch (e: Exception) {
             val log = stringBuilder.toString().trimIndent()

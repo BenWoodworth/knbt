@@ -6,18 +6,14 @@ import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.StringifiedNbtWriter
 import kotlin.native.concurrent.ThreadLocal
 
-@OptIn(ExperimentalSerializationApi::class)
 public sealed class StringifiedNbt constructor(
-    @Suppress("EXPERIMENTAL_OVERRIDE")
-    @ExperimentalNbtApi
     override val configuration: StringifiedNbtConfiguration,
-
     override val serializersModule: SerializersModule,
 ) : NbtFormat, StringFormat {
     /**
      * The default instance of [StringifiedNbt] with default configuration.
      */
-    @OptIn(ExperimentalNbtApi::class)
+    @OptIn(ExperimentalNbtApi::class, ExperimentalSerializationApi::class)
     @ThreadLocal
     public companion object Default : StringifiedNbt(
         configuration = StringifiedNbtConfiguration(
@@ -65,7 +61,6 @@ public fun StringifiedNbt(
  * Builder of the [StringifiedNbt] instance provided by `StringifiedNbt { ... }` factory function.
  */
 @NbtDslMarker
-@OptIn(ExperimentalNbtApi::class)
 public class StringifiedNbtBuilder internal constructor(stringifiedNbt: StringifiedNbt) {
     /**
      * Specifies whether default values of Kotlin properties should be encoded.
@@ -100,7 +95,7 @@ public class StringifiedNbtBuilder internal constructor(stringifiedNbt: Stringif
      */
     public var serializersModule: SerializersModule = stringifiedNbt.serializersModule
 
-    @OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
+    @OptIn(ExperimentalNbtApi::class)
     internal fun build(): StringifiedNbt {
         if (!prettyPrint) {
             require(prettyPrintIndent == StringifiedNbt.configuration.prettyPrintIndent) {
@@ -126,7 +121,6 @@ public class StringifiedNbtBuilder internal constructor(stringifiedNbt: Stringif
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 private class StringifiedNbtImpl(
     configuration: StringifiedNbtConfiguration,
     serializersModule: SerializersModule,

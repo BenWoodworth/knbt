@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt.internal
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.ExperimentalNbtApi
@@ -10,7 +9,7 @@ import net.benwoodworth.knbt.put
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
+@OptIn(ExperimentalNbtApi::class)
 class RootClassSerializerTest {
     @Serializable
     @SerialName("root-name")

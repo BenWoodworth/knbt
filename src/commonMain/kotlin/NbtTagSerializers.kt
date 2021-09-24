@@ -118,7 +118,6 @@ internal class NbtListSerializer<T : NbtTag>(
     private class NbtListDescriptor(
         val elementDescriptor: SerialDescriptor,
     ) : SerialDescriptor by listSerialDescriptor(elementDescriptor) {
-        @ExperimentalSerializationApi
         override val serialName: String = "net.benwoodworth.knbt.NbtList"
     }
 }
@@ -139,14 +138,13 @@ internal object NbtCompoundSerializer : KSerializer<NbtCompound> {
     private class NbtCompoundDescriptor(
         val elementDescriptor: SerialDescriptor,
     ) : SerialDescriptor by mapSerialDescriptor(String.serializer().descriptor, elementDescriptor) {
-        @ExperimentalSerializationApi
         override val serialName: String = "net.benwoodworth.knbt.NbtCompound"
     }
 }
 
 internal object NbtIntArraySerializer : KSerializer<NbtIntArray> {
+    @OptIn(ExperimentalSerializationApi::class)
     private object NbtIntArrayDescriptor : SerialDescriptor by serialDescriptor<IntArray>() {
-        @ExperimentalSerializationApi
         override val serialName: String = "net.benwoodworth.knbt.NbtIntArray"
     }
 
@@ -160,8 +158,8 @@ internal object NbtIntArraySerializer : KSerializer<NbtIntArray> {
 }
 
 internal object NbtLongArraySerializer : KSerializer<NbtLongArray> {
+    @OptIn(ExperimentalSerializationApi::class)
     private object NbtLongArrayDescriptor : SerialDescriptor by serialDescriptor<LongArray>() {
-        @ExperimentalSerializationApi
         override val serialName: String = "net.benwoodworth.knbt.NbtLongArray"
     }
 

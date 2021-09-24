@@ -12,8 +12,8 @@ System.getenv("GIT_REF")?.let { gitRef ->
 val isSnapshot = version.toString().contains("SNAPSHOT", true)
 
 plugins {
-    kotlin("multiplatform") version "1.5.0"
-    kotlin("plugin.serialization") version "1.5.0"
+    kotlin("multiplatform") version "1.5.31"
+    kotlin("plugin.serialization") version "1.5.31"
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.7.1"
     id("org.jetbrains.dokka") version "1.5.0"
     id("maven-publish")
@@ -51,12 +51,13 @@ kotlin {
     watchosX86()
     mingwX64()
 
+    @Suppress("UNUSED_VARIABLE")
     sourceSets {
         configureEach {
             languageSettings.apply {
-                useExperimentalAnnotation("kotlin.RequiresOptIn")
-                useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
-                useExperimentalAnnotation("net.benwoodworth.knbt.InternalNbtApi")
+                optIn("kotlin.RequiresOptIn")
+                optIn("kotlin.contracts.ExperimentalContracts")
+                optIn("net.benwoodworth.knbt.InternalNbtApi")
             }
         }
 

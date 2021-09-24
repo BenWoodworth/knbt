@@ -10,12 +10,8 @@ import okio.Sink
 import okio.Source
 import okio.use
 
-@OptIn(ExperimentalSerializationApi::class)
 public sealed class Nbt constructor(
-    @Suppress("EXPERIMENTAL_OVERRIDE")
-    @ExperimentalNbtApi
     override val configuration: NbtConfiguration,
-
     override val serializersModule: SerializersModule,
 ) : NbtFormat, BinaryFormat {
     /**
@@ -77,7 +73,6 @@ public fun Nbt(from: Nbt = DefaultNbt, builderAction: NbtBuilder.() -> Unit): Nb
  * Builder of the [Nbt] instance provided by `Nbt { ... }` factory function.
  */
 @NbtDslMarker
-@OptIn(ExperimentalNbtApi::class)
 public class NbtBuilder internal constructor(nbt: Nbt) {
     /**
      * The variant of NBT binary format to use. Required.
@@ -124,7 +119,6 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
      */
     public var serializersModule: SerializersModule = nbt.serializersModule
 
-    @OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
     internal fun build(): Nbt {
         val variant = variant
         val compression = compression
@@ -150,7 +144,6 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 private class NbtImpl(
     configuration: NbtConfiguration,
     serializersModule: SerializersModule,

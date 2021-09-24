@@ -9,13 +9,13 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DefaultNbtEncoderTest {
+    @OptIn(ExperimentalSerializationApi::class)
     private fun assertEncodesCorrectly(tag: NbtTag, expectedLog: String) {
         val stringBuilder = StringBuilder()
         var actualTag: NbtTag? = null
         val writer = LoggingNbtWriter(TreeNbtWriter { actualTag = it }, stringBuilder)
 
         try {
-            @OptIn(ExperimentalSerializationApi::class)
             DefaultNbtEncoder(NbtFormat(), writer).encodeSerializableValue(NbtTag.serializer(), tag)
         } catch (e: Exception) {
             throw Exception("Error encoding. NbtWriter log: <\n$stringBuilder>", e)

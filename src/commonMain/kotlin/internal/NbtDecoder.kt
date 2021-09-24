@@ -41,7 +41,7 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     private fun expectTagType(expected: NbtTagType) {
         val actual = entryType
         if (expected != actual) {
-            throw NbtDecodingException("Expected ${expected}, but was ${actual}", getPath())
+            throw NbtDecodingException("Expected $expected, but was $actual", getPath())
         }
     }
 
@@ -179,7 +179,6 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     final override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>, previousValue: T?): T =
         super.decodeSerializableValue(deserializer, previousValue)
 
-    @ExperimentalSerializationApi
     final override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder =
         super.beginStructure(descriptor)
     //endregion
@@ -213,6 +212,7 @@ private abstract class CompoundNbtDecoder : BaseNbtDecoder() {
     override fun getPathNode(): NbtPath.Node =
         NbtPath.NameNode(compoundEntryInfo.name, entryType)
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endCompound()
 }
 
@@ -353,6 +353,7 @@ private class ListNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginListEntry()
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endList()
 }
 
@@ -371,6 +372,7 @@ private class ByteArrayNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginByteArrayEntry()
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endByteArray()
 }
 
@@ -389,6 +391,7 @@ private class IntArrayNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginIntArrayEntry()
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endIntArray()
 }
 
@@ -407,5 +410,6 @@ private class LongArrayNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginLongArrayEntry()
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endLongArray()
 }
