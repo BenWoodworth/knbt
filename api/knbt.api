@@ -233,6 +233,7 @@ public abstract interface class net/benwoodworth/knbt/NbtDecoder : kotlinx/seria
 	public abstract fun decodeIntArray ()[I
 	public abstract fun decodeLongArray ()[J
 	public abstract fun decodeNbtTag ()Lnet/benwoodworth/knbt/NbtTag;
+	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
 
 public final class net/benwoodworth/knbt/NbtDecoder$DefaultImpls {
@@ -275,6 +276,7 @@ public abstract interface class net/benwoodworth/knbt/NbtEncoder : kotlinx/seria
 	public abstract fun encodeIntArray ([I)V
 	public abstract fun encodeLongArray ([J)V
 	public abstract fun encodeNbtTag (Lnet/benwoodworth/knbt/NbtTag;)V
+	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
 
 public final class net/benwoodworth/knbt/NbtEncoder$DefaultImpls {
@@ -534,10 +536,6 @@ public final class net/benwoodworth/knbt/NbtLongArray$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public abstract interface annotation class net/benwoodworth/knbt/NbtRoot : java/lang/annotation/Annotation {
-	public abstract fun name ()Ljava/lang/String;
-}
-
 public final class net/benwoodworth/knbt/NbtShort : net/benwoodworth/knbt/NbtTag {
 	public static final field Companion Lnet/benwoodworth/knbt/NbtShort$Companion;
 	public static final synthetic fun box-impl (S)Lnet/benwoodworth/knbt/NbtShort;
@@ -662,27 +660,8 @@ public final class net/benwoodworth/knbt/NbtVariant$BedrockNetwork : net/benwood
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$BedrockNetwork;
 }
 
-public final class net/benwoodworth/knbt/NbtVariant$BigEndian : net/benwoodworth/knbt/NbtVariant {
-	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$BigEndian;
-}
-
-public final class net/benwoodworth/knbt/NbtVariant$Companion {
-	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Companion;
-	public final fun getBedrock ()Lnet/benwoodworth/knbt/NbtVariant$Bedrock;
-	public final fun getBedrockNetwork ()Lnet/benwoodworth/knbt/NbtVariant$BedrockNetwork;
-	public final fun getJava ()Lnet/benwoodworth/knbt/NbtVariant$Java;
-}
-
 public final class net/benwoodworth/knbt/NbtVariant$Java : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Java;
-}
-
-public final class net/benwoodworth/knbt/NbtVariant$LittleEndian : net/benwoodworth/knbt/NbtVariant {
-	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$LittleEndian;
-}
-
-public final class net/benwoodworth/knbt/NbtVariant$LittleEndianBase128 : net/benwoodworth/knbt/NbtVariant {
-	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$LittleEndianBase128;
 }
 
 public abstract interface annotation class net/benwoodworth/knbt/OkioApi : java/lang/annotation/Annotation {

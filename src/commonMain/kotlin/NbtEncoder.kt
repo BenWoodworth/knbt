@@ -14,6 +14,11 @@ import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.internal.NbtEncodingException
 
 public sealed interface NbtEncoder : Encoder {
+    /**
+     * An instance of the current [NbtFormat].
+     */
+    public val nbt: NbtFormat
+
     public fun encodeByteArray(value: ByteArray)
     public fun encodeIntArray(value: IntArray)
     public fun encodeLongArray(value: LongArray)
