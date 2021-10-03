@@ -534,10 +534,6 @@ public final class net/benwoodworth/knbt/NbtLongArray$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public abstract interface annotation class net/benwoodworth/knbt/NbtRoot : java/lang/annotation/Annotation {
-	public abstract fun name ()Ljava/lang/String;
-}
-
 public final class net/benwoodworth/knbt/NbtShort : net/benwoodworth/knbt/NbtTag {
 	public static final field Companion Lnet/benwoodworth/knbt/NbtShort$Companion;
 	public static final synthetic fun box-impl (S)Lnet/benwoodworth/knbt/NbtShort;
@@ -662,27 +658,8 @@ public final class net/benwoodworth/knbt/NbtVariant$BedrockNetwork : net/benwood
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$BedrockNetwork;
 }
 
-public final class net/benwoodworth/knbt/NbtVariant$BigEndian : net/benwoodworth/knbt/NbtVariant {
-	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$BigEndian;
-}
-
-public final class net/benwoodworth/knbt/NbtVariant$Companion {
-	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Companion;
-	public final fun getBedrock ()Lnet/benwoodworth/knbt/NbtVariant$Bedrock;
-	public final fun getBedrockNetwork ()Lnet/benwoodworth/knbt/NbtVariant$BedrockNetwork;
-	public final fun getJava ()Lnet/benwoodworth/knbt/NbtVariant$Java;
-}
-
 public final class net/benwoodworth/knbt/NbtVariant$Java : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Java;
-}
-
-public final class net/benwoodworth/knbt/NbtVariant$LittleEndian : net/benwoodworth/knbt/NbtVariant {
-	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$LittleEndian;
-}
-
-public final class net/benwoodworth/knbt/NbtVariant$LittleEndianBase128 : net/benwoodworth/knbt/NbtVariant {
-	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$LittleEndianBase128;
 }
 
 public abstract interface annotation class net/benwoodworth/knbt/OkioApi : java/lang/annotation/Annotation {
@@ -692,7 +669,6 @@ public abstract class net/benwoodworth/knbt/StringifiedNbt : kotlinx/serializati
 	public static final field Default Lnet/benwoodworth/knbt/StringifiedNbt$Default;
 	public synthetic fun <init> (Lnet/benwoodworth/knbt/StringifiedNbtConfiguration;Lkotlinx/serialization/modules/SerializersModule;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun decodeFromNbtTag (Lkotlinx/serialization/DeserializationStrategy;Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Object;
-	public final fun decodeFromString (Ljava/lang/String;)Ljava/lang/Object;
 	public fun decodeFromString (Lkotlinx/serialization/DeserializationStrategy;Ljava/lang/String;)Ljava/lang/Object;
 	public fun encodeToNbtTag (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Lnet/benwoodworth/knbt/NbtTag;
 	public fun encodeToString (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Ljava/lang/String;

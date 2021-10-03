@@ -3,6 +3,9 @@ package net.benwoodworth.knbt
 import kotlinx.serialization.*
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
+import net.benwoodworth.knbt.internal.CharSource
+import net.benwoodworth.knbt.internal.NbtDecodingException
+import net.benwoodworth.knbt.internal.StringifiedNbtReader
 import net.benwoodworth.knbt.internal.StringifiedNbtWriter
 import kotlin.native.concurrent.ThreadLocal
 
@@ -30,17 +33,18 @@ public sealed class StringifiedNbt constructor(
             encodeToNbtWriter(StringifiedNbtWriter(this@StringifiedNbt, this), serializer, value)
         }
 
-    @Suppress("UNUSED_PARAMETER")
-    @Deprecated("Decoding from Stringified NBT is not yet supported", level = DeprecationLevel.ERROR)
     override fun <T> decodeFromString(deserializer: DeserializationStrategy<T>, string: String): T {
-        TODO("Decoding from Stringified NBT is not yet supported")
-    }
+        val source = CharSource(string)
+        val decoded = decodeFromNbtReader(StringifiedNbtReader(source), deserializer)
 
-    // Try to prevent usages of the StringFormat.decodeFromString(String) extension function
-    @Suppress("UNUSED_PARAMETER")
-    @Deprecated("Decoding from Stringified NBT is not yet supported", level = DeprecationLevel.ERROR)
-    public fun <T> decodeFromString(string: String): T {
-        TODO("Decoding from Stringified NBT is not yet supported")
+        while (!source.exhausted()) {
+            val char = source.readChar()
+            if (!char.isWhitespace()) {
+                throw NbtDecodingException("Expected only whitespace after value, but got '$char'")
+            }
+        }
+
+        return decoded
     }
 }
 
