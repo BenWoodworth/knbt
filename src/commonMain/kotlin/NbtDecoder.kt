@@ -14,6 +14,8 @@ import kotlinx.serialization.encoding.Decoder
 import net.benwoodworth.knbt.internal.NbtDecodingException
 
 public sealed interface NbtDecoder : Decoder {
+    public val nbt: NbtFormat
+
     public fun decodeByteArray(): ByteArray
     public fun decodeIntArray(): IntArray
     public fun decodeLongArray(): LongArray
@@ -33,6 +35,8 @@ public fun Decoder.asNbtDecoder(): NbtDecoder =
     )
 
 public sealed interface CompositeNbtDecoder : CompositeDecoder {
+    public val nbt: NbtFormat
+
     public fun decodeByteArrayElement(descriptor: SerialDescriptor, index: Int): ByteArray
     public fun decodeIntArrayElement(descriptor: SerialDescriptor, index: Int): IntArray
     public fun decodeLongArrayElement(descriptor: SerialDescriptor, index: Int): LongArray

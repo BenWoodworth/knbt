@@ -3,6 +3,7 @@ public abstract interface class net/benwoodworth/knbt/CompositeNbtDecoder : kotl
 	public abstract fun decodeIntArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I)[I
 	public abstract fun decodeLongArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I)[J
 	public abstract fun decodeNbtTagElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lnet/benwoodworth/knbt/NbtTag;
+	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
 
 public final class net/benwoodworth/knbt/CompositeNbtDecoder$DefaultImpls {
@@ -15,6 +16,7 @@ public abstract interface class net/benwoodworth/knbt/CompositeNbtEncoder : kotl
 	public abstract fun encodeIntArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I[I)V
 	public abstract fun encodeLongArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I[J)V
 	public abstract fun encodeNbtTagElement (Lkotlinx/serialization/descriptors/SerialDescriptor;ILnet/benwoodworth/knbt/NbtTag;)V
+	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
 
 public final class net/benwoodworth/knbt/CompositeNbtEncoder$DefaultImpls {
@@ -61,9 +63,11 @@ public final class net/benwoodworth/knbt/NbtByte : net/benwoodworth/knbt/NbtTag 
 	public static final field Companion Lnet/benwoodworth/knbt/NbtByte$Companion;
 	public static final synthetic fun box-impl (B)Lnet/benwoodworth/knbt/NbtByte;
 	public static fun constructor-impl (B)B
+	public static fun constructor-impl (Z)B
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (BLjava/lang/Object;)Z
 	public static final fun equals-impl0 (BB)Z
+	public static final fun getBooleanValue-impl (B)Z
 	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
 	public static fun getType-impl (B)Lnet/benwoodworth/knbt/internal/NbtTagType;
 	public final fun getValue ()B
@@ -233,6 +237,7 @@ public abstract interface class net/benwoodworth/knbt/NbtDecoder : kotlinx/seria
 	public abstract fun decodeIntArray ()[I
 	public abstract fun decodeLongArray ()[J
 	public abstract fun decodeNbtTag ()Lnet/benwoodworth/knbt/NbtTag;
+	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
 
 public final class net/benwoodworth/knbt/NbtDecoder$DefaultImpls {
@@ -275,6 +280,7 @@ public abstract interface class net/benwoodworth/knbt/NbtEncoder : kotlinx/seria
 	public abstract fun encodeIntArray ([I)V
 	public abstract fun encodeLongArray ([J)V
 	public abstract fun encodeNbtTag (Lnet/benwoodworth/knbt/NbtTag;)V
+	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
 
 public final class net/benwoodworth/knbt/NbtEncoder$DefaultImpls {
@@ -598,6 +604,7 @@ public final class net/benwoodworth/knbt/NbtTagBuildersKt {
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;Lnet/benwoodworth/knbt/NbtList;)Z
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;Lnet/benwoodworth/knbt/NbtLongArray;)Z
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;S)Z
+	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;Z)Z
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;[B)Z
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;[I)Z
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;[J)Z
@@ -622,6 +629,7 @@ public final class net/benwoodworth/knbt/NbtTagBuildersKt {
 	public static final fun put (Lnet/benwoodworth/knbt/NbtCompoundBuilder;Ljava/lang/String;J)Lnet/benwoodworth/knbt/NbtTag;
 	public static final fun put (Lnet/benwoodworth/knbt/NbtCompoundBuilder;Ljava/lang/String;Ljava/lang/String;)Lnet/benwoodworth/knbt/NbtTag;
 	public static final fun put (Lnet/benwoodworth/knbt/NbtCompoundBuilder;Ljava/lang/String;S)Lnet/benwoodworth/knbt/NbtTag;
+	public static final fun put (Lnet/benwoodworth/knbt/NbtCompoundBuilder;Ljava/lang/String;Z)Lnet/benwoodworth/knbt/NbtTag;
 	public static final fun put (Lnet/benwoodworth/knbt/NbtCompoundBuilder;Ljava/lang/String;[B)Lnet/benwoodworth/knbt/NbtTag;
 	public static final fun put (Lnet/benwoodworth/knbt/NbtCompoundBuilder;Ljava/lang/String;[I)Lnet/benwoodworth/knbt/NbtTag;
 	public static final fun put (Lnet/benwoodworth/knbt/NbtCompoundBuilder;Ljava/lang/String;[J)Lnet/benwoodworth/knbt/NbtTag;

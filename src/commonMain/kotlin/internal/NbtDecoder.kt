@@ -17,7 +17,6 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     override val serializersModule: SerializersModule
         get() = nbt.serializersModule
 
-    protected abstract val nbt: NbtFormat
     protected abstract val reader: NbtReader
     protected abstract val parent: BaseNbtDecoder?
     protected abstract val entryType: NbtTagType
