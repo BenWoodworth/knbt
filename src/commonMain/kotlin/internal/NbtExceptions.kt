@@ -2,7 +2,7 @@ package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.SerializationException
 
-public sealed class NbtException(
+internal sealed class NbtException(
     message: String,
     internal var path: NbtPath?,
     cause: Throwable? = null,
@@ -13,7 +13,7 @@ public sealed class NbtException(
         get() = path?.let { "Error while $coding '$path': ${super.message}" } ?: super.message
 }
 
-public class NbtEncodingException internal constructor(
+internal class NbtEncodingException(
     message: String,
     path: NbtPath? = null,
     cause: Throwable? = null,
@@ -22,7 +22,7 @@ public class NbtEncodingException internal constructor(
         get() = "encoding"
 }
 
-public class NbtDecodingException internal constructor(
+internal class NbtDecodingException(
     message: String,
     path: NbtPath? = null,
     cause: Throwable? = null,
