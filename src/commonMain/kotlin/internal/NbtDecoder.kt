@@ -51,6 +51,17 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         return tryWithPath { reader.readByte() }
     }
 
+    override fun decodeBoolean(): Boolean {
+        expectTagType(TAG_Byte)
+        return tryWithPath {
+            when (val byte = reader.readByte()) {
+                0.toByte() -> false
+                1.toByte() -> true
+                else -> throw NbtDecodingException("Expected TAG_Byte to be a Boolean (0 or 1), but was $byte")
+            }
+        }
+    }
+
     override fun decodeShort(): Short {
         expectTagType(TAG_Short)
         return tryWithPath { reader.readShort() }
@@ -149,9 +160,6 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     //region Unsupported types
     private fun notSupported(type: String, path: NbtPath? = null): NbtDecodingException =
         NbtDecodingException("Decoding $type values is not supported by the NBT format", path ?: getPath())
-
-    final override fun decodeBoolean(): Boolean =
-        throw notSupported("Boolean")
 
     final override fun decodeChar(): Char =
         throw notSupported("Char")

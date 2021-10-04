@@ -133,6 +133,11 @@ internal class DefaultNbtEncoder(
         writer.writeByte(value)
     }
 
+    override fun encodeBoolean(value: Boolean) {
+        beginEncodingValue(TAG_Byte)
+        writer.writeByte(if (value) 1 else 0)
+    }
+
     override fun encodeShort(value: Short) {
         beginEncodingValue(TAG_Short)
         writer.writeShort(value)

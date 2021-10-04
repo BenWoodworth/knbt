@@ -30,6 +30,22 @@ public sealed interface NbtTag {
 public value class NbtByte(public val value: Byte) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Byte
 
+    /**
+     * Create an [NbtByte] containing a [Boolean]: `false = 0b`, `true = 1b`
+     */
+    public constructor(booleanValue: Boolean) : this(if (booleanValue) 1 else 0)
+
+    /**
+     * Get an [NbtByte] as a [Boolean]: `0b = false`, `1b = true`
+     * @throws IllegalArgumentException if this is not `0b` or `1b`
+     */
+    public val booleanValue: Boolean
+        get() = when (value) {
+            0.toByte() -> false
+            1.toByte() -> true
+            else -> throw IllegalArgumentException("Expected value to be a boolean (0 or 1), but was $value")
+        }
+
     override fun toString(): String = "${value}b"
 }
 
@@ -171,7 +187,7 @@ public class NbtList<out T : NbtTag> private constructor(
 
 @Serializable(NbtCompoundSerializer::class)
 public class NbtCompound(
-    private val content: Map<String, NbtTag>
+    private val content: Map<String, NbtTag>,
 ) : NbtTag, Map<String, NbtTag> by content {
     override val type: NbtTagType get() = NbtTagType.TAG_Compound
 
