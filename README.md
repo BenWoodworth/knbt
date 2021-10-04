@@ -131,6 +131,7 @@ class NbtCompound : NbtTag, Map<String, NbtTag>
 
 ```kotlin
 val nbtByte = NbtByte(5)
+val boolean = NbtByte(true)
 
 val nbtIntArray = NbtIntArray(intArrayOf(1, 2, 3, 4, 5))
 
