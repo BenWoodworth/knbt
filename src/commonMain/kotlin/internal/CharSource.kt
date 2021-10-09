@@ -61,7 +61,7 @@ private class OkioCharSource private constructor(
 ) : CharSource {
     private companion object {
         val NO_LOW_SURROGATE = Char(0u)
-        val MIN_SUPPLEMENTARY_CODE_POINT = 0x010000
+        const val MIN_SUPPLEMENTARY_CODE_POINT = 0x010000
     }
 
     constructor(source: BufferedSource) : this(source, NO_LOW_SURROGATE)
