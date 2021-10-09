@@ -14,7 +14,7 @@ internal interface CharSource {
     @JvmInline
     value class ReadResult private constructor(private val code: Int) {
         companion object {
-            private val EOF_CODE = -1
+            private const val EOF_CODE = -1
             val EOF = ReadResult(EOF_CODE)
         }
 
