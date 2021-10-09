@@ -2,20 +2,38 @@ package net.benwoodworth.knbt.internal
 
 import okio.BufferedSource
 import okio.EOFException
+import kotlin.jvm.JvmInline
 
 internal interface CharSource {
     fun close()
 
     fun peek(): CharSource
 
-    fun exhausted(): Boolean
+    fun read(): ReadResult
 
-    fun readChar(): Char
+    @JvmInline
+    value class ReadResult private constructor(private val code: Int) {
+        companion object {
+            private val EOF_CODE = -1
+            val EOF = ReadResult(EOF_CODE)
+        }
+
+        constructor(char: Char) : this(char.code)
+
+        override fun toString(): String =
+            if (code == EOF_CODE) "EOF" else Char(code.toUShort()).toString()
+
+        fun toChar(): Char =
+            if (code == EOF_CODE) {
+                error("Character is EOF")
+            } else {
+                Char(code.toUShort())
+            }
+    }
 }
 
 internal fun CharSource(string: String): CharSource = StringCharSource(string)
-internal fun CharSource(source: BufferedSource): CharSource = SourceCharSource(source)
-
+internal fun CharSource(source: BufferedSource): CharSource = OkioCharSource(source)
 
 private class StringCharSource private constructor(
     private val string: String,
@@ -29,18 +47,15 @@ private class StringCharSource private constructor(
     override fun peek(): CharSource =
         StringCharSource(string, position)
 
-    override fun exhausted(): Boolean =
-        position > string.lastIndex
-
-    override fun readChar(): Char =
-        if (exhausted()) {
-            throw EOFException()
+    override fun read(): CharSource.ReadResult =
+        if (position > string.lastIndex) {
+            CharSource.ReadResult.EOF
         } else {
-            string[position++]
+            CharSource.ReadResult(string[position++])
         }
 }
 
-private class SourceCharSource private constructor(
+private class OkioCharSource private constructor(
     private val source: BufferedSource,
     private var lowSurrogate: Char,
 ) : CharSource {
@@ -54,23 +69,29 @@ private class SourceCharSource private constructor(
     override fun close(): Unit = source.close()
 
     override fun peek(): CharSource =
-        SourceCharSource(source.peek(), lowSurrogate)
+        OkioCharSource(source.peek(), lowSurrogate)
 
-    override fun exhausted(): Boolean =
-        lowSurrogate != NO_LOW_SURROGATE && source.exhausted()
-
-    override fun readChar(): Char =
+    override fun read(): CharSource.ReadResult =
         if (lowSurrogate != NO_LOW_SURROGATE) {
-            lowSurrogate
+            CharSource.ReadResult(lowSurrogate)
                 .also { lowSurrogate = NO_LOW_SURROGATE }
+        } else if (source.exhausted()) {
+            CharSource.ReadResult.EOF
         } else {
-            val codePoint = source.readUtf8CodePoint()
-            if (codePoint ushr 16 == 0) {
-                Char(codePoint.toUShort())
-            } else {
-                lowSurrogate = Char(((codePoint and 0x3ff) + Char.MIN_LOW_SURROGATE.code).toUShort())
+            try {
+                val codePoint = source.readUtf8CodePoint()
+                if (codePoint ushr 16 == 0) {
+                    CharSource.ReadResult(Char(codePoint.toUShort()))
+                } else {
+                    val highSurrogate = (codePoint ushr 10) +
+                            (Char.MIN_HIGH_SURROGATE.code - (MIN_SUPPLEMENTARY_CODE_POINT ushr 10))
 
-                Char((codePoint ushr 10) + (Char.MIN_HIGH_SURROGATE.code - (MIN_SUPPLEMENTARY_CODE_POINT ushr 10)))
+                    lowSurrogate = Char(((codePoint and 0x3ff) + Char.MIN_LOW_SURROGATE.code).toUShort())
+
+                    CharSource.ReadResult(Char(highSurrogate))
+                }
+            } catch (e: EOFException) {
+                CharSource.ReadResult.EOF
             }
         }
 }

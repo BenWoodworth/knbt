@@ -2,6 +2,8 @@ package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.OkioApi
+import net.benwoodworth.knbt.internal.CharSource.ReadResult
+import net.benwoodworth.knbt.internal.CharSource.ReadResult.Companion.EOF
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import okio.Closeable
 
@@ -22,9 +24,11 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
         val SHORT = Regex("""[-+]?(?:0|[1-9][0-9]*)s""", RegexOption.IGNORE_CASE)
         val INT = Regex("""[-+]?(?:0|[1-9][0-9]*)""")
 
-        fun Char.isUnquotedStringCharacter(): Boolean =
-            this in '0'..'9' || this in 'A'..'Z' || this in 'a'..'z' ||
-                    this == '_' || this == '-' || this == '.' || this == '+'
+        fun ReadResult.isUnquotedStringCharacter(): Boolean =
+            this != EOF && toChar().let {
+                it in '0'..'9' || it in 'A'..'Z' || it in 'a'..'z' || it == '_' || it == '-' || it == '.' || it == '+'
+            }
+
     }
 
     private val buffer = StringBuilder()
@@ -32,9 +36,12 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
 
     override fun close(): Unit = source.close()
 
+    private fun ReadResult.isWhitespace(): Boolean =
+        this != EOF && toChar().isWhitespace()
+
     private fun CharSource.skipWhitespace(): CharSource {
-        while (!exhausted() && peek().readChar().isWhitespace()) {
-            readChar()
+        while (peek().read().isWhitespace()) {
+            read()
         }
         return this
     }
@@ -42,46 +49,52 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
     private fun CharSource.bufferUnquotedString() {
         buffer.clear()
 
-        while (!exhausted() && peek().readChar().isUnquotedStringCharacter()) {
-            buffer.append(readChar())
+        while (peek().read().isUnquotedStringCharacter()) {
+            buffer.append(read().toChar())
         }
     }
 
     private fun CharSource.bufferQuotedString() {
         buffer.clear()
-        val quote = readChar()
+
+        val quote = ReadResult(read().toChar())
+        val backslash = ReadResult('\\')
 
         while (true) {
-            when (val char = readChar()) {
+            when (val char = read()) {
+                EOF -> throw NbtDecodingException("Unexpected EOF in String")
                 quote -> break
-                '\\' -> when (val esc = readChar()) {
-                    quote, '\\' -> buffer.append(esc)
+                backslash -> when (val esc = read()) {
+                    EOF -> throw NbtDecodingException("Unexpected EOF in String")
+                    quote, backslash -> buffer.append(esc)
                     else -> throw NbtDecodingException("Invalid escape: \\$esc")
                 }
-                else -> buffer.append(char)
+                else -> buffer.append(char.toChar())
             }
         }
     }
 
     private fun CharSource.expect(char: Char, ignoreCase: Boolean = false) {
-        val actual = readChar()
-        if (!actual.equals(char, ignoreCase)) {
+        val actual = read()
+        if (actual == EOF) {
+            throw NbtDecodingException("Expected '$char', but was EOF")
+        } else if (!actual.toChar().equals(char, ignoreCase)) {
             throw NbtDecodingException("Expected '$char', but was '$actual'")
         }
     }
 
     private fun CharSource.peekTagType(): NbtTagType? {
-        if (exhausted()) return null
         val peek = peek()
-        return when (peek.readChar()) {
-            '[' -> when (peek.skipWhitespace().readChar()) {
-                'B' -> if (peek.skipWhitespace().readChar() == ';') TAG_Byte_Array else TAG_List
-                'I' -> if (peek.skipWhitespace().readChar() == ';') TAG_Int_Array else TAG_List
-                'L' -> if (peek.skipWhitespace().readChar() == ';') TAG_Long_Array else TAG_List
+        return when (peek.read()) {
+            EOF -> null
+            ReadResult('[') -> when (peek.skipWhitespace().read()) {
+                ReadResult('B') -> if (peek.skipWhitespace().read() == ReadResult(';')) TAG_Byte_Array else TAG_List
+                ReadResult('I') -> if (peek.skipWhitespace().read() == ReadResult(';')) TAG_Int_Array else TAG_List
+                ReadResult('L') -> if (peek.skipWhitespace().read() == ReadResult(';')) TAG_Long_Array else TAG_List
                 else -> TAG_List
             }
-            '{' -> TAG_Compound
-            '\'', '"' -> TAG_String
+            ReadResult('{') -> TAG_Compound
+            ReadResult('\''), ReadResult('"') -> TAG_String
             else -> {
                 peek().bufferUnquotedString()
                 when {
@@ -102,18 +115,18 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
         }
     }
 
-    private fun CharSource.readSnbtString(): String? {
-        val firstChar = skipWhitespace().peek().readChar()
-
-        if (firstChar == '"' || firstChar == '\'') {
-            bufferQuotedString()
-        } else {
-            bufferUnquotedString()
-            if (buffer.isEmpty()) return null
+    private fun CharSource.readSnbtString(): String? =
+        when (skipWhitespace().peek().read()) {
+            EOF -> throw NbtDecodingException("Expected String, but was EOF")
+            ReadResult('"'), ReadResult('\'') -> {
+                bufferQuotedString()
+                buffer.toString()
+            }
+            else -> {
+                bufferUnquotedString()
+                buffer.takeUnless { it.isEmpty() }?.toString()
+            }
         }
-
-        return buffer.toString()
-    }
 
     override fun beginRootTag(): NbtReader.RootTagInfo =
         NbtReader.RootTagInfo(
@@ -129,14 +142,14 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
     override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
         source.skipWhitespace()
 
-        return if (source.peek().readChar() == '}') {
+        return if (source.peek().read() == ReadResult('}')) {
             NbtReader.CompoundEntryInfo.End
         } else {
             if (firstEntry) {
                 firstEntry = false
             } else {
-                val char = source.readChar()
-                if (char != ',') throw NbtDecodingException("Expected ',' or '}', but got '$char'")
+                val char = source.read()
+                if (char != ReadResult(',')) throw NbtDecodingException("Expected ',' or '}', but got '$char'")
             }
 
             val name = source.skipWhitespace().readSnbtString()
@@ -161,7 +174,7 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
 
         firstEntry = true
 
-        val empty = source.skipWhitespace().peek().readChar() == ']'
+        val empty = source.skipWhitespace().peek().read() == ReadResult(']')
         val size = if (empty) 0 else NbtReader.UNKNOWN_SIZE
 
         return NbtReader.ArrayInfo(size)
@@ -170,14 +183,14 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
     private fun beginCollectionEntry(): Boolean {
         source.skipWhitespace()
 
-        return if (source.peek().readChar() == ']') {
+        return if (source.peek().read() == ReadResult(']')) {
             false
         } else {
             if (firstEntry) {
                 firstEntry = false
             } else {
-                val char = source.readChar()
-                if (char != ',') throw NbtDecodingException("Expected ',' or ']', but got '$char'")
+                val char = source.read()
+                if (char != ReadResult(',')) throw NbtDecodingException("Expected ',' or ']', but got '$char'")
             }
             true
         }

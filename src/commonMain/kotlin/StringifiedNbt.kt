@@ -37,11 +37,12 @@ public sealed class StringifiedNbt constructor(
         val source = CharSource(string)
         val decoded = decodeFromNbtReader(StringifiedNbtReader(source), deserializer)
 
-        while (!source.exhausted()) {
-            val char = source.readChar()
-            if (!char.isWhitespace()) {
+        var char = source.read()
+        while (char != CharSource.ReadResult.EOF) {
+            if (!char.toChar().isWhitespace()) {
                 throw NbtDecodingException("Expected only whitespace after value, but got '$char'")
             }
+            char = source.read()
         }
 
         return decoded
