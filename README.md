@@ -14,15 +14,14 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 ### Features
 
 - Kotlin Multiplatform: JVM, JS, Linux, Windows, macOS, iOS, watchOS
-- Supports all NBT variants: Java, Bedrock Files, Bedrock Network
-- Supports all NBT compressions: gzip, zlib
-- Type-safe NbtTag classes, and convenient builder DSLs
+- Serialize any data to/from NBT or SNBT
+- Support for all NBT variants: Java, Bedrock Files, Bedrock Network
+- Support for all NBT compressions: gzip, zlib
+- Type-safe `NbtTag` classes, with convenient builder DSLs
 
 ## Serialization
 
-`Nbt` and `StringifiedNbt` instances can be used to encode/decode `@Serializable` data.
-
-When serializing to/from binary NBT, the resulting tag must be a compound with a single entry (as per the NBT spec).
+`Nbt` and `StringifiedNbt` are be used to encode/decode `@Serializable` data.
 
 ### Configuration
 
@@ -52,29 +51,29 @@ val snbt = StringifiedNbt {
 
 ```kotlin
 // ByteArray
-byteArray = nbt.encodeToByteArray(value)
-value = nbt.decodeFromByteArray(byteArray)
+byteArray = nbt.encodeToByteArray(data)
+data = nbt.decodeFromByteArray(byteArray)
 
 // NbtTag
-nbtTag = nbt.encodeToNbtTag(value)
-value = nbt.decodeFromNbtTag(nbtTag)
+nbtTag = nbt.encodeToNbtTag(data)
+data = nbt.decodeFromNbtTag(nbtTag)
 
 // Okio Sink/Source (Multiplatform)
-nbt.encodeToSink(value, sink)
-value = nbt.decodeFromSource(source)
+nbt.encodeToSink(data, sink)
+data = nbt.decodeFromSource(source)
 
 // OutputStream/InputStream (JVM)
-nbt.encodeToStream(value, outputStream)
-value = nbt.decodeFromStream(inputStream)
+nbt.encodeToStream(data, outputStream)
+data = nbt.decodeFromStream(inputStream)
 
-// String
-string = snbt.encodeToString(value)
-value = snbt.decodeFromString(string)
+// SNBT String
+string = snbt.encodeToString(data)
+data = snbt.decodeFromString(string)
 ```
 
 ### Serializing Classes
 
-Serializable classes will have the class's `@SerialName` as the root tag's name.
+Serializable classes will have their `@SerialName` used for the root tag's name.
 
 ```kotlin
 @Serializable
@@ -108,7 +107,7 @@ file.outputStream().use { output ->
 }
 ```
 
-## NbtTag classes
+## NbtTag Classes
 
 ```kotlin
 sealed interface NbtTag
@@ -127,6 +126,7 @@ class NbtList<T : NbtTag> : NbtTag, List<T> // Only contains entries of a single
 class NbtCompound : NbtTag, Map<String, NbtTag>
 ```
 
+### Creating `NbtTag`s
 `NbtTag`s can be created with constructors and builder functions:
 
 ```kotlin
@@ -145,9 +145,22 @@ val nbtCompound = buildNbtCompound {
     put("int", 1)
     put("string", ":)")
     put("byteArray", byteArrayOf(1, 1, 2, 3, 5, 8))
-}
 
-// bigtest.nbt (https://wiki.vg/NBT#bigtest.nbt)
+    putNbtList("floatList") {
+        add(3f)
+        add(1f)
+        add(4f)
+    }
+}
+```
+
+<details>
+<summary>
+    <strong>Building bigtest.nbt with the DSL</strong>
+    (<a href="https://wiki.vg/NBT#bigtest.nbt">wiki.vg/NBT#bigtest.nbt</a>)
+</summary>
+
+```kotlin
 val bigtest = buildNbtCompound("Level") {
     put("longTest", 9223372036854775807L)
     put("shortTest", 32767.toShort())
@@ -190,7 +203,9 @@ val bigtest = buildNbtCompound("Level") {
 }
 ```
 
-# Setup
+</details>
+
+## Setup
 
 Using the same version of kotlinx.serialization is recommended since parts of its API required for custom formats are
 still experimental, and newer versions may have binary-incompatible changes that could break knbt's implementation.
@@ -208,7 +223,7 @@ Replacement refactorings will be provided where possible for broken APIs. Change
 ```kotlin
 plugins {
     kotlin("jvm") version "1.5.31" // or kotlin("multiplatform"), etc.
-    //kotlin("plugin.serialization") version "1.5.0"
+    //kotlin("plugin.serialization") version "1.5.31"
 }
 
 repositories {
@@ -218,6 +233,6 @@ repositories {
 
 dependencies {
     implementation("net.benwoodworth.knbt:knbt:$knbt_version")
-    //implementation("com.squareup.okio:okio-multiplatform:$okio_version")
+    //implementation("com.squareup.okio:okio-multiplatform:2.10.0")
 }
 ```
