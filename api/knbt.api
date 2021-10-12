@@ -714,19 +714,6 @@ public final class net/benwoodworth/knbt/StringifiedNbtKt {
 	public static synthetic fun StringifiedNbt$default (Lnet/benwoodworth/knbt/StringifiedNbt;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lnet/benwoodworth/knbt/StringifiedNbt;
 }
 
-public final class net/benwoodworth/knbt/internal/NbtDecodingException : net/benwoodworth/knbt/internal/NbtException {
-}
-
-public final class net/benwoodworth/knbt/internal/NbtEncodingException : net/benwoodworth/knbt/internal/NbtException {
-}
-
-public abstract class net/benwoodworth/knbt/internal/NbtException : kotlinx/serialization/SerializationException {
-	public synthetic fun <init> (Ljava/lang/String;Lnet/benwoodworth/knbt/internal/NbtPath;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (Ljava/lang/String;Lnet/benwoodworth/knbt/internal/NbtPath;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	protected abstract fun getCoding ()Ljava/lang/String;
-	public fun getMessage ()Ljava/lang/String;
-}
-
 public final class net/benwoodworth/knbt/internal/NbtTagType : java/lang/Enum {
 	public static final field TAG_Byte Lnet/benwoodworth/knbt/internal/NbtTagType;
 	public static final field TAG_Byte_Array Lnet/benwoodworth/knbt/internal/NbtTagType;
