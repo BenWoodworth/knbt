@@ -21,7 +21,7 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 
 ## Serialization
 
-`Nbt` and `StringifiedNbt` are be used to encode/decode `@Serializable` data.
+`Nbt` and `StringifiedNbt` are used to encode/decode `@Serializable` data.
 
 ### Configuration
 
