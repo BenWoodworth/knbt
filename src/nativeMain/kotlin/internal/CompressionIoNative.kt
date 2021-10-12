@@ -85,7 +85,8 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
                     throw ZlibException(Z_DATA_ERROR, strm)
                 }
                 Z_DATA_ERROR,
-                Z_MEM_ERROR -> {
+                Z_MEM_ERROR,
+                -> {
                     inflateEnd(strm.ptr)
                     throw ZlibException(ret, strm)
                 }

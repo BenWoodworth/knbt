@@ -55,7 +55,7 @@ public sealed class StringifiedNbt constructor(
  */
 public fun StringifiedNbt(
     from: StringifiedNbt = StringifiedNbt.Default,
-    builderAction: StringifiedNbtBuilder.() -> Unit
+    builderAction: StringifiedNbtBuilder.() -> Unit,
 ): StringifiedNbt {
     val builder = StringifiedNbtBuilder(from)
     builder.builderAction()

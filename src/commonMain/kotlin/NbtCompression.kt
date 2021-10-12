@@ -1,14 +1,9 @@
 package net.benwoodworth.knbt
 
-import net.benwoodworth.knbt.internal.NbtDecodingException
-import net.benwoodworth.knbt.internal.asGzipSink
-import net.benwoodworth.knbt.internal.asGzipSource
-import net.benwoodworth.knbt.internal.asZlibSink
-import net.benwoodworth.knbt.internal.asZlibSource
+import net.benwoodworth.knbt.internal.*
 import okio.BufferedSource
 import okio.Sink
 import okio.Source
-import okio.buffer
 
 public abstract class NbtCompression private constructor() {
     internal abstract fun decompress(source: Source): Source

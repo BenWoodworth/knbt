@@ -67,7 +67,7 @@ internal abstract class AbstractNbtEncoder : AbstractEncoder(), NbtEncoder, Comp
     final override fun encodeNbtTagElement(
         descriptor: SerialDescriptor,
         index: Int,
-        value: NbtTag
+        value: NbtTag,
     ) {
         if (encodeElement(descriptor, index)) encodeNbtTag(value)
     }
