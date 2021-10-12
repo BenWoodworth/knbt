@@ -200,9 +200,9 @@ internal class DefaultNbtEncoder(
             TAG_String -> writer.writeString((value as NbtString).value)
             TAG_Compound -> {
                 writer.beginCompound()
-                (value as NbtCompound).forEach { entry ->
-                    writer.beginCompoundEntry(entry.value.type, entry.key)
-                    writeTag(entry.value)
+                (value as NbtCompound).forEach { (key, value) ->
+                    writer.beginCompoundEntry(value.type, key)
+                    writeTag(value)
                 }
                 writer.endCompound()
             }
