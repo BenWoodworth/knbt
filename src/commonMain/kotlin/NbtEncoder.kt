@@ -6,6 +6,7 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
+import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.AbstractEncoder
@@ -93,10 +94,14 @@ internal abstract class AbstractNbtEncoder : AbstractEncoder(), NbtEncoder, Comp
             ByteArraySerializer() -> encodeByteArray(value as ByteArray)
             IntArraySerializer() -> encodeIntArray(value as IntArray)
             LongArraySerializer() -> encodeLongArray(value as LongArray)
-            is PolymorphicSerializer<*> -> when (serializer.baseClass) {
-                NbtTag::class -> encodeNbtTag(value as NbtTag)
-                else -> throw NbtEncodingException("Polymorphic serialization is not yet supported")
+            else -> when {
+                serializer is PolymorphicSerializer && serializer.baseClass === NbtTag::class -> {
+                    encodeNbtTag(value as NbtTag)
+                }
+                serializer.descriptor.kind is PolymorphicKind -> {
+                    throw NbtEncodingException("Polymorphic serialization is not yet supported")
+                }
+                else -> super<AbstractEncoder>.encodeSerializableValue(serializer, value)
             }
-            else -> super<AbstractEncoder>.encodeSerializableValue(serializer, value)
         }
 }
