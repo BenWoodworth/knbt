@@ -28,22 +28,21 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 ```kotlin
 import net.benwoodworth.knbt.*
 
-// variant and compression are required
 val nbt = Nbt {
-    variant = NbtVariant.Java // Java, Bedrock, BedrockNetwork
-    compression = NbtCompression.None // None, Gzip, Zlib
-    compressionLevel = null // in 0..9
-    encodeDefaults = false
-    ignoreUnknownKeys = false
-    serializersModule = EmptySerializersModule
+    variant = NbtVariant. // Java, Bedrock, BedrockNetwork
+    compression = NbtCompression. // None, Gzip, Zlib
+    //compressionLevel = null // in 0..9
+    //encodeDefaults = false
+    //ignoreUnknownKeys = false
+    //serializersModule = EmptySerializersModule
 }
 
 val snbt = StringifiedNbt {
-    prettyPrint = false
-    prettyPrintIndent = "    "
-    encodeDefaults = false
-    ignoreUnknownKeys = false
-    serializersModule = EmptySerializersModule
+    //prettyPrint = false
+    //prettyPrintIndent = "    "
+    //encodeDefaults = false
+    //ignoreUnknownKeys = false
+    //serializersModule = EmptySerializersModule
 }
 ```
 
