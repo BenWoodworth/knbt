@@ -21,7 +21,9 @@ public sealed interface NbtTag {
     public val type: NbtTagType // TODO Make internal
 
     public companion object {
-        public fun serializer(): KSerializer<NbtTag> = PolymorphicSerializer(NbtTag::class)
+        private val serializer = PolymorphicSerializer(NbtTag::class)
+
+        public fun serializer(): KSerializer<NbtTag> = serializer
     }
 }
 
