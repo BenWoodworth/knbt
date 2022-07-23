@@ -32,7 +32,7 @@ public inline fun <reified T> Nbt.encodeToStream(value: T, output: OutputStream)
  */
 @OptIn(OkioApi::class)
 public fun <T> Nbt.decodeFromStream(deserializer: DeserializationStrategy<T>, input: InputStream): T =
-    decodeFromSource(deserializer, input.source())
+    this.decodeFromSource(deserializer, input.source())
 
 /**
  * Decode NBT from an [InputStream].

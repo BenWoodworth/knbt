@@ -34,7 +34,7 @@ val nbt = Nbt {
     //compressionLevel = null // in 0..9
     //encodeDefaults = false
     //ignoreUnknownKeys = false
-    //serializersModule = EmptySerializersModule
+    //serializersModule = EmptySerializersModule()
 }
 
 val snbt = StringifiedNbt {
@@ -42,7 +42,7 @@ val snbt = StringifiedNbt {
     //prettyPrintIndent = "    "
     //encodeDefaults = false
     //ignoreUnknownKeys = false
-    //serializersModule = EmptySerializersModule
+    //serializersModule = EmptySerializersModule()
 }
 ```
 

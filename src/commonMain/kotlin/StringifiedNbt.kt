@@ -16,7 +16,6 @@ public sealed class StringifiedNbt constructor(
     /**
      * The default instance of [StringifiedNbt] with default configuration.
      */
-    @OptIn(ExperimentalSerializationApi::class)
     @ThreadLocal
     public companion object Default : StringifiedNbt(
         configuration = StringifiedNbtConfiguration(
@@ -25,7 +24,7 @@ public sealed class StringifiedNbt constructor(
             prettyPrint = false,
             prettyPrintIndent = "    ",
         ),
-        serializersModule = EmptySerializersModule,
+        serializersModule = EmptySerializersModule(),
     )
 
     override fun <T> encodeToString(serializer: SerializationStrategy<T>, value: T): String =
