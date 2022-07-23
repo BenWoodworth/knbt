@@ -1,13 +1,10 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.ExperimentalNbtApi
-import net.benwoodworth.knbt.OkioApi
 import net.benwoodworth.knbt.internal.CharSource.ReadResult
 import net.benwoodworth.knbt.internal.CharSource.ReadResult.Companion.EOF
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import okio.Closeable
 
-@OptIn(OkioApi::class, ExperimentalNbtApi::class)
 internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeable {
     private companion object {
         // TODO https://youtrack.jetbrains.com/issue/KT-49065

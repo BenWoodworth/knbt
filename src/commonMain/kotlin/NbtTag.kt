@@ -143,7 +143,6 @@ public class NbtList<out T : NbtTag> private constructor(
     override fun toString(): String =
         content.joinToString(prefix = "[", postfix = "]", separator = ",")
 
-    @OptIn(UnsafeNbtApi::class)
     public companion object {
         @UnsafeNbtApi
         internal operator fun <T : NbtTag> invoke(content: List<T>): NbtList<T> = NbtList(content)

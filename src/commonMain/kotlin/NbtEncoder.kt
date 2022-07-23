@@ -1,7 +1,6 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer

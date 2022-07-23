@@ -12,10 +12,10 @@ System.getenv("GIT_REF")?.let { gitRef ->
 val isSnapshot = version.toString().contains("SNAPSHOT", true)
 
 plugins {
-    kotlin("multiplatform") version "1.5.31"
-    kotlin("plugin.serialization") version "1.5.31"
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.7.1"
-    id("org.jetbrains.dokka") version "1.5.0"
+    kotlin("multiplatform") version "1.7.10"
+    kotlin("plugin.serialization") version "1.7.10"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.11.0"
+    id("org.jetbrains.dokka") version "1.7.10"
     id("maven-publish")
     id("signing")
 }
@@ -64,7 +64,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinx_serialization_version")
-                implementation("com.squareup.okio:okio-multiplatform:$okio_version")
+                implementation("com.squareup.okio:okio:$okio_version")
             }
         }
         val commonTest by getting {
