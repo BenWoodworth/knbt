@@ -3,6 +3,9 @@ package net.benwoodworth.knbt
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.serializer
+import net.benwoodworth.knbt.okio.decodeFromBufferedSource
+import net.benwoodworth.knbt.okio.encodeToBufferedSink
+import okio.buffer
 import okio.sink
 import okio.source
 import java.io.InputStream
@@ -13,9 +16,9 @@ import java.io.OutputStream
  *
  * *Note*: It is the caller's responsibility to close the [output].
  */
-@OptIn(OkioApi::class)
+@OptIn(ExperimentalNbtApi::class)
 public fun <T> Nbt.encodeToStream(serializer: SerializationStrategy<T>, value: T, output: OutputStream): Unit =
-    encodeToSink(serializer, value, output.sink())
+    encodeToBufferedSink(serializer, value, output.sink().buffer())
 
 /**
  * Encode NBT to an [OutputStream].
@@ -30,9 +33,9 @@ public inline fun <reified T> Nbt.encodeToStream(value: T, output: OutputStream)
  *
  * *Note*: It is the caller's responsibility to close the [input].
  */
-@OptIn(OkioApi::class)
+@OptIn(ExperimentalNbtApi::class)
 public fun <T> Nbt.decodeFromStream(deserializer: DeserializationStrategy<T>, input: InputStream): T =
-    this.decodeFromSource(deserializer, input.source())
+    this.decodeFromBufferedSource(deserializer, input.source().buffer())
 
 /**
  * Decode NBT from an [InputStream].

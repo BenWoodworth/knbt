@@ -6,6 +6,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.file.nbtFiles
+import net.benwoodworth.knbt.okio.encodeToBufferedSink
 import okio.blackholeSink
 import okio.buffer
 import okio.use
@@ -14,7 +15,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 
-@OptIn(OkioApi::class)
+@OptIn(ExperimentalNbtApi::class)
 class BinaryNbtWriterTest {
     val nbt = Nbt {
         variant = NbtVariant.Java
@@ -158,7 +159,7 @@ class BinaryNbtWriterTest {
         nbtFiles.assertForEach { file ->
             TestSink(blackholeSink()).use { sink ->
                 @Suppress("UNCHECKED_CAST")
-                file.nbt.encodeToSink(file.valueSerializer as KSerializer<Any>, file.value, sink)
+                (file.nbt.encodeToBufferedSink(file.valueSerializer as KSerializer<Any>, file.value, sink.buffer()))
                 assertFalse(sink.isClosed, "Sink closed while decoding ${file.description}")
             }
         }

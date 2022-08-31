@@ -5,10 +5,9 @@ import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.BinaryNbtReader
 import net.benwoodworth.knbt.internal.BinaryNbtWriter
-import okio.Buffer
-import okio.Sink
-import okio.Source
-import okio.use
+import net.benwoodworth.knbt.okio.decodeFromBufferedSource
+import net.benwoodworth.knbt.okio.encodeToBufferedSink
+import okio.*
 
 public sealed class Nbt constructor(
     override val configuration: NbtConfiguration,
@@ -18,10 +17,17 @@ public sealed class Nbt constructor(
      * Serializes and encodes the given [value] to the [sink] using the given [serializer].
      *
      * *Note*: It is the caller's responsibility to close the [sink].
+     * @suppress
      */
-    @OkioApi
+    @Deprecated(
+        "Moved to match kotlinx.serialization's okio API",
+        ReplaceWith(
+            "this.encodeToBufferedSink<T>(serializer, value, sink)",
+            "net.benwoodworth.knbt.okio.encodeToBufferedSink"
+        )
+    )
     public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit =
-        BinaryNbtWriter(this, sink).use { writer ->
+        BinaryNbtWriter(this, sink.buffer()).use { writer ->
             encodeToNbtWriter(writer, serializer, value)
         }
 
@@ -29,20 +35,27 @@ public sealed class Nbt constructor(
      * Decodes and deserializes from the given [source] to a value of type [T] using the given [deserializer].
      *
      * *Note*: It is the caller's responsibility to close the [source].
+     * @suppress
      */
-    @OkioApi
+    @Deprecated(
+        "Moved to match kotlinx.serialization's okio API",
+        ReplaceWith(
+            "this.decodeFromBufferedSource<T>(deserializer, source)",
+            "net.benwoodworth.knbt.okio.decodeFromBufferedSource"
+        )
+    )
     public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T =
         BinaryNbtReader(this, source).use { reader ->
             decodeFromNbtReader(reader, deserializer)
         }
 
-    @OptIn(OkioApi::class)
+    @OptIn(ExperimentalNbtApi::class)
     override fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
-        Buffer().apply { encodeToSink(serializer, value, this) }.readByteArray()
+        Buffer().apply { encodeToBufferedSink(serializer, value, this) }.readByteArray()
 
-    @OptIn(OkioApi::class)
+    @OptIn(ExperimentalNbtApi::class)
     override fun <T> decodeFromByteArray(deserializer: DeserializationStrategy<T>, bytes: ByteArray): T =
-        decodeFromSource(deserializer, Buffer().apply { write(bytes) })
+        decodeFromBufferedSource(deserializer, Buffer().apply { write(bytes) })
 }
 
 private object DefaultNbt : Nbt(
@@ -152,8 +165,16 @@ private class NbtImpl(
  * Encode NBT to a [Sink].
  *
  * *Note*: It is the caller's responsibility to close the [sink].
+ * @suppress
  */
-@OkioApi
+@Deprecated(
+    "Moved to match kotlinx.serialization's okio API",
+    ReplaceWith(
+        "this.encodeToBufferedSink<T>(value, sink)",
+        "net.benwoodworth.knbt.okio.encodeToBufferedSink"
+    )
+)
+@Suppress("DEPRECATION")
 public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
     encodeToSink(serializersModule.serializer(), value, sink)
 
@@ -161,7 +182,15 @@ public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
  * Decode NBT from a [Source].
  *
  * *Note*: It is the caller's responsibility to close the [source].
+ * @suppress
  */
-@OkioApi
+@Deprecated(
+    "Moved to match kotlinx.serialization's okio API",
+    ReplaceWith(
+        "this.decodeFromBufferedSource<T>(source)",
+        "net.benwoodworth.knbt.okio.decodeFromBufferedSource"
+    )
+)
+@Suppress("DEPRECATION")
 public inline fun <reified T> Nbt.decodeFromSource(source: Source): T =
     decodeFromSource(serializersModule.serializer(), source)

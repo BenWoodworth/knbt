@@ -1,33 +1,32 @@
 package net.benwoodworth.knbt
 
 import net.benwoodworth.knbt.internal.*
+import okio.BufferedSink
 import okio.BufferedSource
-import okio.Sink
-import okio.Source
 
 public abstract class NbtCompression private constructor() {
-    internal abstract fun decompress(source: Source): Source
-    internal abstract fun compress(sink: Sink, level: Int?): Sink
+    internal abstract fun decompress(source: BufferedSource): BufferedSource
+    internal abstract fun compress(sink: BufferedSink, level: Int?): BufferedSink
 
     public companion object;
 
     public object None : NbtCompression() {
-        override fun decompress(source: Source): Source = source
-        override fun compress(sink: Sink, level: Int?): Sink = sink
+        override fun decompress(source: BufferedSource): BufferedSource = source
+        override fun compress(sink: BufferedSink, level: Int?): BufferedSink = sink
 
         override fun toString(): String = "None"
     }
 
     public object Gzip : NbtCompression() {
-        override fun decompress(source: Source): Source = source.asGzipSource()
-        override fun compress(sink: Sink, level: Int?): Sink = sink.asGzipSink(level ?: -1)
+        override fun decompress(source: BufferedSource): BufferedSource = source.asGzipSource()
+        override fun compress(sink: BufferedSink, level: Int?): BufferedSink = sink.asGzipSink(level ?: -1)
 
         override fun toString(): String = "Gzip"
     }
 
     public object Zlib : NbtCompression() {
-        override fun decompress(source: Source): Source = source.asZlibSource()
-        override fun compress(sink: Sink, level: Int?): Sink = sink.asZlibSink(level ?: -1)
+        override fun decompress(source: BufferedSource): BufferedSource = source.asZlibSource()
+        override fun compress(sink: BufferedSink, level: Int?): BufferedSink = sink.asZlibSink(level ?: -1)
 
         override fun toString(): String = "Zlib"
     }
@@ -58,7 +57,7 @@ internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression =
  *
  * @throws NbtDecodingException when unable to detect NbtCompression.
  */
-@OkioApi
+@ExperimentalNbtApi
 public fun NbtCompression.Companion.detect(source: BufferedSource): NbtCompression =
     detect(source.peek().readByte())
 

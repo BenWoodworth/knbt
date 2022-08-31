@@ -4,10 +4,14 @@ import okio.*
 import java.util.zip.Deflater
 import java.util.zip.Inflater
 
-internal actual fun Source.asGzipSource(): Source = this.gzip()
+internal actual fun BufferedSource.asGzipSource(): BufferedSource =
+    this.gzip().buffer()
 
-internal actual fun Sink.asGzipSink(level: Int): Sink = this.gzip().apply { deflater.setLevel(level) }
+internal actual fun BufferedSink.asGzipSink(level: Int): BufferedSink =
+    this.gzip().apply { deflater.setLevel(level) }.buffer()
 
-internal actual fun Source.asZlibSource(): Source = inflate(Inflater())
+internal actual fun BufferedSource.asZlibSource(): BufferedSource =
+    inflate(Inflater()).buffer()
 
-internal actual fun Sink.asZlibSink(level: Int): Sink = deflate(Deflater(level, false))
+internal actual fun BufferedSink.asZlibSink(level: Int): BufferedSink =
+    deflate(Deflater(level, false)).buffer()

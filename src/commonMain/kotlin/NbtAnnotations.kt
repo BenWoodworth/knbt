@@ -24,4 +24,12 @@ public annotation class ExperimentalNbtApi
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS)
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Deprecated(
+    "Okio is now officially supported by kotlinx.serialization, so it's no longer temporary",
+    ReplaceWith(
+        "ExperimentalNbtApi",
+        "net.benwoodworth.knbt.ExperimentalNbtApi"
+    ),
+    DeprecationLevel.ERROR,
+)
 public annotation class OkioApi

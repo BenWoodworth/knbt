@@ -9,17 +9,17 @@ import okio.*
 import platform.posix.free
 import platform.zlib.*
 
-internal actual fun Source.asGzipSource(): Source =
-    ZlibSource(this.buffer())
+internal actual fun BufferedSource.asGzipSource(): BufferedSource =
+    ZlibSource(this).buffer()
 
-internal actual fun Sink.asGzipSink(level: Int): Sink =
-    ZlibSink(this.buffer(), true, level)
+internal actual fun BufferedSink.asGzipSink(level: Int): BufferedSink =
+    ZlibSink(this, true, level).buffer()
 
-internal actual fun Source.asZlibSource(): Source =
-    ZlibSource(this.buffer())
+internal actual fun BufferedSource.asZlibSource(): BufferedSource =
+    ZlibSource(this).buffer()
 
-internal actual fun Sink.asZlibSink(level: Int): Sink =
-    ZlibSink(this.buffer(), false, level)
+internal actual fun BufferedSink.asZlibSink(level: Int): BufferedSink =
+    ZlibSink(this, false, level).buffer()
 
 // TODO Check this over. It worked 1st try after porting from C and I'm suspicious...
 private class ZlibSource(private val source: BufferedSource) : Source by source {

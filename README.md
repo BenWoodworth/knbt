@@ -58,8 +58,8 @@ nbtTag = nbt.encodeToNbtTag(data)
 data = nbt.decodeFromNbtTag(nbtTag)
 
 // Okio Sink/Source (Multiplatform)
-nbt.encodeToSink(data, sink)
-data = nbt.decodeFromSource(source)
+nbt.encodeToBufferedSink(data, sink)
+data = nbt.decodeFromBufferedSource(source)
 
 // OutputStream/InputStream (JVM)
 nbt.encodeToStream(data, outputStream)

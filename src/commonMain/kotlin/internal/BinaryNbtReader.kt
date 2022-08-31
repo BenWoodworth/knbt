@@ -6,7 +6,7 @@ import okio.Closeable
 import okio.Source
 import okio.buffer
 
-@OptIn(OkioApi::class)
+@OptIn(ExperimentalNbtApi::class)
 internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable {
     private var compoundNesting = 0
     private var readRootEntry = false
@@ -33,7 +33,7 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
         }
 
         this.source = variant.getBinarySource(
-            compression.decompress(nonClosingSource).buffer()
+            compression.decompress(nonClosingSource)
         )
     }
 
