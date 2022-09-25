@@ -1,6 +1,6 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.assertForEach
+import net.benwoodworth.knbt.parameterize
 import okio.Buffer
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -8,62 +8,58 @@ import kotlin.test.assertEquals
 
 @OptIn(ExperimentalUnsignedTypes::class)
 class LittleEndianBase128Test {
-    private val leb128TestValues: List<Pair<ULong, UByteArray>> = listOf(
-        0b00000000uL to ubyteArrayOf(0b00000000u),
-        0b00000001uL to ubyteArrayOf(0b00000001u),
-        0b01111111uL to ubyteArrayOf(0b01111111u),
-        0b10000000uL to ubyteArrayOf(0b10000000u, 0b00000001u),
-        0b11111111uL to ubyteArrayOf(0b11111111u, 0b00000001u),
-        0b1111111111111111uL to ubyteArrayOf(0b11111111u, 0b11111111u, 0b00000011u),
+    private class LEB128Parameters(val ulong: ULong, val bytes: UByteArray)
+
+    private val leb128TestValues: List<LEB128Parameters> = listOf(
+        LEB128Parameters(0b00000000uL, ubyteArrayOf(0b00000000u)),
+        LEB128Parameters(0b00000001uL, ubyteArrayOf(0b00000001u)),
+        LEB128Parameters(0b01111111uL, ubyteArrayOf(0b01111111u)),
+        LEB128Parameters(0b10000000uL, ubyteArrayOf(0b10000000u, 0b00000001u)),
+        LEB128Parameters(0b11111111uL, ubyteArrayOf(0b11111111u, 0b00000001u)),
+        LEB128Parameters(0b1111111111111111uL, ubyteArrayOf(0b11111111u, 0b11111111u, 0b00000011u)),
     )
 
     private fun UByteArray.toBinary(): Array<String> =
         map { it.toString(2).padStart(8, '0') }.toTypedArray()
 
     @Test
-    fun Should_write_LEB128_correctly() {
-        leb128TestValues.assertForEach { (ulong, expectedBytes) ->
-            val actualBytes = Buffer()
-                .apply { writeLEB128(ulong) }
-                .readByteArray().toUByteArray()
+    fun Should_write_LEB128_correctly() = parameterize(leb128TestValues, { ulong }) {
+        val actualBytes = Buffer()
+            .apply { writeLEB128(ulong) }
+            .readByteArray().toUByteArray()
 
-            assertContentEquals(expectedBytes.toBinary(), actualBytes.toBinary(), "Wrote $ulong incorrectly")
-        }
+        assertContentEquals(bytes.toBinary(), actualBytes.toBinary())
     }
 
     @Test
-    fun Should_read_LEB128_correctly() {
-        leb128TestValues.assertForEach { (expectedULong, bytes) ->
-            val actualULong = Buffer()
-                .apply { write(bytes.toByteArray()) }
-                .readLEB128(10)
+    fun Should_read_LEB128_correctly() = parameterize(leb128TestValues, { bytes.contentToString() }) {
+        val actualULong = Buffer()
+            .apply { write(bytes.toByteArray()) }
+            .readLEB128(10)
 
-            assertEquals(expectedULong, actualULong, "Read ${bytes.toBinary().contentToString()} incorrectly")
-        }
+        assertEquals(ulong, actualULong)
     }
 
-    private val zigZagTestValues: List<Pair<Long, ULong>> = listOf(
-        0L to 0uL,
-        -1L to 1uL,
-        1L to 2uL,
-        -2L to 3uL,
-        2147483647L to 4294967294uL,
-        -2147483648L to 4294967295uL,
-        Long.MAX_VALUE to ULong.MAX_VALUE - 1uL,
-        Long.MIN_VALUE to ULong.MAX_VALUE
+    private data class ZigZagParameters(val long: Long, val zigZagULong: ULong)
+
+    private val zigZagTestValues = listOf(
+        ZigZagParameters(0L, 0uL),
+        ZigZagParameters(-1L, 1uL),
+        ZigZagParameters(1L, 2uL),
+        ZigZagParameters(-2L, 3uL),
+        ZigZagParameters(2147483647L, 4294967294uL),
+        ZigZagParameters(-2147483648L, 4294967295uL),
+        ZigZagParameters(Long.MAX_VALUE, ULong.MAX_VALUE - 1uL),
+        ZigZagParameters(Long.MIN_VALUE, ULong.MAX_VALUE),
     )
 
     @Test
-    fun Should_ZigZag_encode_correctly() {
-        zigZagTestValues.assertForEach { (long, ulong) ->
-            assertEquals(ulong, long.zigZagEncode(), "Should ZigZag encode $long to $ulong")
-        }
+    fun Should_ZigZag_encode_correctly() = parameterize(zigZagTestValues, { zigZagULong }) {
+        assertEquals(zigZagULong, long.zigZagEncode())
     }
 
     @Test
-    fun Should_ZigZag_decode_correctly() {
-        zigZagTestValues.assertForEach { (long, ulong) ->
-            assertEquals(long, ulong.zigZagDecode(), "Should ZigZag decode $ulong to $long")
-        }
+    fun Should_ZigZag_decode_correctly() = parameterize(zigZagTestValues, { "$zigZagULong" }) {
+        assertEquals(long, zigZagULong.zigZagDecode())
     }
 }

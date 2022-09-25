@@ -11,53 +11,48 @@ import kotlin.test.*
 @OptIn(OkioApi::class)
 class BinaryNbtReaderTest {
     @Test
-    fun Should_decode_to_class_correctly() {
-        nbtFiles.assertForEach { file ->
-            assertEquals(
-                expected = file.value,
-                actual = file.asSource().use { source ->
-                    file.nbt.decodeFromSource(file.valueSerializer, source)
-                },
-                message = "Read class incorrectly while decoding ${file.description}"
-            )
+    fun Should_decode_to_class_correctly() = parameterize(nbtFiles) {
+        assertEquals(
+            expected = value,
+            actual = asSource().use { source ->
+                nbt.decodeFromSource(valueSerializer, source)
+            },
+        )
+    }
+
+    @Test
+    fun Should_decode_to_NbtTag_correctly() = parameterize(nbtFiles) {
+        assertEquals(
+            expected = nbtTag,
+            actual = asSource().use { source ->
+                nbt.decodeFromSource(NbtTag.serializer(), source)
+            },
+        )
+    }
+
+    @Test
+    fun Should_not_read_more_from_source_than_necessary() = parameterize(nbtFiles) {
+        TestSource(asSource()).use { source ->
+            nbt.decodeFromSource(NbtTag.serializer(), source)
+            assertFalse(source.readPastEnd)
         }
     }
 
     @Test
-    fun Should_decode_to_NbtTag_correctly() {
-        nbtFiles.assertForEach { file ->
-            assertEquals(
-                expected = file.nbtTag,
-                actual = file.asSource().use { source ->
-                    file.nbt.decodeFromSource(NbtTag.serializer(), source)
-                },
-                message = "Read NbtTag incorrectly while decoding ${file.description}"
-            )
-        }
-    }
-
-    @Test
-    fun Should_not_read_more_from_source_than_necessary() {
-        nbtFiles.assertForEach { file ->
-            TestSource(file.asSource()).use { source ->
-                file.nbt.decodeFromSource(NbtTag.serializer(), source)
-                assertFalse(source.readPastEnd, "Source read past end while decoding ${file.description}")
-            }
-        }
-    }
-
-    @Test
-    fun Should_not_close_source() {
-        nbtFiles.assertForEach { file ->
-            TestSource(file.asSource()).use { source ->
-                file.nbt.decodeFromSource(NbtTag.serializer(), source)
-                assertFalse(source.isClosed, "Source closed while decoding ${file.description}")
-            }
+    fun Should_not_close_source() = parameterize(nbtFiles) {
+        TestSource(asSource()).use { source ->
+            nbt.decodeFromSource(NbtTag.serializer(), source)
+            assertFalse(source.isClosed)
         }
     }
 
     @Test
     fun Should_fail_with_incorrect_NbtCompression_and_specify_mismatched_compressions() {
+        data class Parameters(
+            val configuredCompression: NbtCompression,
+            val fileCompression: NbtCompression,
+        )
+
         val data = buildNbtCompound("root") {
             put("string", "String!")
         }
@@ -68,14 +63,18 @@ class BinaryNbtReaderTest {
             NbtCompression.Zlib,
         )
 
-        fun test(configured: NbtCompression, actual: NbtCompression) {
+        val mismatchedCompressions = compressions
+            .flatMap { a -> compressions.map { b -> Parameters(a, b) } }
+            .filter { (a, b) -> a !== b }
+
+        parameterize(mismatchedCompressions, { "Configured: $configuredCompression, File: $fileCompression" }) {
             val decodingNbt = Nbt {
                 variant = Java
-                compression = configured
+                compression = configuredCompression
             }
 
             val encodingNbt = Nbt(decodingNbt) {
-                compression = actual
+                compression = fileCompression
             }
 
             val encoded = encodingNbt.encodeToByteArray(NbtTag.serializer(), data)
@@ -88,19 +87,12 @@ class BinaryNbtReaderTest {
             assertNotNull(errorMessage)
             assertContains(
                 errorMessage,
-                configured.toString(),
-                message = "Error message should contain configured compression name"
+                configuredCompression.toString(),
             )
             assertContains(
                 errorMessage,
-                actual.toString(),
-                message = "Error message should contain actual compression name"
+                fileCompression.toString(),
             )
         }
-
-        compressions
-            .flatMap { a -> compressions.map { b -> a to b } }
-            .filter { (a, b) -> a !== b }
-            .assertForEach { (a, b) -> test(a, b) }
     }
 }

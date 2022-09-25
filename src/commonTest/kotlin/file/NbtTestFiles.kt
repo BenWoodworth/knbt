@@ -28,6 +28,8 @@ class NbtTestFile<T>(
     fun toByteArray(): ByteArray = bytes.copyOf()
 
     fun asSource(): Source = bytes.asSource()
+
+    override fun toString(): String = description
 }
 
 val nbtFiles = listOf(

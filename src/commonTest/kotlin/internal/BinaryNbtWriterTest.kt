@@ -22,58 +22,54 @@ class BinaryNbtWriterTest {
     }
 
     @Test
-    fun Should_encode_from_class_correctly() {
-        nbtFiles.assertForEach { file ->
-            @Suppress("UNCHECKED_CAST")
-            val out = file.nbt.encodeToByteArray(file.valueSerializer as KSerializer<Any>, file.value)
+    fun Should_encode_from_class_correctly() = parameterize(nbtFiles) {
+        @Suppress("UNCHECKED_CAST")
+        val out = nbt.encodeToByteArray(valueSerializer as KSerializer<Any>, value)
 
-            val outCompression = try {
-                NbtCompression.detect(out.asSource().buffer())
-            } catch (t: Throwable) {
-                throw Exception("Unable to check compression type", t)
-            }
-
-            assertEquals(
-                file.nbt.configuration.compression,
-                outCompression,
-                "Encoded with wrong compression: ${file.description}",
-            )
-
-            val tag = try {
-                file.nbt.decodeFromByteArray(NbtTag.serializer(), out)
-            } catch (t: Throwable) {
-                throw Exception("Unable to decode compressed value", t)
-            }
-
-            assertEquals(file.nbtTag, tag, "Unable to decode encoded data correctly: ${file.description}")
+        val outCompression = try {
+            NbtCompression.detect(out.asSource().buffer())
+        } catch (t: Throwable) {
+            throw Exception("Unable to check compression type", t)
         }
+
+        assertEquals(
+            nbt.configuration.compression,
+            outCompression,
+            "Encoded with wrong compression",
+        )
+
+        val tag = try {
+            nbt.decodeFromByteArray(NbtTag.serializer(), out)
+        } catch (t: Throwable) {
+            throw Exception("Unable to decode compressed value", t)
+        }
+
+        assertEquals(nbtTag, tag, "Unable to decode encoded data correctly")
     }
 
     @Test
-    fun Should_encode_from_NbtTag_correctly() {
-        nbtFiles.assertForEach { file ->
-            val out = file.nbt.encodeToByteArray(NbtTag.serializer(), file.nbtTag)
+    fun Should_encode_from_NbtTag_correctly() = parameterize(nbtFiles) {
+        val out = nbt.encodeToByteArray(NbtTag.serializer(), nbtTag)
 
-            val outCompression = try {
-                NbtCompression.detect(out.asSource().buffer())
-            } catch (t: Throwable) {
-                throw Exception("Unable to check compression type", t)
-            }
-
-            assertEquals(
-                file.nbt.configuration.compression,
-                outCompression,
-                "Encoded with wrong compression: ${file.description}",
-            )
-
-            val tag = try {
-                file.nbt.decodeFromByteArray(NbtTag.serializer(), out)
-            } catch (t: Throwable) {
-                throw Exception("Unable to decode compressed value", t)
-            }
-
-            assertEquals(file.nbtTag, tag, "Unable to decode encoded data correctly: ${file.description}")
+        val outCompression = try {
+            NbtCompression.detect(out.asSource().buffer())
+        } catch (t: Throwable) {
+            throw Exception("Unable to check compression type", t)
         }
+
+        assertEquals(
+            nbt.configuration.compression,
+            outCompression,
+            "Encoded with wrong compression",
+        )
+
+        val tag = try {
+            nbt.decodeFromByteArray(NbtTag.serializer(), out)
+        } catch (t: Throwable) {
+            throw Exception("Unable to decode compressed value", t)
+        }
+
+        assertEquals(nbtTag, tag, "Unable to decode encoded data correctly")
     }
 
     @Test
@@ -154,13 +150,11 @@ class BinaryNbtWriterTest {
     }
 
     @Test
-    fun Should_not_close_sink() {
-        nbtFiles.assertForEach { file ->
-            TestSink(blackholeSink()).use { sink ->
-                @Suppress("UNCHECKED_CAST")
-                file.nbt.encodeToSink(file.valueSerializer as KSerializer<Any>, file.value, sink)
-                assertFalse(sink.isClosed, "Sink closed while decoding ${file.description}")
-            }
+    fun Should_not_close_sink() = parameterize(nbtFiles) {
+        TestSink(blackholeSink()).use { sink ->
+            @Suppress("UNCHECKED_CAST")
+            nbt.encodeToSink(valueSerializer as KSerializer<Any>, value, sink)
+            assertFalse(sink.isClosed, "Sink closed while decoding")
         }
     }
 }

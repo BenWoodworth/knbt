@@ -72,22 +72,40 @@ fun ByteArray.asSource(): Source = object : Source {
     override fun timeout(): Timeout = Timeout.NONE
 }
 
-fun <T> Iterable<T>.assertForEach(assert: (element: T) -> Unit) {
-    val throws = mutableListOf<Throwable>()
-
-    forEach { element ->
-        try {
-            assert(element)
+inline fun <T> parameterize(
+    parameters: List<T>,
+    description: T.() -> Any? = { this },
+    assert: T.() -> Unit,
+) {
+    val errors = parameters.map { parameter ->
+        val error = try {
+            parameter.assert()
+            null
         } catch (t: Throwable) {
-            throws += t
-            t.printStackTrace()
-            println()
+            t
         }
+
+        parameter to error
     }
 
-    if (throws.any()) {
-        throw AssertionError("Exceptions thrown: ${throws.size}")
+    errors.forEach { (parameter, error) ->
+        val passOrFail = if (error == null) "PASS" else "FAIL"
+
+        println("[$passOrFail] ${description(parameter)}")
+        if (error != null) {
+            if (error is AssertionError) {
+                println("- ${error.message}")
+            } else {
+                error.printStackTrace()
+            }
+        }
+        if (error != null) println()
     }
+
+    val failCount = errors.count { (_, error) -> error != null }
+    println("Passed: ${parameters.size - failCount}/${parameters.size}")
+
+    if (failCount > 0) fail()
 }
 
 /**
