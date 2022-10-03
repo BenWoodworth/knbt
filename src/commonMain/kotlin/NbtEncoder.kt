@@ -91,12 +91,16 @@ internal abstract class AbstractNbtEncoder : AbstractEncoder(), NbtEncoder, Comp
 
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T): Unit =
         when (serializer) {
-            NbtTag.serializer() -> encodeNbtTag(value as NbtTag)
             ByteArraySerializer() -> encodeByteArray(value as ByteArray)
             IntArraySerializer() -> encodeIntArray(value as IntArray)
             LongArraySerializer() -> encodeLongArray(value as LongArray)
-            else -> when (serializer.descriptor.kind) {
-                is PolymorphicKind -> throw NbtEncodingException("Polymorphic serialization is not yet supported")
+            else -> when {
+                serializer is PolymorphicSerializer && serializer.baseClass == NbtTag::class -> {
+                    encodeNbtTag(value as NbtTag)
+                }
+                serializer.descriptor.kind is PolymorphicKind -> {
+                    throw NbtEncodingException("Polymorphic serialization is not yet supported")
+                }
                 else -> super<AbstractEncoder>.encodeSerializableValue(serializer, value)
             }
         }

@@ -6,12 +6,14 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
+import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.AbstractDecoder
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import net.benwoodworth.knbt.internal.NbtDecodingException
+import net.benwoodworth.knbt.internal.NbtEncodingException
 
 public sealed interface NbtDecoder : Decoder {
     public val nbt: NbtFormat
@@ -81,10 +83,14 @@ internal abstract class AbstractNbtDecoder : AbstractDecoder(), NbtDecoder, Comp
             ByteArraySerializer() -> decodeByteArray() as T
             IntArraySerializer() -> decodeIntArray() as T
             LongArraySerializer() -> decodeLongArray() as T
-            is PolymorphicSerializer<*> -> when (deserializer.baseClass) {
-                NbtTag::class -> decodeNbtTag() as T
-                else -> throw NbtDecodingException("Polymorphic serialization is not yet supported")
+            else -> when {
+                deserializer is PolymorphicSerializer && deserializer.baseClass == NbtTag::class -> {
+                    decodeNbtTag() as T
+                }
+                deserializer.descriptor.kind is PolymorphicKind -> {
+                    throw NbtEncodingException("Polymorphic serialization is not yet supported")
+                }
+                else -> super<AbstractDecoder>.decodeSerializableValue(deserializer)
             }
-            else -> super<AbstractDecoder>.decodeSerializableValue(deserializer)
         }
 }
