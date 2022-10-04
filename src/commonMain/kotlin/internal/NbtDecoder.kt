@@ -219,7 +219,6 @@ private abstract class CompoundNbtDecoder : BaseNbtDecoder() {
     override fun getPathNode(): NbtPath.Node =
         NbtPath.NameNode(compoundEntryInfo.name, entryType)
 
-    @OptIn(ExperimentalSerializationApi::class)
     override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endCompound()
 }
 
@@ -237,7 +236,6 @@ private class ClassNbtDecoder(
         reader.beginCompound()
     }
 
-    @OptIn(ExperimentalNbtApi::class)
     private fun handleUnknownKey(info: NbtReader.CompoundEntryInfo) {
         fun discardTagAndGetTypeName(): String =
             if (info.type == TAG_List) {
@@ -360,7 +358,6 @@ private class ListNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginListEntry()
 
-    @OptIn(ExperimentalSerializationApi::class)
     override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endList()
 }
 
@@ -379,7 +376,6 @@ private class ByteArrayNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginByteArrayEntry()
 
-    @OptIn(ExperimentalSerializationApi::class)
     override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endByteArray()
 }
 
@@ -398,7 +394,6 @@ private class IntArrayNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginIntArrayEntry()
 
-    @OptIn(ExperimentalSerializationApi::class)
     override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endIntArray()
 }
 
@@ -417,6 +412,5 @@ private class LongArrayNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginLongArrayEntry()
 
-    @OptIn(ExperimentalSerializationApi::class)
     override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endLongArray()
 }

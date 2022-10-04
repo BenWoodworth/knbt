@@ -146,7 +146,7 @@ public final class net/benwoodworth/knbt/NbtCompound : java/util/Map, kotlin/jvm
 	public fun containsValue (Lnet/benwoodworth/knbt/NbtTag;)Z
 	public final fun entrySet ()Ljava/util/Set;
 	public fun equals (Ljava/lang/Object;)Z
-	public synthetic fun get (Ljava/lang/Object;)Ljava/lang/Object;
+	public final synthetic fun get (Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun get (Ljava/lang/Object;)Lnet/benwoodworth/knbt/NbtTag;
 	public fun get (Ljava/lang/String;)Lnet/benwoodworth/knbt/NbtTag;
 	public fun getEntries ()Ljava/util/Set;
@@ -467,6 +467,7 @@ public final class net/benwoodworth/knbt/NbtList$Companion {
 public final class net/benwoodworth/knbt/NbtListBuilder {
 	public fun <init> ()V
 	public fun <init> (I)V
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun add (Lnet/benwoodworth/knbt/NbtTag;)Z
 	public final fun build ()Lnet/benwoodworth/knbt/NbtList;
 }

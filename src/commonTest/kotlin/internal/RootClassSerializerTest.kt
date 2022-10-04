@@ -2,14 +2,12 @@ package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.buildNbtCompound
 import net.benwoodworth.knbt.put
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalNbtApi::class)
 class RootClassSerializerTest {
     @Serializable
     @SerialName("root-name")

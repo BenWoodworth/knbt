@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.Nbt
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_Compound
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_End
@@ -8,7 +7,6 @@ import okio.Closeable
 import okio.Sink
 import okio.buffer
 
-@OptIn(ExperimentalNbtApi::class)
 internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
     private var compoundNesting = 0
     private var wroteRootEntry = false

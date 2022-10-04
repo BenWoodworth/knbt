@@ -3,13 +3,11 @@
 package net.benwoodworth.knbt.internal
 
 import data.testTag
-import kotlinx.serialization.ExperimentalSerializationApi
 import net.benwoodworth.knbt.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DefaultNbtEncoderTest {
-    @OptIn(ExperimentalSerializationApi::class)
     private fun assertEncodesCorrectly(tag: NbtTag, expectedLog: String) {
         val stringBuilder = StringBuilder()
         var actualTag: NbtTag? = null

@@ -12,10 +12,10 @@ System.getenv("GIT_REF")?.let { gitRef ->
 val isSnapshot = version.toString().contains("SNAPSHOT", true)
 
 plugins {
-    kotlin("multiplatform") version "1.5.31"
-    kotlin("plugin.serialization") version "1.5.31"
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.7.1"
-    id("org.jetbrains.dokka") version "1.5.0"
+    kotlin("multiplatform") version "1.7.20"
+    kotlin("plugin.serialization") version "1.7.20"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.11.1"
+    id("org.jetbrains.dokka") version "1.7.10"
     id("maven-publish")
     id("signing")
 }
@@ -55,7 +55,6 @@ kotlin {
     sourceSets {
         configureEach {
             languageSettings.apply {
-                optIn("kotlin.RequiresOptIn")
                 optIn("kotlin.contracts.ExperimentalContracts")
                 optIn("net.benwoodworth.knbt.InternalNbtApi")
             }

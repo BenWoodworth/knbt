@@ -8,7 +8,6 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-@OptIn(ExperimentalNbtApi::class)
 class StringifiedNbtReaderTest {
     private fun check(expected: NbtTag, snbt: String) {
         assertEquals(

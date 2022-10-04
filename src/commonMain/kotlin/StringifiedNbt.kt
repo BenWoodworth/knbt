@@ -16,7 +16,7 @@ public sealed class StringifiedNbt constructor(
     /**
      * The default instance of [StringifiedNbt] with default configuration.
      */
-    @OptIn(ExperimentalNbtApi::class, ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class)
     @ThreadLocal
     public companion object Default : StringifiedNbt(
         configuration = StringifiedNbtConfiguration(
