@@ -39,7 +39,7 @@ public inline fun <reified T> NbtFormat.decodeFromNbtTag(tag: NbtTag): T =
 
 @OptIn(ExperimentalSerializationApi::class)
 internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: SerializationStrategy<T>, value: T) {
-    val rootSerializer = if (serializer.descriptor.kind == StructureKind.CLASS) {
+    val rootSerializer = if (serializer.descriptor.kind == StructureKind.CLASS && serializer !== NbtTag.serializer()) {
         RootClassSerializer(serializer)
     } else {
         serializer
@@ -51,11 +51,12 @@ internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: Seri
 
 @OptIn(ExperimentalSerializationApi::class)
 internal fun <T> NbtFormat.decodeFromNbtReader(reader: NbtReader, deserializer: DeserializationStrategy<T>): T {
-    val rootDeserializer = if (deserializer.descriptor.kind == StructureKind.CLASS) {
-        RootClassDeserializer(deserializer)
-    } else {
-        deserializer
-    }
+    val rootDeserializer =
+        if (deserializer.descriptor.kind == StructureKind.CLASS && deserializer !== NbtTag.serializer()) {
+            RootClassDeserializer(deserializer)
+        } else {
+            deserializer
+        }
 
     return NbtDecoder(this, reader).decodeSerializableValue(rootDeserializer)
 }

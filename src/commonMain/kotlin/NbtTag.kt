@@ -1,8 +1,5 @@
 package net.benwoodworth.knbt
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Polymorphic
-import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.internal.NbtTagType
 import net.benwoodworth.knbt.internal.appendNbtString
@@ -11,7 +8,7 @@ import kotlin.jvm.JvmInline
 import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 
-@Polymorphic
+@Serializable(with = NbtTagSerializer::class)
 public sealed interface NbtTag {
     /**
      * For internal use only. Will be marked as internal once Kotlin supports it on sealed interface members.
@@ -19,12 +16,6 @@ public sealed interface NbtTag {
      */
     @InternalNbtApi
     public val type: NbtTagType // TODO Make internal
-
-    public companion object {
-        private val serializer = PolymorphicSerializer(NbtTag::class)
-
-        public fun serializer(): KSerializer<NbtTag> = serializer
-    }
 }
 
 @JvmInline

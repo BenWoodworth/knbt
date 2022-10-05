@@ -9,6 +9,17 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+internal object NbtTagSerializer : KSerializer<NbtTag> {
+    override val descriptor: SerialDescriptor =
+        buildClassSerialDescriptor("net.benwoodworth.knbt.NbtTag")
+
+    override fun serialize(encoder: Encoder, value: NbtTag): Unit =
+        encoder.asNbtEncoder().encodeNbtTag(value)
+
+    override fun deserialize(decoder: Decoder): NbtTag =
+        decoder.asNbtDecoder().decodeNbtTag()
+}
+
 internal object NbtByteSerializer : KSerializer<NbtByte> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("net.benwoodworth.knbt.NbtByte", PrimitiveKind.BYTE)
