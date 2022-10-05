@@ -87,6 +87,18 @@ kotlin {
                 implementation(devNpm("node-polyfill-webpack-plugin", "^2.0.1"))
             }
         }
+        val nativeMain by creating {
+            dependsOn(commonMain)
+        }
+
+        val linuxX64Main by getting { dependsOn(nativeMain) }
+        val macosX64Main by getting { dependsOn(nativeMain) }
+        val iosArm64Main by getting { dependsOn(nativeMain) }
+        val iosX64Main by getting { dependsOn(nativeMain) }
+        val watchosArm32Main by getting { dependsOn(nativeMain) }
+        val watchosArm64Main by getting { dependsOn(nativeMain) }
+        val watchosX86Main by getting { dependsOn(nativeMain) }
+        val mingwX64Main by getting { dependsOn(nativeMain) }
     }
 }
 
