@@ -232,6 +232,6 @@ repositories {
 
 dependencies {
     implementation("net.benwoodworth.knbt:knbt:$knbt_version")
-    //implementation("com.squareup.okio:okio-multiplatform:2.10.0")
+    //implementation("com.squareup.okio:okio:3.2.0")
 }
 ```

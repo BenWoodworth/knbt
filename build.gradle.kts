@@ -63,7 +63,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinx_serialization_version")
-                implementation("com.squareup.okio:okio-multiplatform:$okio_version")
+                implementation("com.squareup.okio:okio:$okio_version")
             }
         }
         val commonTest by getting {
@@ -79,6 +79,12 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation(npm("pako", "2.0.3"))
+            }
+        }
+        val jsTest by getting {
+            dependencies {
+                // https://github.com/square/okio/issues/1163
+                implementation(devNpm("node-polyfill-webpack-plugin", "^2.0.1"))
             }
         }
     }
