@@ -1,6 +1,6 @@
 package net.benwoodworth.knbt
 
-import org.junit.Test
+import kotlin.test.Test
 import java.io.IOException
 
 class MinecraftFilesTest {
