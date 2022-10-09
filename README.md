@@ -13,7 +13,7 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 
 ### Features
 
-- Kotlin Multiplatform: JVM, JS, Linux, Windows, macOS, iOS, watchOS
+- Kotlin Multiplatform: JVM, JS (IR), Linux, Windows, macOS, iOS, watchOS
 - Serialize any data to/from NBT or SNBT
 - Support for all NBT variants: Java, Bedrock Files, Bedrock Network
 - Support for all NBT compressions: gzip, zlib

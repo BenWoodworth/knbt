@@ -45,8 +45,9 @@ internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: Seri
         serializer
     }
 
-    return DefaultNbtEncoder(this, writer)
-        .encodeSerializableValue(rootSerializer, value)
+    return tryOrRethrowWithNbtPath {
+        DefaultNbtEncoder(this, writer).encodeSerializableValue(rootSerializer, value)
+    }
 }
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -58,5 +59,7 @@ internal fun <T> NbtFormat.decodeFromNbtReader(reader: NbtReader, deserializer: 
             deserializer
         }
 
-    return NbtDecoder(this, reader).decodeSerializableValue(rootDeserializer)
+    return tryOrRethrowWithNbtPath {
+        NbtDecoder(this, reader).decodeSerializableValue(rootDeserializer)
+    }
 }

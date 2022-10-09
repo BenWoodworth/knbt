@@ -9,8 +9,9 @@ internal sealed class NbtException(
 ) : SerializationException(message, cause) {
     protected abstract val coding: String
 
-    override val message: String?
-        get() = path?.let { "Error while $coding '$path': ${super.message}" } ?: super.message
+    // Causes problems with Kotlin JS IR: https://youtrack.jetbrains.com/issue/KT-43490
+    //override val message: String?
+    //    get() = path?.let { "Error while $coding '$path': ${super.message}" } ?: super.message
 }
 
 internal class NbtEncodingException(
@@ -37,5 +38,18 @@ internal inline fun <R> tryWithPath(path: () -> NbtPath, block: () -> R): R {
     } catch (e: NbtException) {
         if (e.path == null) e.path = path()
         throw e
+    }
+}
+
+internal inline fun <R> tryOrRethrowWithNbtPath(block: () -> R): R {
+    try {
+        return block()
+    } catch (e: NbtException) {
+        if (e.path == null) throw e
+
+        throw when (e) {
+            is NbtEncodingException -> NbtEncodingException("Error while encoding '${e.path}'", e.path, e)
+            is NbtDecodingException -> NbtDecodingException("Error while decoding '${e.path}'", e.path, e)
+        }
     }
 }
