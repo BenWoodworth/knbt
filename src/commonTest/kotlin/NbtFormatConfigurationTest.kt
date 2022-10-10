@@ -27,7 +27,7 @@ class NbtFormatConfigurationTest {
 
         val expected = TestData(1, 2)
 
-        assertEquals(expected, nbt.decodeFromNbtTag(TestData.serializer(), tag))
+        assertEquals(expected, nbt.decodeFromNbtTag(tag))
     }
 
     @Test
@@ -42,7 +42,7 @@ class NbtFormatConfigurationTest {
 
         val expected = TestData(1, 2)
 
-        assertEquals(expected, nbt.decodeFromNbtTag(TestData.serializer(), tag))
+        assertEquals(expected, nbt.decodeFromNbtTag(tag))
     }
 
     @Test
@@ -57,7 +57,7 @@ class NbtFormatConfigurationTest {
 
         val expected = TestData(1, 2)
 
-        assertEquals(expected, nbt.decodeFromNbtTag(TestData.serializer(), tag))
+        assertEquals(expected, nbt.decodeFromNbtTag(tag))
     }
 
     @Test
@@ -71,7 +71,7 @@ class NbtFormatConfigurationTest {
         }
 
         assertFailsWith<SerializationException> {
-            nbt.decodeFromNbtTag(TestData.serializer(), tag)
+            nbt.decodeFromNbtTag<TestData>(tag)
         }
     }
 }

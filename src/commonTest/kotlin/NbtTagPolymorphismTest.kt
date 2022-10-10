@@ -29,7 +29,7 @@ class NbtTagPolymorphismTest {
             expected = buildNbtCompound("") {
                 put(NbtTagContainer::nbtTag.name, compound)
             },
-            actual = nbt.encodeToNbtTag(NbtTagContainer.serializer(), toEncode),
+            actual = nbt.encodeToNbtTag(toEncode),
         )
     }
 
@@ -45,7 +45,7 @@ class NbtTagPolymorphismTest {
 
         assertEquals(
             expected = NbtTagContainer(compound),
-            actual = nbt.decodeFromNbtTag(NbtTagContainer.serializer(), toDecode),
+            actual = nbt.decodeFromNbtTag(toDecode),
         )
     }
 }

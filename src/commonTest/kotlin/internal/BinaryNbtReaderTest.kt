@@ -2,6 +2,8 @@
 
 package net.benwoodworth.knbt.internal
 
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.NbtVariant.Java
 import net.benwoodworth.knbt.file.nbtFiles
@@ -25,7 +27,7 @@ class BinaryNbtReaderTest {
         assertEquals(
             expected = nbtTag,
             actual = asSource().use { source ->
-                nbt.decodeFromSource(NbtTag.serializer(), source)
+                nbt.decodeFromSource(source)
             },
         )
     }
@@ -33,7 +35,7 @@ class BinaryNbtReaderTest {
     @Test
     fun Should_not_read_more_from_source_than_necessary() = parameterize(nbtFiles) {
         TestSource(asSource()).use { source ->
-            nbt.decodeFromSource(NbtTag.serializer(), source)
+            nbt.decodeFromSource<NbtTag>(source)
             assertFalse(source.readPastEnd)
         }
     }
@@ -41,7 +43,7 @@ class BinaryNbtReaderTest {
     @Test
     fun Should_not_close_source() = parameterize(nbtFiles) {
         TestSource(asSource()).use { source ->
-            nbt.decodeFromSource(NbtTag.serializer(), source)
+            nbt.decodeFromSource<NbtTag>(source)
             assertFalse(source.isClosed)
         }
     }
@@ -77,10 +79,10 @@ class BinaryNbtReaderTest {
                 compression = fileCompression
             }
 
-            val encoded = encodingNbt.encodeToByteArray(NbtTag.serializer(), data)
+            val encoded = encodingNbt.encodeToByteArray<NbtTag>(data)
 
             val error = assertFailsWith<NbtDecodingException> {
-                decodingNbt.decodeFromByteArray(NbtTag.serializer(), encoded)
+                decodingNbt.decodeFromByteArray<NbtTag>(encoded)
             }
 
             val errorMessage = error.message

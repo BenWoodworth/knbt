@@ -1,6 +1,8 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.encodeToByteArray
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -33,9 +35,9 @@ private val child = Person.Child("nate", 6, father, mother)
 class SealedClassTest {
     @Test
     fun Should_successfully_encode_and_decode_sealed_classes() {
-        val childNbt = nbt.encodeToByteArray(Person.Child.serializer(), child)
+        val childNbt = nbt.encodeToByteArray(child)
 
-        val childFromNbt: Person.Child = nbt.decodeFromByteArray(Person.Child.serializer(), childNbt)
+        val childFromNbt: Person.Child = nbt.decodeFromByteArray(childNbt)
 
         assertEquals(child, childFromNbt)
     }

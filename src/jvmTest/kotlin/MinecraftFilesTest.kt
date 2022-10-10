@@ -1,5 +1,7 @@
 package net.benwoodworth.knbt
 
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.encodeToByteArray
 import org.junit.Test
 import java.io.IOException
 
@@ -12,8 +14,8 @@ class MinecraftFilesTest {
             val fileBytes = stream.use { it.readBytes() }
 
             stream.use {
-                val decoded = nbt.decodeFromByteArray(NbtTag.serializer(), fileBytes)
-                val encodedBytes = nbt.encodeToByteArray(NbtTag.serializer(), decoded)
+                val decoded = nbt.decodeFromByteArray<NbtTag>(fileBytes)
+                val encodedBytes = nbt.encodeToByteArray(decoded)
                 return fileBytes.contentEquals(encodedBytes)
             }
         }

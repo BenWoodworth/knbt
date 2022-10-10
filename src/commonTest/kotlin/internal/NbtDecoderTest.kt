@@ -318,7 +318,7 @@ class NbtDecoderTest {
         val nbt = NbtFormat(ignoreUnknownKeys = false)
 
         assertFailsWith<NbtDecodingException> {
-            nbt.decodeFromNbtTag(UnknownKeys.serializer(), unknownKeysTag)
+            nbt.decodeFromNbtTag<UnknownKeys>(unknownKeysTag)
         }
     }
 
@@ -326,7 +326,7 @@ class NbtDecoderTest {
     fun Decoding_should_not_fail_on_unknown_key_if_ignoring() {
         val nbt = NbtFormat(ignoreUnknownKeys = true)
 
-        val actual = nbt.decodeFromNbtTag(UnknownKeys.serializer(), unknownKeysTag)
+        val actual = nbt.decodeFromNbtTag<UnknownKeys>(unknownKeysTag)
         assertEquals(UnknownKeys.expected, actual)
     }
 }

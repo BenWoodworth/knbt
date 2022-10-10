@@ -12,37 +12,40 @@ class StringifiedNbtReaderTest {
     private fun check(expected: NbtTag, snbt: String) {
         assertEquals(
             expected = expected,
-            actual = StringifiedNbt.decodeFromString(NbtTag.serializer(), snbt),
+            actual = StringifiedNbt.decodeFromString(snbt),
             message = "Parsed \"$snbt\" incorrectly.",
         )
 
         when (expected) {
-            is NbtByte -> assertEquals(expected.value, StringifiedNbt.decodeFromString(Byte.serializer(), snbt))
-            is NbtShort -> assertEquals(expected.value, StringifiedNbt.decodeFromString(Short.serializer(), snbt))
-            is NbtInt -> assertEquals(expected.value, StringifiedNbt.decodeFromString(Int.serializer(), snbt))
-            is NbtLong -> assertEquals(expected.value, StringifiedNbt.decodeFromString(Long.serializer(), snbt))
-            is NbtFloat -> assertEquals(expected.value, StringifiedNbt.decodeFromString(Float.serializer(), snbt))
-            is NbtDouble -> assertEquals(expected.value, StringifiedNbt.decodeFromString(Double.serializer(), snbt))
+            is NbtByte -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
+            is NbtShort -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
+            is NbtInt -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
+            is NbtLong -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
+            is NbtFloat -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
+            is NbtDouble -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
             is NbtByteArray -> assertContentEquals(
                 expected.toByteArray(),
-                StringifiedNbt.decodeFromString(ByteArraySerializer(), snbt)
+                StringifiedNbt.decodeFromString(snbt)
             )
+
             is NbtIntArray -> assertContentEquals(
                 expected.toIntArray(),
-                StringifiedNbt.decodeFromString(IntArraySerializer(), snbt)
+                StringifiedNbt.decodeFromString(snbt)
             )
+
             is NbtLongArray -> assertContentEquals(
                 expected.toLongArray(),
-                StringifiedNbt.decodeFromString(LongArraySerializer(), snbt)
+                StringifiedNbt.decodeFromString(snbt)
             )
-            is NbtString -> assertEquals(expected.value, StringifiedNbt.decodeFromString(String.serializer(), snbt))
+
+            is NbtString -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
             is NbtCompound -> assertEquals(
                 expected.toMap(),
-                StringifiedNbt.decodeFromString(MapSerializer(String.serializer(), NbtTag.serializer()), snbt)
+                StringifiedNbt.decodeFromString(snbt)
             )
             is NbtList<*> -> assertEquals(
                 expected.toList(),
-                StringifiedNbt.decodeFromString(ListSerializer(NbtTag.serializer()), snbt)
+                StringifiedNbt.decodeFromString(snbt)
             )
             else -> error("Unexpected type: ${expected::class}")
         }
@@ -206,18 +209,18 @@ class StringifiedNbtReaderTest {
 
     @Test
     fun Should_fail_on_missing_key() {
-        assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString(NbtTag.serializer(), "{ : value}") }
+        assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<NbtTag>("{ : value}") }
     }
 
     @Test
     fun Should_fail_on_missing_value() {
-        assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString(NbtTag.serializer(), "{ key: }") }
+        assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<NbtTag>("{ key: }") }
     }
 
     @Test
     fun Should_fail_if_only_whitespace() {
-        assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString(NbtTag.serializer(), "") }
-        assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString(NbtTag.serializer(), "    ") }
+        assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<NbtTag>("") }
+        assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<NbtTag>("    ") }
 
         assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<String>("") }
         assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<String>("    ") }
@@ -225,6 +228,6 @@ class StringifiedNbtReaderTest {
 
     @Test
     fun Should_fail_if_there_is_trailing_data() {
-        assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString(NbtTag.serializer(), "{} hi") }
+        assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<NbtTag>("{} hi") }
     }
 }

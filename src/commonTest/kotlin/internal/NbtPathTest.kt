@@ -36,8 +36,7 @@ class NbtPathTest {
         class MyClass(val entry: Int)
 
         assertFailsWithPathMessage<NbtDecodingException>("root.entry") {
-            nbt.decodeFromNbtTag(
-                MyClass.serializer(),
+            nbt.decodeFromNbtTag<MyClass>(
                 buildNbtCompound("root") { }
             )
         }
@@ -50,8 +49,7 @@ class NbtPathTest {
         class MyClass(val entry: Int)
 
         assertFailsWithPathMessage<NbtDecodingException>("root.entry") {
-            nbt.decodeFromNbtTag(
-                MyClass.serializer(),
+            nbt.decodeFromNbtTag<MyClass>(
                 buildNbtCompound("root") {
                     put("entry", "string!")
                 }
@@ -66,8 +64,7 @@ class NbtPathTest {
         class MyClass(val entry: List<Int>)
 
         assertFailsWithPathMessage<NbtDecodingException>("root.entry[0]") {
-            nbt.decodeFromNbtTag(
-                MyClass.serializer(),
+            nbt.decodeFromNbtTag<MyClass>(
                 buildNbtCompound("root") {
                     putNbtList<NbtString>("entry") { add("string!") }
                 }

@@ -3,6 +3,7 @@
 package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.file.nbtFiles
@@ -39,7 +40,7 @@ class BinaryNbtWriterTest {
         )
 
         val tag = try {
-            nbt.decodeFromByteArray(NbtTag.serializer(), out)
+            nbt.decodeFromByteArray<NbtTag>(out)
         } catch (t: Throwable) {
             throw Exception("Unable to decode compressed value", t)
         }
@@ -49,7 +50,7 @@ class BinaryNbtWriterTest {
 
     @Test
     fun Should_encode_from_NbtTag_correctly() = parameterize(nbtFiles) {
-        val out = nbt.encodeToByteArray(NbtTag.serializer(), nbtTag)
+        val out = nbt.encodeToByteArray(nbtTag)
 
         val outCompression = try {
             NbtCompression.detect(out.asSource().buffer())
@@ -64,7 +65,7 @@ class BinaryNbtWriterTest {
         )
 
         val tag = try {
-            nbt.decodeFromByteArray(NbtTag.serializer(), out)
+            nbt.decodeFromByteArray<NbtTag>(out)
         } catch (t: Throwable) {
             throw Exception("Unable to decode compressed value", t)
         }
