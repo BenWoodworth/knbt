@@ -2,6 +2,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 
 val kotlinx_serialization_version: String by extra
 val okio_version: String by extra
+val kotest_version: String by extra
 
 System.getenv("GIT_REF")?.let { gitRef ->
     Regex("refs/tags/v(.*)").matchEntire(gitRef)?.let { gitVersionMatch ->
@@ -14,6 +15,7 @@ val isSnapshot = version.toString().contains("SNAPSHOT", true)
 plugins {
     kotlin("multiplatform") version "1.7.20"
     kotlin("plugin.serialization") version "1.7.20"
+    id("io.kotest.multiplatform") version "5.5.1"
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.11.1"
     id("org.jetbrains.dokka") version "1.7.10"
     id("maven-publish")
@@ -69,11 +71,15 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation("io.kotest:kotest-framework-engine:$kotest_version")
+                implementation("io.kotest:kotest-assertions-core:$kotest_version")
+                implementation("io.kotest:kotest-property:$kotest_version")
             }
         }
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("reflect"))
+                implementation("io.kotest:kotest-runner-junit5:$kotest_version")
             }
         }
         val jsMain by getting {
@@ -100,6 +106,10 @@ kotlin {
         val watchosX86Main by getting { dependsOn(nativeMain) }
         val mingwX64Main by getting { dependsOn(nativeMain) }
     }
+}
+
+tasks.named<Test>("jvmTest") {
+    useJUnitPlatform()
 }
 
 tasks.withType<DokkaTask> {

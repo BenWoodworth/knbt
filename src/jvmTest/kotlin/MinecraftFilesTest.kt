@@ -2,7 +2,7 @@ package net.benwoodworth.knbt
 
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
-import org.junit.Test
+import kotlin.test.Test
 import java.io.IOException
 
 class MinecraftFilesTest {
