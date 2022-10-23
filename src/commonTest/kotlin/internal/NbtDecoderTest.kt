@@ -2,111 +2,177 @@
 
 package net.benwoodworth.knbt.internal
 
+import data.bigTestTag
 import data.testTag
 import kotlinx.serialization.*
-import kotlinx.serialization.builtins.serializer
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.internal.NbtReader.*
+import net.benwoodworth.knbt.internal.NbtTagType.*
+import net.benwoodworth.knbt.mocks.VerifyingNbtReaderMock
 import kotlin.math.PI
 import kotlin.test.*
 
 class NbtDecoderTest {
-    private fun <T> assertDecodesCorrectly(
-        serializer: DeserializationStrategy<T>,
-        tag: NbtTag,
+    private inline fun <reified T> assertReadsCorrectly(
         expectedValue: T,
-        expectedLog: String,
+        noinline expectedCalls: VerifyingNbtReaderMock.Builder.() -> Unit,
     ) {
-        val stringBuilder = StringBuilder()
-        val reader = LoggingNbtReader(TreeNbtReader(tag), stringBuilder)
-
-        val actualValue = try {
-            NbtDecoder(NbtFormat(), reader).decodeSerializableValue(serializer)
-        } catch (e: Exception) {
-            val log = stringBuilder.toString().trimIndent()
-            val expectedLogTrimmed = expectedLog.trimIndent()
-
-            throw Exception("Error decoding. NbtReader log: <\n$log\n>\nExpected log: <\n$expectedLogTrimmed\n>", e)
+        val actualValue = VerifyingNbtReaderMock.create(expectedCalls).verify { reader ->
+            NbtDecoder(NbtFormat(), reader).decodeSerializableValue(serializer<T>())
         }
 
         when (expectedValue) {
+            is Float -> {
+                assertIs<Float>(actualValue)
+                assertEquals(expectedValue.fix(), actualValue.fix())
+            }
+
             is ByteArray -> {
                 assertIs<ByteArray>(actualValue)
                 assertContentEquals(expectedValue, actualValue)
             }
+
             is IntArray -> {
                 assertIs<IntArray>(actualValue)
                 assertContentEquals(expectedValue, actualValue)
             }
+
             is LongArray -> {
                 assertIs<LongArray>(actualValue)
                 assertContentEquals(expectedValue, actualValue)
             }
+
             else -> assertEquals(expectedValue, actualValue)
         }
-
-        assertEquals(expectedLog.trimIndent(), stringBuilder.toString().trimIndent())
     }
-
-    private inline fun <reified T> assertDecodesCorrectly(tag: NbtTag, expectedValue: T, expectedLog: String): Unit =
-        assertDecodesCorrectly(serializer(), tag, expectedValue, expectedLog)
 
     @Test
     fun Decoding_TestNbt_should_read_correctly() {
-        assertDecodesCorrectly(
-            serializer = NbtTag.serializer(),
-            tag = testTag,
+        assertReadsCorrectly(
             expectedValue = testTag,
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Compound)
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Compound)
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Compound, name=hello world)
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Compound, "hello world")
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_String, name=name)
-                readString() -> Bananrama
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_String, "name")
+                readString() returns "Bananrama"
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
                 endCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
                 endCompound()
-            """,
+            },
         )
     }
 
-//    @Test
-//    fun Decoding_BigTestNbt_should_read_correctly() {
-//        assertDecodesCorrectly(
-//            tag = bigTestTag,
-//            expectedValue = bigTestClass,
-//            expectedLog = getResourceAsText("/bigtest-reader.log"),
-//        )
-//    }
+    @Test
+    fun Decoding_BigTestNbt_should_read_correctly() {
+        assertReadsCorrectly(
+            expectedValue = bigTestTag,
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Compound)
+                beginCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Compound, "Level")
+                beginCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Long, "longTest")
+                readLong() returns 9223372036854775807L
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Short, "shortTest")
+                readShort() returns 32767
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_String, "stringTest")
+                readString() returns "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!"
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Float, "floatTest")
+                readFloat() returns 0.49823147f
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Int, "intTest")
+                readInt() returns 2147483647
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Compound, "nested compound test")
+                beginCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Compound, "ham")
+                beginCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_String, "name")
+                readString() returns "Hampus"
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Float, "value")
+                readFloat() returns 0.75f
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
+                endCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Compound, "egg")
+                beginCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_String, "name")
+                readString() returns "Eggbert"
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Float, "value")
+                readFloat() returns 0.5f
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
+                endCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
+                endCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_List, "listTest (long)")
+                beginList() returns ListInfo(TAG_Long, 5)
+                for (n in 11L..15L) {
+                    readLong() returns n
+                }
+                endList()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_List, "listTest (compound)")
+                beginList() returns ListInfo(TAG_Compound, 2)
+                beginCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_String, "name")
+                readString() returns "Compound tag #0"
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Long, "created-on")
+                readLong() returns 1264099775885L
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
+                endCompound()
+                beginCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_String, "name")
+                readString() returns "Compound tag #1"
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Long, "created-on")
+                readLong() returns 1264099775885L
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
+                endCompound()
+                endList()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Byte, "byteTest")
+                readByte() returns 127
+                beginCompoundEntry() returns CompoundEntryInfo(
+                    TAG_Byte_Array,
+                    "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))"
+                )
+                beginByteArray() returns ArrayInfo(1000)
+                repeat(1000) { n ->
+                    readByte() returns ((n * n * 255 + n * 7) % 100).toByte()
+                }
+                endByteArray()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Double, "doubleTest")
+                readDouble() returns 0.4931287132182315
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
+                endCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
+                endCompound()
+            },
+        )
+    }
 
     @Test
     fun Decoding_compound_with_no_entries_to_Map_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = buildNbtCompound {},
+        assertReadsCorrectly(
             expectedValue = mapOf<String, Int>(),
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Compound)
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Compound)
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
                 endCompound()
-            """,
+            },
         )
     }
 
     @Test
     fun Decoding_compound_with_one_entry_to_Map_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = buildNbtCompound { put("property", 7) },
+        assertReadsCorrectly(
             expectedValue = mapOf("property" to 7),
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Compound)
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Compound)
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Int, name=property)
-                readInt() -> 7
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Int, "property")
+                readInt() returns 7
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
                 endCompound()
-            """,
+            },
         )
     }
 
@@ -115,87 +181,78 @@ class NbtDecoderTest {
 
     @Test
     fun Decoding_compound_with_one_entry_to_class_should_read_correctly() {
-        assertDecodesCorrectly(
-            serializer = OneProperty.serializer(Int.serializer()),
-            tag = buildNbtCompound { put("property", 7) },
+        assertReadsCorrectly(
             expectedValue = OneProperty(7),
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Compound)
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Compound)
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Int, name=property)
-                readInt() -> 7
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Int, "property")
+                readInt() returns 7
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
                 endCompound()
-            """,
+            },
         )
     }
 
     @Test
     fun Decoding_List_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = buildNbtList<NbtList<*>> {
-                add(NbtList(listOf(NbtByte(1))))
-                add(NbtList(emptyList<NbtByte>()))
-            },
+        assertReadsCorrectly(
             expectedValue = listOf(listOf(1.toByte()), listOf()),
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_List)
-                beginList() -> ListInfo(type=TAG_List, size=2)
-                beginList() -> ListInfo(type=TAG_Byte, size=1)
-                readByte() -> 1
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_List)
+                beginList() returns ListInfo(TAG_List, 2)
+                beginList() returns ListInfo(TAG_Byte, 1)
+                readByte() returns 1
                 endList()
-                beginList() -> ListInfo(type=TAG_End, size=0)
+                beginList() returns ListInfo(TAG_End, 0)
                 endList()
                 endList()
-            """,
+            },
         )
     }
 
     @Test
     fun Decoding_ByteArray_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = NbtByteArray(byteArrayOf(1, 2, 3)),
+        assertReadsCorrectly(
             expectedValue = byteArrayOf(1, 2, 3),
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Byte_Array)
-                beginByteArray() -> ArrayInfo(size=3)
-                readByte() -> 1
-                readByte() -> 2
-                readByte() -> 3
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Byte_Array)
+                beginByteArray() returns ArrayInfo(size = 3)
+                readByte() returns 1
+                readByte() returns 2
+                readByte() returns 3
                 endByteArray()
-            """,
+            },
         )
     }
 
     @Test
     fun Decoding_IntArray_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = NbtIntArray(intArrayOf(1, 2, 3)),
+        assertReadsCorrectly(
             expectedValue = intArrayOf(1, 2, 3),
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Int_Array)
-                beginIntArray() -> ArrayInfo(size=3)
-                readInt() -> 1
-                readInt() -> 2
-                readInt() -> 3
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Int_Array)
+                beginIntArray() returns ArrayInfo(size = 3)
+                readInt() returns 1
+                readInt() returns 2
+                readInt() returns 3
                 endIntArray()
-            """,
+            },
         )
     }
 
     @Test
     fun Decoding_LongArray_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = NbtLongArray(longArrayOf(1, 2, 3)),
+        assertReadsCorrectly(
             expectedValue = longArrayOf(1, 2, 3),
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Long_Array)
-                beginLongArray() -> ArrayInfo(size=3)
-                readLong() -> 1
-                readLong() -> 2
-                readLong() -> 3
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Long_Array)
+                beginLongArray() returns ArrayInfo(size = 3)
+                readLong() returns 1
+                readLong() returns 2
+                readLong() returns 3
                 endLongArray()
-            """,
+            },
         )
     }
 
@@ -204,95 +261,84 @@ class NbtDecoderTest {
 
     @Test
     fun Decoding_compound_with_two_entries_should_read_correctly() {
-        assertDecodesCorrectly(
-            serializer = TwoProperties.serializer(),
-            tag = buildNbtCompound {
-                put("entry1", "value1")
-                put("entry2", 1234L)
-            },
+        assertReadsCorrectly(
             expectedValue = TwoProperties(entry1 = "value1", entry2 = 1234L),
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Compound)
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Compound)
                 beginCompound()
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_String, name=entry1)
-                readString() -> value1
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_Long, name=entry2)
-                readLong() -> 1234
-                beginCompoundEntry() -> CompoundEntryInfo(type=TAG_End, name=)
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_String, "entry1")
+                readString() returns "value1"
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Long, "entry2")
+                readLong() returns 1234
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
                 endCompound()
-            """,
+            },
         )
     }
 
     @Test
     fun Decoding_Byte_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = NbtByte(4),
+        assertReadsCorrectly(
             expectedValue = 4.toByte(),
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Byte)
-                readByte() -> 4
-            """,
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Byte)
+                readByte() returns 4
+            },
         )
     }
 
     @Test
     fun Decoding_Short_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = NbtShort(5),
+        assertReadsCorrectly(
             expectedValue = 5.toShort(),
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Short)
-                readShort() -> 5
-            """,
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Short)
+                readShort() returns 5
+            },
         )
     }
 
     @Test
     fun Decoding_Int_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = NbtInt(6),
+        assertReadsCorrectly(
             expectedValue = 6,
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Int)
-                readInt() -> 6
-            """,
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Int)
+                readInt() returns 6
+            },
         )
     }
 
     @Test
     fun Decoding_Long_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = NbtLong(7L),
+        assertReadsCorrectly(
             expectedValue = 7L,
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Long)
-                readLong() -> 7
-            """,
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Long)
+                readLong() returns 7
+            },
         )
     }
 
     @Test
     fun Decoding_Float_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = NbtFloat(3.14f),
+        assertReadsCorrectly(
             expectedValue = 3.14f,
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Float)
-                readFloat() -> 3.14
-            """,
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Float)
+                readFloat() returns 3.14f
+            },
         )
     }
 
     @Test
     fun Decoding_Double_should_read_correctly() {
-        assertDecodesCorrectly(
-            tag = NbtDouble(3.14),
+        assertReadsCorrectly(
             expectedValue = 3.14,
-            expectedLog = """
-                beginRootTag() -> RootTagInfo(type=TAG_Double)
-                readDouble() -> 3.14
-            """,
+            expectedCalls = {
+                beginRootTag() returns RootTagInfo(TAG_Double)
+                readDouble() returns 3.14
+            },
         )
     }
 
