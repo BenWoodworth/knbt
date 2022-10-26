@@ -10,10 +10,8 @@ import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
 
-internal fun NbtDecoder(nbt: NbtFormat, reader: NbtReader): NbtDecoder = RootNbtDecoder(nbt, reader)
-
 @OptIn(ExperimentalSerializationApi::class)
-private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
+internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     override val serializersModule: SerializersModule
         get() = nbt.serializersModule
 
@@ -191,7 +189,7 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     //endregion
 }
 
-private class RootNbtDecoder(
+internal class NbtReaderDecoder(
     override val nbt: NbtFormat,
     override val reader: NbtReader,
 ) : BaseNbtDecoder() {

@@ -9,10 +9,10 @@ import net.benwoodworth.knbt.internal.NbtTagType.*
 import net.benwoodworth.knbt.mocks.VerifyingNbtWriterMock
 import kotlin.test.Test
 
-class DefaultNbtEncoderTest {
+class NbtWriterEncoderTest {
     private fun assertWritesCorrectly(tag: NbtTag, expectedCalls: VerifyingNbtWriterMock.Builder.() -> Unit) {
         VerifyingNbtWriterMock.create(expectedCalls).verify { writer ->
-            DefaultNbtEncoder(NbtFormat(), writer).encodeSerializableValue(NbtTag.serializer(), tag)
+            NbtWriterEncoder(NbtFormat(), writer).encodeSerializableValue(NbtTag.serializer(), tag)
         }
     }
 

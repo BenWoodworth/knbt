@@ -8,7 +8,7 @@ import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
 
 @OptIn(ExperimentalSerializationApi::class)
-internal class DefaultNbtEncoder(
+internal class NbtWriterEncoder(
     override val nbt: NbtFormat,
     private val writer: NbtWriter,
 ) : AbstractNbtEncoder() {

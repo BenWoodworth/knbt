@@ -12,13 +12,13 @@ import net.benwoodworth.knbt.mocks.VerifyingNbtReaderMock
 import kotlin.math.PI
 import kotlin.test.*
 
-class NbtDecoderTest {
+class NbtReaderDecoderTest {
     private inline fun <reified T> assertReadsCorrectly(
         expectedValue: T,
         noinline expectedCalls: VerifyingNbtReaderMock.Builder.() -> Unit,
     ) {
         val actualValue = VerifyingNbtReaderMock.create(expectedCalls).verify { reader ->
-            NbtDecoder(NbtFormat(), reader).decodeSerializableValue(serializer<T>())
+            NbtReaderDecoder(NbtFormat(), reader).decodeSerializableValue(serializer<T>())
         }
 
         when (expectedValue) {
