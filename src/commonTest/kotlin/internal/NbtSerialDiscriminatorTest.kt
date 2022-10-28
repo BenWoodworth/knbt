@@ -8,7 +8,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.serialization.serializer
 import kotlin.test.Test
 
-class DefaultNbtSerialDiscriminatorSpec {
+class NbtSerialDiscriminatorTest {
     @Test
     fun discriminating_list_kind_given_a_builtin_descriptor_should_resolve_correctly() {
         table(

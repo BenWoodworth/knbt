@@ -22,7 +22,7 @@ private object VerifyingMyInterfaceMock :
     }
 }
 
-class VerifyingMockFactorySpec {
+class VerifyingMockFactoryTest {
     private class PassEarly : Throwable()
 
     private fun <T> VerifyingMockFactory.Verifier<T>.verifyWithPassEarly(block: (callee: T) -> Unit) {
