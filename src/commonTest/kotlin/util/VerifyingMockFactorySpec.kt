@@ -2,6 +2,7 @@ package net.benwoodworth.knbt.util
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import kotlin.test.Test
 
 private interface MyInterface {
     fun functionWithReturn(arg: String): String
@@ -21,158 +22,168 @@ private object VerifyingMyInterfaceMock :
     }
 }
 
-class VerifyingMockFactorySpec : FlatSpec({
-    class PassEarly : Throwable()
+class VerifyingMockFactorySpec {
+    private class PassEarly : Throwable()
 
-    fun <T> VerifyingMockFactory.Verifier<T>.verifyWithPassEarly(block: (callee: T) -> Unit) {
+    private fun <T> VerifyingMockFactory.Verifier<T>.verifyWithPassEarly(block: (callee: T) -> Unit) {
         try {
             verify(block)
         } catch (_: PassEarly) {
         }
     }
 
-    context("builder") {
-        test("should error on call without `returns` at the end") {
-            shouldThrow<IllegalStateException> {
-                VerifyingMyInterfaceMock.create {
-                    functionWithReturn("string")
-                }
-            }
-        }
+    private val verifier = VerifyingMyInterfaceMock.create {
+        functionWithReturn("arg") returns "result"
+        function(2)
+    }
 
-        test("should error when calling `returns` twice in a row") {
-            shouldThrow<IllegalStateException> {
-                VerifyingMyInterfaceMock.create {
-                    val call = functionWithReturn("string")
-                    call returns "normal return"
-                    call returns "extra return"
-                }
-            }
-        }
-
-        test("should error when calling `returns` on the wrong call") {
-            shouldThrow<IllegalStateException> {
-                VerifyingMyInterfaceMock.create {
-                    val wrongCall = functionWithReturn("string")
-                    wrongCall returns "its own return value"
-
-                    functionWithReturn("expected call")
-                    wrongCall returns "normal return"
-                }
-            }
-        }
-
-        test("should error on call without `returns` followed by another call") {
-            shouldThrow<IllegalStateException> {
-                VerifyingMyInterfaceMock.create {
-                    functionWithReturn("string")
-                    function(7)
-                }
+    @Test
+    fun builder_should_error_on_call_without_returns_at_the_end() {
+        shouldThrow<IllegalStateException> {
+            VerifyingMyInterfaceMock.create {
+                functionWithReturn("string") // missing `returns`
             }
         }
     }
 
-    context("verifier") {
-        val verifier = VerifyingMyInterfaceMock.create {
-            functionWithReturn("arg") returns "result"
-            function(2)
-        }
-
-        test("should pass when calls are correct") {
-            verifier.verify { myInterface ->
-                myInterface.functionWithReturn("arg")
-                myInterface.function(2)
+    @Test
+    fun builder_should_error_when_calling_returns_twice_in_a_row() {
+        shouldThrow<IllegalStateException> {
+            VerifyingMyInterfaceMock.create {
+                val call = functionWithReturn("string")
+                call returns "normal return"
+                call returns "extra return"
             }
         }
+    }
 
-        test("should return the block return value") {
-            val returned = verifier.verify { myInterface ->
-                myInterface.functionWithReturn("arg")
-                myInterface.function(2)
+    @Test
+    fun builder_should_error_when_calling_returns_on_the_wrong_call() {
+        shouldThrow<IllegalStateException> {
+            VerifyingMyInterfaceMock.create {
+                val wrongCall = functionWithReturn("string")
+                wrongCall returns "its own return value"
 
-                7
-            }
-
-            returned shouldBe 7
-        }
-
-        test("should return correct values from mocked results") {
-            var firstResult: String? = null
-
-            verifier.verify { myInterface ->
-                firstResult = myInterface.functionWithReturn("arg")
-                myInterface.function(2)
-            }
-
-            firstResult.shouldBe("result")
-        }
-
-        test("should fail when calling a function a second time") {
-            verifier.verifyWithPassEarly { myInterface ->
-                myInterface.functionWithReturn("arg")
-                shouldThrow<AssertionError> {
-                    myInterface.functionWithReturn("arg")
-                }
-                throw PassEarly()
+                functionWithReturn("expected call")
+                wrongCall returns "normal return"
             }
         }
+    }
 
-        test("should fail when first call has incorrect argument") {
-            verifier.verifyWithPassEarly { myInterface ->
-                shouldThrow<AssertionError> {
-                    myInterface.functionWithReturn("incorrect arg")
-                }
-                throw PassEarly()
+    @Test
+    fun builder_should_error_on_call_without_returns_followed_by_another_call() {
+        shouldThrow<IllegalStateException> {
+            VerifyingMyInterfaceMock.create {
+                functionWithReturn("string")
+                function(7)
             }
         }
+    }
 
-        test("should fail when first call is incorrect function") {
-            verifier.verifyWithPassEarly { myInterface ->
-                shouldThrow<AssertionError> {
-                    myInterface.function(2)
-                }
-                throw PassEarly()
-            }
+    @Test
+    fun verifier_should_pass_when_calls_are_correct() {
+        verifier.verify { myInterface ->
+            myInterface.functionWithReturn("arg")
+            myInterface.function(2)
+        }
+    }
+
+    @Test
+    fun verifier_should_return_the_block_return_value() {
+        val returned = verifier.verify { myInterface ->
+            myInterface.functionWithReturn("arg")
+            myInterface.function(2)
+
+            7
         }
 
-        test("should fail when second call has incorrect argument") {
-            verifier.verifyWithPassEarly { myInterface ->
-                myInterface.functionWithReturn("arg")
-                shouldThrow<AssertionError> {
-                    myInterface.function(22222)
-                }
-                throw PassEarly()
-            }
+        returned shouldBe 7
+    }
+
+    @Test
+    fun verifier_should_return_correct_values_from_mocked_results() {
+        var firstResult: String? = null
+
+        verifier.verify { myInterface ->
+            firstResult = myInterface.functionWithReturn("arg")
+            myInterface.function(2)
         }
 
-        test("should fail when second call is incorrect function") {
-            verifier.verifyWithPassEarly { myInterface ->
-                myInterface.functionWithReturn("arg")
-                shouldThrow<AssertionError> {
-                    myInterface.functionWithReturn("arg")
-                }
-                throw PassEarly()
-            }
-        }
+        firstResult.shouldBe("result")
+    }
 
-        test("should fail when call is missing from end") {
+    @Test
+    fun verifier_should_fail_when_calling_a_function_a_second_time() {
+        verifier.verifyWithPassEarly { myInterface ->
+            myInterface.functionWithReturn("arg")
             shouldThrow<AssertionError> {
-                verifier.verify { myInterface ->
-                    myInterface.functionWithReturn("arg")
-                }
-            }
-        }
-
-        test("should fail when there are extra calls at end") {
-            verifier.verifyWithPassEarly { myInterface ->
                 myInterface.functionWithReturn("arg")
-                myInterface.function(2)
+            }
+            throw PassEarly()
+        }
+    }
 
-                shouldThrow<AssertionError> {
-                    myInterface.function(3)
-                }
-                throw PassEarly()
+    @Test
+    fun verifier_should_fail_when_first_call_has_incorrect_argument() {
+        verifier.verifyWithPassEarly { myInterface ->
+            shouldThrow<AssertionError> {
+                myInterface.functionWithReturn("incorrect arg")
+            }
+            throw PassEarly()
+        }
+    }
+
+    @Test
+    fun verifier_should_fail_when_first_call_is_incorrect_function() {
+        verifier.verifyWithPassEarly { myInterface ->
+            shouldThrow<AssertionError> {
+                myInterface.function(2)
+            }
+            throw PassEarly()
+        }
+    }
+
+    @Test
+    fun verifier_should_fail_when_second_call_has_incorrect_argument() {
+        verifier.verifyWithPassEarly { myInterface ->
+            myInterface.functionWithReturn("arg")
+            shouldThrow<AssertionError> {
+                myInterface.function(22222)
+            }
+            throw PassEarly()
+        }
+    }
+
+    @Test
+    fun verifier_should_fail_when_second_call_is_incorrect_function() {
+        verifier.verifyWithPassEarly { myInterface ->
+            myInterface.functionWithReturn("arg")
+            shouldThrow<AssertionError> {
+                myInterface.functionWithReturn("arg")
+            }
+            throw PassEarly()
+        }
+    }
+
+    @Test
+    fun verifier_should_fail_when_call_is_missing_from_end() {
+        shouldThrow<AssertionError> {
+            verifier.verify { myInterface ->
+                myInterface.functionWithReturn("arg")
             }
         }
     }
-})
+
+    @Test
+    fun verifier_should_fail_when_there_are_extra_calls_at_end() {
+        verifier.verifyWithPassEarly { myInterface ->
+            myInterface.functionWithReturn("arg")
+            myInterface.function(2)
+
+            shouldThrow<AssertionError> {
+                myInterface.function(3)
+            }
+            throw PassEarly()
+        }
+    }
+}
