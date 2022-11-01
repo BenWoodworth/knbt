@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt
+package net.benwoodworth.knbt.test
 
 import kotlin.math.E
 import kotlin.math.PI

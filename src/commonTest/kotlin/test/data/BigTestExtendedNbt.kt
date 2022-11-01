@@ -1,10 +1,14 @@
-package data
+package net.benwoodworth.knbt.test.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.test.assertStructureEquals
+import net.benwoodworth.knbt.test.fix
+import net.benwoodworth.knbt.test.pow
+import net.benwoodworth.knbt.test.toBinary
 
-val bigTestTag
+val bigTestExtendedTag
     get() = buildNbtCompound("Level") {
         put("longTest", 9223372036854775807L)
         put("shortTest", 32767.toShort())
@@ -38,11 +42,19 @@ val bigTestTag
             ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() }
         )
         put("doubleTest", 0.4931287132182315)
+        put(
+            "intArrayTest (the first 1000 values of (n-500)^3*16, starting with n=0 (-2000000000, ...))",
+            IntArray(1000) { n -> ((n - 500) pow 3) * 16 }
+        )
+        put(
+            "longArrayTest (the first 1000 values of (n-500)^5*16, starting with n=0 (-500000000000000, ...))",
+            LongArray(1000) { n -> ((n.toLong() - 500) pow 5) * 16 }
+        )
     }
 
 @Serializable
 @SerialName("Level")
-data class BigTestNbt(
+data class BigTestExtendedNbt(
     val longTest: Long,
 
     val shortTest: Short,
@@ -68,6 +80,12 @@ data class BigTestNbt(
     val byteArrayTest: ByteArray,
 
     val doubleTest: Double,
+
+    @SerialName("intArrayTest (the first 1000 values of (n-500)^3*16, starting with n=0 (-2000000000, ...))")
+    val intArrayTest: IntArray,
+
+    @SerialName("longArrayTest (the first 1000 values of (n-500)^5*16, starting with n=0 (-500000000000000, ...))")
+    val longArrayTest: LongArray,
 ) {
     @Serializable
     data class NestedCompoundTest(
@@ -90,7 +108,7 @@ data class BigTestNbt(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as BigTestNbt
+        other as BigTestExtendedNbt
 
         if (longTest != other.longTest) return false
         if (shortTest != other.shortTest) return false
@@ -103,6 +121,8 @@ data class BigTestNbt(
         if (byteTest != other.byteTest) return false
         if (!byteArrayTest.contentEquals(other.byteArrayTest)) return false
         if (doubleTest != other.doubleTest) return false
+        if (!intArrayTest.contentEquals(other.intArrayTest)) return false
+        if (!longArrayTest.contentEquals(other.longArrayTest)) return false
 
         return true
     }
@@ -119,11 +139,13 @@ data class BigTestNbt(
         result = 31 * result + byteTest
         result = 31 * result + byteArrayTest.contentHashCode()
         result = 31 * result + doubleTest.hashCode()
+        result = 31 * result + intArrayTest.contentHashCode()
+        result = 31 * result + longArrayTest.contentHashCode()
         return result
     }
 }
 
-fun assertStructureEquals(expected: BigTestNbt, actual: BigTestNbt, message: String? = null): Unit =
+fun assertStructureEquals(expected: BigTestExtendedNbt, actual: BigTestExtendedNbt, message: String? = null): Unit =
     assertStructureEquals(expected, actual, message) {
         property("longTest") { longTest }
         property("shortTest") { shortTest }
@@ -139,32 +161,34 @@ fun assertStructureEquals(expected: BigTestNbt, actual: BigTestNbt, message: Str
         property("byteTest") { byteTest }
         property("byteArrayTest") { byteArrayTest.asList() }
         property("doubleTest") { doubleTest.toBinary() }
+        property("intArrayTest") { intArrayTest.asList() }
+        property("longArrayTest") { longArrayTest.asList() }
     }
 
-val bigTestClass
-    get() = BigTestNbt(
+val bigTestExtendedClass
+    get() = BigTestExtendedNbt(
         longTest = 9223372036854775807L,
         shortTest = 32767,
         stringTest = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!",
         floatTest = 0.49823147f.fix(),
         intTest = 2147483647,
-        nestedCompoundTest = BigTestNbt.NestedCompoundTest(
-            ham = BigTestNbt.NestedCompoundTest.Entry(
+        nestedCompoundTest = BigTestExtendedNbt.NestedCompoundTest(
+            ham = BigTestExtendedNbt.NestedCompoundTest.Entry(
                 name = "Hampus",
                 value = 0.75f,
             ),
-            egg = BigTestNbt.NestedCompoundTest.Entry(
+            egg = BigTestExtendedNbt.NestedCompoundTest.Entry(
                 name = "Eggbert",
                 value = 0.5f,
             )
         ),
         listTestLong = listOf(11L, 12L, 13L, 14L, 15L),
         listTestCompound = listOf(
-            BigTestNbt.ListTestCompoundEntry(
+            BigTestExtendedNbt.ListTestCompoundEntry(
                 name = "Compound tag #0",
                 createdOn = 1264099775885L,
             ),
-            BigTestNbt.ListTestCompoundEntry(
+            BigTestExtendedNbt.ListTestCompoundEntry(
                 name = "Compound tag #1",
                 createdOn = 1264099775885L,
             ),
@@ -172,4 +196,6 @@ val bigTestClass
         byteTest = 127,
         byteArrayTest = ByteArray(1000) { n -> ((n * n * 255 + n * 7) % 100).toByte() },
         doubleTest = 0.4931287132182315,
+        intArrayTest = IntArray(1000) { n -> ((n - 500) pow 3) * 16 },
+        longArrayTest = LongArray(1000) { n -> ((n.toLong() - 500) pow 5) * 16 },
     )

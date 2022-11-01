@@ -6,7 +6,9 @@ import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.NbtVariant.Java
-import net.benwoodworth.knbt.file.nbtFiles
+import net.benwoodworth.knbt.test.TestSource
+import net.benwoodworth.knbt.test.file.nbtFiles
+import net.benwoodworth.knbt.test.parameterize
 import okio.use
 import kotlin.test.*
 

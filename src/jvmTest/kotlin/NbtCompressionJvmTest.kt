@@ -1,7 +1,7 @@
 package net.benwoodworth.knbt
 
-import net.benwoodworth.knbt.file.NbtTestFile
-import net.benwoodworth.knbt.file.nbtFiles
+import net.benwoodworth.knbt.test.file.NbtTestFile
+import net.benwoodworth.knbt.test.file.nbtFiles
 import java.io.InputStream
 import kotlin.test.Test
 import kotlin.test.assertContentEquals

@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt.internal
 
-import kotlinx.serialization.builtins.*
 import kotlinx.serialization.decodeFromString
 import net.benwoodworth.knbt.*
 import kotlin.test.Test

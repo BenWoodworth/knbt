@@ -1,14 +1,11 @@
-package net.benwoodworth.knbt.file
+package net.benwoodworth.knbt.test.file
 
-import data.*
 import kotlinx.serialization.KSerializer
 import net.benwoodworth.knbt.Nbt
 import net.benwoodworth.knbt.NbtCompression
 import net.benwoodworth.knbt.NbtVariant
-import net.benwoodworth.knbt.asSource
-import net.benwoodworth.knbt.data.BigTestExtendedNbt
-import net.benwoodworth.knbt.data.bigTestExtendedClass
-import net.benwoodworth.knbt.data.bigTestExtendedTag
+import net.benwoodworth.knbt.test.asSource
+import net.benwoodworth.knbt.test.data.*
 import okio.Source
 
 class NbtTestFile<T>(

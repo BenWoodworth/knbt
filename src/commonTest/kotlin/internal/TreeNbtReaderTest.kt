@@ -2,10 +2,13 @@
 
 package net.benwoodworth.knbt.internal
 
-import data.*
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtReader.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
+import net.benwoodworth.knbt.test.NbtFormat
+import net.benwoodworth.knbt.test.TestValues
+import net.benwoodworth.knbt.test.data.*
+import net.benwoodworth.knbt.test.shouldReturn
 import kotlin.test.Test
 
 class TreeNbtReaderTest {

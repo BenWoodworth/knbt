@@ -1,9 +1,8 @@
-package net.benwoodworth.knbt.mocks
+package net.benwoodworth.knbt.test.mocks
 
-import net.benwoodworth.knbt.fix
 import net.benwoodworth.knbt.internal.NbtTagType
 import net.benwoodworth.knbt.internal.NbtWriter
-import net.benwoodworth.knbt.util.VerifyingMockFactory
+import net.benwoodworth.knbt.test.fix
 
 internal object VerifyingNbtWriterMock :
     VerifyingMockFactory<NbtWriter, VerifyingNbtWriterMock.Builder>(VerifyingNbtWriterMock::Builder) {

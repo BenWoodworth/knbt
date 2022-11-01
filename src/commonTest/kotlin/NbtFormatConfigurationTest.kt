@@ -3,6 +3,7 @@ package net.benwoodworth.knbt
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
+import net.benwoodworth.knbt.test.NbtFormat
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

@@ -1,6 +1,6 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.parameterize
+import net.benwoodworth.knbt.test.parameterize
 import okio.Buffer
 import kotlin.test.Test
 import kotlin.test.assertContentEquals

@@ -3,6 +3,7 @@ package net.benwoodworth.knbt.internal
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.test.NbtFormat
 import kotlin.test.*
 
 // Regression tests when changing how NBT exception paths were captured

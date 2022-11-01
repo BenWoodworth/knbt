@@ -2,11 +2,12 @@
 
 package net.benwoodworth.knbt.internal
 
-import data.bigTestTag
-import data.testTag
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
-import net.benwoodworth.knbt.mocks.VerifyingNbtWriterMock
+import net.benwoodworth.knbt.test.NbtFormat
+import net.benwoodworth.knbt.test.data.bigTestTag
+import net.benwoodworth.knbt.test.data.testTag
+import net.benwoodworth.knbt.test.mocks.VerifyingNbtWriterMock
 import kotlin.test.Test
 
 class NbtWriterEncoderTest {

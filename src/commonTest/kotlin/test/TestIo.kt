@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt
+package net.benwoodworth.knbt.test
 
 import okio.Buffer
 import okio.Sink

@@ -1,4 +1,9 @@
-package net.benwoodworth.knbt
+package net.benwoodworth.knbt.test
+
+import net.benwoodworth.knbt.Nbt
+import net.benwoodworth.knbt.NbtCompression
+import net.benwoodworth.knbt.NbtFormat
+import net.benwoodworth.knbt.NbtVariant
 
 fun NbtFormat(
     encodeDefaults: Boolean = false,

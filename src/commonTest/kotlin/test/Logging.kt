@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt
+package net.benwoodworth.knbt.test
 
 import net.benwoodworth.knbt.internal.NbtReader
 import net.benwoodworth.knbt.internal.NbtTagType

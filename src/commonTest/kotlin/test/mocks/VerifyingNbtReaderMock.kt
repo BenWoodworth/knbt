@@ -1,8 +1,7 @@
-package net.benwoodworth.knbt.mocks
+package net.benwoodworth.knbt.test.mocks
 
-import net.benwoodworth.knbt.fix
 import net.benwoodworth.knbt.internal.NbtReader
-import net.benwoodworth.knbt.util.VerifyingMockFactory
+import net.benwoodworth.knbt.test.fix
 
 internal object VerifyingNbtReaderMock :
     VerifyingMockFactory<NbtReader, VerifyingNbtReaderMock.Builder>(VerifyingNbtReaderMock::Builder) {

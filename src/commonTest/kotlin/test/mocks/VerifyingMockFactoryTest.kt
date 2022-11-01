@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.util
+package net.benwoodworth.knbt.test.mocks
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue

@@ -1,11 +1,11 @@
 package net.benwoodworth.knbt.internal
 
-import data.testTag
 import kotlinx.serialization.encodeToString
 import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.StringifiedNbt
-import net.benwoodworth.knbt.data.bigTestExtendedTag
-import net.benwoodworth.knbt.fix
+import net.benwoodworth.knbt.test.data.bigTestExtendedTag
+import net.benwoodworth.knbt.test.data.testTag
+import net.benwoodworth.knbt.test.fix
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
