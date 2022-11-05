@@ -1,6 +1,11 @@
 package net.benwoodworth.knbt.internal
 
-internal class NbtPath(private val path: List<Node>) : List<NbtPath.Node> by path {
+internal data class NbtPath(private val path: List<Node>) {
+    constructor(vararg path: Node) : this(path.toList())
+
+    operator fun plus(node: Node): NbtPath =
+        NbtPath(path + node)
+
     override fun toString(): String = buildString {
         fun Char.isSafeNameChar(): Boolean = when (this) {
             in '0'..'9', in 'a'..'z', in 'A'..'Z', '_' -> true
@@ -37,21 +42,20 @@ internal class NbtPath(private val path: List<Node>) : List<NbtPath.Node> by pat
         }
     }
 
-
     sealed interface Node {
         val type: NbtTagType
     }
 
-    class RootNode(
+    data class RootNode(
         override val type: NbtTagType,
     ) : Node
 
-    class NameNode(
+    data class NameNode(
         val name: String,
         override val type: NbtTagType,
     ) : Node
 
-    class IndexNode(
+    data class IndexNode(
         val index: Int,
         override val type: NbtTagType,
     ) : Node

@@ -6,7 +6,7 @@ import kotlin.jvm.JvmName
 import kotlin.reflect.KFunction
 import kotlin.test.assertContentEquals
 
-abstract class VerifyingMockFactory<T : Any, TBuilder : VerifyingMockFactory.Builder<T>>(
+abstract class VerifyingMockFactory<out T : Any, out TBuilder : VerifyingMockFactory.Builder<T>>(
     private val builderConstructor: () -> TBuilder,
 ) {
     fun create(builderAction: TBuilder.() -> Unit): Verifier<T> {
@@ -18,7 +18,7 @@ abstract class VerifyingMockFactory<T : Any, TBuilder : VerifyingMockFactory.Bui
         }
     }
 
-    class Verifier<T> private constructor(
+    class Verifier<out T> private constructor(
         private val mockConstructor: () -> T,
     ) {
         fun <R> verify(block: (callee: T) -> R): R {
@@ -78,17 +78,17 @@ abstract class VerifyingMockFactory<T : Any, TBuilder : VerifyingMockFactory.Bui
         }
     }
 
-    data class Call<R>(val function: String, val args: List<Any?>) {
+    data class Call<out R>(val function: String, val args: List<Any?>) {
         override fun toString(): String =
             args.joinToString(prefix = "${function}(", postfix = ")")
     }
 
-    data class CallReturn<R>(val call: Call<R>, val returns: R) {
+    data class CallReturn<out R>(val call: Call<R>, val returns: R) {
         override fun toString(): String =
             if (returns == Unit) "$call" else "$call -> $returns"
     }
 
-    abstract class Builder<T : Any>(
+    abstract class Builder<out T : Any>(
         private val mockConstructor: () -> T,
     ) {
         private val callReturns = mutableListOf<CallReturn<*>>()
