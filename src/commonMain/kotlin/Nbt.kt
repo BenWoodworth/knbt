@@ -5,9 +5,13 @@ import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.BinaryNbtReader
 import net.benwoodworth.knbt.internal.BinaryNbtWriter
+import net.benwoodworth.knbt.internal.NbtDecodingException
+import net.benwoodworth.knbt.internal.NonClosingSink
+import net.benwoodworth.knbt.internal.NonClosingSource
 import okio.Buffer
 import okio.Sink
 import okio.Source
+import okio.buffer
 import okio.use
 
 public sealed class Nbt constructor(
@@ -20,10 +24,15 @@ public sealed class Nbt constructor(
      * *Note*: It is the caller's responsibility to close the [sink].
      */
     @OkioApi
-    public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit =
-        BinaryNbtWriter(this, sink).use { writer ->
+    public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit {
+        val binarySink = configuration.variant.getBinarySink(
+            configuration.compression.compress(NonClosingSink(sink), configuration.compressionLevel).buffer()
+        )
+
+        BinaryNbtWriter(binarySink).use { writer ->
             encodeToNbtWriter(writer, serializer, value)
         }
+    }
 
     /**
      * Decodes and deserializes from the given [source] to a value of type [T] using the given [deserializer].
@@ -31,10 +40,30 @@ public sealed class Nbt constructor(
      * *Note*: It is the caller's responsibility to close the [source].
      */
     @OkioApi
-    public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T =
-        BinaryNbtReader(this, source).use { reader ->
+    public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T {
+        val variant = configuration.variant
+        val compression = configuration.compression
+
+        val nonClosingSource = NonClosingSource(source).buffer()
+
+        val detectedCompression = try {
+            NbtCompression.detect(nonClosingSource)
+        } catch (e: NbtDecodingException) {
+            null
+        }
+
+        if (detectedCompression != null && compression != detectedCompression) {
+            throw NbtDecodingException("Expected compression to be $compression, but was $detectedCompression")
+        }
+
+        val binarySource = variant.getBinarySource(
+            compression.decompress(nonClosingSource).buffer()
+        )
+
+        return BinaryNbtReader(binarySource).use { reader ->
             decodeFromNbtReader(reader, deserializer)
         }
+    }
 
     @OptIn(OkioApi::class)
     override fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =

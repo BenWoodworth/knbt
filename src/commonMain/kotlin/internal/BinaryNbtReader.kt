@@ -1,41 +1,16 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import okio.Closeable
-import okio.Source
-import okio.buffer
 
-@OptIn(OkioApi::class)
-internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable {
+internal class BinaryNbtReader(
+    private val source: BinarySource,
+) : NbtReader, Closeable {
     private var compoundNesting = 0
     private var readRootEntry = false
 
     private val tagTypeStack = ArrayDeque<NbtTagType>()
     private val elementsRemainingStack = ArrayDeque<Int>()
-
-    private val source: BinarySource
-
-    init {
-        val variant = nbt.configuration.variant
-        val compression = nbt.configuration.compression
-
-        val nonClosingSource = NonClosingSource(source).buffer()
-
-        val detectedCompression = try {
-            NbtCompression.detect(nonClosingSource)
-        } catch (e: NbtDecodingException) {
-            null
-        }
-
-        if (detectedCompression != null && compression != detectedCompression) {
-            throw NbtDecodingException("Expected compression to be $compression, but was $detectedCompression")
-        }
-
-        this.source = variant.getBinarySource(
-            compression.decompress(nonClosingSource).buffer()
-        )
-    }
 
     override fun close(): Unit = source.close()
 

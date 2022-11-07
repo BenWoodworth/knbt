@@ -1,19 +1,14 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.Nbt
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_Compound
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_End
 import okio.Closeable
-import okio.Sink
-import okio.buffer
 
-internal class BinaryNbtWriter(nbt: Nbt, sink: Sink) : NbtWriter, Closeable {
+internal class BinaryNbtWriter(
+    private val sink: BinarySink,
+) : NbtWriter, Closeable {
     private var compoundNesting = 0
     private var wroteRootEntry = false
-
-    private val sink: BinarySink = nbt.configuration.variant.getBinarySink(
-        nbt.configuration.compression.compress(NonClosingSink(sink), nbt.configuration.compressionLevel).buffer()
-    )
 
     override fun close(): Unit = sink.close()
 
