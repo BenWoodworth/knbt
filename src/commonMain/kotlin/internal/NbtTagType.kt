@@ -1,6 +1,8 @@
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.InternalNbtApi
+import net.benwoodworth.knbt.NbtTag
+import kotlin.reflect.KClass
 
 @Suppress("EnumEntryName")
 @InternalNbtApi
@@ -46,3 +48,20 @@ public enum class NbtTagType(internal val id: Byte) {
         }
     }
 }
+
+internal fun KClass<out NbtTag>.toNbtTagType(): NbtTagType =
+    when (simpleName) { // String cases so it's optimized to a jump table
+        "NbtByte" -> NbtTagType.TAG_Byte
+        "NbtShort" -> NbtTagType.TAG_Short
+        "NbtInt" -> NbtTagType.TAG_Int
+        "NbtLong" -> NbtTagType.TAG_Long
+        "NbtFloat" -> NbtTagType.TAG_Float
+        "NbtDouble" -> NbtTagType.TAG_Double
+        "NbtByteArray" -> NbtTagType.TAG_Byte_Array
+        "NbtString" -> NbtTagType.TAG_String
+        "NbtList" -> NbtTagType.TAG_List
+        "NbtCompound" -> NbtTagType.TAG_Compound
+        "NbtIntArray" -> NbtTagType.TAG_Int_Array
+        "NbtLongArray" -> NbtTagType.TAG_Long_Array
+        else -> NbtTagType.TAG_End // "Nothing", or "Void" on JVM
+    }

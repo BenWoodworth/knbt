@@ -654,6 +654,15 @@ public final class net/benwoodworth/knbt/NbtTagKt {
 	public static final fun nbtList (Lnet/benwoodworth/knbt/NbtTag;Lkotlin/reflect/KClass;)Lnet/benwoodworth/knbt/NbtList;
 }
 
+public abstract interface annotation class net/benwoodworth/knbt/NbtType : java/lang/annotation/Annotation {
+	public abstract fun type ()Ljava/lang/Class;
+}
+
+public final class net/benwoodworth/knbt/NbtType$Impl : net/benwoodworth/knbt/NbtType {
+	public fun <init> (Lkotlin/reflect/KClass;)V
+	public final synthetic fun type ()Ljava/lang/Class;
+}
+
 public abstract class net/benwoodworth/knbt/NbtVariant {
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun toString ()Ljava/lang/String;
