@@ -16,8 +16,12 @@ internal class BinaryNbtReader(
 
     private fun <T> ArrayDeque<T>.replaceLast(element: T): T = set(lastIndex, element)
 
-    private fun BinarySource.readNbtTagType(): NbtTagType =
-        NbtTagType.fromId(readByte())
+    private fun BinarySource.readNbtTagType(): NbtTagType {
+        val tagId = readByte()
+
+        return tagId.toNbtTagTypeOrNull()
+            ?: throw NbtDecodingException("Unknown NBT tag type ID: 0x${tagId.toHex()}")
+    }
 
     private fun checkTagType(expected: NbtTagType) {
         val actual = tagTypeStack.lastOrNull()

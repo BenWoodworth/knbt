@@ -4,12 +4,12 @@ import net.benwoodworth.knbt.InternalNbtApi
 import net.benwoodworth.knbt.NbtTag
 import kotlin.reflect.KClass
 
-@Suppress("EnumEntryName")
-@InternalNbtApi
 /**
  * For internal use only. Will be marked as internal eventually.
  * @suppress
  */
+@Suppress("EnumEntryName")
+@InternalNbtApi
 public enum class NbtTagType(internal val id: Byte) {
     TAG_End(0),
     TAG_Byte(1),
@@ -24,27 +24,14 @@ public enum class NbtTagType(internal val id: Byte) {
     TAG_Compound(10),
     TAG_Int_Array(11),
     TAG_Long_Array(12),
-    ;
-
-    internal companion object {
-        fun fromId(id: Byte): NbtTagType = when (id) {
-            0.toByte() -> TAG_End
-            1.toByte() -> TAG_Byte
-            2.toByte() -> TAG_Short
-            3.toByte() -> TAG_Int
-            4.toByte() -> TAG_Long
-            5.toByte() -> TAG_Float
-            6.toByte() -> TAG_Double
-            7.toByte() -> TAG_Byte_Array
-            8.toByte() -> TAG_String
-            9.toByte() -> TAG_List
-            10.toByte() -> TAG_Compound
-            11.toByte() -> TAG_Int_Array
-            12.toByte() -> TAG_Long_Array
-            else -> throw NbtDecodingException("Unknown NBT tag type ID: 0x${id.toHex()}")
-        }
-    }
 }
+
+// NbtTagType entries for quick lookup, with the ID equalling the list index
+// Can be replaced with this in the future: https://youtrack.jetbrains.com/issue/KT-48872
+private val tags = NbtTagType.values().asList()
+
+internal fun Byte.toNbtTagTypeOrNull(): NbtTagType? =
+    tags.getOrNull(this.toInt())
 
 internal fun KClass<out NbtTag>.toNbtTagType(): NbtTagType =
     when (simpleName) { // String cases so it's optimized to a jump table

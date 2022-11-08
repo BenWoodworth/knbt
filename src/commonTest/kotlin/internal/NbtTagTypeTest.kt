@@ -4,12 +4,37 @@ import io.kotest.data.forAll
 import io.kotest.data.headers
 import io.kotest.data.row
 import io.kotest.data.table
+import io.kotest.inspectors.forAll
 import io.kotest.matchers.shouldBe
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import kotlin.test.Test
 
 class NbtTagTypeTest {
+    @Test
+    fun converting_to_NbtTagType_or_null_from_a_valid_ID_byte_should_return_the_correct_tag() = table(
+        headers("Byte", "Expected Tag"),
+
+        rows = NbtTagType.values()
+            .map { row(it.id, it) }
+            .toTypedArray()
+    ).forAll { byte, expectedTag ->
+        byte.toNbtTagTypeOrNull() shouldBe expectedTag
+    }
+
+    @Test
+    fun converting_to_NbtTagType_or_null_from_an_invalid_ID_byte_should_return_null() {
+        val validIds = NbtTagType.values().map { it.id }
+
+        val invalidIds = (Byte.MIN_VALUE..Byte.MAX_VALUE)
+            .map { it.toByte() }
+            .filter { it !in validIds }
+
+        invalidIds.forAll { id ->
+            id.toNbtTagTypeOrNull() shouldBe null
+        }
+    }
+
     @Test
     fun converting_from_NbtTag_class_should_return_the_correct_type() = table(
         headers("Class", "Expected Type"),
