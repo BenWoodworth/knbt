@@ -83,7 +83,7 @@ class NbtReaderDecoderTest {
                 beginCompoundEntry() returns CompoundEntryInfo(TAG_String, "stringTest")
                 readString() returns "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!"
                 beginCompoundEntry() returns CompoundEntryInfo(TAG_Float, "floatTest")
-                readFloat() returns 0.49823147f
+                readFloat() returns 0.49823147f.fix()
                 beginCompoundEntry() returns CompoundEntryInfo(TAG_Int, "intTest")
                 readInt() returns 2147483647
                 beginCompoundEntry() returns CompoundEntryInfo(TAG_Compound, "nested compound test")

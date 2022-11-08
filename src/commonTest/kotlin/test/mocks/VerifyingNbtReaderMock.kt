@@ -27,7 +27,7 @@ internal object VerifyingNbtReaderMock :
         override fun readShort(): Short = ::readShort.called()
         override fun readInt(): Int = ::readInt.called()
         override fun readLong(): Long = ::readLong.called()
-        override fun readFloat(): Float = ::readFloat.called().fix()
+        override fun readFloat(): Float = ::readFloat.called()
         override fun readDouble(): Double = ::readDouble.called()
         override fun readString(): String = ::readString.called()
     }
@@ -56,8 +56,5 @@ internal object VerifyingNbtReaderMock :
         fun readFloat(): Call<Float> = ::readFloat.called()
         fun readDouble(): Call<Double> = ::readDouble.called()
         fun readString(): Call<String> = ::readString.called()
-
-        infix fun Call<Float>.returns(value: Float): Unit =
-            returns<Float>(value.fix())
     }
 }

@@ -28,7 +28,7 @@ internal object VerifyingNbtWriterMock :
         override fun writeShort(value: Short): Unit = ::writeShort.called(value)
         override fun writeInt(value: Int): Unit = ::writeInt.called(value)
         override fun writeLong(value: Long): Unit = ::writeLong.called(value)
-        override fun writeFloat(value: Float): Unit = ::writeFloat.called(value.fix())
+        override fun writeFloat(value: Float): Unit = ::writeFloat.called(value)
         override fun writeDouble(value: Double): Unit = ::writeDouble.called(value)
         override fun writeString(value: String): Unit = ::writeString.called(value)
     }
@@ -54,7 +54,7 @@ internal object VerifyingNbtWriterMock :
         fun writeShort(value: Short): Unit = ::writeShort.called(value)
         fun writeInt(value: Int): Unit = ::writeInt.called(value)
         fun writeLong(value: Long): Unit = ::writeLong.called(value)
-        fun writeFloat(value: Float): Unit = ::writeFloat.called(value.fix())
+        fun writeFloat(value: Float): Unit = ::writeFloat.called(value)
         fun writeDouble(value: Double): Unit = ::writeDouble.called(value)
         fun writeString(value: String): Unit = ::writeString.called(value)
     }

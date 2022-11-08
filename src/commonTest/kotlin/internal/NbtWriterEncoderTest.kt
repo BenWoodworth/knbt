@@ -7,6 +7,7 @@ import net.benwoodworth.knbt.internal.NbtTagType.*
 import net.benwoodworth.knbt.test.NbtFormat
 import net.benwoodworth.knbt.test.data.bigTestTag
 import net.benwoodworth.knbt.test.data.testTag
+import net.benwoodworth.knbt.test.fix
 import net.benwoodworth.knbt.test.mocks.VerifyingNbtWriterMock
 import kotlin.test.Test
 
@@ -50,7 +51,7 @@ class NbtWriterEncoderTest {
                 beginCompoundEntry(TAG_String, "stringTest")
                 writeString("HELLO WORLD THIS IS A TEST STRING ÅÄÖ!")
                 beginCompoundEntry(TAG_Float, "floatTest")
-                writeFloat(0.49823147f)
+                writeFloat(0.49823147f.fix())
                 beginCompoundEntry(TAG_Int, "intTest")
                 writeInt(2147483647)
                 beginCompoundEntry(TAG_Compound, "nested compound test")
