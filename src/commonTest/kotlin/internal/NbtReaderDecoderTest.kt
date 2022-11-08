@@ -1,5 +1,3 @@
-@file:Suppress("TestFunctionName")
-
 package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.*
@@ -49,7 +47,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_TestNbt_should_read_correctly() {
+    fun decoding_TestNbt_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = testTag,
             expectedCalls = {
@@ -68,7 +66,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_BigTestNbt_should_read_correctly() {
+    fun decoding_BigTestNbt_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = bigTestTag,
             expectedCalls = {
@@ -151,7 +149,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_compound_with_no_entries_to_Map_should_read_correctly() {
+    fun decoding_compound_with_no_entries_to_Map_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = mapOf<String, Int>(),
             expectedCalls = {
@@ -164,7 +162,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_compound_with_one_entry_to_Map_should_read_correctly() {
+    fun decoding_compound_with_one_entry_to_Map_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = mapOf("property" to 7),
             expectedCalls = {
@@ -182,7 +180,7 @@ class NbtReaderDecoderTest {
     data class OneProperty<T>(val property: T)
 
     @Test
-    fun Decoding_compound_with_one_entry_to_class_should_read_correctly() {
+    fun decoding_compound_with_one_entry_to_class_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = OneProperty(7),
             expectedCalls = {
@@ -197,7 +195,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_List_should_read_correctly() {
+    fun decoding_List_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = listOf(listOf(1.toByte()), listOf()),
             expectedCalls = {
@@ -214,7 +212,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_ByteArray_should_read_correctly() {
+    fun decoding_ByteArray_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = byteArrayOf(1, 2, 3),
             expectedCalls = {
@@ -229,7 +227,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_IntArray_should_read_correctly() {
+    fun decoding_IntArray_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = intArrayOf(1, 2, 3),
             expectedCalls = {
@@ -244,7 +242,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_LongArray_should_read_correctly() {
+    fun decoding_LongArray_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = longArrayOf(1, 2, 3),
             expectedCalls = {
@@ -262,7 +260,7 @@ class NbtReaderDecoderTest {
     private data class TwoProperties(val entry1: String, val entry2: Long)
 
     @Test
-    fun Decoding_compound_with_two_entries_should_read_correctly() {
+    fun decoding_compound_with_two_entries_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = TwoProperties(entry1 = "value1", entry2 = 1234L),
             expectedCalls = {
@@ -279,7 +277,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_Byte_should_read_correctly() {
+    fun decoding_Byte_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = 4.toByte(),
             expectedCalls = {
@@ -290,7 +288,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_Short_should_read_correctly() {
+    fun decoding_Short_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = 5.toShort(),
             expectedCalls = {
@@ -301,7 +299,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_Int_should_read_correctly() {
+    fun decoding_Int_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = 6,
             expectedCalls = {
@@ -312,7 +310,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_Long_should_read_correctly() {
+    fun decoding_Long_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = 7L,
             expectedCalls = {
@@ -323,7 +321,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_Float_should_read_correctly() {
+    fun decoding_Float_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = 3.14f,
             expectedCalls = {
@@ -334,7 +332,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_Double_should_read_correctly() {
+    fun decoding_Double_should_read_correctly() {
         assertReadsCorrectly(
             expectedValue = 3.14,
             expectedCalls = {
@@ -362,7 +360,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_should_fail_on_unknown_key_if_not_ignoring() {
+    fun decoding_should_fail_on_unknown_key_if_not_ignoring() {
         val nbt = NbtFormat(ignoreUnknownKeys = false)
 
         assertFailsWith<NbtDecodingException> {
@@ -371,7 +369,7 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun Decoding_should_not_fail_on_unknown_key_if_ignoring() {
+    fun decoding_should_not_fail_on_unknown_key_if_ignoring() {
         val nbt = NbtFormat(ignoreUnknownKeys = true)
 
         val actual = nbt.decodeFromNbtTag<UnknownKeys>(unknownKeysTag)

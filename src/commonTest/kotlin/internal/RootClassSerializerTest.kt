@@ -29,12 +29,12 @@ class RootClassSerializerTest {
     }
 
     @Test
-    fun Should_encode_correctly() {
+    fun should_encode_correctly() {
         assertEquals(testNbtTag, NbtFormat().encodeToNbtTag(testNbt))
     }
 
     @Test
-    fun Should_decode_correctly() {
+    fun should_decode_correctly() {
         assertEquals(testNbt, NbtFormat().decodeFromNbtTag(testNbtTag))
     }
 }

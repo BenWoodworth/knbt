@@ -8,7 +8,7 @@ import kotlin.test.assertContentEquals
 
 class NbtCompressionJvmTest {
     @Test
-    fun Should_correctly_detect_compression_from_InputStream() {
+    fun should_correctly_detect_compression_from_InputStream() {
         fun testStream(stream: InputStream, expected: NbtCompression) {
             val bytes = stream.readBytes()
 

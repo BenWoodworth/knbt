@@ -51,7 +51,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_read_Byte_correctly() {
+    fun should_read_Byte_correctly() {
         check(NbtByte(0), "0b")
         check(NbtByte(Byte.MIN_VALUE), "${Byte.MIN_VALUE}b")
         check(NbtByte(Byte.MAX_VALUE), "${Byte.MAX_VALUE}b")
@@ -62,7 +62,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_read_Short_correctly() {
+    fun should_read_Short_correctly() {
         check(NbtShort(0), "0s")
         check(NbtShort(Short.MIN_VALUE), "${Short.MIN_VALUE}s")
         check(NbtShort(Short.MAX_VALUE), "${Short.MAX_VALUE}s")
@@ -71,7 +71,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_read_Int_correctly() {
+    fun should_read_Int_correctly() {
         check(NbtInt(0), "0")
         check(NbtInt(Int.MIN_VALUE), "${Int.MIN_VALUE}")
         check(NbtInt(Int.MAX_VALUE), "${Int.MAX_VALUE}")
@@ -80,7 +80,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_read_Long_correctly() {
+    fun should_read_Long_correctly() {
         check(NbtLong(0), "0l")
         check(NbtLong(Long.MIN_VALUE), "${Long.MIN_VALUE}l")
         check(NbtLong(Long.MAX_VALUE), "${Long.MAX_VALUE}l")
@@ -89,7 +89,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_read_Float_correctly() {
+    fun should_read_Float_correctly() {
         check(NbtFloat(0.0f), "0f")
         check(NbtFloat(0.1f), "0.1f")
         check(NbtFloat(0.1f), ".1f")
@@ -105,7 +105,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_read_Double_correctly() {
+    fun should_read_Double_correctly() {
         check(NbtDouble(0.0), "0d")
         check(NbtDouble(0.1), "0.1d")
         check(NbtDouble(0.1), ".1d")
@@ -131,7 +131,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_parse_ByteArray_correctly() {
+    fun should_parse_ByteArray_correctly() {
         check(NbtByteArray(byteArrayOf()), "[B;]")
         check(NbtByteArray(byteArrayOf(1, 2, 3)), "[B; 1b, 2b, 3b]")
 
@@ -139,7 +139,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_parse_IntArray_correctly() {
+    fun should_parse_IntArray_correctly() {
         check(NbtIntArray(intArrayOf()), "[I;]")
         check(NbtIntArray(intArrayOf(1, 2, 3)), "[I; 1, 2, 3]")
 
@@ -147,7 +147,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_parse_LongArray_correctly() {
+    fun should_parse_LongArray_correctly() {
         check(NbtLongArray(longArrayOf()), "[L;]")
         check(NbtLongArray(longArrayOf(1, 2, 3)), "[L; 1l, 2l, 3l]")
 
@@ -155,7 +155,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_parse_String_correctly() {
+    fun should_parse_String_correctly() {
         check(NbtString(""), "''")
         check(NbtString(""), "\"\"")
         check(NbtString("one"), "one")
@@ -169,7 +169,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_parse_List_correctly() {
+    fun should_parse_List_correctly() {
         check(buildNbtList<Nothing> { }, "[]")
         check(buildNbtList<NbtByte> { add(0) }, "[0b]")
         check(buildNbtList<NbtShort> { add(0) }, "[0s]")
@@ -190,7 +190,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_parse_Compound_correctly() {
+    fun should_parse_Compound_correctly() {
         check(buildNbtCompound { }, "{}")
         check(buildNbtCompound { put("one", 1) }, "{one: 1}")
         check(buildNbtCompound { put("", 0) }, "{'': 0}")
@@ -207,17 +207,17 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_fail_on_missing_key() {
+    fun should_fail_on_missing_key() {
         assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<NbtTag>("{ : value}") }
     }
 
     @Test
-    fun Should_fail_on_missing_value() {
+    fun should_fail_on_missing_value() {
         assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<NbtTag>("{ key: }") }
     }
 
     @Test
-    fun Should_fail_if_only_whitespace() {
+    fun should_fail_if_only_whitespace() {
         assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<NbtTag>("") }
         assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<NbtTag>("    ") }
 
@@ -226,7 +226,7 @@ class StringifiedNbtReaderTest {
     }
 
     @Test
-    fun Should_fail_if_there_is_trailing_data() {
+    fun should_fail_if_there_is_trailing_data() {
         assertFailsWith<NbtDecodingException> { StringifiedNbt.decodeFromString<NbtTag>("{} hi") }
     }
 }

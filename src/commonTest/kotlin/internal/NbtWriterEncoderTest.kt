@@ -1,5 +1,3 @@
-@file:Suppress("TestFunctionName")
-
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.*
@@ -19,7 +17,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_TestNbt_should_write_correctly() {
+    fun encoding_TestNbt_should_write_correctly() {
         assertWritesCorrectly(
             tag = testTag,
             expectedCalls = {
@@ -36,7 +34,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_BigTestNbt_should_write_correctly() {
+    fun encoding_BigTestNbt_should_write_correctly() {
         assertWritesCorrectly(
             tag = bigTestTag,
             expectedCalls = {
@@ -116,7 +114,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_compound_with_no_entries_should_write_correctly() {
+    fun encoding_compound_with_no_entries_should_write_correctly() {
         assertWritesCorrectly(
             tag = buildNbtCompound {},
             expectedCalls = {
@@ -128,7 +126,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_compound_with_one_entry_should_write_correctly() {
+    fun encoding_compound_with_one_entry_should_write_correctly() {
         assertWritesCorrectly(
             tag = buildNbtCompound { put("property", 7) },
             expectedCalls = {
@@ -142,7 +140,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_compound_with_two_entries_should_write_correctly() {
+    fun encoding_compound_with_two_entries_should_write_correctly() {
         assertWritesCorrectly(
             tag = buildNbtCompound {
                 put("entry1", "value1")
@@ -161,7 +159,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_List_should_write_correctly() {
+    fun encoding_List_should_write_correctly() {
         assertWritesCorrectly(
             tag = buildNbtList<NbtList<*>> {
                 add(NbtList(listOf(NbtByte(1))))
@@ -184,7 +182,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_ByteArray_should_write_correctly() {
+    fun encoding_ByteArray_should_write_correctly() {
         assertWritesCorrectly(
             tag = NbtByteArray(byteArrayOf(1, 2, 3)),
             expectedCalls = {
@@ -202,7 +200,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_IntArray_should_write_correctly() {
+    fun encoding_IntArray_should_write_correctly() {
         assertWritesCorrectly(
             tag = NbtIntArray(intArrayOf(1, 2, 3)),
             expectedCalls = {
@@ -220,7 +218,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_LongArray_should_write_correctly() {
+    fun encoding_LongArray_should_write_correctly() {
         assertWritesCorrectly(
             tag = NbtLongArray(longArrayOf(1, 2, 3)),
             expectedCalls = {
@@ -238,7 +236,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_Byte_should_write_correctly() {
+    fun encoding_Byte_should_write_correctly() {
         assertWritesCorrectly(
             tag = NbtByte(4),
             expectedCalls = {
@@ -249,7 +247,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_Short_should_write_correctly() {
+    fun encoding_Short_should_write_correctly() {
         assertWritesCorrectly(
             tag = NbtShort(5),
             expectedCalls = {
@@ -260,7 +258,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_Int_should_write_correctly() {
+    fun encoding_Int_should_write_correctly() {
         assertWritesCorrectly(
             tag = NbtInt(6),
             expectedCalls = {
@@ -271,7 +269,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_Long_should_write_correctly() {
+    fun encoding_Long_should_write_correctly() {
         assertWritesCorrectly(
             tag = NbtLong(7L),
             expectedCalls = {
@@ -282,7 +280,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_Float_should_write_correctly() {
+    fun encoding_Float_should_write_correctly() {
         assertWritesCorrectly(
             tag = NbtFloat(3.14f),
             expectedCalls = {
@@ -293,7 +291,7 @@ class NbtWriterEncoderTest {
     }
 
     @Test
-    fun Encoding_Double_should_write_correctly() {
+    fun encoding_Double_should_write_correctly() {
         assertWritesCorrectly(
             tag = NbtDouble(3.14),
             expectedCalls = {

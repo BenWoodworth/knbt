@@ -17,7 +17,7 @@ class NbtFormatConfigurationTest {
     )
 
     @Test
-    fun Should_ignore_unknown_key_at_beginning() {
+    fun should_ignore_unknown_key_at_beginning() {
         val nbt = NbtFormat(ignoreUnknownKeys = true)
 
         val tag = buildNbtCompound("") {
@@ -32,7 +32,7 @@ class NbtFormatConfigurationTest {
     }
 
     @Test
-    fun Should_ignore_unknown_key_at_middle() {
+    fun should_ignore_unknown_key_at_middle() {
         val nbt = NbtFormat(ignoreUnknownKeys = true)
 
         val tag = buildNbtCompound("") {
@@ -47,7 +47,7 @@ class NbtFormatConfigurationTest {
     }
 
     @Test
-    fun Should_ignore_unknown_key_at_end() {
+    fun should_ignore_unknown_key_at_end() {
         val nbt = NbtFormat(ignoreUnknownKeys = true)
 
         val tag = buildNbtCompound("") {
@@ -62,7 +62,7 @@ class NbtFormatConfigurationTest {
     }
 
     @Test
-    fun Should_throw_for_unknown_keys_if_not_permitted() {
+    fun should_throw_for_unknown_keys_if_not_permitted() {
         val nbt = NbtFormat(ignoreUnknownKeys = false)
 
         val tag = buildNbtCompound("") {

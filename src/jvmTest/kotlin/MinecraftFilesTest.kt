@@ -29,7 +29,7 @@ class MinecraftFilesTest {
     }
 
     @Test
-    fun Encoding_Java_NBT_file_to_NbtTag_and_back_should_be_identical() {
+    fun encoding_Java_NBT_file_to_NbtTag_and_back_should_be_identical() {
         testFiles(
             nbt = Nbt {
                 variant = NbtVariant.Java
@@ -48,7 +48,7 @@ class MinecraftFilesTest {
     }
 
     @Test
-    fun Encoding_Bedrock_NBT_file_to_NbtTag_and_back_should_be_identical() {
+    fun encoding_Bedrock_NBT_file_to_NbtTag_and_back_should_be_identical() {
         testFiles(
             nbt = Nbt {
                 variant = NbtVariant.Bedrock

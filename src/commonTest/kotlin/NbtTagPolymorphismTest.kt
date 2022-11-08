@@ -18,7 +18,7 @@ class NbtTagPolymorphismTest {
     )
 
     @Test
-    fun Should_encode_NbtCompound_to_NbtTag_property_correctly() {
+    fun should_encode_NbtCompound_to_NbtTag_property_correctly() {
         val compound = buildNbtCompound {
             put("entry", "Hello, world!")
         }
@@ -34,7 +34,7 @@ class NbtTagPolymorphismTest {
     }
 
     @Test
-    fun Should_decode_NbtCompound_from_NbtTag_property_correctly() {
+    fun should_decode_NbtCompound_from_NbtTag_property_correctly() {
         val compound = buildNbtCompound {
             put("entry", "Hello, world!")
         }

@@ -16,7 +16,7 @@ class StringifiedNbtWriterTest {
     }
 
     @Test
-    fun Should_use_prettyPrintIndent() {
+    fun should_use_prettyPrintIndent() {
         val indentSnbt = StringifiedNbt(snbt) {
             prettyPrintIndent = "\t"
         }
@@ -35,7 +35,7 @@ class StringifiedNbtWriterTest {
     }
 
     @Test
-    fun Should_write_bigtest_extended_snbt_correctly() {
+    fun should_write_bigtest_extended_snbt_correctly() {
         assertEquals(
             expected = """
                 {

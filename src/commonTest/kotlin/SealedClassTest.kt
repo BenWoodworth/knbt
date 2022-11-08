@@ -34,7 +34,7 @@ private val child = Person.Child("nate", 6, father, mother)
 
 class SealedClassTest {
     @Test
-    fun Should_successfully_encode_and_decode_sealed_classes() {
+    fun should_successfully_encode_and_decode_sealed_classes() {
         val childNbt = nbt.encodeToByteArray(child)
 
         val childFromNbt: Person.Child = nbt.decodeFromByteArray(childNbt)

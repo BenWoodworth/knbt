@@ -1,5 +1,3 @@
-@file:Suppress("TestFunctionName")
-
 package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.KSerializer
@@ -26,7 +24,7 @@ class BinaryNbtWriterTest {
     }
 
     @Test
-    fun Should_encode_from_class_correctly() = parameterize(nbtFiles) {
+    fun should_encode_from_class_correctly() = parameterize(nbtFiles) {
         @Suppress("UNCHECKED_CAST")
         val out = nbt.encodeToByteArray(valueSerializer as KSerializer<Any>, value)
 
@@ -52,7 +50,7 @@ class BinaryNbtWriterTest {
     }
 
     @Test
-    fun Should_encode_from_NbtTag_correctly() = parameterize(nbtFiles) {
+    fun should_encode_from_NbtTag_correctly() = parameterize(nbtFiles) {
         val out = nbt.encodeToByteArray(nbtTag)
 
         val outCompression = try {
@@ -77,84 +75,84 @@ class BinaryNbtWriterTest {
     }
 
     @Test
-    fun Should_fail_when_decoding_Byte() {
+    fun should_fail_when_decoding_Byte() {
         assertFailsWith<NbtEncodingException> {
             nbt.encodeToByteArray<Byte>(0)
         }
     }
 
     @Test
-    fun Should_fail_when_decoding_Short() {
+    fun should_fail_when_decoding_Short() {
         assertFailsWith<NbtEncodingException> {
             nbt.encodeToByteArray<Short>(0)
         }
     }
 
     @Test
-    fun Should_fail_when_decoding_Int() {
+    fun should_fail_when_decoding_Int() {
         assertFailsWith<NbtEncodingException> {
             nbt.encodeToByteArray(0)
         }
     }
 
     @Test
-    fun Should_fail_when_decoding_Long() {
+    fun should_fail_when_decoding_Long() {
         assertFailsWith<NbtEncodingException> {
             nbt.encodeToByteArray(0L)
         }
     }
 
     @Test
-    fun Should_fail_when_decoding_Float() {
+    fun should_fail_when_decoding_Float() {
         assertFailsWith<NbtEncodingException> {
             nbt.encodeToByteArray(0.0f)
         }
     }
 
     @Test
-    fun Should_fail_when_decoding_Double() {
+    fun should_fail_when_decoding_Double() {
         assertFailsWith<NbtEncodingException> {
             nbt.encodeToByteArray(0.0)
         }
     }
 
     @Test
-    fun Should_fail_when_decoding_String() {
+    fun should_fail_when_decoding_String() {
         assertFailsWith<NbtEncodingException> {
             nbt.encodeToByteArray("string")
         }
     }
 
     @Test
-    fun Should_fail_when_decoding_ByteArray() {
+    fun should_fail_when_decoding_ByteArray() {
         assertFailsWith<NbtEncodingException> {
             nbt.encodeToByteArray(byteArrayOf(1, 2, 3))
         }
     }
 
     @Test
-    fun Should_fail_when_decoding_IntArray() {
+    fun should_fail_when_decoding_IntArray() {
         assertFailsWith<NbtEncodingException> {
             nbt.encodeToByteArray(intArrayOf(1, 2, 3))
         }
     }
 
     @Test
-    fun Should_fail_when_decoding_LongArray() {
+    fun should_fail_when_decoding_LongArray() {
         assertFailsWith<NbtEncodingException> {
             nbt.encodeToByteArray(longArrayOf(1, 2, 3))
         }
     }
 
     @Test
-    fun Should_fail_when_decoding_List() {
+    fun should_fail_when_decoding_List() {
         assertFailsWith<NbtEncodingException> {
             nbt.encodeToByteArray(listOf<Byte>(1, 2, 3))
         }
     }
 
     @Test
-    fun Should_not_close_sink() = parameterize(nbtFiles) {
+    fun should_not_close_sink() = parameterize(nbtFiles) {
         TestSink(blackholeSink()).use { sink ->
             @Suppress("UNCHECKED_CAST")
             nbt.encodeToSink(valueSerializer as KSerializer<Any>, value, sink)

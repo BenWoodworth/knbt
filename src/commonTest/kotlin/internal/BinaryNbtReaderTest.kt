@@ -1,5 +1,3 @@
-@file:Suppress("TestFunctionName")
-
 package net.benwoodworth.knbt.internal
 
 import io.kotest.assertions.throwables.shouldThrow
@@ -60,7 +58,7 @@ class BinaryNbtReaderTest {
     }
 
     @Test
-    fun Should_decode_to_class_correctly() = parameterize(nbtFiles) {
+    fun should_decode_to_class_correctly() = parameterize(nbtFiles) {
         assertEquals(
             expected = value,
             actual = asSource().use { source ->
@@ -70,7 +68,7 @@ class BinaryNbtReaderTest {
     }
 
     @Test
-    fun Should_decode_to_NbtTag_correctly() = parameterize(nbtFiles) {
+    fun should_decode_to_NbtTag_correctly() = parameterize(nbtFiles) {
         assertEquals(
             expected = nbtTag,
             actual = asSource().use { source ->
@@ -80,7 +78,7 @@ class BinaryNbtReaderTest {
     }
 
     @Test
-    fun Should_not_read_more_from_source_than_necessary() = parameterize(nbtFiles) {
+    fun should_not_read_more_from_source_than_necessary() = parameterize(nbtFiles) {
         TestSource(asSource()).use { source ->
             nbt.decodeFromSource<NbtTag>(source)
             assertFalse(source.readPastEnd)
@@ -88,7 +86,7 @@ class BinaryNbtReaderTest {
     }
 
     @Test
-    fun Should_not_close_source() = parameterize(nbtFiles) {
+    fun should_not_close_source() = parameterize(nbtFiles) {
         TestSource(asSource()).use { source ->
             nbt.decodeFromSource<NbtTag>(source)
             assertFalse(source.isClosed)
@@ -96,7 +94,7 @@ class BinaryNbtReaderTest {
     }
 
     @Test
-    fun Should_fail_with_incorrect_NbtCompression_and_specify_mismatched_compressions() {
+    fun should_fail_with_incorrect_NbtCompression_and_specify_mismatched_compressions() {
         data class Parameters(
             val configuredCompression: NbtCompression,
             val fileCompression: NbtCompression,

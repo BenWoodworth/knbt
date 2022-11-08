@@ -1,5 +1,3 @@
-@file:Suppress("TestFunctionName")
-
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.*
@@ -19,19 +17,19 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_encode_test_from_class_correctly(): Unit = assertEquals(
+    fun should_encode_test_from_class_correctly(): Unit = assertEquals(
         expected = testTag,
         actual = NbtFormat().encodeToNbtTag(testClass),
     )
 
     @Test
-    fun Should_encode_bigtest_from_class_correctly(): Unit = assertEquals(
+    fun should_encode_bigtest_from_class_correctly(): Unit = assertEquals(
         expected = testTag,
         actual = NbtFormat().encodeToNbtTag(testClass),
     )
 
     @Test
-    fun Should_write_Byte_correctly() {
+    fun should_write_Byte_correctly() {
         TestValues.bytes.forEach { value ->
             expectNbtWriterCalls(NbtByte(value)) {
                 beginRootTag(TAG_Byte)
@@ -41,7 +39,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_Short_correctly() {
+    fun should_write_Short_correctly() {
         TestValues.shorts.forEach { value ->
             expectNbtWriterCalls(NbtShort(value)) {
                 beginRootTag(TAG_Short)
@@ -51,7 +49,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_Int_correctly() {
+    fun should_write_Int_correctly() {
         TestValues.ints.forEach { value ->
             expectNbtWriterCalls(NbtInt(value)) {
                 beginRootTag(TAG_Int)
@@ -61,7 +59,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_Long_correctly() {
+    fun should_write_Long_correctly() {
         TestValues.longs.forEach { value ->
             expectNbtWriterCalls(NbtLong(value)) {
                 beginRootTag(TAG_Long)
@@ -71,7 +69,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_Float_correctly() {
+    fun should_write_Float_correctly() {
         TestValues.floats.forEach { value ->
             expectNbtWriterCalls(NbtFloat(value)) {
                 beginRootTag(TAG_Float)
@@ -81,7 +79,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_Double_correctly() {
+    fun should_write_Double_correctly() {
         TestValues.doubles.forEach { value ->
             expectNbtWriterCalls(NbtDouble(value)) {
                 beginRootTag(TAG_Double)
@@ -91,7 +89,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_ByteArray_correctly() {
+    fun should_write_ByteArray_correctly() {
         TestValues.byteArrays.forEach { value ->
             expectNbtWriterCalls(NbtByteArray(value)) {
                 beginRootTag(TAG_Byte_Array)
@@ -106,7 +104,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_IntArray_correctly() {
+    fun should_write_IntArray_correctly() {
         TestValues.intArrays.forEach { value ->
             expectNbtWriterCalls(NbtIntArray(value)) {
                 beginRootTag(TAG_Int_Array)
@@ -121,7 +119,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_LongArray_correctly() {
+    fun should_write_LongArray_correctly() {
         TestValues.longArrays.forEach { value ->
             expectNbtWriterCalls(NbtLongArray(value)) {
                 beginRootTag(TAG_Long_Array)
@@ -136,7 +134,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_Compound_with_no_entries_correctly() {
+    fun should_write_Compound_with_no_entries_correctly() {
         expectNbtWriterCalls(buildNbtCompound {}) {
             beginRootTag(TAG_Compound)
             beginCompound()
@@ -145,7 +143,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_Compound_with_one_entry_correctly() {
+    fun should_write_Compound_with_one_entry_correctly() {
         expectNbtWriterCalls(
             buildNbtCompound { put("entry", 5) }
         ) {
@@ -158,7 +156,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_List_with_no_entries_correctly() {
+    fun should_write_List_with_no_entries_correctly() {
         expectNbtWriterCalls(NbtList(emptyList<NbtByte>())) {
             beginRootTag(TAG_List)
             beginList(TAG_End, 0)
@@ -167,7 +165,7 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_write_List_with_one_entry_correctly() {
+    fun should_write_List_with_one_entry_correctly() {
         expectNbtWriterCalls(NbtList(listOf("entry").map { NbtString(it) })) {
             beginRootTag(TAG_List)
             beginList(TAG_String, 1)

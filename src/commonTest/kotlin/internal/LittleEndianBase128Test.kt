@@ -23,7 +23,7 @@ class LittleEndianBase128Test {
         map { it.toString(2).padStart(8, '0') }.toTypedArray()
 
     @Test
-    fun Should_write_LEB128_correctly() = parameterize(leb128TestValues, { ulong }) {
+    fun should_write_LEB128_correctly() = parameterize(leb128TestValues, { ulong }) {
         val actualBytes = Buffer()
             .apply { writeLEB128(ulong) }
             .readByteArray().toUByteArray()
@@ -32,7 +32,7 @@ class LittleEndianBase128Test {
     }
 
     @Test
-    fun Should_read_LEB128_correctly() = parameterize(leb128TestValues, { bytes.contentToString() }) {
+    fun should_read_LEB128_correctly() = parameterize(leb128TestValues, { bytes.contentToString() }) {
         val actualULong = Buffer()
             .apply { write(bytes.toByteArray()) }
             .readLEB128(10)
@@ -54,12 +54,12 @@ class LittleEndianBase128Test {
     )
 
     @Test
-    fun Should_ZigZag_encode_correctly() = parameterize(zigZagTestValues, { zigZagULong }) {
+    fun should_ZigZag_encode_correctly() = parameterize(zigZagTestValues, { zigZagULong }) {
         assertEquals(zigZagULong, long.zigZagEncode())
     }
 
     @Test
-    fun Should_ZigZag_decode_correctly() = parameterize(zigZagTestValues, { "$zigZagULong" }) {
+    fun should_ZigZag_decode_correctly() = parameterize(zigZagTestValues, { "$zigZagULong" }) {
         assertEquals(long, zigZagULong.zigZagDecode())
     }
 }
