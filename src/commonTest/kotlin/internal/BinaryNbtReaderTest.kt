@@ -2,18 +2,63 @@
 
 package net.benwoodworth.knbt.internal
 
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.throwable.shouldHaveMessage
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.NbtVariant.Java
 import net.benwoodworth.knbt.test.TestSource
 import net.benwoodworth.knbt.test.file.nbtFiles
+import net.benwoodworth.knbt.test.mocks.VerifyingBinarySourceMock
 import net.benwoodworth.knbt.test.parameterize
 import okio.use
 import kotlin.test.*
 
 @OptIn(OkioApi::class)
 class BinaryNbtReaderTest {
+    @Test
+    fun should_throw_decoding_exception_when_reading_invalid_tag_type_ID_from_compound_entry() {
+        VerifyingBinarySourceMock
+            .create {
+                readByte() returns 0xAB.toByte() // beginCompoundEntry type
+            }
+            .verify { source ->
+                val reader = BinaryNbtReader(source)
+                reader.beginRootTag()
+                reader.beginCompound()
+
+                val error = shouldThrow<NbtDecodingException> {
+                    reader.beginCompoundEntry()
+                }
+
+                error shouldHaveMessage "Unknown NBT tag type ID: 0xAB"
+            }
+    }
+
+    @Test
+    fun should_throw_decoding_exception_when_reading_invalid_tag_type_ID_from_list_entry_type() {
+        VerifyingBinarySourceMock
+            .create {
+                readByte() returns NbtTagType.TAG_List.id // beginCompoundEntry type
+                readString() returns "ListWithInvalidType" // beginCompoundEntry name
+
+                readByte() returns 0xCD.toByte() // beginList type
+            }
+            .verify { source ->
+                val reader = BinaryNbtReader(source)
+                reader.beginRootTag()
+                reader.beginCompound()
+                reader.beginCompoundEntry()
+
+                val error = shouldThrow<NbtDecodingException> {
+                    reader.beginList()
+                }
+
+                error shouldHaveMessage "Unknown NBT tag type ID: 0xCD"
+            }
+    }
+
     @Test
     fun Should_decode_to_class_correctly() = parameterize(nbtFiles) {
         assertEquals(
