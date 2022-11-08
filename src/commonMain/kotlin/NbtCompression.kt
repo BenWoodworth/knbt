@@ -47,10 +47,9 @@ internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression =
         // Zlib headers: 0x7801, 0x789C, and 0x78DA
         0x78.toByte() -> NbtCompression.Zlib
 
-        else -> {
-            val byteStr = firstByte.toUByte().toString(16).uppercase().padStart(2, '0')
-            throw NbtDecodingException("Unable to detect NbtCompression. Unexpected first byte: 0x$byteStr")
-        }
+        else -> throw NbtDecodingException(
+            "Unable to detect NbtCompression. Unexpected first byte: 0x${firstByte.toHex()}"
+        )
     }
 
 /**

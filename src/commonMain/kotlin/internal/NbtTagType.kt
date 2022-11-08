@@ -41,10 +41,7 @@ public enum class NbtTagType(internal val id: Byte) {
             10.toByte() -> TAG_Compound
             11.toByte() -> TAG_Int_Array
             12.toByte() -> TAG_Long_Array
-            else -> {
-                val hex = id.toUByte().toString(16).uppercase().padStart(2, '0')
-                throw NbtDecodingException("Unknown NBT tag type ID: 0x$hex")
-            }
+            else -> throw NbtDecodingException("Unknown NBT tag type ID: 0x${id.toHex()}")
         }
     }
 }
