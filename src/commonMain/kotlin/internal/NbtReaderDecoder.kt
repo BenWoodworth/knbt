@@ -178,9 +178,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     final override fun decodeValue(): Any =
         super.decodeValue()
 
-    final override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T =
-        super.decodeSerializableValue(deserializer)
-
     final override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>, previousValue: T?): T =
         super.decodeSerializableValue(deserializer, previousValue)
 
@@ -189,6 +186,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     //endregion
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 internal class NbtReaderDecoder(
     override val nbt: NbtFormat,
     override val reader: NbtReader,
@@ -208,6 +206,17 @@ internal class NbtReaderDecoder(
     @ExperimentalSerializationApi
     override fun decodeSequentially(): Boolean {
         return super.decodeSequentially()
+    }
+
+    override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
+        if (deserializer.descriptor.kind == StructureKind.CLASS &&
+            deserializer !is RootClassDeserializer<*> &&
+            deserializer !is NbtTagSerializer // TODO Remove when NbtTag's kind is Polymorphic instead of Class
+        ) {
+            return decodeSerializableValue(RootClassDeserializer(deserializer))
+        }
+
+        return super.decodeSerializableValue(deserializer)
     }
 }
 

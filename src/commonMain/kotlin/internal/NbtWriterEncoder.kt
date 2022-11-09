@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.modules.SerializersModule
@@ -216,6 +217,7 @@ internal class NbtWriterEncoder(
                 }
                 writer.endList()
             }
+
             TAG_Byte_Array -> writer.writeByteArray((value as NbtByteArray).content)
             TAG_Int_Array -> writer.writeIntArray((value as NbtIntArray).content)
             TAG_Long_Array -> writer.writeLongArray((value as NbtLongArray).content)
@@ -223,5 +225,17 @@ internal class NbtWriterEncoder(
 
         beginEncodingValue(value.type)
         writeTag(value)
+    }
+
+    override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
+        if (structureTypeStack.isEmpty() && // Is at the root
+            serializer.descriptor.kind == StructureKind.CLASS &&
+            serializer !is RootClassSerializer<*> &&
+            serializer !is NbtTagSerializer // TODO Remove when NbtTag's kind is Polymorphic instead of Class
+        ) {
+            return encodeSerializableValue(RootClassSerializer(serializer), value)
+        }
+
+        super.encodeSerializableValue(serializer, value)
     }
 }

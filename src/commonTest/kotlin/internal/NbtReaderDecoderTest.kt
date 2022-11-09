@@ -1,5 +1,6 @@
 package net.benwoodworth.knbt.internal
 
+import io.kotest.matchers.shouldBe
 import kotlinx.serialization.*
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtReader.*
@@ -177,6 +178,7 @@ class NbtReaderDecoderTest {
     }
 
     @Serializable
+    @SerialName("OneProperty")
     data class OneProperty<T>(val property: T)
 
     @Test
@@ -186,8 +188,12 @@ class NbtReaderDecoderTest {
             expectedCalls = {
                 beginRootTag() returns RootTagInfo(TAG_Compound)
                 beginCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Compound, "OneProperty")
+                beginCompound()
                 beginCompoundEntry() returns CompoundEntryInfo(TAG_Int, "property")
                 readInt() returns 7
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
+                endCompound()
                 beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
                 endCompound()
             },
@@ -257,6 +263,7 @@ class NbtReaderDecoderTest {
     }
 
     @Serializable
+    @SerialName("TwoProperties")
     private data class TwoProperties(val entry1: String, val entry2: Long)
 
     @Test
@@ -266,10 +273,14 @@ class NbtReaderDecoderTest {
             expectedCalls = {
                 beginRootTag() returns RootTagInfo(TAG_Compound)
                 beginCompound()
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_Compound, "TwoProperties")
+                beginCompound()
                 beginCompoundEntry() returns CompoundEntryInfo(TAG_String, "entry1")
                 readString() returns "value1"
                 beginCompoundEntry() returns CompoundEntryInfo(TAG_Long, "entry2")
                 readLong() returns 1234
+                beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
+                endCompound()
                 beginCompoundEntry() returns CompoundEntryInfo(TAG_End, "")
                 endCompound()
             },
@@ -374,5 +385,29 @@ class NbtReaderDecoderTest {
 
         val actual = nbt.decodeFromNbtTag<UnknownKeys>(unknownKeysTag)
         assertEquals(UnknownKeys.expected, actual)
+    }
+
+    @Test
+    fun decoding_a_class_should_unnest_from_a_compound_with_the_class_serial_name_as_the_key() {
+        @Serializable
+        @SerialName("RootKey")
+        data class MyClass(val property: String)
+
+        val myClass = MyClass("value")
+
+        val tag = buildNbtCompound {
+            putNbtCompound("RootKey") {
+                put("property", "value")
+            }
+        }
+
+        val decoder = NbtReaderDecoder(
+            NbtFormat(),
+            TreeNbtReader(tag)
+        )
+
+        val decodedValue = decoder.decodeSerializableValue(MyClass.serializer(), myClass)
+
+        decodedValue shouldBe myClass
     }
 }

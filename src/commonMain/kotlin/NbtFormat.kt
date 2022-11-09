@@ -37,29 +37,12 @@ public inline fun <reified T> NbtFormat.encodeToNbtTag(value: T): NbtTag =
 public inline fun <reified T> NbtFormat.decodeFromNbtTag(tag: NbtTag): T =
     decodeFromNbtTag(serializersModule.serializer(), tag)
 
-@OptIn(ExperimentalSerializationApi::class)
-internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: SerializationStrategy<T>, value: T) {
-    val rootSerializer = if (serializer.descriptor.kind == StructureKind.CLASS && serializer !== NbtTag.serializer()) {
-        RootClassSerializer(serializer)
-    } else {
-        serializer
+internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: SerializationStrategy<T>, value: T): Unit =
+    tryOrRethrowWithNbtPath {
+        NbtWriterEncoder(this, writer).encodeSerializableValue(serializer, value)
     }
 
-    return tryOrRethrowWithNbtPath {
-        NbtWriterEncoder(this, writer).encodeSerializableValue(rootSerializer, value)
+internal fun <T> NbtFormat.decodeFromNbtReader(reader: NbtReader, deserializer: DeserializationStrategy<T>): T =
+    tryOrRethrowWithNbtPath {
+        NbtReaderDecoder(this, reader).decodeSerializableValue(deserializer)
     }
-}
-
-@OptIn(ExperimentalSerializationApi::class)
-internal fun <T> NbtFormat.decodeFromNbtReader(reader: NbtReader, deserializer: DeserializationStrategy<T>): T {
-    val rootDeserializer =
-        if (deserializer.descriptor.kind == StructureKind.CLASS && deserializer !== NbtTag.serializer()) {
-            RootClassDeserializer(deserializer)
-        } else {
-            deserializer
-        }
-
-    return tryOrRethrowWithNbtPath {
-        NbtReaderDecoder(this, reader).decodeSerializableValue(rootDeserializer)
-    }
-}
