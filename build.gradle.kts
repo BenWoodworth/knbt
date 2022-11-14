@@ -58,6 +58,10 @@ kotlin {
             languageSettings.apply {
                 optIn("kotlin.contracts.ExperimentalContracts")
                 optIn("net.benwoodworth.knbt.InternalNbtApi")
+
+                if (name.endsWith("Test")) {
+                    languageVersion = "1.8" // For data objects
+                }
             }
         }
 
