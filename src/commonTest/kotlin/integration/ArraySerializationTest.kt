@@ -8,7 +8,7 @@ import kotlin.test.Test
 class ArraySerializationTest : SerializationTest() {
     @Test
     fun should_serialize_ByteArray_correctly() {
-        assertSerializesCorrectly(
+        defaultNbt.testSerialization(
             byteArrayOf(1, 2, 3),
             NbtByteArray(byteArrayOf(1, 2, 3)),
             ByteArray::contentEquals
@@ -17,7 +17,7 @@ class ArraySerializationTest : SerializationTest() {
 
     @Test
     fun should_serialize_IntArray_correctly() {
-        assertSerializesCorrectly(
+        defaultNbt.testSerialization(
             intArrayOf(1, 2, 3),
             NbtIntArray(intArrayOf(1, 2, 3)),
             IntArray::contentEquals
@@ -26,7 +26,7 @@ class ArraySerializationTest : SerializationTest() {
 
     @Test
     fun should_serialize_LongArray_correctly() {
-        assertSerializesCorrectly(
+        defaultNbt.testSerialization(
             longArrayOf(1, 2, 3),
             NbtLongArray(longArrayOf(1, 2, 3)),
             LongArray::contentEquals,

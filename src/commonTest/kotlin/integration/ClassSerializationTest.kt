@@ -18,7 +18,7 @@ class ClassSerializationTest : SerializationTest() {
         @SerialName("RootKey")
         data class MyClass(val property: String)
 
-        assertSerializesCorrectly(
+        defaultNbt.testSerialization(
             MyClass("value"),
             buildNbtCompound {
                 putNbtCompound("RootKey") {
@@ -30,12 +30,12 @@ class ClassSerializationTest : SerializationTest() {
 
     @Test
     fun should_serialize_TestNbt_class_correctly() {
-        assertSerializesCorrectly(testClass, testTag)
+        defaultNbt.testSerialization(testClass, testTag)
     }
 
     @Test
     fun should_serialize_BigTestNbt_class_correctly() {
-        assertSerializesCorrectly(bigTestClass, bigTestTag)
+        defaultNbt.testSerialization(bigTestClass, bigTestTag)
     }
 
     @Test
@@ -44,7 +44,7 @@ class ClassSerializationTest : SerializationTest() {
         @SerialName("OneProperty")
         data class OneProperty(val property: Int)
 
-        assertSerializesCorrectly(
+        defaultNbt.testSerialization(
             OneProperty(7),
             buildNbtCompound("OneProperty") {
                 put("property", 7)
@@ -58,7 +58,7 @@ class ClassSerializationTest : SerializationTest() {
         @SerialName("TwoProperties")
         data class TwoProperties(val entry1: String, val entry2: Long)
 
-        assertSerializesCorrectly(
+        defaultNbt.testSerialization(
             TwoProperties(entry1 = "value1", entry2 = 1234L),
             buildNbtCompound("TwoProperties") {
                 put("entry1", "value1")
