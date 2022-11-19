@@ -29,7 +29,6 @@ internal class VerifyingNbtReader(
         val newState = state.transition(resultCall)
         state = newState
 
-        if (newState is State.Illegal) error(newState.reason)
         return result
     }
 
@@ -151,36 +150,34 @@ internal class VerifyingNbtReader(
     //endregion
 
     private fun State.transition(call: Call): State = when (this) {
-        is State.Complete -> State.Illegal("Expected no more calls, but got $call")
-
-        is State.Illegal -> this
+        is State.Complete -> error("Expected no more calls, but got $call")
 
         is State.AwaitingValue -> when {
             call is Call.BeginCompound && type == TAG_Compound -> State.InCompound(false, nextState)
 
             call is Call.BeginList && type == TAG_List -> when {
                 call.result.size == NbtReader.UNKNOWN_SIZE -> State.InList(call.result.type, null, 0, nextState)
-                call.result.type == TAG_End && call.result.size > 0 -> expected<Call.BeginList> { "Expected $it with $TAG_End to have size 0, but got $call" }
+                call.result.type == TAG_End && call.result.size > 0 -> error("Expected ${Call.BeginList::class.simpleName} with $TAG_End to have size 0, but got $call")
                 call.result.size >= 0 -> State.InList(call.result.type, call.result.size, 0, nextState)
-                else -> expected<Call.BeginList> { "Expected $it with non-negative size, but got $call" }
+                else -> error("Expected ${Call.BeginList::class.simpleName} with non-negative size, but got $call")
             }
 
             call is Call.BeginByteArray && type == TAG_Byte_Array -> when {
                 call.result.size == NbtReader.UNKNOWN_SIZE -> State.InByteArray(null, 0, nextState)
                 call.result.size >= 0 -> State.InByteArray(call.result.size, 0, nextState)
-                else -> expected<Call.BeginByteArray> { "Expected $it with non-negative size, but got $call" }
+                else -> error("Expected ${Call.BeginByteArray::class.simpleName} with non-negative size, but got $call")
             }
 
             call is Call.BeginIntArray && type == TAG_Int_Array -> when {
                 call.result.size == NbtReader.UNKNOWN_SIZE -> State.InIntArray(null, 0, nextState)
                 call.result.size >= 0 -> State.InIntArray(call.result.size, 0, nextState)
-                else -> expected<Call.BeginIntArray> { "Expected $it with non-negative size, but got $call" }
+                else -> error("Expected ${Call.BeginIntArray::class.simpleName} with non-negative size, but got $call")
             }
 
             call is Call.BeginLongArray && type == TAG_Long_Array -> when {
                 call.result.size == NbtReader.UNKNOWN_SIZE -> State.InLongArray(null, 0, nextState)
                 call.result.size >= 0 -> State.InLongArray(call.result.size, 0, nextState)
-                else -> expected<Call.BeginLongArray> { "Expected $it with non-negative size, but got $call" }
+                else -> error("Expected ${Call.BeginLongArray::class.simpleName} with non-negative size, but got $call")
             }
 
             call is Call.ReadByte && type == TAG_Byte -> nextState
@@ -191,32 +188,32 @@ internal class VerifyingNbtReader(
             call is Call.ReadDouble && type == TAG_Double -> nextState
             call is Call.ReadString && type == TAG_String -> nextState
 
-            else -> State.Illegal("Expected value call for $type, but got $this")
+            else -> error("Expected value call for $type, but got $this")
         }
 
         is State.InRoot -> when (call) {
             is Call.BeginRootTag -> when {
                 call.result.type != TAG_End -> State.AwaitingValue(call.result.type, State.Complete)
-                else -> State.Illegal("${NbtWriter::beginRootTag.name} must not be called with $TAG_End")
+                else -> error("${NbtWriter::beginRootTag.name} must not be called with $TAG_End")
             }
 
-            else -> expected<Call.BeginRootTag> { "Expected $it for first call, but got $call" }
+            else -> error("Expected ${Call.BeginRootTag::class.simpleName} for first call, but got $call")
         }
 
         is State.InCompound -> when {
             ended -> when (call) {
                 is Call.EndCompound -> nextState
-                else -> expected<Call.BeginCompoundEntry> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.BeginCompoundEntry::class.simpleName}, but got $call")
             }
 
             else -> when (call) {
                 is Call.BeginCompoundEntry -> when {
                     call.result.type == TAG_End && call.result.name == "" -> State.InCompound(true, nextState)
-                    call.result.type == TAG_End -> expected<Call.BeginCompoundEntry> { "Expected $it with $TAG_End to have empty name, but got $call" }
+                    call.result.type == TAG_End -> error("Expected ${Call.BeginCompoundEntry::class.simpleName} with $TAG_End to have empty name, but got $call")
                     else -> State.AwaitingValue(call.result.type, this)
                 }
 
-                else -> expected<Call.BeginCompoundEntry> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.BeginCompoundEntry::class.simpleName}, but got $call")
             }
         }
 
@@ -228,7 +225,7 @@ internal class VerifyingNbtReader(
                     else -> copy(size = count)
                 }
 
-                else -> expected<Call.BeginListEntry> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.BeginListEntry::class.simpleName}, but got $call")
             }
 
             // Size is known, so begin entry call is not needed, and is read directly
@@ -236,7 +233,7 @@ internal class VerifyingNbtReader(
 
             else -> when (call) {
                 Call.EndList -> nextState
-                else -> expected<Call.EndList> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.EndList::class.simpleName}, but got $call")
             }
         }
 
@@ -248,18 +245,18 @@ internal class VerifyingNbtReader(
                     else -> copy(size = count)
                 }
 
-                else -> expected<Call.BeginByteArrayEntry> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.BeginByteArrayEntry::class.simpleName}, but got $call")
             }
 
             // Size is known, so begin entry call is not needed, and is read directly
             count < size -> when (call) {
                 is Call.ReadByte -> copy(count = count + 1)
-                else -> expected<Call.ReadByte> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.ReadByte::class.simpleName}, but got $call")
             }
 
             else -> when (call) {
                 Call.EndByteArray -> nextState
-                else -> expected<Call.EndByteArray> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.EndByteArray::class.simpleName}, but got $call")
             }
         }
 
@@ -271,18 +268,18 @@ internal class VerifyingNbtReader(
                     else -> copy(size = count)
                 }
 
-                else -> expected<Call.BeginIntArrayEntry> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.BeginIntArrayEntry::class.simpleName}, but got $call")
             }
 
             // Size is known, so begin entry call is not needed, and is read directly
             count < size -> when (call) {
                 is Call.ReadInt -> copy(count = count + 1)
-                else -> expected<Call.ReadInt> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.ReadInt::class.simpleName}, but got $call")
             }
 
             else -> when (call) {
                 Call.EndIntArray -> nextState
-                else -> expected<Call.EndIntArray> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.EndIntArray::class.simpleName}, but got $call")
             }
         }
 
@@ -294,28 +291,24 @@ internal class VerifyingNbtReader(
                     else -> copy(size = count)
                 }
 
-                else -> expected<Call.BeginLongArrayEntry> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.BeginLongArrayEntry::class.simpleName}, but got $call")
             }
 
             // Size is known, so begin entry call is not needed, and is read directly
             count < size -> when (call) {
                 is Call.ReadLong -> copy(count = count + 1)
-                else -> expected<Call.ReadLong> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.ReadLong::class.simpleName}, but got $call")
             }
 
             else -> when (call) {
                 Call.EndLongArray -> nextState
-                else -> expected<Call.EndLongArray> { "Expected $it, but got $call" }
+                else -> error("Expected ${Call.EndLongArray::class.simpleName}, but got $call")
             }
         }
     }
 
-    private inline fun <reified TExpected : Call> expected(message: (expectedCall: String) -> String): State.Illegal =
-        State.Illegal(message(TExpected::class.simpleName!!))
-
     private sealed interface State {
         data object Complete : State
-        data class Illegal(val reason: String) : State
 
         data class AwaitingValue(val type: NbtTagType, val nextState: State) : State
 
