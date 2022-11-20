@@ -9,13 +9,20 @@ import net.benwoodworth.knbt.internal.NbtWriter
  * Delegates to [reader] and verifies that the all the calls are correct.
  */
 internal class VerifyingNbtReader(
-    private val reader: NbtReader
+    private val reader: NbtReader,
+    private val knownSizes: Boolean = true,
 ) : NbtReader {
     private val stateHistory = mutableListOf<Pair<State, Call>>()
     private var state: State = State.InRoot
 
     fun assertComplete(): Unit =
         check(state is State.Complete) { "Expected reader calls to be complete, but is in state $state" }
+
+    private fun NbtReader.ListInfo.withInterceptedSize(): NbtReader.ListInfo =
+        if (knownSizes) this else this.copy(size = NbtReader.UNKNOWN_SIZE)
+
+    private fun NbtReader.ArrayInfo.withInterceptedSize(): NbtReader.ArrayInfo =
+        if (knownSizes) this else NbtReader.ArrayInfo(NbtReader.UNKNOWN_SIZE)
 
     private inline fun <R> call(
         delegate: NbtReader.() -> R,
@@ -54,7 +61,7 @@ internal class VerifyingNbtReader(
     )
 
     override fun beginList(): NbtReader.ListInfo = call(
-        delegate = { beginList() },
+        delegate = { beginList().withInterceptedSize() },
         call = { Call.BeginList(it) }
     )
 
@@ -69,7 +76,7 @@ internal class VerifyingNbtReader(
     )
 
     override fun beginByteArray(): NbtReader.ArrayInfo = call(
-        delegate = { beginByteArray() },
+        delegate = { beginByteArray().withInterceptedSize() },
         call = { Call.BeginByteArray(it) }
     )
 
@@ -84,7 +91,7 @@ internal class VerifyingNbtReader(
     )
 
     override fun beginIntArray(): NbtReader.ArrayInfo = call(
-        delegate = { beginIntArray() },
+        delegate = { beginIntArray().withInterceptedSize() },
         call = { Call.BeginIntArray(it) }
     )
 
@@ -99,7 +106,7 @@ internal class VerifyingNbtReader(
     )
 
     override fun beginLongArray(): NbtReader.ArrayInfo = call(
-        delegate = { beginLongArray() },
+        delegate = { beginLongArray().withInterceptedSize() },
         call = { Call.BeginLongArray(it) }
     )
 

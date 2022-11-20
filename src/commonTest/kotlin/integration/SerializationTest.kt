@@ -41,13 +41,24 @@ abstract class SerializationTest {
             }
         }
 
-        run {// Deserialize Value
+        run { // Deserialize Value
             val reader = VerifyingNbtReader(TreeNbtReader(nbtTag))
             val decoder = NbtReaderDecoder(this, reader)
             val actualValue = decoder.decodeSerializableValue(serializer)
 
             reader.assertComplete()
             assertTrue("Deserialized value incorrectly. Expected <$value>, actual <$actualValue>.") {
+                valuesEqual(actualValue, value)
+            }
+        }
+
+        run { // Deserialize Value (non-sequentially)
+            val reader = VerifyingNbtReader(TreeNbtReader(nbtTag), knownSizes = false)
+            val decoder = NbtReaderDecoder(this, reader)
+            val actualValue = decoder.decodeSerializableValue(serializer)
+
+            reader.assertComplete()
+            assertTrue("Non-sequentially deserialized value incorrectly. Expected <$value>, actual <$actualValue>.") {
                 valuesEqual(actualValue, value)
             }
         }
@@ -63,7 +74,7 @@ abstract class SerializationTest {
             }
         }
 
-        run {// Deserialize NbtTag
+        run { // Deserialize NbtTag
             val reader = VerifyingNbtReader(TreeNbtReader(nbtTag))
             val decoder = NbtReaderDecoder(this, reader)
             val deserializedNbtTag = decoder.decodeSerializableValue(NbtTag.serializer())
