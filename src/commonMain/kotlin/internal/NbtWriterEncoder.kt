@@ -70,7 +70,7 @@ internal class NbtWriterEncoder(
                 writer.beginIntArrayEntry()
             }
             TAG_Long_Array -> {
-                if (type != TAG_Int) throw NbtEncodingException("Cannot encode $type within a $TAG_Long_Array")
+                if (type != TAG_Long) throw NbtEncodingException("Cannot encode $type within a $TAG_Long_Array")
                 writer.beginLongArrayEntry()
             }
             else -> error("Unhandled structure type: $structureType")

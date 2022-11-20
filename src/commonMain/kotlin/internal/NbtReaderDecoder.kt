@@ -389,7 +389,7 @@ private class ByteArrayNbtDecoder(
     override val nbtSerialDiscriminator: NbtSerialDiscriminator,
     override val parent: BaseNbtDecoder,
 ) : ListLikeNbtDecoder() {
-    private val arrayInfo = reader.beginList()
+    private val arrayInfo = reader.beginByteArray()
 
     override val elementCount: Int
         get() = arrayInfo.size
@@ -408,7 +408,7 @@ private class IntArrayNbtDecoder(
     override val nbtSerialDiscriminator: NbtSerialDiscriminator,
     override val parent: BaseNbtDecoder,
 ) : ListLikeNbtDecoder() {
-    private val arrayInfo = reader.beginList()
+    private val arrayInfo = reader.beginIntArray()
 
     override val elementCount: Int
         get() = arrayInfo.size
@@ -427,7 +427,7 @@ private class LongArrayNbtDecoder(
     override val nbtSerialDiscriminator: NbtSerialDiscriminator,
     override val parent: BaseNbtDecoder,
 ) : ListLikeNbtDecoder() {
-    private val arrayInfo = reader.beginList()
+    private val arrayInfo = reader.beginLongArray()
 
     override val elementCount: Int
         get() = arrayInfo.size
