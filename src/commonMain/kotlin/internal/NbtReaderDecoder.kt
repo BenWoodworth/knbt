@@ -15,6 +15,8 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     override val serializersModule: SerializersModule
         get() = nbt.serializersModule
 
+    protected abstract val nbtSerialDiscriminator: NbtSerialDiscriminator
+
     protected abstract val reader: NbtReader
     protected abstract val parent: BaseNbtDecoder?
     protected abstract val entryType: NbtTagType
@@ -106,35 +108,47 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     //endregion
 
     //region Structure begin*() functions
+    final override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder =
+        if (descriptor.kind == StructureKind.LIST) {
+            when (nbtSerialDiscriminator.discriminateListKind(descriptor)) {
+                NbtListKind.List -> beginList(descriptor)
+                NbtListKind.ByteArray -> beginByteArray(descriptor)
+                NbtListKind.IntArray -> beginIntArray(descriptor)
+                NbtListKind.LongArray -> beginLongArray(descriptor)
+            }
+        } else {
+            beginCompound(descriptor)
+        }
+
     override fun beginCompound(descriptor: SerialDescriptor): CompositeNbtDecoder {
         expectTagType(TAG_Compound)
         return tryWithPath {
             if (descriptor.kind == StructureKind.MAP) {
-                MapNbtDecoder(nbt, reader, this)
+                MapNbtDecoder(nbt, reader, nbtSerialDiscriminator, this)
             } else {
-                ClassNbtDecoder(nbt, reader, this)
+                ClassNbtDecoder(nbt, reader, nbtSerialDiscriminator, this)
             }
         }
     }
 
     override fun beginList(descriptor: SerialDescriptor): CompositeNbtDecoder {
         expectTagType(TAG_List)
-        return tryWithPath { ListNbtDecoder(nbt, reader, this) }
+        return tryWithPath { ListNbtDecoder(nbt, reader, nbtSerialDiscriminator, this) }
     }
 
     override fun beginByteArray(descriptor: SerialDescriptor): CompositeNbtDecoder {
         expectTagType(TAG_Byte_Array)
-        return tryWithPath { ByteArrayNbtDecoder(nbt, reader, this) }
+        return tryWithPath { ByteArrayNbtDecoder(nbt, reader, nbtSerialDiscriminator, this) }
     }
 
     override fun beginIntArray(descriptor: SerialDescriptor): CompositeNbtDecoder {
         expectTagType(TAG_Int_Array)
-        return tryWithPath { IntArrayNbtDecoder(nbt, reader, this) }
+        return tryWithPath { IntArrayNbtDecoder(nbt, reader, nbtSerialDiscriminator, this) }
     }
 
     override fun beginLongArray(descriptor: SerialDescriptor): CompositeNbtDecoder {
         expectTagType(TAG_Long_Array)
-        return tryWithPath { LongArrayNbtDecoder(nbt, reader, this) }
+        return tryWithPath { LongArrayNbtDecoder(nbt, reader, nbtSerialDiscriminator, this) }
     }
     //endregion
 
@@ -180,9 +194,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
 
     final override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>, previousValue: T?): T =
         super.decodeSerializableValue(deserializer, previousValue)
-
-    final override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder =
-        super.beginStructure(descriptor)
     //endregion
 }
 
@@ -190,6 +201,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
 internal class NbtReaderDecoder(
     override val nbt: NbtFormat,
     override val reader: NbtReader,
+    override val nbtSerialDiscriminator: NbtSerialDiscriminator = DefaultNbtSerialDiscriminator,
 ) : BaseNbtDecoder() {
     override val parent: Nothing? = null
 
@@ -232,6 +244,7 @@ private abstract class CompoundNbtDecoder : BaseNbtDecoder() {
 private class ClassNbtDecoder(
     override val nbt: NbtFormat,
     override val reader: NbtReader,
+    override val nbtSerialDiscriminator: NbtSerialDiscriminator,
     override val parent: BaseNbtDecoder,
 ) : CompoundNbtDecoder() {
     override lateinit var compoundEntryInfo: NbtReader.CompoundEntryInfo
@@ -295,6 +308,7 @@ private class ClassNbtDecoder(
 private class MapNbtDecoder(
     override val nbt: NbtFormat,
     override val reader: NbtReader,
+    override val nbtSerialDiscriminator: NbtSerialDiscriminator,
     override val parent: BaseNbtDecoder,
 ) : CompoundNbtDecoder() {
     private var index = 0
@@ -353,6 +367,7 @@ private abstract class ListLikeNbtDecoder : BaseNbtDecoder() {
 private class ListNbtDecoder(
     override val nbt: NbtFormat,
     override val reader: NbtReader,
+    override val nbtSerialDiscriminator: NbtSerialDiscriminator,
     override val parent: BaseNbtDecoder,
 ) : ListLikeNbtDecoder() {
     private val listInfo = reader.beginList()
@@ -371,6 +386,7 @@ private class ListNbtDecoder(
 private class ByteArrayNbtDecoder(
     override val nbt: NbtFormat,
     override val reader: NbtReader,
+    override val nbtSerialDiscriminator: NbtSerialDiscriminator,
     override val parent: BaseNbtDecoder,
 ) : ListLikeNbtDecoder() {
     private val arrayInfo = reader.beginList()
@@ -389,6 +405,7 @@ private class ByteArrayNbtDecoder(
 private class IntArrayNbtDecoder(
     override val nbt: NbtFormat,
     override val reader: NbtReader,
+    override val nbtSerialDiscriminator: NbtSerialDiscriminator,
     override val parent: BaseNbtDecoder,
 ) : ListLikeNbtDecoder() {
     private val arrayInfo = reader.beginList()
@@ -407,6 +424,7 @@ private class IntArrayNbtDecoder(
 private class LongArrayNbtDecoder(
     override val nbt: NbtFormat,
     override val reader: NbtReader,
+    override val nbtSerialDiscriminator: NbtSerialDiscriminator,
     override val parent: BaseNbtDecoder,
 ) : ListLikeNbtDecoder() {
     private val arrayInfo = reader.beginList()

@@ -4,6 +4,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
@@ -12,6 +13,7 @@ import net.benwoodworth.knbt.internal.NbtTagType.*
 internal class NbtWriterEncoder(
     override val nbt: NbtFormat,
     private val writer: NbtWriter,
+    private val nbtSerialDiscriminator: NbtSerialDiscriminator = DefaultNbtSerialDiscriminator,
 ) : AbstractNbtEncoder() {
     override val serializersModule: SerializersModule
         get() = nbt.serializersModule
@@ -74,6 +76,18 @@ internal class NbtWriterEncoder(
             else -> error("Unhandled structure type: $structureType")
         }
     }
+
+    override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder =
+        if (descriptor.kind == StructureKind.LIST) {
+            when (nbtSerialDiscriminator.discriminateListKind(descriptor)) {
+                NbtListKind.List -> beginList(descriptor, collectionSize)
+                NbtListKind.ByteArray -> beginByteArray(descriptor, collectionSize)
+                NbtListKind.IntArray -> beginIntArray(descriptor, collectionSize)
+                NbtListKind.LongArray -> beginLongArray(descriptor, collectionSize)
+            }
+        } else {
+            beginCompound(descriptor)
+        }
 
     override fun beginCompound(descriptor: SerialDescriptor): CompositeNbtEncoder {
         beginEncodingValue(TAG_Compound)

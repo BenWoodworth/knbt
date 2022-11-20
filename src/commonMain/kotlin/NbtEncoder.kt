@@ -1,14 +1,12 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
 import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.AbstractEncoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
@@ -76,12 +74,7 @@ internal abstract class AbstractNbtEncoder : AbstractEncoder(), NbtEncoder, Comp
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder =
         beginCompound(descriptor)
 
-    override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder =
-        if (descriptor.kind == StructureKind.LIST) {
-            beginList(descriptor, collectionSize)
-        } else {
-            beginCompound(descriptor)
-        }
+    abstract override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder
 
     override fun beginCompound(descriptor: SerialDescriptor): CompositeNbtEncoder = this
     override fun beginList(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder = this

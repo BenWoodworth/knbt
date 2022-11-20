@@ -2,13 +2,11 @@ package net.benwoodworth.knbt
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
 import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.AbstractDecoder
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
@@ -64,12 +62,7 @@ internal abstract class AbstractNbtDecoder : AbstractDecoder(), NbtDecoder, Comp
     final override fun decodeNbtTagElement(descriptor: SerialDescriptor, index: Int): NbtTag =
         decodeNbtTag()
 
-    override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder =
-        if (descriptor.kind == StructureKind.LIST) {
-            beginList(descriptor)
-        } else {
-            beginCompound(descriptor)
-        }
+    abstract override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder
 
     override fun beginCompound(descriptor: SerialDescriptor): CompositeNbtDecoder = this
     override fun beginList(descriptor: SerialDescriptor): CompositeNbtDecoder = this
