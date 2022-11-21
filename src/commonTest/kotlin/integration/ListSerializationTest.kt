@@ -30,7 +30,7 @@ class ListSerializationTest : SerializationTest() {
         defaultNbt.testSerialization(
             byteArrayOf(1, 2, 3),
             NbtByteArray(byteArrayOf(1, 2, 3)),
-            ByteArray::contentEquals
+            ByteArray::asList
         )
     }
 
@@ -39,7 +39,7 @@ class ListSerializationTest : SerializationTest() {
         defaultNbt.testSerialization(
             intArrayOf(1, 2, 3),
             NbtIntArray(intArrayOf(1, 2, 3)),
-            IntArray::contentEquals
+            IntArray::asList
         )
     }
 
@@ -48,7 +48,7 @@ class ListSerializationTest : SerializationTest() {
         defaultNbt.testSerialization(
             longArrayOf(1L, 2L, 3L),
             NbtLongArray(longArrayOf(1L, 2L, 3L)),
-            LongArray::contentEquals
+            LongArray::asList
         )
     }
 
@@ -59,7 +59,7 @@ class ListSerializationTest : SerializationTest() {
             SurrogateSerializer(ByteArray::toList, List<Byte>::toByteArray),
             byteArrayOf(1, 2, 3),
             NbtList(listOf<Byte>(1, 2, 3).map(::NbtByte)),
-            ByteArray::contentEquals
+            ByteArray::asList
         )
     }
 
@@ -69,7 +69,7 @@ class ListSerializationTest : SerializationTest() {
             SurrogateSerializer(IntArray::toList, List<Int>::toIntArray),
             intArrayOf(1, 2, 3),
             NbtList(listOf(1, 2, 3).map(::NbtInt)),
-            IntArray::contentEquals
+            IntArray::asList
         )
     }
 
@@ -79,7 +79,7 @@ class ListSerializationTest : SerializationTest() {
             SurrogateSerializer(LongArray::toList, List<Long>::toLongArray),
             longArrayOf(1L, 2L, 3L),
             NbtList(listOf(1L, 2L, 3L).map(::NbtLong)),
-            LongArray::contentEquals
+            LongArray::asList
         )
     }
 }

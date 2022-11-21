@@ -11,7 +11,7 @@ class ArraySerializationTest : SerializationTest() {
         defaultNbt.testSerialization(
             byteArrayOf(1, 2, 3),
             NbtByteArray(byteArrayOf(1, 2, 3)),
-            ByteArray::contentEquals
+            ByteArray::asList
         )
     }
 
@@ -20,7 +20,7 @@ class ArraySerializationTest : SerializationTest() {
         defaultNbt.testSerialization(
             intArrayOf(1, 2, 3),
             NbtIntArray(intArrayOf(1, 2, 3)),
-            IntArray::contentEquals
+            IntArray::asList
         )
     }
 
@@ -29,7 +29,7 @@ class ArraySerializationTest : SerializationTest() {
         defaultNbt.testSerialization(
             longArrayOf(1, 2, 3),
             NbtLongArray(longArrayOf(1, 2, 3)),
-            LongArray::contentEquals,
+            LongArray::asList,
         )
     }
 }

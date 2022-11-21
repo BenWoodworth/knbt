@@ -8,11 +8,9 @@ import net.benwoodworth.knbt.internal.NbtReaderDecoder
 import net.benwoodworth.knbt.internal.NbtWriterEncoder
 import net.benwoodworth.knbt.internal.TreeNbtReader
 import net.benwoodworth.knbt.internal.TreeNbtWriter
-import net.benwoodworth.knbt.test.NbtFormat
-import net.benwoodworth.knbt.test.binaryEquals
+import net.benwoodworth.knbt.test.*
 import net.benwoodworth.knbt.test.verify.VerifyingNbtReader
 import net.benwoodworth.knbt.test.verify.VerifyingNbtWriter
-import kotlin.test.assertTrue
 
 abstract class SerializationTest {
     protected val defaultNbt: NbtFormat = NbtFormat()
@@ -20,15 +18,15 @@ abstract class SerializationTest {
     protected inline fun <reified T> NbtFormat.testSerialization(
         value: T,
         nbtTag: NbtTag,
-        noinline valuesEqual: (T, T) -> Boolean = { a, b -> a == b }
+        compareBy: CompareBy<T> = CompareBy.Self
     ): Unit =
-        testSerialization(this.serializersModule.serializer(), value, nbtTag, valuesEqual)
+        testSerialization(this.serializersModule.serializer(), value, nbtTag, compareBy)
 
     protected fun <T> NbtFormat.testSerialization(
         serializer: KSerializer<T>,
         value: T,
         nbtTag: NbtTag,
-        valuesEqual: (T, T) -> Boolean = { a, b -> a == b }
+        compareBy: CompareBy<T> = CompareBy.Self
     ) {
         run { // Serialize Value
             lateinit var actualNbtTag: NbtTag
@@ -36,9 +34,7 @@ abstract class SerializationTest {
             NbtWriterEncoder(this, writer).encodeSerializableValue(serializer, value)
 
             writer.assertComplete()
-            assertTrue("Serialized value incorrectly. Expected <$nbtTag>, actual <$actualNbtTag>.") {
-                actualNbtTag.binaryEquals(nbtTag)
-            }
+            NbtTag.compareByBinary().assertEquals(nbtTag, actualNbtTag, "Serialized value incorrectly")
         }
 
         run { // Deserialize Value
@@ -47,9 +43,7 @@ abstract class SerializationTest {
             val actualValue = decoder.decodeSerializableValue(serializer)
 
             reader.assertComplete()
-            assertTrue("Deserialized value incorrectly. Expected <$value>, actual <$actualValue>.") {
-                valuesEqual(actualValue, value)
-            }
+            compareBy.assertEquals(value, actualValue, "Deserialized value incorrectly")
         }
 
         run { // Deserialize Value (non-sequentially)
@@ -58,9 +52,7 @@ abstract class SerializationTest {
             val actualValue = decoder.decodeSerializableValue(serializer)
 
             reader.assertComplete()
-            assertTrue("Non-sequentially deserialized value incorrectly. Expected <$value>, actual <$actualValue>.") {
-                valuesEqual(actualValue, value)
-            }
+            compareBy.assertEquals(value, actualValue, "Non-sequentially deserialized value incorrectly")
         }
 
         run { // Serialize NbtTag
@@ -69,9 +61,7 @@ abstract class SerializationTest {
             NbtWriterEncoder(this, writer).encodeSerializableValue(NbtTag.serializer(), nbtTag)
 
             writer.assertComplete()
-            assertTrue("Serialized nbtTag incorrectly. Expected <$nbtTag>, actual <$serializedNbtTag>.") {
-                serializedNbtTag.binaryEquals(nbtTag)
-            }
+            NbtTag.compareByBinary().assertEquals(nbtTag, serializedNbtTag, "Serialized nbtTag incorrectly")
         }
 
         run { // Deserialize NbtTag
@@ -80,9 +70,7 @@ abstract class SerializationTest {
             val deserializedNbtTag = decoder.decodeSerializableValue(NbtTag.serializer())
 
             reader.assertComplete()
-            assertTrue("Deserialized nbtTag incorrectly. Expected <$value>, actual <$deserializedNbtTag>.") {
-                deserializedNbtTag.binaryEquals(nbtTag)
-            }
+            NbtTag.compareByBinary().assertEquals(nbtTag, deserializedNbtTag, "Deserialized nbtTag incorrectly")
         }
     }
 }
