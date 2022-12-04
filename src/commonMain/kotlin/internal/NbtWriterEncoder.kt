@@ -2,6 +2,9 @@ package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.builtins.ByteArraySerializer
+import kotlinx.serialization.builtins.IntArraySerializer
+import kotlinx.serialization.builtins.LongArraySerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeEncoder
@@ -23,23 +26,31 @@ internal class NbtWriterEncoder(
 
     private val structureTypeStack = ArrayDeque<NbtTagType>()
 
+    private var elementListKind: NbtListKind? = null
     private val listTypeStack = ArrayDeque<NbtTagType>() // TAG_End when uninitialized
     private var listSize: Int = 0
 
-    override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean =
+    override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
         when (descriptor.kind as StructureKind) {
             StructureKind.CLASS,
             StructureKind.OBJECT,
             -> {
                 elementName = descriptor.getElementName(index)
-                true
             }
+
             StructureKind.MAP -> {
                 if (index % 2 == 0) encodingMapKey = true
-                true
             }
-            StructureKind.LIST -> true
+
+            StructureKind.LIST -> {}
         }
+
+        if (descriptor.getElementDescriptor(index).kind == StructureKind.LIST) {
+            elementListKind = nbtSerialDiscriminator.discriminateElementListKind(descriptor, index)
+        }
+
+        return true
+    }
 
     private fun beginEncodingValue(type: NbtTagType) {
         when (val structureType = structureTypeStack.lastOrNull()) {
@@ -79,7 +90,7 @@ internal class NbtWriterEncoder(
 
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder =
         if (descriptor.kind == StructureKind.LIST) {
-            when (nbtSerialDiscriminator.discriminateListKind(descriptor)) {
+            when (elementListKind ?: nbtSerialDiscriminator.discriminateListKind(descriptor)) {
                 NbtListKind.List -> beginList(descriptor, collectionSize)
                 NbtListKind.ByteArray -> beginByteArray(descriptor, collectionSize)
                 NbtListKind.IntArray -> beginIntArray(descriptor, collectionSize)
@@ -250,6 +261,14 @@ internal class NbtWriterEncoder(
             return encodeSerializableValue(RootClassSerializer(serializer), value)
         }
 
-        super.encodeSerializableValue(serializer, value)
+        fun isArraySerializer(arraySerializer: SerializationStrategy<*>, arrayKind: NbtListKind): Boolean =
+            (elementListKind == null || elementListKind == arrayKind) && serializer == arraySerializer
+
+        return when {
+            isArraySerializer(ByteArraySerializer(), NbtListKind.ByteArray) -> encodeByteArray(value as ByteArray)
+            isArraySerializer(IntArraySerializer(), NbtListKind.IntArray) -> encodeIntArray(value as IntArray)
+            isArraySerializer(LongArraySerializer(), NbtListKind.LongArray) -> encodeLongArray(value as LongArray)
+            else -> super.encodeSerializableValue(serializer, value)
+        }
     }
 }

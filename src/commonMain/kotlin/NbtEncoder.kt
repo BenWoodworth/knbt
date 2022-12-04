@@ -83,13 +83,8 @@ internal abstract class AbstractNbtEncoder : AbstractEncoder(), NbtEncoder, Comp
     override fun beginLongArray(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder = this
 
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T): Unit =
-        when (serializer) {
-            ByteArraySerializer() -> encodeByteArray(value as ByteArray)
-            IntArraySerializer() -> encodeIntArray(value as IntArray)
-            LongArraySerializer() -> encodeLongArray(value as LongArray)
-            else -> when (serializer.descriptor.kind) {
-                is PolymorphicKind -> throw NbtEncodingException("Polymorphic serialization is not yet supported")
-                else -> super<AbstractEncoder>.encodeSerializableValue(serializer, value)
-            }
+        when (serializer.descriptor.kind) {
+            is PolymorphicKind -> throw NbtEncodingException("Polymorphic serialization is not yet supported")
+            else -> super<AbstractEncoder>.encodeSerializableValue(serializer, value)
         }
 }

@@ -2,6 +2,10 @@ package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.builtins.ByteArraySerializer
+import kotlinx.serialization.builtins.IntArraySerializer
+import kotlinx.serialization.builtins.LongArraySerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeDecoder
@@ -20,6 +24,8 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     protected abstract val reader: NbtReader
     protected abstract val parent: BaseNbtDecoder?
     protected abstract val entryType: NbtTagType
+
+    protected var elementListKind: NbtListKind? = null
 
     protected abstract fun getPathNode(): NbtPath.Node
 
@@ -110,7 +116,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     //region Structure begin*() functions
     final override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder =
         if (descriptor.kind == StructureKind.LIST) {
-            when (nbtSerialDiscriminator.discriminateListKind(descriptor)) {
+            when (elementListKind ?: nbtSerialDiscriminator.discriminateListKind(descriptor)) {
                 NbtListKind.List -> beginList(descriptor)
                 NbtListKind.ByteArray -> beginByteArray(descriptor)
                 NbtListKind.IntArray -> beginIntArray(descriptor)
@@ -195,6 +201,19 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     final override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>, previousValue: T?): T =
         super.decodeSerializableValue(deserializer, previousValue)
     //endregion
+
+    override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
+        fun isArraySerializer(arraySerializer: SerializationStrategy<*>, arrayKind: NbtListKind): Boolean =
+            deserializer == arraySerializer && (elementListKind == null || elementListKind == arrayKind)
+
+        @Suppress("UNCHECKED_CAST")
+        return when {
+            isArraySerializer(ByteArraySerializer(), NbtListKind.ByteArray) -> decodeByteArray() as T
+            isArraySerializer(IntArraySerializer(), NbtListKind.IntArray) -> decodeIntArray() as T
+            isArraySerializer(LongArraySerializer(), NbtListKind.LongArray) -> decodeLongArray() as T
+            else -> super.decodeSerializableValue(deserializer)
+        }
+    }
 }
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -281,7 +300,7 @@ private class ClassNbtDecoder(
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
         compoundEntryInfo = reader.beginCompoundEntry()
 
-        return if (compoundEntryInfo.type == TAG_End) {
+        val index = if (compoundEntryInfo.type == TAG_End) {
             CompositeDecoder.DECODE_DONE
         } else {
             var index: Int
@@ -302,6 +321,12 @@ private class ClassNbtDecoder(
 
             index
         }
+
+        if (index >= 0 && descriptor.getElementDescriptor(index).kind == StructureKind.LIST) {
+            elementListKind = nbtSerialDiscriminator.discriminateElementListKind(descriptor, index)
+        }
+
+        return index
     }
 }
 
