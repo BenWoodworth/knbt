@@ -11,32 +11,27 @@ internal sealed interface NbtSerialKind
 
 internal enum class NbtListKind : NbtSerialKind { List, ByteArray, IntArray, LongArray }
 
-internal interface NbtSerialDiscriminator {
-    fun discriminateListKind(descriptor: SerialDescriptor): NbtListKind
+@OptIn(ExperimentalSerializationApi::class)
+private fun List<Annotation>.getNbtSerialKind(): NbtSerialKind? {
+    val nbtType = firstOrNull { it is NbtType } as NbtType?
+        ?: return null
 
-    fun discriminateElementListKind(descriptor: SerialDescriptor, index: Int): NbtListKind
+    return when (nbtType.type.toNbtTagType()) {
+        NbtTagType.TAG_List -> NbtListKind.List
+        NbtTagType.TAG_Byte_Array -> NbtListKind.ByteArray
+        NbtTagType.TAG_Int_Array -> NbtListKind.IntArray
+        NbtTagType.TAG_Long_Array -> NbtListKind.LongArray
+        else -> null
+    }
 }
 
 @OptIn(ExperimentalSerializationApi::class)
-internal object DefaultNbtSerialDiscriminator : NbtSerialDiscriminator {
-    private fun List<Annotation>.getNbtSerialKind(): NbtSerialKind? {
-        val nbtType = firstOrNull { it is NbtType } as NbtType?
-            ?: return null
-
-        return when (nbtType.type.toNbtTagType()) {
-            NbtTagType.TAG_List -> NbtListKind.List
-            NbtTagType.TAG_Byte_Array -> NbtListKind.ByteArray
-            NbtTagType.TAG_Int_Array -> NbtListKind.IntArray
-            NbtTagType.TAG_Long_Array -> NbtListKind.LongArray
-            else -> null
-        }
-    }
-
-    override fun discriminateListKind(descriptor: SerialDescriptor): NbtListKind {
-        val nbtType = descriptor.annotations.getNbtSerialKind() as? NbtListKind
+internal val SerialDescriptor.nbtListKind: NbtListKind
+    get() {
+        val nbtType = annotations.getNbtSerialKind() as? NbtListKind
         if (nbtType != null) return nbtType
 
-        return when (descriptor) {
+        return when (this) {
             ByteArraySerializer().descriptor -> NbtListKind.ByteArray
             IntArraySerializer().descriptor -> NbtListKind.IntArray
             LongArraySerializer().descriptor -> NbtListKind.LongArray
@@ -45,10 +40,10 @@ internal object DefaultNbtSerialDiscriminator : NbtSerialDiscriminator {
         }
     }
 
-    override fun discriminateElementListKind(descriptor: SerialDescriptor, index: Int): NbtListKind {
-        val nbtType = descriptor.getElementAnnotations(index).getNbtSerialKind() as? NbtListKind
-        if (nbtType != null) return nbtType
+@OptIn(ExperimentalSerializationApi::class)
+internal fun SerialDescriptor.getElementNbtListKind(index: Int): NbtListKind {
+    val nbtType = getElementAnnotations(index).getNbtSerialKind() as? NbtListKind
+    if (nbtType != null) return nbtType
 
-        return discriminateListKind(descriptor.getElementDescriptor(index))
-    }
+    return getElementDescriptor(index).nbtListKind
 }

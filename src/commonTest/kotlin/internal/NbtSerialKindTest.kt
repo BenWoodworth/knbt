@@ -16,7 +16,7 @@ import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.*
 import kotlin.test.Test
 
-class NbtSerialDiscriminatorTest {
+class NbtSerialDescriptorTest {
     @Test
     fun discriminating_list_kind_from_a_builtin_List_descriptor_should_resolve_to_NBT_List() = table(
         headers("type", "serializer", "expected kind"),
@@ -25,7 +25,7 @@ class NbtSerialDiscriminatorTest {
         row("List<Int>", serializer<List<Int>>(), NbtListKind.List),
         row("List<Long>", serializer<List<Long>>(), NbtListKind.List),
     ).forAll { type, serializer, expectedKind ->
-        val listKind = DefaultNbtSerialDiscriminator.discriminateListKind(serializer.descriptor)
+        val listKind = serializer.descriptor.nbtListKind
 
         withClue("$type serializer") {
             listKind.shouldBe(expectedKind)
@@ -40,7 +40,7 @@ class NbtSerialDiscriminatorTest {
         row("Array<Int>", serializer<Array<Int>>(), NbtListKind.List),
         row("Array<Long>", serializer<Array<Long>>(), NbtListKind.List),
     ).forAll { type, serializer, expectedKind ->
-        val listKind = DefaultNbtSerialDiscriminator.discriminateListKind(serializer.descriptor)
+        val listKind = serializer.descriptor.nbtListKind
 
         withClue("$type serializer") {
             listKind.shouldBe(expectedKind)
@@ -50,7 +50,7 @@ class NbtSerialDiscriminatorTest {
     @Test
     fun discriminating_list_kind_from_a_builtin_ByteArray_descriptor_should_resolve_to_NBT_ByteArray() {
         val serializer = serializer<ByteArray>()
-        val listKind = DefaultNbtSerialDiscriminator.discriminateListKind(serializer.descriptor)
+        val listKind = serializer.descriptor.nbtListKind
 
         listKind.shouldBe(NbtListKind.ByteArray)
     }
@@ -58,7 +58,7 @@ class NbtSerialDiscriminatorTest {
     @Test
     fun discriminating_list_kind_from_a_builtin_IntArray_descriptor_should_resolve_to_NBT_IntArray() {
         val serializer = serializer<IntArray>()
-        val listKind = DefaultNbtSerialDiscriminator.discriminateListKind(serializer.descriptor)
+        val listKind = serializer.descriptor.nbtListKind
 
         listKind.shouldBe(NbtListKind.IntArray)
     }
@@ -66,7 +66,7 @@ class NbtSerialDiscriminatorTest {
     @Test
     fun discriminating_list_kind_from_a_builtin_LongArray_descriptor_should_resolve_to_NBT_LongArray() {
         val serializer = serializer<LongArray>()
-        val listKind = DefaultNbtSerialDiscriminator.discriminateListKind(serializer.descriptor)
+        val listKind = serializer.descriptor.nbtListKind
 
         listKind.shouldBe(NbtListKind.LongArray)
     }
@@ -85,7 +85,7 @@ class NbtSerialDiscriminatorTest {
             annotations = listOf(NbtType(type))
         }
 
-        val listKind = DefaultNbtSerialDiscriminator.discriminateListKind(descriptor)
+        val listKind = descriptor.nbtListKind
         listKind shouldBe expectedKind
     }
 
@@ -116,7 +116,7 @@ class NbtSerialDiscriminatorTest {
         ).forAll { element, expectedListKind ->
             val elementIndex = descriptor.getElementIndex(element)
 
-            val listKind = DefaultNbtSerialDiscriminator.discriminateElementListKind(descriptor, elementIndex)
+            val listKind = descriptor.getElementNbtListKind(elementIndex)
             listKind shouldBe expectedListKind
         }
     }
@@ -142,7 +142,7 @@ class NbtSerialDiscriminatorTest {
             element("element", elementDescriptor, listOf(NbtType(classElementType)))
         }
 
-        val listKind = DefaultNbtSerialDiscriminator.discriminateElementListKind(classDescriptor, 0)
+        val listKind = classDescriptor.getElementNbtListKind(0)
         listKind shouldBe expectedNbtListKind
     }
 }

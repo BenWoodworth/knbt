@@ -16,7 +16,6 @@ import net.benwoodworth.knbt.internal.NbtTagType.*
 internal class NbtWriterEncoder(
     override val nbt: NbtFormat,
     private val writer: NbtWriter,
-    private val nbtSerialDiscriminator: NbtSerialDiscriminator = DefaultNbtSerialDiscriminator,
 ) : AbstractNbtEncoder() {
     override val serializersModule: SerializersModule
         get() = nbt.serializersModule
@@ -46,7 +45,7 @@ internal class NbtWriterEncoder(
         }
 
         if (descriptor.getElementDescriptor(index).kind == StructureKind.LIST) {
-            elementListKind = nbtSerialDiscriminator.discriminateElementListKind(descriptor, index)
+            elementListKind = descriptor.getElementNbtListKind(index)
         }
 
         return true
@@ -90,7 +89,7 @@ internal class NbtWriterEncoder(
 
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder =
         if (descriptor.kind == StructureKind.LIST) {
-            when (elementListKind ?: nbtSerialDiscriminator.discriminateListKind(descriptor)) {
+            when (elementListKind ?: descriptor.nbtListKind) {
                 NbtListKind.List -> beginList(descriptor, collectionSize)
                 NbtListKind.ByteArray -> beginByteArray(descriptor, collectionSize)
                 NbtListKind.IntArray -> beginIntArray(descriptor, collectionSize)
