@@ -6,9 +6,10 @@ import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.internal.NbtReaderDecoder
 import net.benwoodworth.knbt.internal.NbtWriterEncoder
-import net.benwoodworth.knbt.internal.TreeNbtReader
-import net.benwoodworth.knbt.internal.TreeNbtWriter
-import net.benwoodworth.knbt.test.*
+import net.benwoodworth.knbt.test.CompareBy
+import net.benwoodworth.knbt.test.NbtFormat
+import net.benwoodworth.knbt.test.assertEquals
+import net.benwoodworth.knbt.test.compareByBinary
 import net.benwoodworth.knbt.test.verify.VerifyingNbtReader
 import net.benwoodworth.knbt.test.verify.VerifyingNbtWriter
 
@@ -29,16 +30,14 @@ abstract class SerializationTest {
         compareBy: CompareBy<T> = CompareBy.Self
     ) {
         run { // Serialize Value
-            lateinit var actualNbtTag: NbtTag
-            val writer = VerifyingNbtWriter(TreeNbtWriter { actualNbtTag = it })
+            val writer = VerifyingNbtWriter(nbtTag)
             NbtWriterEncoder(this, writer).encodeSerializableValue(serializer, value)
 
             writer.assertComplete()
-            NbtTag.compareByBinary().assertEquals(nbtTag, actualNbtTag, "Serialized value incorrectly")
         }
 
         run { // Deserialize Value
-            val reader = VerifyingNbtReader(TreeNbtReader(nbtTag))
+            val reader = VerifyingNbtReader(nbtTag)
             val decoder = NbtReaderDecoder(this, reader)
             val actualValue = decoder.decodeSerializableValue(serializer)
 
@@ -47,7 +46,7 @@ abstract class SerializationTest {
         }
 
         run { // Deserialize Value (non-sequentially)
-            val reader = VerifyingNbtReader(TreeNbtReader(nbtTag), knownSizes = false)
+            val reader = VerifyingNbtReader(nbtTag, knownSizes = false)
             val decoder = NbtReaderDecoder(this, reader)
             val actualValue = decoder.decodeSerializableValue(serializer)
 
@@ -56,16 +55,14 @@ abstract class SerializationTest {
         }
 
         run { // Serialize NbtTag
-            lateinit var serializedNbtTag: NbtTag
-            val writer = VerifyingNbtWriter(TreeNbtWriter { serializedNbtTag = it })
+            val writer = VerifyingNbtWriter(nbtTag)
             NbtWriterEncoder(this, writer).encodeSerializableValue(NbtTag.serializer(), nbtTag)
 
             writer.assertComplete()
-            NbtTag.compareByBinary().assertEquals(nbtTag, serializedNbtTag, "Serialized nbtTag incorrectly")
         }
 
         run { // Deserialize NbtTag
-            val reader = VerifyingNbtReader(TreeNbtReader(nbtTag))
+            val reader = VerifyingNbtReader(nbtTag)
             val decoder = NbtReaderDecoder(this, reader)
             val deserializedNbtTag = decoder.decodeSerializableValue(NbtTag.serializer())
 
