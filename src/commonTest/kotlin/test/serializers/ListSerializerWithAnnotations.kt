@@ -9,7 +9,8 @@ import kotlinx.serialization.encoding.*
 @OptIn(ExperimentalSerializationApi::class)
 class ListSerializerWithAnnotations<T>(
     private val elementSerializer: KSerializer<T>,
-    private val annotations: List<Annotation>,
+    private val annotations: List<Annotation> = emptyList(),
+    private val elementAnnotations: List<Annotation> = emptyList(),
 ) : KSerializer<List<T>> {
     private val listDescriptor = ListSerializer(elementSerializer).descriptor
 
@@ -20,6 +21,10 @@ class ListSerializerWithAnnotations<T>(
 
             override val annotations: List<Annotation> =
                 listDescriptor.annotations + this@ListSerializerWithAnnotations.annotations
+
+            @ExperimentalSerializationApi
+            override fun getElementAnnotations(index: Int): List<Annotation> =
+                listDescriptor.getElementAnnotations(index) + elementAnnotations
         }
 
     override fun serialize(encoder: Encoder, value: List<T>): Unit =

@@ -212,6 +212,20 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
             else -> super.decodeSerializableValue(deserializer)
         }
     }
+
+    override fun <T> decodeSerializableElement(
+        descriptor: SerialDescriptor,
+        index: Int,
+        deserializer: DeserializationStrategy<T>,
+        previousValue: T?
+    ): T {
+        elementListKind = descriptor
+            .takeIf { it.getElementDescriptor(index).kind == StructureKind.LIST }
+            ?.getElementNbtListKind(index)
+            ?: descriptor.getElementDescriptor(index).nbtListKind
+
+        return decodeSerializableValue(deserializer)
+    }
 }
 
 @OptIn(ExperimentalSerializationApi::class)

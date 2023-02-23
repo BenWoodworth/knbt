@@ -1,13 +1,11 @@
 package net.benwoodworth.knbt.integration
 
 import kotlinx.serialization.*
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.encoding.*
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.test.*
 import net.benwoodworth.knbt.test.serializers.ListSerializerWithAnnotations
-import net.benwoodworth.knbt.test.serializers.NothingSerializer
 import kotlin.test.Test
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -15,23 +13,10 @@ class NbtTypeSerializationTest : SerializationTest() {
     private inline fun <reified T, reified TNbt : NbtTag> listSerializer(): KSerializer<List<T>> =
         ListSerializerWithAnnotations(serializer(), listOf(NbtType(TNbt::class)))
 
-    private data class ListType<T>(
-        val serializer: KSerializer<T>,
-        val empty: T,
-        val emptyTag: NbtTag,
-        val asList: (T) -> List<*>,
+    private object ListAsNbtByteArraySerializer : KSerializer<List<Byte>> by ListSerializerWithAnnotations(
+        elementSerializer = Byte.serializer(),
+        annotations = listOf(NbtType(NbtByteArray::class))
     )
-
-    private val ListType<*>.nbtType: NbtType
-        get() = NbtType(emptyTag::class)
-
-    private val listTypes = listOf(
-        ListType(serializer(), listOf<String>(), NbtList(emptyList<NbtString>())) { it },
-        ListType(serializer(), byteArrayOf(), NbtByteArray(byteArrayOf())) { it.asList() },
-        ListType(serializer(), intArrayOf(), NbtIntArray(intArrayOf())) { it.asList() },
-        ListType(serializer(), longArrayOf(), NbtLongArray(longArrayOf())) { it.asList() },
-    )
-
 
     @Test
     fun should_serialize_List_to_NbtByteArray_according_to_the_descriptor_NbtType() {
@@ -60,122 +45,165 @@ class NbtTypeSerializationTest : SerializationTest() {
         )
     }
 
-    private data class NbtTypeProperty<T>(val property: T)
-
-    private class NbtTypePropertySerializer<T>(
-        private val propertyNbtType: NbtType,
-        private val propertySerializer: KSerializer<T>,
-    ) : KSerializer<NbtTypeProperty<T>> {
-        override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("NbtTypeProperty", propertySerializer.descriptor) {
-                element(NbtTypeProperty<T>::property.name, propertySerializer.descriptor, listOf(propertyNbtType))
-            }
-
-        override fun serialize(encoder: Encoder, value: NbtTypeProperty<T>): Unit =
-            encoder.encodeStructure(descriptor) {
-                encodeSerializableElement(descriptor, 0, propertySerializer, value.property)
-            }
-
-        override fun deserialize(decoder: Decoder): NbtTypeProperty<T> =
-            decoder.decodeStructure(descriptor) {
-                check(decodeElementIndex(descriptor) == 0)
-                val property = decodeSerializableElement(descriptor, 0, propertySerializer)
-                check(decodeElementIndex(descriptor) == CompositeDecoder.DECODE_DONE)
-                NbtTypeProperty(property)
-            }
-    }
-
     @Test
-    fun class_property_with_NbtType_should_serialize_according_to_that_type() {
-        fun <T> test(valueType: ListType<T>, propertyType: ListType<*>): Unit =
-            defaultNbt.testSerialization(
-                serializer = NbtTypePropertySerializer(propertyType.nbtType, valueType.serializer),
-                value = NbtTypeProperty(valueType.empty),
-                nbtTag = buildNbtCompound("NbtTypeProperty") {
-                    put("property", propertyType.emptyTag)
-                },
-                compareBy = { valueType.asList(it.property) },
-            )
-
-        listTypes.forEach { propertyType ->
-            listTypes.forEach { valueType ->
-                test(valueType, propertyType)
-            }
-        }
-    }
-
-    @Test
-    fun class_property_NbtType_should_take_priority_over_the_element_descriptor_NbtType() {
-        fun test(elementDescriptorType: ListType<*>, propertyType: ListType<*>): Unit =
-            defaultNbt.testSerialization(
-                serializer = NbtTypePropertySerializer(
-                    propertyType.nbtType,
-                    ListSerializerWithAnnotations(NothingSerializer, listOf(elementDescriptorType.nbtType)),
-                ),
-                value = NbtTypeProperty(emptyList()),
-                nbtTag = buildNbtCompound("NbtTypeProperty") {
-                    put("property", propertyType.emptyTag)
-                },
-            )
-
-        listTypes.forEach { propertyType ->
-            listTypes.forEach { elementDescriptorType ->
-                test(elementDescriptorType, propertyType)
-            }
-        }
-    }
-
-    @Test
-    fun class_with_NbtType_property_followed_by_non_NbtType_property() {
+    fun class_property_marked_as_NbtList_should_serialize_as_NbtList() {
         @Serializable
-        @SerialName("TestClass")
-        data class TestClass(
-            @NbtType(NbtByteArray::class)
-            val propertyWithNbtType: List<Byte>,
-
-            val propertyWithoutNbtType: List<Byte>,
+        @SerialName("Class")
+        class Class(
+            @NbtType(NbtList::class)
+            val property: ByteArray
         )
 
         defaultNbt.testSerialization(
-            value = TestClass(
-                propertyWithNbtType = listOf(1, 2),
-                propertyWithoutNbtType = listOf(3, 4)
-            ),
-            nbtTag = buildNbtCompound("TestClass") {
-                put("propertyWithNbtType", byteArrayOf(1, 2))
-                putNbtList<NbtByte>("propertyWithoutNbtType") { add(3); add(4) }
-            }
-        )
-    }
-
-    @Test
-    fun class_with_nested_NbtType_property_followed_by_non_NbtType_property() {
-        @Serializable
-        data class Nested(
-            @NbtType(NbtByteArray::class)
-            val propertyWithNbtType: List<Byte>,
-        )
-
-        @Serializable
-        @SerialName("TestClass")
-        data class TestClass(
-            val nested: Nested,
-            val propertyWithoutNbtType: List<Byte>,
-        )
-
-        defaultNbt.testSerialization(
-            value = TestClass(
-                nested = Nested(
-                    propertyWithNbtType = listOf(1, 2)
-                ),
-                propertyWithoutNbtType = listOf(3, 4)
-            ),
-            nbtTag = buildNbtCompound("TestClass") {
-                putNbtCompound("nested") {
-                    put("propertyWithNbtType", byteArrayOf(1, 2))
+            value = Class(byteArrayOf(123)),
+            nbtTag = buildNbtCompound("Class") {
+                putNbtList<NbtByte>("property") {
+                    add(123)
                 }
-                putNbtList<NbtByte>("propertyWithoutNbtType") { add(3); add(4) }
+            },
+            compareBy = { it.property.asList() },
+        )
+    }
+
+    @Test
+    fun class_property_marked_as_NbtByteArray_should_serialize_as_NbtByteArray() {
+        @Serializable
+        @SerialName("Class")
+        data class Class(
+            @NbtType(NbtByteArray::class)
+            val property: List<Byte>
+        )
+
+        defaultNbt.testSerialization(
+            value = Class(listOf(123)),
+            nbtTag = buildNbtCompound("Class") {
+                put("property", byteArrayOf(123))
             }
+        )
+    }
+
+    @Test
+    fun class_property_marked_as_NbtIntArray_should_serialize_as_NbtIntArray() {
+        @Serializable
+        @SerialName("Class")
+        data class Class(
+            @NbtType(NbtIntArray::class)
+            val property: List<Int>
+        )
+
+        defaultNbt.testSerialization(
+            value = Class(listOf(123)),
+            nbtTag = buildNbtCompound("Class") {
+                put("property", intArrayOf(123))
+            }
+        )
+    }
+
+    @Test
+    fun class_property_marked_as_NbtLongArray_should_serialize_as_NbtLongArray() {
+        @Serializable
+        @SerialName("Class")
+        data class Class(
+            @NbtType(NbtLongArray::class)
+            val property: List<Long>
+        )
+
+        defaultNbt.testSerialization(
+            value = Class(listOf(123)),
+            nbtTag = buildNbtCompound("Class") {
+                put("property", longArrayOf(123))
+            }
+        )
+    }
+
+    @Test
+    fun class_property_NbtType_should_take_priority_over_its_value_NbtType() {
+        @Serializable
+        @SerialName("Class")
+        data class Class(
+            @NbtType(NbtIntArray::class)
+            @Serializable(ListAsNbtByteArraySerializer::class)
+            val property: List<Byte>
+        )
+
+        defaultNbt.testSerialization(
+            value = Class(listOf()),
+            nbtTag = buildNbtCompound("Class") {
+                put("property", intArrayOf())
+            }
+        )
+    }
+
+    @Test
+    fun list_element_marked_as_NbtList_should_serialize_as_NbtList() {
+        defaultNbt.testSerialization(
+            value = listOf(byteArrayOf(123)),
+            nbtTag = buildNbtList<NbtList<*>> {
+                addNbtList<NbtByte> {
+                    add(123)
+                }
+            },
+            serializer = ListSerializerWithAnnotations(
+                elementSerializer = serializer(),
+                elementAnnotations = listOf(NbtType(NbtList::class))
+            ),
+            compareBy = { it[0].asList() },
+        )
+    }
+
+    @Test
+    fun list_element_marked_as_NbtByteArray_should_serialize_as_NbtByteArray() {
+        defaultNbt.testSerialization(
+            value = listOf(listOf(123.toByte())),
+            nbtTag = buildNbtList<NbtByteArray> {
+                add(byteArrayOf(123))
+            },
+            serializer = ListSerializerWithAnnotations(
+                elementSerializer = serializer(),
+                elementAnnotations = listOf(NbtType(NbtByteArray::class))
+            )
+        )
+    }
+
+    @Test
+    fun list_element_marked_as_NbtIntArray_should_serialize_as_NbtIntArray() {
+        defaultNbt.testSerialization(
+            value = listOf(listOf(123)),
+            nbtTag = buildNbtList<NbtIntArray> {
+                add(intArrayOf(123))
+            },
+            serializer = ListSerializerWithAnnotations(
+                elementSerializer = serializer(),
+                elementAnnotations = listOf(NbtType(NbtIntArray::class))
+            )
+        )
+    }
+
+    @Test
+    fun list_element_marked_as_NbtLongArray_should_serialize_as_NbtLongArray() {
+        defaultNbt.testSerialization(
+            value = listOf(listOf(123.toLong())),
+            nbtTag = buildNbtList<NbtLongArray> {
+                add(longArrayOf(123))
+            },
+            serializer = ListSerializerWithAnnotations(
+                elementSerializer = serializer(),
+                elementAnnotations = listOf(NbtType(NbtLongArray::class))
+            )
+        )
+    }
+
+    @Test
+    fun list_element_NbtType_should_take_priority_over_its_value_NbtType() {
+        defaultNbt.testSerialization(
+            value = listOf(listOf()),
+            nbtTag = buildNbtList<NbtIntArray> {
+                add(intArrayOf())
+            },
+            serializer = ListSerializerWithAnnotations(
+                elementSerializer = ListAsNbtByteArraySerializer,
+                elementAnnotations = listOf(NbtType(NbtIntArray::class))
+            )
         )
     }
 }
