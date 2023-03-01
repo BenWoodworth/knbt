@@ -83,6 +83,26 @@ class Example(val string: String, val int: Int)
 nbt.encodeToNbtTag(Example(string = "Hello, World!", int = 42))
 ```
 
+### Serializing Lists/Arrays
+Kotlin's builtin `ByteArray`, `IntArray`, and `LongArray` types will serialize to NBT array tags,
+as well as any other lists marked with `@NbtArray`.
+All other kinds of lists will serialize as NBT list tags.
+
+```kotlin
+@Serializable
+class ListsAndArrays(
+    // Serializes as TAG_List
+    val byteList: List<Byte>,
+    
+    // Serializes as TAG_Int_Array
+    val intArray: IntArray,
+    
+    // Serializes as TAG_Long_Array
+    @NbtArray
+    val listAsLongArray: List<Long>,
+)
+```
+
 ### Reading/Writing NBT Files (JVM)
 
 ```kotlin
