@@ -293,14 +293,20 @@ internal class VerifyingNbtReader(
     }
 
     private sealed interface State {
-        data object Complete : State
+        object Complete : State {
+            override fun toString(): String =
+                this::class.simpleName!!
+        }
 
         data class AwaitingValue(
             val tag: NbtTag,
             val nextState: State,
         ) : State
 
-        data object InRoot : State
+        object InRoot : State {
+            override fun toString(): String =
+                this::class.simpleName!!
+        }
 
         data class InCompound(
             val tag: NbtCompound,
