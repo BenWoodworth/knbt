@@ -1,47 +1,47 @@
 package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
-import net.benwoodworth.knbt.NbtType
+import net.benwoodworth.knbt.NbtArray
 
 internal enum class NbtListKind { List, ByteArray, IntArray, LongArray }
 
 @OptIn(ExperimentalSerializationApi::class)
-private fun List<Annotation>.getNbtListKindOrNull(): NbtListKind? {
-    val nbtType = firstOrNull { it is NbtType } as NbtType?
-        ?: return null
+private fun SerialDescriptor.getNbtListKind(
+    additionalAnnotations: List<Annotation> = emptyList()
+): NbtListKind {
+    when (this) {
+        ByteArraySerializer().descriptor -> return NbtListKind.ByteArray
+        IntArraySerializer().descriptor -> return NbtListKind.IntArray
+        LongArraySerializer().descriptor -> return NbtListKind.LongArray
+    }
 
-    return when (nbtType.type.toNbtTagType()) {
-        NbtTagType.TAG_List -> NbtListKind.List
-        NbtTagType.TAG_Byte_Array -> NbtListKind.ByteArray
-        NbtTagType.TAG_Int_Array -> NbtListKind.IntArray
-        NbtTagType.TAG_Long_Array -> NbtListKind.LongArray
-        else -> null
+    val hasNbtArrayAnnotation = annotations.any { it is NbtArray } || additionalAnnotations.any { it is NbtArray }
+    if (!hasNbtArrayAnnotation) return NbtListKind.List
+
+    if (elementsCount == 0) {
+        // TODO NbtSerializationException
+        throw SerializationException("$serialName has @NbtArray and zero elements, but one is required for determining array type")
+    }
+
+    return when (val elementKind = getElementDescriptor(0).kind) {
+        PrimitiveKind.BYTE -> NbtListKind.ByteArray
+        PrimitiveKind.INT -> NbtListKind.IntArray
+        PrimitiveKind.LONG -> NbtListKind.LongArray
+
+        // TODO NbtSerializationException
+        else -> throw SerializationException("$serialName has @NbtArray with element kind $elementKind, but BYTE, INT, or LONG is required")
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 internal val SerialDescriptor.nbtListKind: NbtListKind
-    get() {
-        val nbtType = annotations.getNbtListKindOrNull()
-        if (nbtType != null) return nbtType
-
-        return when (this) {
-            ByteArraySerializer().descriptor -> NbtListKind.ByteArray
-            IntArraySerializer().descriptor -> NbtListKind.IntArray
-            LongArraySerializer().descriptor -> NbtListKind.LongArray
-
-            else -> NbtListKind.List
-        }
-    }
+    get() = getNbtListKind()
 
 @OptIn(ExperimentalSerializationApi::class)
-internal fun SerialDescriptor.getElementNbtListKind(index: Int): NbtListKind {
-    val nbtType = getElementAnnotations(index).getNbtListKindOrNull() as? NbtListKind
-    if (nbtType != null) return nbtType
-
-    return getElementDescriptor(index).nbtListKind
-}
+internal fun SerialDescriptor.getElementNbtListKind(index: Int): NbtListKind =
+    getElementDescriptor(index).getNbtListKind(getElementAnnotations(index))

@@ -1,148 +1,154 @@
 package net.benwoodworth.knbt.internal
-
-import io.kotest.assertions.withClue
-import io.kotest.data.forAll
-import io.kotest.data.headers
-import io.kotest.data.row
-import io.kotest.data.table
-import io.kotest.matchers.shouldBe
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.StructureKind
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.buildSerialDescriptor
-import kotlinx.serialization.serializer
+import kotlinx.serialization.*
+import kotlinx.serialization.builtins.*
+import kotlinx.serialization.descriptors.*
 import net.benwoodworth.knbt.*
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class NbtListKindTest {
-    @Test
-    fun discriminating_list_kind_from_a_builtin_List_descriptor_should_resolve_to_NBT_List() = table(
-        headers("type", "serializer", "expected kind"),
-
-        row("List<Byte>", serializer<List<Byte>>(), NbtListKind.List),
-        row("List<Int>", serializer<List<Int>>(), NbtListKind.List),
-        row("List<Long>", serializer<List<Long>>(), NbtListKind.List),
-    ).forAll { type, serializer, expectedKind ->
-        val listKind = serializer.descriptor.nbtListKind
-
-        withClue("$type serializer") {
-            listKind.shouldBe(expectedKind)
-        }
-    }
-
-    @Test
-    fun discriminating_list_kind_from_a_builtin_generic_Array_descriptor_should_resolve_to_NBT_List() = table(
-        headers("type", "serializer", "expected kind"),
-
-        row("Array<Byte>", serializer<Array<Byte>>(), NbtListKind.List),
-        row("Array<Int>", serializer<Array<Int>>(), NbtListKind.List),
-        row("Array<Long>", serializer<Array<Long>>(), NbtListKind.List),
-    ).forAll { type, serializer, expectedKind ->
-        val listKind = serializer.descriptor.nbtListKind
-
-        withClue("$type serializer") {
-            listKind.shouldBe(expectedKind)
-        }
-    }
-
-    @Test
-    fun discriminating_list_kind_from_a_builtin_ByteArray_descriptor_should_resolve_to_NBT_ByteArray() {
-        val serializer = serializer<ByteArray>()
-        val listKind = serializer.descriptor.nbtListKind
-
-        listKind.shouldBe(NbtListKind.ByteArray)
-    }
-
-    @Test
-    fun discriminating_list_kind_from_a_builtin_IntArray_descriptor_should_resolve_to_NBT_IntArray() {
-        val serializer = serializer<IntArray>()
-        val listKind = serializer.descriptor.nbtListKind
-
-        listKind.shouldBe(NbtListKind.IntArray)
-    }
-
-    @Test
-    fun discriminating_list_kind_from_a_builtin_LongArray_descriptor_should_resolve_to_NBT_LongArray() {
-        val serializer = serializer<LongArray>()
-        val listKind = serializer.descriptor.nbtListKind
-
-        listKind.shouldBe(NbtListKind.LongArray)
-    }
-
-    @Test
-    @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
-    fun discriminating_list_kind_with_NbtType_descriptor_annotation_should_use_the_annotation_type() = table(
-        headers("NbtType", "expected kind"),
-
-        row(NbtList::class, NbtListKind.List),
-        row(NbtByteArray::class, NbtListKind.ByteArray),
-        row(NbtIntArray::class, NbtListKind.IntArray),
-        row(NbtLongArray::class, NbtListKind.LongArray),
-    ).forAll { type, expectedKind ->
-        val descriptor = buildSerialDescriptor("MyList", StructureKind.LIST) {
-            annotations = listOf(NbtType(type))
-        }
-
-        val listKind = descriptor.nbtListKind
-        listKind shouldBe expectedKind
-    }
-
-    @Test
     @OptIn(ExperimentalSerializationApi::class)
-    fun discriminating_element_list_kind_with_NbtType_annotation_should_use_the_element_annotation_type() {
-        @Serializable
-        class ElementNbtListKinds(
-            @NbtType(NbtIntArray::class) val listAsIntArray: List<Int>,
-            @NbtType(NbtByteArray::class) val listAsByteArray: List<Byte>,
-            @NbtType(NbtLongArray::class) val listAsLongArray: List<Long>,
-            @NbtType(NbtList::class) val byteArrayAsList: ByteArray,
-            @NbtType(NbtList::class) val intArrayAsList: IntArray,
-            @NbtType(NbtList::class) val longArrayAsList: LongArray,
-        )
+    private fun SerialDescriptor.asNbtArray(): SerialDescriptor =
+        object : SerialDescriptor by this {
+            override val annotations: List<Annotation> = this@asNbtArray.annotations + NbtArray()
+        }
 
-        val descriptor = ElementNbtListKinds.serializer().descriptor
 
-        table(
-            headers("Element", "Expected List Kind"),
+    private fun test(expectedKind: NbtListKind, descriptor: SerialDescriptor): Unit =
+        assertEquals(expectedKind, descriptor.nbtListKind)
 
-            row(ElementNbtListKinds::listAsIntArray.name, NbtListKind.IntArray),
-            row(ElementNbtListKinds::listAsByteArray.name, NbtListKind.ByteArray),
-            row(ElementNbtListKinds::listAsLongArray.name, NbtListKind.LongArray),
-            row(ElementNbtListKinds::byteArrayAsList.name, NbtListKind.List),
-            row(ElementNbtListKinds::intArrayAsList.name, NbtListKind.List),
-            row(ElementNbtListKinds::longArrayAsList.name, NbtListKind.List),
-        ).forAll { element, expectedListKind ->
-            val elementIndex = descriptor.getElementIndex(element)
+    private fun testElement(expectedKind: NbtListKind, elementDescriptor: SerialDescriptor) {
+        val descriptor = buildClassSerialDescriptor("Parent", elementDescriptor) {
+            element("element", elementDescriptor)
+        }
 
-            val listKind = descriptor.getElementNbtListKind(elementIndex)
-            listKind shouldBe expectedListKind
+        assertEquals(expectedKind, descriptor.getElementNbtListKind(0))
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun testNbtArrayElement(expectedKind: NbtListKind, elementDescriptor: SerialDescriptor) {
+        val descriptor = buildClassSerialDescriptor("Parent", elementDescriptor) {
+            element("element", elementDescriptor, listOf(NbtArray()))
+        }
+
+        assertEquals(expectedKind, descriptor.getElementNbtListKind(0))
+    }
+
+
+    @Test
+    fun kind_for_ByteArray_should_be_ByteArray(): Unit =
+        test(NbtListKind.ByteArray, ByteArraySerializer().descriptor)
+
+    @Test
+    fun kind_for_element_ByteArray_should_be_ByteArray(): Unit =
+        testElement(NbtListKind.ByteArray, ByteArraySerializer().descriptor)
+
+
+    @Test
+    fun kind_for_IntArray_should_be_IntArray(): Unit =
+        test(NbtListKind.IntArray, IntArraySerializer().descriptor)
+
+    @Test
+    fun kind_for_element_IntArray_should_be_IntArray(): Unit =
+        testElement(NbtListKind.IntArray, IntArraySerializer().descriptor)
+
+
+    @Test
+    fun kind_for_LongArray_should_be_LongArray(): Unit =
+        test(NbtListKind.LongArray, LongArraySerializer().descriptor)
+
+    @Test
+    fun kind_for_element_LongArray_should_be_LongArray(): Unit =
+        testElement(NbtListKind.LongArray, LongArraySerializer().descriptor)
+
+
+    @Test
+    fun kind_for_Byte_List_should_be_List(): Unit =
+        test(NbtListKind.List, serializer<List<Byte>>().descriptor)
+
+    @Test
+    fun kind_for_element_Byte_List_should_be_List(): Unit =
+        testElement(NbtListKind.List, serializer<List<Byte>>().descriptor)
+
+    @Test
+    fun kind_for_NbtArray_element_Byte_List_should_be_ByteArray(): Unit =
+        testNbtArrayElement(NbtListKind.ByteArray, serializer<List<Byte>>().descriptor)
+
+
+    @Test
+    fun kind_for_Int_List_should_be_List(): Unit =
+        test(NbtListKind.List, serializer<List<Int>>().descriptor)
+
+    @Test
+    fun kind_for_element_Int_List_should_be_List(): Unit =
+        testElement(NbtListKind.List, serializer<List<Int>>().descriptor)
+
+    @Test
+    fun kind_for_NbtArray_element_Int_List_should_be_IntArray(): Unit =
+        testNbtArrayElement(NbtListKind.IntArray, serializer<List<Int>>().descriptor)
+
+
+    @Test
+    fun kind_for_Long_List_should_be_List(): Unit =
+        test(NbtListKind.List, serializer<List<Long>>().descriptor)
+
+    @Test
+    fun kind_for_element_Long_List_should_be_List(): Unit =
+        testElement(NbtListKind.List, serializer<List<Long>>().descriptor)
+
+    @Test
+    fun kind_for_NbtArray_element_Long_List_should_be_LongArray(): Unit =
+        testNbtArrayElement(NbtListKind.LongArray, serializer<List<Long>>().descriptor)
+
+
+    @Test
+    fun kind_for_Byte_NbtArrayList_should_be_ByteArray(): Unit =
+        test(NbtListKind.ByteArray, serializer<List<Byte>>().descriptor.asNbtArray())
+
+    @Test
+    fun kind_for_element_Byte_NbtArrayList_should_be_ByteArray(): Unit =
+        testElement(NbtListKind.ByteArray, serializer<List<Byte>>().descriptor.asNbtArray())
+
+
+    @Test
+    fun kind_for_Int_NbtArrayList_should_be_IntArray(): Unit =
+        test(NbtListKind.IntArray, serializer<List<Int>>().descriptor.asNbtArray())
+
+    @Test
+    fun kind_for_element_Int_NbtArrayList_should_be_IntArray(): Unit =
+        testElement(NbtListKind.IntArray, serializer<List<Int>>().descriptor.asNbtArray())
+
+
+    @Test
+    fun kind_for_Long_NbtArrayList_should_be_LongArray(): Unit =
+        test(NbtListKind.LongArray, serializer<List<Long>>().descriptor.asNbtArray())
+
+    @Test
+    fun kind_for_element_Long_NbtArrayList_should_be_LongArray(): Unit =
+        testElement(NbtListKind.LongArray, serializer<List<Long>>().descriptor.asNbtArray())
+
+
+    @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
+    private val nbtArrayDescriptorWithZeroElements = buildSerialDescriptor("ListDescriptorWithZeroElements", StructureKind.LIST) {
+        annotations = listOf(NbtArray())
+    }
+
+    @Test
+    fun getting_kind_for_NbtArray_descriptor_should_throw_SerializationException_if_it_has_zero_elements() {
+        assertFailsWith<SerializationException> {
+            nbtArrayDescriptorWithZeroElements.nbtListKind
         }
     }
 
     @Test
-    @OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
-    fun discriminating_element_list_kind_should_prefer_element_annotation_over_element_descriptor_annotation() = table(
-        headers("Class Element NbtType", "Element NbtType", "Expected NbtListKind"),
-
-        row(NbtList::class, NbtByteArray::class, NbtListKind.List),
-        row(NbtList::class, NbtIntArray::class, NbtListKind.List),
-        row(NbtList::class, NbtLongArray::class, NbtListKind.List),
-
-        row(NbtByteArray::class, NbtList::class, NbtListKind.ByteArray),
-        row(NbtIntArray::class, NbtList::class, NbtListKind.IntArray),
-        row(NbtLongArray::class, NbtList::class, NbtListKind.LongArray),
-    ).forAll { classElementType, elementType, expectedNbtListKind ->
-        val elementDescriptor = buildSerialDescriptor("Element", StructureKind.LIST) {
-            annotations = listOf(NbtType(elementType))
+    fun getting_kind_for_NbtArray_element_descriptor_should_throw_SerializationException_if_it_has_zero_elements() {
+        val descriptor = buildClassSerialDescriptor("MyClass") {
+            element("0", nbtArrayDescriptorWithZeroElements)
         }
 
-        val classDescriptor = buildClassSerialDescriptor("Class") {
-            element("element", elementDescriptor, listOf(NbtType(classElementType)))
+        assertFailsWith<SerializationException> {
+            descriptor.getElementNbtListKind(0)
         }
-
-        val listKind = classDescriptor.getElementNbtListKind(0)
-        listKind shouldBe expectedNbtListKind
     }
 }

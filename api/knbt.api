@@ -44,6 +44,13 @@ public abstract class net/benwoodworth/knbt/Nbt : kotlinx/serialization/BinaryFo
 	public fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
 }
 
+public abstract interface annotation class net/benwoodworth/knbt/NbtArray : java/lang/annotation/Annotation {
+}
+
+public final class net/benwoodworth/knbt/NbtArray$Impl : net/benwoodworth/knbt/NbtArray {
+	public fun <init> ()V
+}
+
 public final class net/benwoodworth/knbt/NbtBuilder {
 	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
 	public final fun getCompressionLevel ()Ljava/lang/Integer;
@@ -652,15 +659,6 @@ public final class net/benwoodworth/knbt/NbtTagKt {
 	public static final fun getNbtShort (Lnet/benwoodworth/knbt/NbtTag;)S
 	public static final fun getNbtString (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/String;
 	public static final fun nbtList (Lnet/benwoodworth/knbt/NbtTag;Lkotlin/reflect/KClass;)Lnet/benwoodworth/knbt/NbtList;
-}
-
-public abstract interface annotation class net/benwoodworth/knbt/NbtType : java/lang/annotation/Annotation {
-	public abstract fun type ()Ljava/lang/Class;
-}
-
-public final class net/benwoodworth/knbt/NbtType$Impl : net/benwoodworth/knbt/NbtType {
-	public fun <init> (Lkotlin/reflect/KClass;)V
-	public final synthetic fun type ()Ljava/lang/Class;
 }
 
 public abstract class net/benwoodworth/knbt/NbtVariant {

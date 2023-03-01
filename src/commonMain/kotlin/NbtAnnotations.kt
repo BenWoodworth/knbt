@@ -2,9 +2,9 @@ package net.benwoodworth.knbt
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialInfo
-import kotlinx.serialization.descriptors.SerialKind
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
-import kotlin.reflect.KClass
 
 
 @DslMarker
@@ -34,15 +34,17 @@ public annotation class ExperimentalNbtApi
 public annotation class OkioApi
 
 /**
- * Signal to the NBT encoder what type a value should be encoded as.
- * Valid for class properties, and within a serial descriptor's annotations.
+ * Instructs the NBT serializer to serialize a [StructureKind.LIST] as an array tag.
+ * Can be used on properties, or in a [SerialDescriptor]'s
+ * [annotations][SerialDescriptor.annotations]/[getElementAnnotations][SerialDescriptor.getElementAnnotations].
  *
- * [SerialKind]s, and their recognized [NbtType]s:
- * - [StructureKind.LIST]: [NbtList], [NbtByteArray], [NbtIntArray], [NbtLongArray]
+ * NBT array tag type is determined by the first element in the serial descriptor.
+ * Applicable to lists of [PrimitiveKind.BYTE], [INT][PrimitiveKind.INT], and [LONG][PrimitiveKind.LONG], for
+ * `TAG_Byte_Array`, `TAG_Int_Array`, and `TAG_Long_Array`, respectively.
  *
  * Is [ExperimentalSerializationApi] since [SerialInfo] is experimental.
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
 @ExperimentalSerializationApi
-public annotation class NbtType(val type: KClass<out NbtTag>)
+public annotation class NbtArray
