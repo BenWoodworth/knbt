@@ -24,7 +24,7 @@ public sealed class Nbt constructor(
      * *Note*: It is the caller's responsibility to close the [sink].
      */
     @OkioApi
-    public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit {
+    public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink) {
         val binarySink = configuration.variant.getBinarySink(
             configuration.compression.compress(NonClosingSink(sink), configuration.compressionLevel).buffer()
         )

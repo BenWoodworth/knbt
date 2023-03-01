@@ -1,7 +1,9 @@
 package net.benwoodworth.knbt
 
-import kotlinx.serialization.*
-import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialFormat
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.internal.*
 
 public sealed interface NbtFormat : SerialFormat {

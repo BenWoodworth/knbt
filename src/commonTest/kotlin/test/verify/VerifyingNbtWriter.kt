@@ -3,7 +3,6 @@ package net.benwoodworth.knbt.test.verify
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType
 import net.benwoodworth.knbt.internal.NbtWriter
-import kotlin.contracts.contract
 
 internal class VerifyingNbtWriter(
     private val tag: NbtTag,
