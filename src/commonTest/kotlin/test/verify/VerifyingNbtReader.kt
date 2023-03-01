@@ -2,20 +2,12 @@ package net.benwoodworth.knbt.test.verify
 
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtReader
-import kotlin.contracts.contract
 
 internal class VerifyingNbtReader(
     private val tag: NbtTag,
     private val knownSizes: Boolean = true,
 ) : NbtReader {
     private val stateHistory = mutableListOf<State>(State.InRoot)
-
-    private inline fun check(value: Boolean) {
-        contract {
-            returns() implies value
-        }
-        check(value) { stateHistory.last().getPath() }
-    }
 
     fun assertComplete() {
         val state = stateHistory.last()
