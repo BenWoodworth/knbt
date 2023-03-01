@@ -16,7 +16,7 @@ import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.*
 import kotlin.test.Test
 
-class NbtSerialDescriptorTest {
+class NbtListKindTest {
     @Test
     fun discriminating_list_kind_from_a_builtin_List_descriptor_should_resolve_to_NBT_List() = table(
         headers("type", "serializer", "expected kind"),

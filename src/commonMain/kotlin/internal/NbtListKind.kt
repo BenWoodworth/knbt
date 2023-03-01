@@ -7,12 +7,10 @@ import kotlinx.serialization.builtins.LongArraySerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import net.benwoodworth.knbt.NbtType
 
-internal sealed interface NbtSerialKind
-
-internal enum class NbtListKind : NbtSerialKind { List, ByteArray, IntArray, LongArray }
+internal enum class NbtListKind { List, ByteArray, IntArray, LongArray }
 
 @OptIn(ExperimentalSerializationApi::class)
-private fun List<Annotation>.getNbtSerialKind(): NbtSerialKind? {
+private fun List<Annotation>.getNbtListKindOrNull(): NbtListKind? {
     val nbtType = firstOrNull { it is NbtType } as NbtType?
         ?: return null
 
@@ -28,7 +26,7 @@ private fun List<Annotation>.getNbtSerialKind(): NbtSerialKind? {
 @OptIn(ExperimentalSerializationApi::class)
 internal val SerialDescriptor.nbtListKind: NbtListKind
     get() {
-        val nbtType = annotations.getNbtSerialKind() as? NbtListKind
+        val nbtType = annotations.getNbtListKindOrNull()
         if (nbtType != null) return nbtType
 
         return when (this) {
@@ -42,7 +40,7 @@ internal val SerialDescriptor.nbtListKind: NbtListKind
 
 @OptIn(ExperimentalSerializationApi::class)
 internal fun SerialDescriptor.getElementNbtListKind(index: Int): NbtListKind {
-    val nbtType = getElementAnnotations(index).getNbtSerialKind() as? NbtListKind
+    val nbtType = getElementAnnotations(index).getNbtListKindOrNull() as? NbtListKind
     if (nbtType != null) return nbtType
 
     return getElementDescriptor(index).nbtListKind
