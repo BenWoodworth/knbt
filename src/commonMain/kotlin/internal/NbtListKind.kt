@@ -1,7 +1,6 @@
 package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
@@ -24,18 +23,18 @@ private fun SerialDescriptor.getNbtListKind(
     val hasNbtArrayAnnotation = annotations.any { it is NbtArray } || additionalAnnotations.any { it is NbtArray }
     if (!hasNbtArrayAnnotation) return NbtListKind.List
 
-    if (elementsCount == 0) {
-        // TODO NbtSerializationException
-        throw SerializationException("$serialName has @NbtArray and zero elements, but one is required for determining array type")
-    }
+    if (elementsCount == 0) throw NbtException(
+        "$serialName has @NbtArray and zero elements, but one is required for determining array type"
+    )
 
     return when (val elementKind = getElementDescriptor(0).kind) {
         PrimitiveKind.BYTE -> NbtListKind.ByteArray
         PrimitiveKind.INT -> NbtListKind.IntArray
         PrimitiveKind.LONG -> NbtListKind.LongArray
 
-        // TODO NbtSerializationException
-        else -> throw SerializationException("$serialName has @NbtArray with element kind $elementKind, but BYTE, INT, or LONG is required")
+        else -> throw NbtException(
+            "$serialName has @NbtArray with element kind $elementKind, but BYTE, INT, or LONG is required"
+        )
     }
 }
 

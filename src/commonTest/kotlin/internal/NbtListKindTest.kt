@@ -136,7 +136,7 @@ class NbtListKindTest {
 
     @Test
     fun getting_kind_for_NbtArray_descriptor_should_throw_SerializationException_if_it_has_zero_elements() {
-        assertFailsWith<SerializationException> {
+        assertFailsWith<NbtException> {
             nbtArrayDescriptorWithZeroElements.nbtListKind
         }
     }
@@ -147,7 +147,7 @@ class NbtListKindTest {
             element("0", nbtArrayDescriptorWithZeroElements)
         }
 
-        assertFailsWith<SerializationException> {
+        assertFailsWith<NbtException> {
             descriptor.getElementNbtListKind(0)
         }
     }
