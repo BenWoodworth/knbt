@@ -332,6 +332,7 @@ private class ClassNbtDecoder(
             index
         }
 
+        @OptIn(ExperimentalSerializationApi::class)
         if (index >= 0 && descriptor.getElementDescriptor(index).kind == StructureKind.LIST) {
             elementListKind = descriptor.getElementNbtListKind(index)
         }

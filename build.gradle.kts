@@ -13,9 +13,9 @@ System.getenv("GIT_REF")?.let { gitRef ->
 val isSnapshot = version.toString().contains("SNAPSHOT", true)
 
 plugins {
-    kotlin("multiplatform") version "1.8.0-Beta"
-    kotlin("plugin.serialization") version "1.8.0-Beta"
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.12.1"
+    kotlin("multiplatform") version "1.8.10"
+    kotlin("plugin.serialization") version "1.8.10"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.0"
     id("org.jetbrains.dokka") version "1.7.20"
     id("maven-publish")
     id("signing")
