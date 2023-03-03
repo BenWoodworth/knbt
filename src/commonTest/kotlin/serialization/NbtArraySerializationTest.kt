@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.integration
+package net.benwoodworth.knbt.serialization
 
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer

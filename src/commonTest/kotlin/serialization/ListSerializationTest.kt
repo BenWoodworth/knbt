@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.integration
+package net.benwoodworth.knbt.serialization
 
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.test.serializers.SurrogateSerializer

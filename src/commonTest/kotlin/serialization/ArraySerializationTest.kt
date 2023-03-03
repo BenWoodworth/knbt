@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.integration
+package net.benwoodworth.knbt.serialization
 
 import net.benwoodworth.knbt.NbtByteArray
 import net.benwoodworth.knbt.NbtIntArray
