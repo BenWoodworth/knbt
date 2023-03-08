@@ -1,10 +1,44 @@
 package net.benwoodworth.knbt
 
+import io.kotest.property.Exhaustive
+import io.kotest.property.checkAll
+import io.kotest.property.exhaustive.bytes
+import io.kotest.property.exhaustive.filter
+import io.kotest.property.exhaustive.map
+import kotlinx.coroutines.test.runTest
 import kotlin.reflect.KProperty1
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
+
+class NbtByteTest {
+    @Test
+    fun creating_from_false_boolean_should_return_0b() {
+        assertEquals(NbtByte(0), NbtByte.fromBoolean(false))
+    }
+
+    @Test
+    fun creating_from_true_boolean_should_return_1b() {
+        assertEquals(NbtByte(1), NbtByte.fromBoolean(true))
+    }
+
+    @Test
+    fun converting_0b_to_boolean_should_be_false() {
+        assertEquals(false, NbtByte(0).toBoolean())
+    }
+
+    @Test
+    fun converting_non_zero_to_boolean_should_be_true() = runTest {
+        val nonZeroNbtBytes = Exhaustive.bytes()
+            .filter { it != 0.toByte() }
+            .map { NbtByte(it) }
+
+        checkAll(nonZeroNbtBytes) { nbtByte ->
+            assertEquals(true, nbtByte.toBoolean())
+        }
+    }
+}
 
 class NbtTagToStringTest {
     @Test

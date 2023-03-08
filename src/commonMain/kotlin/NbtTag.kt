@@ -26,12 +26,29 @@ public value class NbtByte(public val value: Byte) : NbtTag {
     /**
      * Create an [NbtByte] containing a [Boolean]: `false = 0b`, `true = 1b`
      */
+    @Deprecated(
+        "Replaced by NbtByte.fromBoolean(...)",
+        ReplaceWith(
+            "NbtByte.fromBoolean(booleanValue)",
+            "net.benwoodworth.knbt.NbtByte",
+            "net.benwoodworth.knbt.fromBoolean"
+        ),
+        DeprecationLevel.ERROR
+    )
     public constructor(booleanValue: Boolean) : this(if (booleanValue) 1 else 0)
 
     /**
      * Get an [NbtByte] as a [Boolean]: `0b = false`, `1b = true`
      * @throws IllegalArgumentException if this is not `0b` or `1b`
      */
+    @Deprecated(
+        "Replaced by NbtByte.toBoolean(), which more leniently converts NbtByte values",
+        ReplaceWith(
+            "this.toBoolean()",
+            "net.benwoodworth.knbt.toBoolean"
+        ),
+        DeprecationLevel.ERROR
+    )
     public val booleanValue: Boolean
         get() = when (value) {
             0.toByte() -> false
@@ -41,6 +58,20 @@ public value class NbtByte(public val value: Byte) : NbtTag {
 
     override fun toString(): String = "${value}b"
 }
+
+/**
+ * Create an [NbtByte] representing a [Boolean]: `false = 0b`, `true = 1b`.
+ */
+public fun NbtByte.Companion.fromBoolean(value: Boolean): NbtByte =
+    NbtByte(if (value) 1 else 0)
+
+/**
+ * Convert [this] [NbtByte] to its [Boolean] representation: `0b = false`, `1b = true`.
+ *
+ * In order to match Minecraft's lenient behavior, all other values convert to `true`.
+ */
+public fun NbtByte.toBoolean(): Boolean =
+    value != 0.toByte()
 
 @JvmInline
 @Serializable(NbtShortSerializer::class)

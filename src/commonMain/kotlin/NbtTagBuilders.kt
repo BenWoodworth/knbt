@@ -74,7 +74,7 @@ public fun NbtListBuilder<NbtShort>.add(tag: NbtShort): Boolean = add(tag)
 public fun NbtListBuilder<NbtString>.add(tag: NbtString): Boolean = add(tag)
 
 public fun NbtListBuilder<NbtByte>.add(value: Byte): Boolean = add(NbtByte(value))
-public fun NbtListBuilder<NbtByte>.add(value: Boolean): Boolean = add(NbtByte(value))
+public fun NbtListBuilder<NbtByte>.add(value: Boolean): Boolean = add(NbtByte.fromBoolean(value))
 public fun NbtListBuilder<NbtShort>.add(value: Short): Boolean = add(NbtShort(value))
 public fun NbtListBuilder<NbtInt>.add(value: Int): Boolean = add(NbtInt(value))
 public fun NbtListBuilder<NbtLong>.add(value: Long): Boolean = add(NbtLong(value))
@@ -149,7 +149,7 @@ public inline fun buildNbtCompound(
     }
 
 public fun NbtCompoundBuilder.put(key: String, value: Byte): NbtTag? = put(key, NbtByte(value))
-public fun NbtCompoundBuilder.put(key: String, value: Boolean): NbtTag? = put(key, NbtByte(value))
+public fun NbtCompoundBuilder.put(key: String, value: Boolean): NbtTag? = put(key, NbtByte.fromBoolean(value))
 public fun NbtCompoundBuilder.put(key: String, value: Short): NbtTag? = put(key, NbtShort(value))
 public fun NbtCompoundBuilder.put(key: String, value: Int): NbtTag? = put(key, NbtInt(value))
 public fun NbtCompoundBuilder.put(key: String, value: Long): NbtTag? = put(key, NbtLong(value))

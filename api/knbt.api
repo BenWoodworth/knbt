@@ -646,6 +646,7 @@ public final class net/benwoodworth/knbt/NbtTagBuildersKt {
 }
 
 public final class net/benwoodworth/knbt/NbtTagKt {
+	public static final fun fromBoolean (Lnet/benwoodworth/knbt/NbtByte$Companion;Z)B
 	public static final fun getNbtByte (Lnet/benwoodworth/knbt/NbtTag;)B
 	public static final fun getNbtByteArray (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtByteArray;
 	public static final fun getNbtCompound (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtCompound;
@@ -659,6 +660,7 @@ public final class net/benwoodworth/knbt/NbtTagKt {
 	public static final fun getNbtShort (Lnet/benwoodworth/knbt/NbtTag;)S
 	public static final fun getNbtString (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/String;
 	public static final fun nbtList (Lnet/benwoodworth/knbt/NbtTag;Lkotlin/reflect/KClass;)Lnet/benwoodworth/knbt/NbtList;
+	public static final fun toBoolean-fqT0T5c (B)Z
 }
 
 public abstract class net/benwoodworth/knbt/NbtVariant {
