@@ -1,6 +1,7 @@
 import org.jetbrains.dokka.gradle.DokkaTask
 
 val kotlinx_serialization_version: String by extra
+val kotlinx_coroutines_version: String by extra
 val okio_version: String by extra
 val kotest_version: String by extra
 
@@ -55,9 +56,13 @@ kotlin {
     @Suppress("UNUSED_VARIABLE")
     sourceSets {
         configureEach {
+            val isTest = name.endsWith("Test")
+
             languageSettings.apply {
                 optIn("kotlin.contracts.ExperimentalContracts")
                 optIn("net.benwoodworth.knbt.InternalNbtApi")
+
+                if (isTest) optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
             }
         }
 
@@ -70,6 +75,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version")
                 implementation("io.kotest:kotest-assertions-core:$kotest_version")
                 implementation("io.kotest:kotest-property:$kotest_version")
             }
