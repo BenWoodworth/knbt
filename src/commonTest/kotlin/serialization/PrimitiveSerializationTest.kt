@@ -1,6 +1,8 @@
 package net.benwoodworth.knbt.serialization
 
+import io.kotest.property.Arb
 import io.kotest.property.Exhaustive
+import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
 import io.kotest.property.exhaustive.boolean
 import io.kotest.property.exhaustive.bytes
@@ -11,33 +13,45 @@ import kotlin.test.Test
 
 class PrimitiveSerializationTest : SerializationTest() {
     @Test
-    fun should_serialize_Byte_correctly() {
-        defaultNbt.testSerialization(4.toByte(), NbtByte(4))
+    fun should_serialize_Byte_correctly() = runTest {
+        checkAll(Exhaustive.bytes()) { byte ->
+            defaultNbt.testSerialization(byte, NbtByte(byte))
+        }
     }
 
     @Test
-    fun should_serialize_Short_correctly() {
-        defaultNbt.testSerialization(5.toShort(), NbtShort(5))
+    fun should_serialize_Short_correctly() = runTest {
+        checkAll { short: Short ->
+            defaultNbt.testSerialization(short, NbtShort(short))
+        }
     }
 
     @Test
-    fun should_serialize_Int_correctly() {
-        defaultNbt.testSerialization(6, NbtInt(6))
+    fun should_serialize_Int_correctly() = runTest {
+        checkAll(Arb.int()) { int: Int ->
+            defaultNbt.testSerialization(int, NbtInt(int))
+        }
     }
 
     @Test
-    fun should_serialize_Long_correctly() {
-        defaultNbt.testSerialization(7L, NbtLong(7L))
+    fun should_serialize_Long_correctly() = runTest {
+        checkAll { long: Long ->
+            defaultNbt.testSerialization(long, NbtLong(long))
+        }
     }
 
     @Test
-    fun should_serialize_Float_correctly() {
-        defaultNbt.testSerialization(3.14f, NbtFloat(3.14f))
+    fun should_serialize_Float_correctly() = runTest {
+        checkAll { float: Float ->
+            defaultNbt.testSerialization(float, NbtFloat(float))
+        }
     }
 
     @Test
-    fun should_serialize_Double_correctly() {
-        defaultNbt.testSerialization(3.14, NbtDouble(3.14))
+    fun should_serialize_Double_correctly() = runTest {
+        checkAll { double: Double ->
+            defaultNbt.testSerialization(double, NbtDouble(double))
+        }
     }
 
     @Test
