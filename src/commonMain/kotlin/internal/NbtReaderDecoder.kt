@@ -54,16 +54,8 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         return tryWithPath { reader.readByte() }
     }
 
-    override fun decodeBoolean(): Boolean {
-        expectTagType(TAG_Byte)
-        return tryWithPath {
-            when (val byte = reader.readByte()) {
-                0.toByte() -> false
-                1.toByte() -> true
-                else -> throw NbtDecodingException("Expected TAG_Byte to be a Boolean (0 or 1), but was $byte")
-            }
-        }
-    }
+    override fun decodeBoolean(): Boolean =
+        decodeByte() != 0.toByte()
 
     override fun decodeShort(): Short {
         expectTagType(TAG_Short)

@@ -36,6 +36,29 @@ abstract class SerializationTest {
             writer.assertComplete()
         }
 
+        run { // Serialize NbtTag
+            val writer = VerifyingNbtWriter(nbtTag)
+            NbtWriterEncoder(this, writer).encodeSerializableValue(NbtTag.serializer(), nbtTag)
+
+            writer.assertComplete()
+        }
+
+        testDeserialization(serializer, nbtTag, value, compareBy)
+    }
+
+    protected inline fun <reified T> NbtFormat.testDeserialization(
+        nbtTag: NbtTag,
+        value: T,
+        compareBy: CompareBy<T> = CompareBy.Self
+    ): Unit =
+        testDeserialization(this.serializersModule.serializer(), nbtTag, value, compareBy)
+
+    protected fun <T> NbtFormat.testDeserialization(
+        serializer: KSerializer<T>,
+        nbtTag: NbtTag,
+        value: T,
+        compareBy: CompareBy<T> = CompareBy.Self
+    ) {
         run { // Deserialize Value
             val reader = VerifyingNbtReader(nbtTag)
             val decoder = NbtReaderDecoder(this, reader)
@@ -52,13 +75,6 @@ abstract class SerializationTest {
 
             reader.assertComplete()
             compareBy.assertEquals(value, actualValue, "Non-sequentially deserialized value incorrectly")
-        }
-
-        run { // Serialize NbtTag
-            val writer = VerifyingNbtWriter(nbtTag)
-            NbtWriterEncoder(this, writer).encodeSerializableValue(NbtTag.serializer(), nbtTag)
-
-            writer.assertComplete()
         }
 
         run { // Deserialize NbtTag
