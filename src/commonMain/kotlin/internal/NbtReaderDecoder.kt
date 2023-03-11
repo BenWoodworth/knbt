@@ -253,6 +253,7 @@ internal class NbtReaderDecoder(
     override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
         if (deserializer.descriptor.kind == StructureKind.CLASS &&
             deserializer !is RootClassDeserializer<*> &&
+            deserializer !is NbtContentPolymorphicSerializer<*> &&
             deserializer !is NbtTagSerializer // TODO Remove when NbtTag's kind is Polymorphic instead of Class
         ) {
             return decodeSerializableValue(RootClassDeserializer(deserializer))
