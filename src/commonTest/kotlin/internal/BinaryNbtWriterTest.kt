@@ -4,6 +4,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.okio.encodeToBufferedSink
 import net.benwoodworth.knbt.test.TestSink
 import net.benwoodworth.knbt.test.asSource
 import net.benwoodworth.knbt.test.file.nbtFiles
@@ -155,7 +156,7 @@ class BinaryNbtWriterTest {
     fun should_not_close_sink() = parameterize(nbtFiles) {
         TestSink(blackholeSink()).use { sink ->
             @Suppress("UNCHECKED_CAST")
-            nbt.encodeToSink(valueSerializer as KSerializer<Any>, value, sink)
+            nbt.encodeToBufferedSink(valueSerializer as KSerializer<Any>, value, sink.buffer())
             assertFalse(sink.isClosed, "Sink closed while decoding")
         }
     }

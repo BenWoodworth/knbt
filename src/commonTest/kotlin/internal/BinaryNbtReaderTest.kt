@@ -6,10 +6,12 @@ import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.NbtVariant.Java
+import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.test.TestSource
 import net.benwoodworth.knbt.test.file.nbtFiles
 import net.benwoodworth.knbt.test.mocks.VerifyingBinarySourceMock
 import net.benwoodworth.knbt.test.parameterize
+import okio.buffer
 import okio.use
 import kotlin.test.*
 
@@ -62,7 +64,7 @@ class BinaryNbtReaderTest {
         assertEquals(
             expected = value,
             actual = asSource().use { source ->
-                nbt.decodeFromSource(valueSerializer, source)
+                nbt.decodeFromBufferedSource(valueSerializer, source.buffer())
             },
         )
     }
@@ -72,7 +74,7 @@ class BinaryNbtReaderTest {
         assertEquals(
             expected = nbtTag,
             actual = asSource().use { source ->
-                nbt.decodeFromSource(source)
+                nbt.decodeFromBufferedSource(source.buffer())
             },
         )
     }
@@ -80,7 +82,7 @@ class BinaryNbtReaderTest {
     @Test
     fun should_not_read_more_from_source_than_necessary() = parameterize(nbtFiles) {
         TestSource(asSource()).use { source ->
-            nbt.decodeFromSource<NbtTag>(source)
+            nbt.decodeFromBufferedSource<NbtTag>(source.buffer())
             assertFalse(source.readPastEnd)
         }
     }
@@ -88,7 +90,7 @@ class BinaryNbtReaderTest {
     @Test
     fun should_not_close_source() = parameterize(nbtFiles) {
         TestSource(asSource()).use { source ->
-            nbt.decodeFromSource<NbtTag>(source)
+            nbt.decodeFromBufferedSource<NbtTag>(source.buffer())
             assertFalse(source.isClosed)
         }
     }

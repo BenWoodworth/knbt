@@ -3,16 +3,9 @@ package net.benwoodworth.knbt
 import kotlinx.serialization.*
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
-import net.benwoodworth.knbt.internal.BinaryNbtReader
-import net.benwoodworth.knbt.internal.BinaryNbtWriter
-import net.benwoodworth.knbt.internal.NbtDecodingException
-import net.benwoodworth.knbt.internal.NonClosingSink
-import net.benwoodworth.knbt.internal.NonClosingSource
-import okio.Buffer
-import okio.Sink
-import okio.Source
-import okio.buffer
-import okio.use
+import net.benwoodworth.knbt.okio.decodeFromBufferedSource
+import net.benwoodworth.knbt.okio.encodeToBufferedSink
+import okio.*
 
 public sealed class Nbt constructor(
     override val configuration: NbtConfiguration,
@@ -24,15 +17,34 @@ public sealed class Nbt constructor(
      * *Note*: It is the caller's responsibility to close the [sink].
      */
     @OkioApi
-    public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink) {
-        val binarySink = configuration.variant.getBinarySink(
-            configuration.compression.compress(NonClosingSink(sink), configuration.compressionLevel).buffer()
-        )
+    @Deprecated(
+        "Replaced by encodeToBufferedSink()",
+        ReplaceWith(
+            "this.encodeToBufferedSink<T>(serializer, value, sink.buffer())",
+            "net.benwoodworth.knbt.okio.encodeToBufferedSink",
+            "okio.buffer"
+        ),
+        DeprecationLevel.ERROR
+    )
+    public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit =
+        encodeToBufferedSink(serializer, value, sink.buffer())
 
-        BinaryNbtWriter(binarySink).use { writer ->
-            encodeToNbtWriter(writer, serializer, value)
-        }
-    }
+    /**
+     * Serializes and encodes the given [value] to the [sink] using the given [serializer].
+     *
+     * *Note*: It is the caller's responsibility to close the [sink].
+     */
+    @OkioApi
+    @Deprecated(
+        "Replaced by encodeToBufferedSink()",
+        ReplaceWith(
+            "this.encodeToBufferedSink<T>(serializer, value, sink)",
+            "net.benwoodworth.knbt.okio.encodeToBufferedSink"
+        ),
+        DeprecationLevel.ERROR
+    )
+    public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: BufferedSink): Unit =
+        encodeToBufferedSink(serializer, value, sink)
 
     /**
      * Decodes and deserializes from the given [source] to a value of type [T] using the given [deserializer].
@@ -40,38 +52,42 @@ public sealed class Nbt constructor(
      * *Note*: It is the caller's responsibility to close the [source].
      */
     @OkioApi
-    public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T {
-        val variant = configuration.variant
-        val compression = configuration.compression
+    @Deprecated(
+        "Replaced by decodeFromBufferedSource()",
+        ReplaceWith(
+            "this.decodeFromBufferedSource<T>(deserializer, source.buffer())",
+            "net.benwoodworth.knbt.okio.decodeFromBufferedSource",
+            "okio.buffer"
+        ),
+        DeprecationLevel.ERROR
+    )
+    public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T =
+        decodeFromBufferedSource(deserializer, source.buffer())
 
-        val nonClosingSource = NonClosingSource(source).buffer()
-
-        val detectedCompression = try {
-            NbtCompression.detect(nonClosingSource)
-        } catch (e: NbtDecodingException) {
-            null
-        }
-
-        if (detectedCompression != null && compression != detectedCompression) {
-            throw NbtDecodingException("Expected compression to be $compression, but was $detectedCompression")
-        }
-
-        val binarySource = variant.getBinarySource(
-            compression.decompress(nonClosingSource).buffer()
-        )
-
-        return BinaryNbtReader(binarySource).use { reader ->
-            decodeFromNbtReader(reader, deserializer)
-        }
-    }
+    /**
+     * Decodes and deserializes from the given [source] to a value of type [T] using the given [deserializer].
+     *
+     * *Note*: It is the caller's responsibility to close the [source].
+     */
+    @OkioApi
+    @Deprecated(
+        "Replaced by decodeFromBufferedSource()",
+        ReplaceWith(
+            "this.decodeFromBufferedSource<T>(deserializer, source)",
+            "net.benwoodworth.knbt.okio.decodeFromBufferedSource"
+        ),
+        DeprecationLevel.ERROR
+    )
+    public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: BufferedSource): T =
+        decodeFromBufferedSource(deserializer, source)
 
     @OptIn(OkioApi::class)
     override fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
-        Buffer().apply { encodeToSink(serializer, value, this) }.readByteArray()
+        Buffer().apply { encodeToBufferedSink(serializer, value, this) }.readByteArray()
 
     @OptIn(OkioApi::class)
     override fun <T> decodeFromByteArray(deserializer: DeserializationStrategy<T>, bytes: ByteArray): T =
-        decodeFromSource(deserializer, Buffer().apply { write(bytes) })
+        decodeFromBufferedSource(deserializer, Buffer().apply { write(bytes) })
 }
 
 private object DefaultNbt : Nbt(
@@ -183,8 +199,34 @@ private class NbtImpl(
  * *Note*: It is the caller's responsibility to close the [sink].
  */
 @OkioApi
+@Deprecated(
+    "Replaced by encodeToBufferedSink()",
+    ReplaceWith(
+        "this.encodeToBufferedSink<T>(value, sink.buffer())",
+        "net.benwoodworth.knbt.okio.encodeToBufferedSink",
+        "okio.buffer"
+    ),
+    DeprecationLevel.ERROR
+)
 public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
-    encodeToSink(serializersModule.serializer(), value, sink)
+    encodeToBufferedSink(value, sink.buffer())
+
+/**
+ * Encode NBT to a [Sink].
+ *
+ * *Note*: It is the caller's responsibility to close the [sink].
+ */
+@OkioApi
+@Deprecated(
+    "Replaced by encodeToBufferedSink()",
+    ReplaceWith(
+        "this.encodeToBufferedSink<T>(value, sink)",
+        "net.benwoodworth.knbt.okio.encodeToBufferedSink"
+    ),
+    DeprecationLevel.ERROR
+)
+public inline fun <reified T> Nbt.encodeToSink(value: T, sink: BufferedSink): Unit =
+    encodeToBufferedSink(value, sink)
 
 /**
  * Decode NBT from a [Source].
@@ -192,5 +234,31 @@ public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
  * *Note*: It is the caller's responsibility to close the [source].
  */
 @OkioApi
+@Deprecated(
+    "Replaced by decodeFromBufferedSource()",
+    ReplaceWith(
+        "this.decodeFromBufferedSource<T>(source.buffer())",
+        "net.benwoodworth.knbt.okio.decodeFromBufferedSource",
+        "okio.buffer"
+    ),
+    DeprecationLevel.ERROR
+)
 public inline fun <reified T> Nbt.decodeFromSource(source: Source): T =
-    decodeFromSource(serializersModule.serializer(), source)
+    decodeFromBufferedSource(source.buffer())
+
+/**
+ * Decode NBT from a [Source].
+ *
+ * *Note*: It is the caller's responsibility to close the [source].
+ */
+@OkioApi
+@Deprecated(
+    "Replaced by decodeFromBufferedSource()",
+    ReplaceWith(
+        "this.decodeFromBufferedSource<T>(source)",
+        "net.benwoodworth.knbt.okio.decodeFromBufferedSource"
+    ),
+    DeprecationLevel.ERROR
+)
+public inline fun <reified T> Nbt.decodeFromSource(source: BufferedSource): T =
+    decodeFromBufferedSource(source)

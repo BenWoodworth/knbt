@@ -35,9 +35,11 @@ public abstract class net/benwoodworth/knbt/Nbt : kotlinx/serialization/BinaryFo
 	public synthetic fun <init> (Lnet/benwoodworth/knbt/NbtConfiguration;Lkotlinx/serialization/modules/SerializersModule;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun decodeFromByteArray (Lkotlinx/serialization/DeserializationStrategy;[B)Ljava/lang/Object;
 	public fun decodeFromNbtTag (Lkotlinx/serialization/DeserializationStrategy;Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Object;
+	public final fun decodeFromSource (Lkotlinx/serialization/DeserializationStrategy;Lokio/BufferedSource;)Ljava/lang/Object;
 	public final fun decodeFromSource (Lkotlinx/serialization/DeserializationStrategy;Lokio/Source;)Ljava/lang/Object;
 	public fun encodeToByteArray (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)[B
 	public fun encodeToNbtTag (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Lnet/benwoodworth/knbt/NbtTag;
+	public final fun encodeToSink (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;Lokio/BufferedSink;)V
 	public final fun encodeToSink (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;Lokio/Sink;)V
 	public fun getConfiguration ()Lnet/benwoodworth/knbt/NbtConfiguration;
 	public synthetic fun getConfiguration ()Lnet/benwoodworth/knbt/NbtFormatConfiguration;
@@ -740,5 +742,10 @@ public final class net/benwoodworth/knbt/internal/NbtTagType : java/lang/Enum {
 	public static final field TAG_String Lnet/benwoodworth/knbt/internal/NbtTagType;
 	public static fun valueOf (Ljava/lang/String;)Lnet/benwoodworth/knbt/internal/NbtTagType;
 	public static fun values ()[Lnet/benwoodworth/knbt/internal/NbtTagType;
+}
+
+public final class net/benwoodworth/knbt/okio/OkioStreamsKt {
+	public static final fun decodeFromBufferedSource (Lnet/benwoodworth/knbt/Nbt;Lkotlinx/serialization/DeserializationStrategy;Lokio/BufferedSource;)Ljava/lang/Object;
+	public static final fun encodeToBufferedSink (Lnet/benwoodworth/knbt/Nbt;Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;Lokio/BufferedSink;)V
 }
 
