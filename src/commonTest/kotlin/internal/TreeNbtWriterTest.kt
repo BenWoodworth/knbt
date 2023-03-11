@@ -157,7 +157,7 @@ class TreeNbtWriterTest {
 
     @Test
     fun should_write_List_with_no_entries_correctly() {
-        expectNbtWriterCalls(NbtList(emptyList<NbtByte>())) {
+        expectNbtWriterCalls(NbtList<NbtByte>(emptyList())) {
             beginRootTag(TAG_List)
             beginList(TAG_End, 0)
             endList()

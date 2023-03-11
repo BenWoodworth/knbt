@@ -160,7 +160,7 @@ class TreeNbtReaderTest {
 
     @Test
     fun should_read_List_with_no_entries_correctly() {
-        expectNbtReaderCalls(NbtList(emptyList<NbtByte>())) {
+        expectNbtReaderCalls(NbtList<NbtByte>(emptyList())) {
             beginRootTag() shouldReturn RootTagInfo(TAG_List)
             beginList() shouldReturn ListInfo(TAG_End, 0)
             beginListEntry() shouldReturn false

@@ -165,46 +165,59 @@ public class NbtList<out T : NbtTag> private constructor(
     override fun toString(): String =
         content.joinToString(prefix = "[", postfix = "]", separator = ",")
 
+    @Suppress("FINAL_UPPER_BOUND")
     public companion object {
         @UnsafeNbtApi
         internal operator fun <T : NbtTag> invoke(content: List<T>): NbtList<T> = NbtList(content)
 
         // Specific constructors, since NbtLists can only contain a single tag type
         @JvmName("invoke\$NbtByte")
-        public operator fun invoke(content: List<NbtByte>): NbtList<NbtByte> = NbtList(content)
+        public operator fun <TNbtByte : NbtByte> invoke(content: List<TNbtByte>): NbtList<TNbtByte> =
+            NbtList(content)
 
         @JvmName("invoke\$NbtShort")
-        public operator fun invoke(content: List<NbtShort>): NbtList<NbtShort> = NbtList(content)
+        public operator fun <TNbtShort : NbtShort> invoke(content: List<TNbtShort>): NbtList<TNbtShort> =
+            NbtList(content)
 
         @JvmName("invoke\$NbtInt")
-        public operator fun invoke(content: List<NbtInt>): NbtList<NbtInt> = NbtList(content)
+        public operator fun <TNbtInt : NbtInt> invoke(content: List<TNbtInt>): NbtList<TNbtInt> =
+            NbtList(content)
 
         @JvmName("invoke\$NbtLong")
-        public operator fun invoke(content: List<NbtLong>): NbtList<NbtLong> = NbtList(content)
+        public operator fun <TNbtLong : NbtLong> invoke(content: List<TNbtLong>): NbtList<TNbtLong> =
+            NbtList(content)
 
         @JvmName("invoke\$NbtFloat")
-        public operator fun invoke(content: List<NbtFloat>): NbtList<NbtFloat> = NbtList(content)
+        public operator fun <TNbtFloat : NbtFloat> invoke(content: List<TNbtFloat>): NbtList<TNbtFloat> =
+            NbtList(content)
 
         @JvmName("invoke\$NbtDouble")
-        public operator fun invoke(content: List<NbtDouble>): NbtList<NbtDouble> = NbtList(content)
+        public operator fun <TNbtDouble : NbtDouble> invoke(content: List<TNbtDouble>): NbtList<TNbtDouble> =
+            NbtList(content)
 
         @JvmName("invoke\$NbtByteArray")
-        public operator fun invoke(content: List<NbtByteArray>): NbtList<NbtByteArray> = NbtList(content)
+        public operator fun <TNbtByteArray : NbtByteArray> invoke(content: List<TNbtByteArray>): NbtList<TNbtByteArray> =
+            NbtList(content)
 
         @JvmName("invoke\$NbtString")
-        public operator fun invoke(content: List<NbtString>): NbtList<NbtString> = NbtList(content)
+        public operator fun <TNbtString : NbtString> invoke(content: List<TNbtString>): NbtList<TNbtString> =
+            NbtList(content)
 
         @JvmName("invoke\$NbtList")
-        public operator fun invoke(content: List<NbtList<*>>): NbtList<NbtList<*>> = NbtList(content)
+        public operator fun <TNbtList : NbtList<*>> invoke(content: List<TNbtList>): NbtList<TNbtList> =
+            NbtList(content)
 
         @JvmName("invoke\$NbtCompound")
-        public operator fun invoke(content: List<NbtCompound>): NbtList<NbtCompound> = NbtList(content)
+        public operator fun <TNbtCompound : NbtCompound> invoke(content: List<TNbtCompound>): NbtList<TNbtCompound> =
+            NbtList(content)
 
         @JvmName("invoke\$NbtIntArray")
-        public operator fun invoke(content: List<NbtIntArray>): NbtList<NbtIntArray> = NbtList(content)
+        public operator fun <TNbtIntArray : NbtIntArray> invoke(content: List<TNbtIntArray>): NbtList<TNbtIntArray> =
+            NbtList(content)
 
         @JvmName("invoke\$NbtLongArray")
-        public operator fun invoke(content: List<NbtLongArray>): NbtList<NbtLongArray> = NbtList(content)
+        public operator fun <TNbtLongArray : NbtLongArray> invoke(content: List<TNbtLongArray>): NbtList<TNbtLongArray> =
+            NbtList(content)
     }
 }
 
