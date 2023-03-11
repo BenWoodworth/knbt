@@ -1,7 +1,8 @@
-package net.benwoodworth.knbt
+package net.benwoodworth.knbt.serialization
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.benwoodworth.knbt.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
