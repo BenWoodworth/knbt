@@ -4,49 +4,25 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.*
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
-class NbtTagPolymorphismTest {
-    private val nbt = Nbt {
-        variant = NbtVariant.Java
-        compression = NbtCompression.None
-    }
-
-    @Serializable
-    @SerialName("")
-    private data class NbtTagContainer(
-        val nbtTag: NbtTag,
-    )
-
+class NbtTagElementSerializationTest : SerializationTest() {
     @Test
-    fun should_encode_NbtCompound_to_NbtTag_property_correctly() {
-        val compound = buildNbtCompound {
-            put("entry", "Hello, world!")
-        }
-
-        val toEncode = NbtTagContainer(compound)
-
-        assertEquals(
-            expected = buildNbtCompound("") {
-                put(NbtTagContainer::nbtTag.name, compound)
-            },
-            actual = nbt.encodeToNbtTag(toEncode),
+    fun should_serialize_NbtTag_class_property() {
+        @Serializable
+        @SerialName("")
+        data class NbtTagContainer(
+            val nbtTag: NbtTag
         )
-    }
 
-    @Test
-    fun should_decode_NbtCompound_from_NbtTag_property_correctly() {
         val compound = buildNbtCompound {
             put("entry", "Hello, world!")
         }
 
-        val toDecode = buildNbtCompound("") {
-            put(NbtTagContainer::nbtTag.name, compound)
-        }
-
-        assertEquals(
-            expected = NbtTagContainer(compound),
-            actual = nbt.decodeFromNbtTag(toDecode),
+        defaultNbt.testSerialization(
+            NbtTagContainer(compound),
+            buildNbtCompound("") {
+                put(NbtTagContainer::nbtTag.name, compound)
+            }
         )
     }
 }
