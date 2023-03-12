@@ -256,7 +256,7 @@ internal class NbtWriterEncoder(
 
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
         if (structureTypeStack.isEmpty() && // Is at the root
-            serializer.descriptor.kind == StructureKind.CLASS &&
+            serializer.descriptor.kind.let { it == StructureKind.CLASS || it == StructureKind.OBJECT } &&
             serializer !is RootClassSerializer<*> &&
             serializer !is NbtTagSerializer // TODO Remove when NbtTag's kind is Polymorphic instead of Class
         ) {
