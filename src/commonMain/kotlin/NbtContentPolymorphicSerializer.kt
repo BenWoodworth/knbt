@@ -73,8 +73,12 @@ public abstract class NbtContentPolymorphicSerializer<T : Any>(
                     ?: value::class.serializerOrNull()
                     ?: throwSubtypeNotRegistered(value::class, baseClass)
 
+        // required until root logic is moved into beginStructure
         @Suppress("UNCHECKED_CAST")
-        (actualSerializer as KSerializer<T>).serialize(encoder, value)
+        encoder.encodeSerializableValue(actualSerializer as KSerializer<T>, value)
+
+//        @Suppress("UNCHECKED_CAST")
+//        (actualSerializer as KSerializer<T>).serialize(encoder, value)
     }
 
     final override fun deserialize(decoder: Decoder): T {

@@ -70,7 +70,10 @@ internal abstract class AbstractNbtDecoder : AbstractDecoder(), NbtDecoder, Comp
     override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T =
         @Suppress("UNCHECKED_CAST")
         when (deserializer.descriptor.kind) {
-            is PolymorphicKind -> throw NbtDecodingException("Polymorphic serialization is not yet supported")
+            is PolymorphicKind -> when (deserializer) {
+                is NbtContentPolymorphicSerializer -> deserializer.deserialize(this)
+                else -> throw NbtDecodingException("Polymorphic serialization is not yet supported")
+            }
             else -> super<AbstractDecoder>.decodeSerializableValue(deserializer)
         }
 }

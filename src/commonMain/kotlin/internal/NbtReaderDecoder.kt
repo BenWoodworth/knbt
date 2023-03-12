@@ -6,6 +6,7 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
+import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeDecoder
