@@ -2,6 +2,7 @@ package net.benwoodworth.knbt.serialization
 
 import io.kotest.property.Arb
 import io.kotest.property.Exhaustive
+import io.kotest.property.arbitrary.char
 import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
 import io.kotest.property.exhaustive.boolean
@@ -65,6 +66,13 @@ class PrimitiveSerializationTest : SerializationTest() {
     fun should_deserialize_booleans_according_to_NbtByte_boolean_converter() = runTest {
         checkAll(Exhaustive.bytes().map(::NbtByte)) { nbtByte ->
             defaultNbt.testDeserialization(nbtByte, nbtByte.toBoolean())
+        }
+    }
+
+    @Test
+    fun should_serialize_Char_correctly() = runTest {
+        checkAll(Arb.char(Char.MIN_VALUE..Char.MAX_VALUE)) { char ->
+            defaultNbt.testSerialization(char, NbtString(char.toString()))
         }
     }
 }

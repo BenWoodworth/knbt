@@ -197,6 +197,9 @@ internal class NbtWriterEncoder(
         }
     }
 
+    override fun encodeChar(value: Char): Unit =
+        encodeString(value.toString())
+
     override fun encodeByteArray(value: ByteArray) {
         beginEncodingValue(TAG_Byte_Array)
         writer.writeByteArray(value)

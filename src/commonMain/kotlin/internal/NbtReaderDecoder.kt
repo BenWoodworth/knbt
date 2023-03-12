@@ -87,6 +87,17 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         return tryWithPath { reader.readString() }
     }
 
+    override fun decodeChar(): Char {
+        expectTagType(TAG_String)
+        val string = tryWithPath { reader.readString() }
+
+        if (string.length != 1) {
+            throw NbtDecodingException("Expected TAG_String with length 1, but got ${NbtString(string)} (length ${string.length}")
+        }
+
+        return string[0]
+    }
+
     override fun decodeByteArray(): ByteArray {
         expectTagType(TAG_Byte_Array)
         return tryWithPath { reader.readByteArray() }
@@ -167,9 +178,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     //region Unsupported types
     private fun notSupported(type: String, path: NbtPath? = null): NbtDecodingException =
         NbtDecodingException("Decoding $type values is not supported by the NBT format", path ?: getPath())
-
-    final override fun decodeChar(): Char =
-        throw notSupported("Char")
 
     final override fun decodeEnum(enumDescriptor: SerialDescriptor): Int =
         throw notSupported("Enum")
