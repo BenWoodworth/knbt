@@ -223,8 +223,9 @@ public final class net/benwoodworth/knbt/NbtCompressionJvmKt {
 }
 
 public final class net/benwoodworth/knbt/NbtCompressionKt {
-	public static final fun detect (Lnet/benwoodworth/knbt/NbtCompression$Companion;Lokio/BufferedSource;)Lnet/benwoodworth/knbt/NbtCompression;
+	public static final fun detect (Lnet/benwoodworth/knbt/NbtCompression$Companion;Lokio/BufferedSource;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtCompression;
 	public static final fun detect (Lnet/benwoodworth/knbt/NbtCompression$Companion;[B)Lnet/benwoodworth/knbt/NbtCompression;
+	public static synthetic fun detect$default (Lnet/benwoodworth/knbt/NbtCompression$Companion;Lokio/BufferedSource;Ljava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtCompression;
 }
 
 public final class net/benwoodworth/knbt/NbtConfiguration : net/benwoodworth/knbt/NbtFormatConfiguration {
@@ -746,6 +747,7 @@ public final class net/benwoodworth/knbt/internal/NbtTagType : java/lang/Enum {
 
 public final class net/benwoodworth/knbt/okio/OkioStreamsKt {
 	public static final fun decodeFromBufferedSource (Lnet/benwoodworth/knbt/Nbt;Lkotlinx/serialization/DeserializationStrategy;Lokio/BufferedSource;)Ljava/lang/Object;
+	public static final fun detect (Lnet/benwoodworth/knbt/NbtCompression$Companion;Lokio/BufferedSource;)Lnet/benwoodworth/knbt/NbtCompression;
 	public static final fun encodeToBufferedSink (Lnet/benwoodworth/knbt/Nbt;Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;Lokio/BufferedSink;)V
 }
 

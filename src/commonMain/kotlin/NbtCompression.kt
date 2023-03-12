@@ -4,6 +4,7 @@ import net.benwoodworth.knbt.internal.*
 import okio.BufferedSource
 import okio.Sink
 import okio.Source
+import kotlin.jvm.JvmOverloads
 
 public abstract class NbtCompression private constructor() {
     internal abstract fun decompress(source: Source): Source
@@ -58,7 +59,16 @@ internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression =
  * @throws NbtDecodingException when unable to detect NbtCompression.
  */
 @OkioApi
-public fun NbtCompression.Companion.detect(source: BufferedSource): NbtCompression =
+@Deprecated(
+    "Moved to okio package",
+    ReplaceWith(
+        "this.detect(source)",
+        "net.benwoodworth.knbt.okio.detect"
+    ),
+    DeprecationLevel.ERROR
+)
+@Suppress("UNUSED_PARAMETER") // The `deprecated` parameter lowers the overload precedence so the relocated function takes priority when replaced
+public fun NbtCompression.Companion.detect(source: BufferedSource, deprecated: Nothing? = null): NbtCompression =
     detect(source.peek().readByte())
 
 /**

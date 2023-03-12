@@ -4,6 +4,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.okio.detect
 import net.benwoodworth.knbt.okio.encodeToBufferedSink
 import net.benwoodworth.knbt.test.TestSink
 import net.benwoodworth.knbt.test.asSource

@@ -84,3 +84,7 @@ public fun <T> Nbt.decodeFromBufferedSource(
 @OkioApi
 public inline fun <reified T> Nbt.decodeFromBufferedSource(source: BufferedSource): T =
     decodeFromBufferedSource(serializersModule.serializer(), source)
+
+@OkioApi
+public fun NbtCompression.Companion.detect(source: BufferedSource): NbtCompression =
+    detect(source.peek().readByte())
