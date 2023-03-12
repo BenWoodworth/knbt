@@ -8,7 +8,6 @@ import net.benwoodworth.knbt.internal.zlib.deflate
 import net.benwoodworth.knbt.internal.zlib.deflateEnd
 import net.benwoodworth.knbt.internal.zlib.deflateInit2
 import okio.*
-import platform.posix.free
 import platform.zlib.*
 
 internal actual fun Source.asGzipSource(): Source =
@@ -111,9 +110,9 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
 
     override fun close() {
         if (!closed) {
-            free(strm.ptr)
-            free(inbuf)
-            free(outbuf)
+            nativeHeap.free(strm.ptr)
+            nativeHeap.free(inbuf)
+            nativeHeap.free(outbuf)
 
             closed = true
         }
@@ -189,9 +188,9 @@ private class ZlibSink(private val sink: BufferedSink, gzip: Boolean, level: Int
             clearBuffer()
 
             stream.deflateEnd()
-            free(stream.ptr)
-            free(inputBuffer)
-            free(outputBuffer)
+            nativeHeap.free(stream.ptr)
+            nativeHeap.free(inputBuffer)
+            nativeHeap.free(outputBuffer)
 
             closed = true
         }
