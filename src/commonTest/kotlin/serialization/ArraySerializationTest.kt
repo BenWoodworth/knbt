@@ -32,4 +32,34 @@ class ArraySerializationTest : SerializationTest() {
             LongArray::asList,
         )
     }
+
+    @Test
+    fun should_serialize_UByteArray_correctly() {
+        @OptIn(ExperimentalUnsignedTypes::class)
+        defaultNbt.testSerialization(
+            ubyteArrayOf(1u, 2u, 3u),
+            NbtByteArray(byteArrayOf(1, 2, 3)),
+            UByteArray::asList
+        )
+    }
+
+    @Test
+    fun should_serialize_UIntArray_correctly() {
+        @OptIn(ExperimentalUnsignedTypes::class)
+        defaultNbt.testSerialization(
+            uintArrayOf(1u, 2u, 3u),
+            NbtIntArray(intArrayOf(1, 2, 3)),
+            UIntArray::asList
+        )
+    }
+
+    @Test
+    fun should_serialize_ULongArray_correctly() {
+        @OptIn(ExperimentalUnsignedTypes::class)
+        defaultNbt.testSerialization(
+            ulongArrayOf(1u, 2u, 3u),
+            NbtLongArray(longArrayOf(1, 2, 3)),
+            ULongArray::asList,
+        )
+    }
 }

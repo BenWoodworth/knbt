@@ -1,16 +1,14 @@
 package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.builtins.ByteArraySerializer
-import kotlinx.serialization.builtins.IntArraySerializer
-import kotlinx.serialization.builtins.LongArraySerializer
+import kotlinx.serialization.builtins.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import net.benwoodworth.knbt.NbtArray
 
 internal enum class NbtListKind { List, ByteArray, IntArray, LongArray }
 
-@OptIn(ExperimentalSerializationApi::class)
+@OptIn(ExperimentalSerializationApi::class, ExperimentalUnsignedTypes::class)
 private fun SerialDescriptor.getNbtListKind(
     additionalAnnotations: List<Annotation> = emptyList()
 ): NbtListKind {
@@ -18,6 +16,10 @@ private fun SerialDescriptor.getNbtListKind(
         ByteArraySerializer().descriptor -> return NbtListKind.ByteArray
         IntArraySerializer().descriptor -> return NbtListKind.IntArray
         LongArraySerializer().descriptor -> return NbtListKind.LongArray
+
+        UByteArraySerializer().descriptor -> return NbtListKind.ByteArray
+        UIntArraySerializer().descriptor -> return NbtListKind.IntArray
+        ULongArraySerializer().descriptor -> return NbtListKind.LongArray
     }
 
     val hasNbtArrayAnnotation = annotations.any { it is NbtArray } || additionalAnnotations.any { it is NbtArray }
