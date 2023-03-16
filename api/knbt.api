@@ -471,6 +471,7 @@ public final class net/benwoodworth/knbt/NbtList$Companion {
 	public final fun invoke$NbtLongArray (Ljava/util/List;)Lnet/benwoodworth/knbt/NbtList;
 	public final fun invoke$NbtShort (Ljava/util/List;)Lnet/benwoodworth/knbt/NbtList;
 	public final fun invoke$NbtString (Ljava/util/List;)Lnet/benwoodworth/knbt/NbtList;
+	public final fun invoke$Nothing (Ljava/util/List;)Lnet/benwoodworth/knbt/NbtList;
 	public final fun serializer (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;
 }
 

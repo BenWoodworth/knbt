@@ -171,6 +171,11 @@ public class NbtList<out T : NbtTag> private constructor(
         internal operator fun <T : NbtTag> invoke(content: List<T>): NbtList<T> = NbtList(content)
 
         // Specific constructors, since NbtLists can only contain a single tag type
+        @JvmName("invoke\$Nothing")
+        @Suppress("CONFLICTING_UPPER_BOUNDS") // https://youtrack.jetbrains.com/issue/KT-57274
+        public operator fun <TNothing : Nothing> invoke(content: List<TNothing>): NbtList<TNothing> =
+            NbtList(content)
+
         @JvmName("invoke\$NbtByte")
         public operator fun <TNbtByte : NbtByte> invoke(content: List<TNbtByte>): NbtList<TNbtByte> =
             NbtList(content)
