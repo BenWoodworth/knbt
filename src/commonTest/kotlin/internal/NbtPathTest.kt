@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt.internal
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.test.NbtFormat
@@ -33,7 +32,7 @@ class NbtPathTest {
     @Ignore // Wasn't working before refactor
     fun decoding_missing_compound_entry() {
         @Serializable
-        @SerialName("root")
+        @NbtNamed("root")
         class MyClass(val entry: Int)
 
         assertFailsWithPathMessage<NbtDecodingException>("root.entry") {
@@ -46,7 +45,7 @@ class NbtPathTest {
     @Test
     fun decoding_incorrect_compound_entry() {
         @Serializable
-        @SerialName("root")
+        @NbtNamed("root")
         class MyClass(val entry: Int)
 
         assertFailsWithPathMessage<NbtDecodingException>("root.entry") {
@@ -61,7 +60,7 @@ class NbtPathTest {
     @Test
     fun decoding_incorrect_list_type() {
         @Serializable
-        @SerialName("root")
+        @NbtNamed("root")
         class MyClass(val entry: List<Int>)
 
         assertFailsWithPathMessage<NbtDecodingException>("root.entry[0]") {

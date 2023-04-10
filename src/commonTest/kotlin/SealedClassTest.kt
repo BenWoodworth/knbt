@@ -14,12 +14,15 @@ private sealed class Person {
     abstract val age: Int
 
     @Serializable
+    @NbtNamed("Adult")
     data class Adult(override val name: String, override val age: Int, val occupancy: String) : Person()
 
 //    @Serializable
+//    @NbtNamed("Teen")
 //    data class Teen(override val name: String, override val age: Int, val school: String) : Person()
 
     @Serializable
+    @NbtNamed("Child")
     data class Child(override val name: String, override val age: Int, val father: Adult, val mother: Adult) : Person()
 }
 

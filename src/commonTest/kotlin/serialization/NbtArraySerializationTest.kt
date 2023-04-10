@@ -43,7 +43,7 @@ class NbtArraySerializationTest : SerializationTest() {
     @Test
     fun class_property_marked_as_NbtArray_should_serialize_Byte_List_as_NbtByteArray() {
         @Serializable
-        @SerialName("Class")
+        @NbtNamed("Class")
         data class Class(@NbtArray val property: List<Byte>)
 
         defaultNbt.testSerialization(
@@ -57,7 +57,7 @@ class NbtArraySerializationTest : SerializationTest() {
     @Test
     fun class_property_marked_as_NbtArray_should_serialize_Int_List_as_NbtIntArray() {
         @Serializable
-        @SerialName("Class")
+        @NbtNamed("Class")
         data class Class(@NbtArray val property: List<Int>)
 
         defaultNbt.testSerialization(
@@ -71,7 +71,7 @@ class NbtArraySerializationTest : SerializationTest() {
     @Test
     fun class_property_marked_as_NbtArray_should_serialize_Long_List_as_NbtLongArray() {
         @Serializable
-        @SerialName("Class")
+        @NbtNamed("Class")
         data class Class(@NbtArray val property: List<Long>)
 
         defaultNbt.testSerialization(

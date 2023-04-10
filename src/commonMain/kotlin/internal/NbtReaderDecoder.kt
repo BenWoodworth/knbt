@@ -249,17 +249,6 @@ internal class NbtReaderDecoder(
     override fun decodeSequentially(): Boolean {
         return super.decodeSequentially()
     }
-
-    override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
-        if (deserializer.descriptor.kind.let { it == StructureKind.CLASS || it == StructureKind.OBJECT } &&
-            deserializer !is RootClassDeserializer<*> &&
-            deserializer !is NbtTagSerializer // TODO Remove when NbtTag's kind is Polymorphic instead of Class
-        ) {
-            return decodeSerializableValue(RootClassDeserializer(deserializer))
-        }
-
-        return super.decodeSerializableValue(deserializer)
-    }
 }
 
 private abstract class CompoundNbtDecoder : BaseNbtDecoder() {

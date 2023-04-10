@@ -1,8 +1,8 @@
 package net.benwoodworth.knbt.test.data
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtNamed
 import net.benwoodworth.knbt.buildNbtCompound
 import net.benwoodworth.knbt.put
 import net.benwoodworth.knbt.test.assertStructureEquals
@@ -13,7 +13,7 @@ val testTag: NbtCompound
     }
 
 @Serializable
-@SerialName("hello world")
+@NbtNamed("hello world")
 data class TestNbt(
     val name: String,
 )

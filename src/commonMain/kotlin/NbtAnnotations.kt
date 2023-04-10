@@ -48,3 +48,36 @@ public annotation class OkioApi
 @Target(AnnotationTarget.PROPERTY)
 @ExperimentalSerializationApi
 public annotation class NbtArray
+
+/**
+ * Instructs the NBT serializer to serialize a [NbtCompound] or [NbtList] as a named tag. (A tag nested in a
+ * single-element compound)
+ *
+ * This is convenient for NBT binary/files, which require the root tag to be named.
+ *
+ * Example:
+ * ```
+ * @Serializable
+ * @NbtNamed("name")
+ * class MyClass(
+ *     val entry1: String,
+ *     entry2: Int
+ * )
+ * ```
+ *
+ * `MyClass("hello", 42)` serializes to:
+ * ```nbt
+ * {
+ *   name: {
+ *     entry1: "hello",
+ *     entry2: 42
+ *   }
+ * }
+ * ```
+ *
+ * Is [ExperimentalSerializationApi] since [SerialInfo] is experimental.
+ */
+@SerialInfo
+@Target(AnnotationTarget.CLASS)
+@ExperimentalSerializationApi
+public annotation class NbtNamed(val name: String)

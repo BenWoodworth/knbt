@@ -1,13 +1,13 @@
 package net.benwoodworth.knbt.serialization
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.benwoodworth.knbt.NbtNamed
 import net.benwoodworth.knbt.buildNbtCompound
 import kotlin.test.Test
 
 class ObjectSerializationTest : SerializationTest() {
     @Serializable
-    @SerialName("RootKey")
+    @NbtNamed("RootKey")
     private object MyObject {
         var property: String = ""
             private set

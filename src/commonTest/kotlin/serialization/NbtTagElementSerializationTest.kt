@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt.serialization
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.*
 import kotlin.test.Test
@@ -9,7 +8,7 @@ class NbtTagElementSerializationTest : SerializationTest() {
     @Test
     fun should_serialize_NbtTag_class_property() {
         @Serializable
-        @SerialName("")
+        @NbtNamed("")
         data class NbtTagContainer(
             val nbtTag: NbtTag
         )

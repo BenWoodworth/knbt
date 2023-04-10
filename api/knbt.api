@@ -552,6 +552,15 @@ public final class net/benwoodworth/knbt/NbtLongArray$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
+public abstract interface annotation class net/benwoodworth/knbt/NbtNamed : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
+public final class net/benwoodworth/knbt/NbtNamed$Impl : net/benwoodworth/knbt/NbtNamed {
+	public fun <init> (Ljava/lang/String;)V
+	public final synthetic fun name ()Ljava/lang/String;
+}
+
 public final class net/benwoodworth/knbt/NbtShort : net/benwoodworth/knbt/NbtTag {
 	public static final field Companion Lnet/benwoodworth/knbt/NbtShort$Companion;
 	public static final synthetic fun box-impl (S)Lnet/benwoodworth/knbt/NbtShort;

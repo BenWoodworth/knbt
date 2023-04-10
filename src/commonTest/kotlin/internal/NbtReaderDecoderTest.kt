@@ -16,7 +16,7 @@ import kotlin.test.*
 
 class NbtReaderDecoderTest {
     @Serializable
-    @SerialName("unknown-keys")
+    @NbtNamed("unknown-keys")
     private data class UnknownKeys(
         val int: Int,
         val string: String,
