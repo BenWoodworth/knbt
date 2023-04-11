@@ -87,6 +87,23 @@ internal class NbtWriterEncoder(
         }
     }
 
+    private fun beginNamedTagIfNamed(descriptor: SerialDescriptor) {
+        val name = descriptor.nbtNamed ?: return
+
+        beginEncodingValue(TAG_Compound)
+        writer.beginCompound()
+
+        structureTypeStack += TAG_Compound
+        elementName = name
+    }
+
+    private fun endNamedTagIfNamed(descriptor: SerialDescriptor) {
+        if (descriptor.nbtNamed == null) return
+
+        structureTypeStack.removeLast()
+        writer.endCompound()
+    }
+
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder =
         if (descriptor.kind == StructureKind.LIST) {
             when (elementListKind ?: descriptor.nbtListKind) {
@@ -100,6 +117,7 @@ internal class NbtWriterEncoder(
         }
 
     override fun beginCompound(descriptor: SerialDescriptor): CompositeNbtEncoder {
+        beginNamedTagIfNamed(descriptor)
         beginEncodingValue(TAG_Compound)
         writer.beginCompound()
         structureTypeStack += TAG_Compound
@@ -137,7 +155,10 @@ internal class NbtWriterEncoder(
 
     override fun endStructure(descriptor: SerialDescriptor) {
         when (val structureType = structureTypeStack.removeLast()) {
-            TAG_Compound -> writer.endCompound()
+            TAG_Compound -> {
+                writer.endCompound()
+                endNamedTagIfNamed(descriptor)
+            }
             TAG_List -> {
                 if (listTypeStack.removeLast() == TAG_End) writer.beginList(TAG_End, listSize)
                 writer.endList()

@@ -48,6 +48,30 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         }
     }
 
+    private fun beginNamedTagIfNamed(descriptor: SerialDescriptor) {
+        val name = descriptor.nbtNamed ?: return
+
+        expectTagType(TAG_Compound)
+        reader.beginCompound()
+
+        val entry = reader.beginCompoundEntry()
+        when {
+            entry.type == TAG_End -> throw NbtDecodingException("Expected tag named '$name', but got none")
+            entry.name != name -> throw NbtDecodingException("Expected tag named '$name', but got '${entry.name}'")
+        }
+    }
+
+    protected fun endNamedTagIfNamed(descriptor: SerialDescriptor) {
+        val name = descriptor.nbtNamed ?: return
+
+        val entry = reader.beginCompoundEntry()
+        if (entry.type != TAG_End) {
+            throw NbtDecodingException("Expected tag named '$name', but got additional entry '${entry.name}'")
+        }
+
+        reader.endCompound()
+    }
+
     //region Primitive NBT types
     override fun decodeByte(): Byte {
         expectTagType(TAG_Byte)
@@ -128,6 +152,8 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         }
 
     override fun beginCompound(descriptor: SerialDescriptor): CompositeNbtDecoder {
+        beginNamedTagIfNamed(descriptor)
+
         expectTagType(TAG_Compound)
         return tryWithPath {
             if (descriptor.kind == StructureKind.MAP) {
@@ -257,7 +283,10 @@ private abstract class CompoundNbtDecoder : BaseNbtDecoder() {
     override fun getPathNode(): NbtPath.Node =
         NbtPath.NameNode(compoundEntryInfo.name, entryType)
 
-    override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endCompound()
+    override fun endStructure(descriptor: SerialDescriptor) {
+        reader.endCompound()
+        endNamedTagIfNamed(descriptor)
+    }
 }
 
 private class ClassNbtDecoder(

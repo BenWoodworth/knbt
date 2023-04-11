@@ -5,6 +5,7 @@ import kotlinx.serialization.builtins.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import net.benwoodworth.knbt.NbtArray
+import net.benwoodworth.knbt.NbtNamed
 
 internal enum class NbtListKind { List, ByteArray, IntArray, LongArray }
 
@@ -46,3 +47,11 @@ internal val SerialDescriptor.nbtListKind: NbtListKind
 @OptIn(ExperimentalSerializationApi::class)
 internal fun SerialDescriptor.getElementNbtListKind(index: Int): NbtListKind =
     getElementDescriptor(index).getNbtListKind(getElementAnnotations(index))
+
+
+@OptIn(ExperimentalSerializationApi::class)
+internal val SerialDescriptor.nbtNamed: String?
+    get() = annotations
+        .firstOrNull { it is NbtNamed }
+        ?.let { it as NbtNamed }
+        ?.name

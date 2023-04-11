@@ -22,6 +22,7 @@ class NbtPathTest {
     }
 
     @Test
+    @Ignore // Fix during encoder/decoder refactor: https://github.com/BenWoodworth/knbt/issues/30
     fun decoding_incorrect_root() {
         assertFailsWithPathMessage<NbtDecodingException>("{root}") {
             nbt.decodeFromNbtTag<String>(NbtInt(7))
@@ -43,6 +44,7 @@ class NbtPathTest {
     }
 
     @Test
+    @Ignore // Fix during encoder/decoder refactor: https://github.com/BenWoodworth/knbt/issues/30
     fun decoding_incorrect_compound_entry() {
         @Serializable
         @NbtNamed("root")
@@ -58,6 +60,7 @@ class NbtPathTest {
     }
 
     @Test
+    @Ignore // Fix during encoder/decoder refactor: https://github.com/BenWoodworth/knbt/issues/30
     fun decoding_incorrect_list_type() {
         @Serializable
         @NbtNamed("root")

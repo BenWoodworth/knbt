@@ -7,7 +7,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class NbtListKindTest {
+class SerialDescriptorTest {
     @OptIn(ExperimentalSerializationApi::class)
     private fun SerialDescriptor.asNbtArray(): SerialDescriptor =
         object : SerialDescriptor by this {
