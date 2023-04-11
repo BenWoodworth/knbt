@@ -8,7 +8,6 @@ import net.benwoodworth.knbt.test.*
 import net.benwoodworth.knbt.test.serializers.ListSerializerWithAnnotations
 import kotlin.test.Test
 
-@OptIn(ExperimentalSerializationApi::class)
 class NbtArraySerializationTest : SerializationTest() {
     private inline fun <reified T> listAsNbtArraySerializer(): KSerializer<List<T>> =
         ListSerializerWithAnnotations(serializer(), listOf(NbtArray()))

@@ -26,7 +26,6 @@ class SerialDescriptorTest {
         assertEquals(expectedKind, descriptor.getElementNbtListKind(0))
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     private fun testNbtArrayElement(expectedKind: NbtListKind, elementDescriptor: SerialDescriptor) {
         val descriptor = buildClassSerialDescriptor("Parent", elementDescriptor) {
             element("element", elementDescriptor, listOf(NbtArray()))

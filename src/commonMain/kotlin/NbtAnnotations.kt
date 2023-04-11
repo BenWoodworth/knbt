@@ -41,12 +41,10 @@ public annotation class OkioApi
  * NBT array tag type is determined by the first element in the serial descriptor.
  * Applicable to lists of [PrimitiveKind.BYTE], [INT][PrimitiveKind.INT], and [LONG][PrimitiveKind.LONG], for
  * `TAG_Byte_Array`, `TAG_Int_Array`, and `TAG_Long_Array`, respectively.
- *
- * Is [ExperimentalSerializationApi] since [SerialInfo] is experimental.
  */
 @SerialInfo
 @Target(AnnotationTarget.PROPERTY)
-@ExperimentalSerializationApi
+@OptIn(ExperimentalSerializationApi::class)
 public annotation class NbtArray
 
 /**
@@ -74,10 +72,8 @@ public annotation class NbtArray
  *   }
  * }
  * ```
- *
- * Is [ExperimentalSerializationApi] since [SerialInfo] is experimental.
  */
 @SerialInfo
 @Target(AnnotationTarget.CLASS)
-@ExperimentalSerializationApi
+@OptIn(ExperimentalSerializationApi::class)
 public annotation class NbtNamed(val name: String)
