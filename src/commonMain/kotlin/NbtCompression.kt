@@ -54,24 +54,6 @@ internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression =
     }
 
 /**
- * Peek in the [source] and detect what [NbtCompression] is used.
- *
- * @throws NbtDecodingException when unable to detect NbtCompression.
- */
-@OkioApi
-@Deprecated(
-    "Moved to okio package",
-    ReplaceWith(
-        "this.detect(source)",
-        "net.benwoodworth.knbt.okio.detect"
-    ),
-    DeprecationLevel.ERROR
-)
-@Suppress("UNUSED_PARAMETER") // The `deprecated` parameter lowers the overload precedence so the relocated function takes priority when replaced
-public fun NbtCompression.Companion.detect(source: BufferedSource, deprecated: Nothing? = null): NbtCompression =
-    detect(source.peek().readByte())
-
-/**
  * Peek in the [byteArray] and detect what [NbtCompression] is used.
  *
  * @throws NbtDecodingException when unable to detect NbtCompression.

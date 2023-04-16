@@ -20,41 +20,8 @@ public sealed interface NbtTag {
 
 @JvmInline
 @Serializable(with = NbtByteSerializer::class)
-public value class NbtByte(public val value: Byte) : NbtTag {
+public value class NbtByte(public val value: Byte) : NbtTag, @Suppress("DEPRECATION") NbtByteDeprecations {
     override val type: NbtTagType get() = NbtTagType.TAG_Byte
-
-    /**
-     * Create an [NbtByte] containing a [Boolean]: `false = 0b`, `true = 1b`
-     */
-    @Deprecated(
-        "Replaced by NbtByte.fromBoolean(...)",
-        ReplaceWith(
-            "NbtByte.fromBoolean(booleanValue)",
-            "net.benwoodworth.knbt.NbtByte",
-            "net.benwoodworth.knbt.fromBoolean"
-        ),
-        DeprecationLevel.ERROR
-    )
-    public constructor(booleanValue: Boolean) : this(if (booleanValue) 1 else 0)
-
-    /**
-     * Get an [NbtByte] as a [Boolean]: `0b = false`, `1b = true`
-     * @throws IllegalArgumentException if this is not `0b` or `1b`
-     */
-    @Deprecated(
-        "Replaced by NbtByte.toBoolean(), which more leniently converts NbtByte values",
-        ReplaceWith(
-            "this.toBoolean()",
-            "net.benwoodworth.knbt.toBoolean"
-        ),
-        DeprecationLevel.ERROR
-    )
-    public val booleanValue: Boolean
-        get() = when (value) {
-            0.toByte() -> false
-            1.toByte() -> true
-            else -> throw IllegalArgumentException("Expected value to be a boolean (0 or 1), but was $value")
-        }
 
     override fun toString(): String = "${value}b"
 }

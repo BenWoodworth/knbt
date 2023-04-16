@@ -116,6 +116,10 @@ tasks.named<Test>("jvmTest") {
     useJUnitPlatform()
 }
 
+apiValidation {
+    nonPublicMarkers.add("net.benwoodworth.knbt.NbtDeprecated")
+}
+
 tasks.withType<DokkaTask> {
     dokkaSourceSets.all {
         includeNonPublic.set(false)
