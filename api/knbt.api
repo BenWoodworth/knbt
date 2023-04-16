@@ -1,28 +1,3 @@
-public abstract interface class net/benwoodworth/knbt/CompositeNbtDecoder : kotlinx/serialization/encoding/CompositeDecoder {
-	public abstract fun decodeByteArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I)[B
-	public abstract fun decodeIntArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I)[I
-	public abstract fun decodeLongArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I)[J
-	public abstract fun decodeNbtTagElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lnet/benwoodworth/knbt/NbtTag;
-	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
-}
-
-public final class net/benwoodworth/knbt/CompositeNbtDecoder$DefaultImpls {
-	public static fun decodeCollectionSize (Lnet/benwoodworth/knbt/CompositeNbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)I
-	public static fun decodeSequentially (Lnet/benwoodworth/knbt/CompositeNbtDecoder;)Z
-}
-
-public abstract interface class net/benwoodworth/knbt/CompositeNbtEncoder : kotlinx/serialization/encoding/CompositeEncoder {
-	public abstract fun encodeByteArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I[B)V
-	public abstract fun encodeIntArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I[I)V
-	public abstract fun encodeLongArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I[J)V
-	public abstract fun encodeNbtTagElement (Lkotlinx/serialization/descriptors/SerialDescriptor;ILnet/benwoodworth/knbt/NbtTag;)V
-	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
-}
-
-public final class net/benwoodworth/knbt/CompositeNbtEncoder$DefaultImpls {
-	public static fun shouldEncodeElementDefault (Lnet/benwoodworth/knbt/CompositeNbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Z
-}
-
 public abstract interface annotation class net/benwoodworth/knbt/ExperimentalNbtApi : java/lang/annotation/Annotation {
 }
 
@@ -237,26 +212,70 @@ public final class net/benwoodworth/knbt/NbtConfiguration : net/benwoodworth/knb
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class net/benwoodworth/knbt/NbtDecoder : kotlinx/serialization/encoding/Decoder {
-	public abstract fun beginByteArray (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lnet/benwoodworth/knbt/CompositeNbtDecoder;
-	public abstract fun beginCompound (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lnet/benwoodworth/knbt/CompositeNbtDecoder;
-	public abstract fun beginIntArray (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lnet/benwoodworth/knbt/CompositeNbtDecoder;
-	public abstract fun beginList (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lnet/benwoodworth/knbt/CompositeNbtDecoder;
-	public abstract fun beginLongArray (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lnet/benwoodworth/knbt/CompositeNbtDecoder;
-	public abstract fun decodeByteArray ()[B
-	public abstract fun decodeIntArray ()[I
-	public abstract fun decodeLongArray ()[J
+public abstract interface class net/benwoodworth/knbt/NbtDecoder : kotlinx/serialization/encoding/CompositeDecoder, kotlinx/serialization/encoding/Decoder, net/benwoodworth/knbt/NbtDecoderDeprecations {
 	public abstract fun decodeNbtTag ()Lnet/benwoodworth/knbt/NbtTag;
 	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
 
 public final class net/benwoodworth/knbt/NbtDecoder$DefaultImpls {
+	public static fun beginByteArray (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static fun beginCompound (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static fun beginIntArray (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static fun beginList (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static fun beginLongArray (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static fun decodeByteArray (Lnet/benwoodworth/knbt/NbtDecoder;Ljava/lang/Void;)[B
+	public static fun decodeByteArrayElement (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)[B
+	public static fun decodeCollectionSize (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)I
+	public static fun decodeIntArray (Lnet/benwoodworth/knbt/NbtDecoder;Ljava/lang/Void;)[I
+	public static fun decodeIntArrayElement (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)[I
+	public static fun decodeLongArray (Lnet/benwoodworth/knbt/NbtDecoder;Ljava/lang/Void;)[J
+	public static fun decodeLongArrayElement (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)[J
+	public static fun decodeNbtTagElement (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lnet/benwoodworth/knbt/NbtTag;
 	public static fun decodeNullableSerializableValue (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/DeserializationStrategy;)Ljava/lang/Object;
+	public static fun decodeSequentially (Lnet/benwoodworth/knbt/NbtDecoder;)Z
 	public static fun decodeSerializableValue (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/DeserializationStrategy;)Ljava/lang/Object;
 }
 
-public final class net/benwoodworth/knbt/NbtDecoderKt {
-	public static final fun asNbtDecoder (Lkotlinx/serialization/encoding/Decoder;)Lnet/benwoodworth/knbt/NbtDecoder;
+public abstract interface class net/benwoodworth/knbt/NbtDecoderDeprecations : kotlinx/serialization/encoding/CompositeDecoder, kotlinx/serialization/encoding/Decoder {
+	public abstract fun beginByteArray (Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public abstract fun beginCompound (Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public abstract fun beginIntArray (Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public abstract fun beginList (Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public abstract fun beginLongArray (Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public abstract fun decodeByteArray (Ljava/lang/Void;)[B
+	public abstract fun decodeByteArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I)[B
+	public abstract fun decodeIntArray (Ljava/lang/Void;)[I
+	public abstract fun decodeIntArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I)[I
+	public abstract fun decodeLongArray (Ljava/lang/Void;)[J
+	public abstract fun decodeLongArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I)[J
+	public abstract fun decodeNbtTagElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lnet/benwoodworth/knbt/NbtTag;
+}
+
+public final class net/benwoodworth/knbt/NbtDecoderDeprecations$DefaultImpls {
+	public static fun beginByteArray (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static synthetic fun beginByteArray$default (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static fun beginCompound (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static synthetic fun beginCompound$default (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static fun beginIntArray (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static synthetic fun beginIntArray$default (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static fun beginList (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static synthetic fun beginList$default (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static fun beginLongArray (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static synthetic fun beginLongArray$default (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static fun decodeByteArray (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Ljava/lang/Void;)[B
+	public static synthetic fun decodeByteArray$default (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Ljava/lang/Void;ILjava/lang/Object;)[B
+	public static fun decodeByteArrayElement (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;I)[B
+	public static fun decodeCollectionSize (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;)I
+	public static fun decodeIntArray (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Ljava/lang/Void;)[I
+	public static synthetic fun decodeIntArray$default (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Ljava/lang/Void;ILjava/lang/Object;)[I
+	public static fun decodeIntArrayElement (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;I)[I
+	public static fun decodeLongArray (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Ljava/lang/Void;)[J
+	public static synthetic fun decodeLongArray$default (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Ljava/lang/Void;ILjava/lang/Object;)[J
+	public static fun decodeLongArrayElement (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;I)[J
+	public static fun decodeNbtTagElement (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lnet/benwoodworth/knbt/NbtTag;
+	public static fun decodeNullableSerializableValue (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/DeserializationStrategy;)Ljava/lang/Object;
+	public static fun decodeSequentially (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;)Z
+	public static fun decodeSerializableValue (Lnet/benwoodworth/knbt/NbtDecoderDeprecations;Lkotlinx/serialization/DeserializationStrategy;)Ljava/lang/Object;
 }
 
 public final class net/benwoodworth/knbt/NbtDouble : net/benwoodworth/knbt/NbtTag {
@@ -280,28 +299,72 @@ public final class net/benwoodworth/knbt/NbtDouble$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public abstract interface class net/benwoodworth/knbt/NbtEncoder : kotlinx/serialization/encoding/Encoder {
-	public abstract fun beginByteArray (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lnet/benwoodworth/knbt/CompositeNbtEncoder;
-	public abstract fun beginCompound (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lnet/benwoodworth/knbt/CompositeNbtEncoder;
-	public abstract fun beginIntArray (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lnet/benwoodworth/knbt/CompositeNbtEncoder;
-	public abstract fun beginList (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lnet/benwoodworth/knbt/CompositeNbtEncoder;
-	public abstract fun beginLongArray (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lnet/benwoodworth/knbt/CompositeNbtEncoder;
-	public abstract fun encodeByteArray ([B)V
-	public abstract fun encodeIntArray ([I)V
-	public abstract fun encodeLongArray ([J)V
+public abstract interface class net/benwoodworth/knbt/NbtEncoder : kotlinx/serialization/encoding/CompositeEncoder, kotlinx/serialization/encoding/Encoder, net/benwoodworth/knbt/NbtEncoderDeprecations {
 	public abstract fun encodeNbtTag (Lnet/benwoodworth/knbt/NbtTag;)V
 	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
 
 public final class net/benwoodworth/knbt/NbtEncoder$DefaultImpls {
+	public static fun beginByteArray (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
 	public static fun beginCollection (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lkotlinx/serialization/encoding/CompositeEncoder;
+	public static fun beginCompound (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static fun beginIntArray (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static fun beginList (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static fun beginLongArray (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static fun encodeByteArray (Lnet/benwoodworth/knbt/NbtEncoder;[BLjava/lang/Void;)V
+	public static fun encodeByteArrayElement (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I[B)V
+	public static fun encodeIntArray (Lnet/benwoodworth/knbt/NbtEncoder;[ILjava/lang/Void;)V
+	public static fun encodeIntArrayElement (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I[I)V
+	public static fun encodeLongArray (Lnet/benwoodworth/knbt/NbtEncoder;[JLjava/lang/Void;)V
+	public static fun encodeLongArrayElement (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I[J)V
+	public static fun encodeNbtTagElement (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;ILnet/benwoodworth/knbt/NbtTag;)V
 	public static fun encodeNotNullMark (Lnet/benwoodworth/knbt/NbtEncoder;)V
 	public static fun encodeNullableSerializableValue (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V
 	public static fun encodeSerializableValue (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V
+	public static fun shouldEncodeElementDefault (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Z
 }
 
-public final class net/benwoodworth/knbt/NbtEncoderKt {
-	public static final fun asNbtEncoder (Lkotlinx/serialization/encoding/Encoder;)Lnet/benwoodworth/knbt/NbtEncoder;
+public abstract interface class net/benwoodworth/knbt/NbtEncoderDeprecations : kotlinx/serialization/encoding/CompositeEncoder, kotlinx/serialization/encoding/Encoder {
+	public abstract fun beginByteArray (Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public abstract fun beginCompound (Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public abstract fun beginIntArray (Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public abstract fun beginList (Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public abstract fun beginLongArray (Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public abstract fun encodeByteArray ([BLjava/lang/Void;)V
+	public abstract fun encodeByteArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I[B)V
+	public abstract fun encodeIntArray ([ILjava/lang/Void;)V
+	public abstract fun encodeIntArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I[I)V
+	public abstract fun encodeLongArray ([JLjava/lang/Void;)V
+	public abstract fun encodeLongArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I[J)V
+	public abstract fun encodeNbtTagElement (Lkotlinx/serialization/descriptors/SerialDescriptor;ILnet/benwoodworth/knbt/NbtTag;)V
+}
+
+public final class net/benwoodworth/knbt/NbtEncoderDeprecations$DefaultImpls {
+	public static fun beginByteArray (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static synthetic fun beginByteArray$default (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static fun beginCollection (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lkotlinx/serialization/encoding/CompositeEncoder;
+	public static fun beginCompound (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static synthetic fun beginCompound$default (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;Ljava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static fun beginIntArray (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static synthetic fun beginIntArray$default (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static fun beginList (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static synthetic fun beginList$default (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static fun beginLongArray (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static synthetic fun beginLongArray$default (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static fun encodeByteArray (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;[BLjava/lang/Void;)V
+	public static synthetic fun encodeByteArray$default (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;[BLjava/lang/Void;ILjava/lang/Object;)V
+	public static fun encodeByteArrayElement (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;I[B)V
+	public static fun encodeIntArray (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;[ILjava/lang/Void;)V
+	public static synthetic fun encodeIntArray$default (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;[ILjava/lang/Void;ILjava/lang/Object;)V
+	public static fun encodeIntArrayElement (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;I[I)V
+	public static fun encodeLongArray (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;[JLjava/lang/Void;)V
+	public static synthetic fun encodeLongArray$default (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;[JLjava/lang/Void;ILjava/lang/Object;)V
+	public static fun encodeLongArrayElement (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;I[J)V
+	public static fun encodeNbtTagElement (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;ILnet/benwoodworth/knbt/NbtTag;)V
+	public static fun encodeNotNullMark (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;)V
+	public static fun encodeNullableSerializableValue (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V
+	public static fun encodeSerializableValue (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V
+	public static fun shouldEncodeElementDefault (Lnet/benwoodworth/knbt/NbtEncoderDeprecations;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Z
 }
 
 public final class net/benwoodworth/knbt/NbtFloat : net/benwoodworth/knbt/NbtTag {
@@ -751,6 +814,13 @@ public final class net/benwoodworth/knbt/StringifiedNbtConfiguration : net/benwo
 public final class net/benwoodworth/knbt/StringifiedNbtKt {
 	public static final fun StringifiedNbt (Lnet/benwoodworth/knbt/StringifiedNbt;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/StringifiedNbt;
 	public static synthetic fun StringifiedNbt$default (Lnet/benwoodworth/knbt/StringifiedNbt;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lnet/benwoodworth/knbt/StringifiedNbt;
+}
+
+public final class net/benwoodworth/knbt/_DeprecationsKt {
+	public static final fun asNbtDecoder (Lkotlinx/serialization/encoding/Decoder;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static synthetic fun asNbtDecoder$default (Lkotlinx/serialization/encoding/Decoder;Ljava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtDecoder;
+	public static final fun asNbtEncoder (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtEncoder;
+	public static synthetic fun asNbtEncoder$default (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtEncoder;
 }
 
 public final class net/benwoodworth/knbt/internal/NbtTagType : java/lang/Enum {

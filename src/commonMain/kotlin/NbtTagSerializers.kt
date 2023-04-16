@@ -2,12 +2,15 @@ package net.benwoodworth.knbt
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.encoding.*
+import net.benwoodworth.knbt.internal.NbtDecodingException
+import net.benwoodworth.knbt.internal.NbtEncodingException
 
 internal object NbtTagSerializer : KSerializer<NbtTag> {
     override val descriptor: SerialDescriptor =
@@ -87,18 +90,21 @@ internal object NbtDoubleSerializer : KSerializer<NbtDouble> {
 }
 
 internal object NbtByteArraySerializer : KSerializer<NbtByteArray> {
-    private object NbtByteArrayDescriptor : SerialDescriptor by serialDescriptor<ByteArray>() {
-        @ExperimentalSerializationApi
+    @OptIn(ExperimentalSerializationApi::class)
+    private object NbtByteArrayDescriptor : SerialDescriptor by ListSerializer(Byte.serializer()).descriptor {
         override val serialName: String = "net.benwoodworth.knbt.NbtByteArray"
+        override val annotations: List<Annotation> = listOf(NbtArray())
     }
 
     override val descriptor: SerialDescriptor = NbtByteArrayDescriptor
 
     override fun serialize(encoder: Encoder, value: NbtByteArray): Unit =
-        encoder.asNbtEncoder().encodeByteArray(value.content)
+        encoder.asNbtEncoder().encodeCollection(descriptor, value) { index, element ->
+            encodeByteElement(descriptor, index, element)
+        }
 
     override fun deserialize(decoder: Decoder): NbtByteArray =
-        NbtByteArray(decoder.asNbtDecoder().decodeByteArray())
+        NbtByteArray(decoder.decodeList(descriptor, CompositeDecoder::decodeByteElement).toByteArray())
 }
 
 internal object NbtStringSerializer : KSerializer<NbtString> {
@@ -155,30 +161,76 @@ internal object NbtCompoundSerializer : KSerializer<NbtCompound> {
 
 internal object NbtIntArraySerializer : KSerializer<NbtIntArray> {
     @OptIn(ExperimentalSerializationApi::class)
-    private object NbtIntArrayDescriptor : SerialDescriptor by serialDescriptor<IntArray>() {
+    private object NbtIntArrayDescriptor : SerialDescriptor by ListSerializer(Int.serializer()).descriptor {
         override val serialName: String = "net.benwoodworth.knbt.NbtIntArray"
+        override val annotations: List<Annotation> = listOf(NbtArray())
     }
 
     override val descriptor: SerialDescriptor = NbtIntArrayDescriptor
 
     override fun serialize(encoder: Encoder, value: NbtIntArray): Unit =
-        encoder.asNbtEncoder().encodeIntArray(value.content)
+        encoder.asNbtEncoder().encodeCollection(descriptor, value) { index, element ->
+            encodeIntElement(descriptor, index, element)
+        }
 
     override fun deserialize(decoder: Decoder): NbtIntArray =
-        NbtIntArray(decoder.asNbtDecoder().decodeIntArray())
+        NbtIntArray(decoder.decodeList(descriptor, CompositeDecoder::decodeIntElement).toIntArray())
 }
 
 internal object NbtLongArraySerializer : KSerializer<NbtLongArray> {
     @OptIn(ExperimentalSerializationApi::class)
-    private object NbtLongArrayDescriptor : SerialDescriptor by serialDescriptor<LongArray>() {
+    private object NbtLongArrayDescriptor : SerialDescriptor by ListSerializer(Long.serializer()).descriptor {
         override val serialName: String = "net.benwoodworth.knbt.NbtLongArray"
+        override val annotations: List<Annotation> = listOf(NbtArray())
     }
 
     override val descriptor: SerialDescriptor = NbtLongArrayDescriptor
 
     override fun serialize(encoder: Encoder, value: NbtLongArray): Unit =
-        encoder.asNbtEncoder().encodeLongArray(value.content)
+        encoder.asNbtEncoder().encodeCollection(descriptor, value) { index, element ->
+            encodeLongElement(descriptor, index, element)
+        }
 
     override fun deserialize(decoder: Decoder): NbtLongArray =
-        NbtLongArray(decoder.asNbtDecoder().decodeLongArray())
+        NbtLongArray(decoder.decodeList(descriptor, CompositeDecoder::decodeLongElement).toLongArray())
+}
+
+internal fun Encoder.asNbtEncoder(): NbtEncoder =
+    this as? NbtEncoder ?: throw NbtEncodingException(
+        "This serializer can be used only with NBT format. Expected Encoder to be NbtEncoder, got ${this::class}"
+    )
+
+internal fun Decoder.asNbtDecoder(): NbtDecoder =
+    this as? NbtDecoder ?: throw NbtDecodingException(
+        "This serializer can be used only with NBT format. Expected Decoder to be NbtDecoder, got ${this::class}"
+    )
+
+@OptIn(ExperimentalSerializationApi::class)
+private inline fun <T> Decoder.decodeList(
+    descriptor: SerialDescriptor,
+    crossinline decodeElement: CompositeDecoder.(descriptor: SerialDescriptor, index: Int) -> T
+): List<T> = decodeStructure(descriptor) {
+    val size = decodeCollectionSize(NbtLongArraySerializer.descriptor)
+
+    when {
+        decodeSequentially() -> List(size) { index ->
+            decodeElement(descriptor, index)
+        }
+        size >= 0 -> buildList(size) {
+            while (true) {
+                val index = decodeElementIndex(descriptor)
+                if (index == CompositeDecoder.DECODE_DONE) break
+
+                add(index, decodeElement(descriptor, index))
+            }
+        }
+        else -> buildList {
+            while (true) {
+                val index = decodeElementIndex(descriptor)
+                if (index == CompositeDecoder.DECODE_DONE) break
+
+                add(index, decodeElement(descriptor, index))
+            }
+        }
+    }
 }

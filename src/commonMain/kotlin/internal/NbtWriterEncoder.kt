@@ -5,6 +5,7 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
+import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeEncoder
@@ -104,19 +105,22 @@ internal class NbtWriterEncoder(
         writer.endCompound()
     }
 
+    override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder =
+        beginCompound(descriptor)
+
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder =
         if (descriptor.kind == StructureKind.LIST) {
             when (elementListKind ?: descriptor.nbtListKind) {
-                NbtListKind.List -> beginList(descriptor, collectionSize)
-                NbtListKind.ByteArray -> beginByteArray(descriptor, collectionSize)
-                NbtListKind.IntArray -> beginIntArray(descriptor, collectionSize)
-                NbtListKind.LongArray -> beginLongArray(descriptor, collectionSize)
+                NbtListKind.List -> beginList(collectionSize)
+                NbtListKind.ByteArray -> beginByteArray(collectionSize)
+                NbtListKind.IntArray -> beginIntArray(collectionSize)
+                NbtListKind.LongArray -> beginLongArray(collectionSize)
             }
         } else {
             beginCompound(descriptor)
         }
 
-    override fun beginCompound(descriptor: SerialDescriptor): CompositeNbtEncoder {
+    private fun beginCompound(descriptor: SerialDescriptor): CompositeEncoder {
         beginNamedTagIfNamed(descriptor)
         beginEncodingValue(TAG_Compound)
         writer.beginCompound()
@@ -124,7 +128,7 @@ internal class NbtWriterEncoder(
         return this
     }
 
-    override fun beginList(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder {
+    private fun beginList(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_List)
         structureTypeStack += TAG_List
         listTypeStack += TAG_End // writer.beginList(TYPE, size) is postponed until the first element is encoded, or the list is ended
@@ -132,21 +136,21 @@ internal class NbtWriterEncoder(
         return this
     }
 
-    override fun beginByteArray(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder {
+    private fun beginByteArray(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_Byte_Array)
         writer.beginByteArray(size)
         structureTypeStack += TAG_Byte_Array
         return this
     }
 
-    override fun beginIntArray(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder {
+    private fun beginIntArray(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_Int_Array)
         writer.beginIntArray(size)
         structureTypeStack += TAG_Int_Array
         return this
     }
 
-    override fun beginLongArray(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder {
+    private fun beginLongArray(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_Long_Array)
         writer.beginLongArray(size)
         structureTypeStack += TAG_Long_Array
@@ -221,22 +225,22 @@ internal class NbtWriterEncoder(
     override fun encodeChar(value: Char): Unit =
         encodeString(value.toString())
 
-    override fun encodeByteArray(value: ByteArray) {
+    private fun encodeByteArray(value: ByteArray) {
         beginEncodingValue(TAG_Byte_Array)
         writer.writeByteArray(value)
     }
 
-    override fun encodeIntArray(value: IntArray) {
+    private fun encodeIntArray(value: IntArray) {
         beginEncodingValue(TAG_Int_Array)
         writer.writeIntArray(value)
     }
 
-    override fun encodeLongArray(value: LongArray) {
+    private fun encodeLongArray(value: LongArray) {
         beginEncodingValue(TAG_Long_Array)
         writer.writeLongArray(value)
     }
 
-    override fun encodeNbtTag(value: NbtTag) {
+    override fun encodeNbtTag(tag: NbtTag) {
         fun writeTag(value: NbtTag): Unit = when (value.type) {
             TAG_End -> error("Unexpected $TAG_End")
             TAG_Byte -> writer.writeByte((value as NbtByte).value)
@@ -271,8 +275,8 @@ internal class NbtWriterEncoder(
             TAG_Long_Array -> writer.writeLongArray((value as NbtLongArray).content)
         }
 
-        beginEncodingValue(value.type)
-        writeTag(value)
+        beginEncodingValue(tag.type)
+        writeTag(tag)
     }
 
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
@@ -283,6 +287,7 @@ internal class NbtWriterEncoder(
             isArraySerializer(ByteArraySerializer(), NbtListKind.ByteArray) -> encodeByteArray(value as ByteArray)
             isArraySerializer(IntArraySerializer(), NbtListKind.IntArray) -> encodeIntArray(value as IntArray)
             isArraySerializer(LongArraySerializer(), NbtListKind.LongArray) -> encodeLongArray(value as LongArray)
+            serializer.descriptor.kind is PolymorphicKind -> throw NbtEncodingException("Polymorphic serialization is not yet supported")
             else -> super.encodeSerializableValue(serializer, value)
         }
     }

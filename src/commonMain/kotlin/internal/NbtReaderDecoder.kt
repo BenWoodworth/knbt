@@ -6,6 +6,7 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
+import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeDecoder
@@ -122,17 +123,17 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         return string[0]
     }
 
-    override fun decodeByteArray(): ByteArray {
+    private fun decodeByteArray(): ByteArray {
         expectTagType(TAG_Byte_Array)
         return tryWithPath { reader.readByteArray() }
     }
 
-    override fun decodeIntArray(): IntArray {
+    private fun decodeIntArray(): IntArray {
         expectTagType(TAG_Int_Array)
         return tryWithPath { reader.readIntArray() }
     }
 
-    override fun decodeLongArray(): LongArray {
+    private fun decodeLongArray(): LongArray {
         expectTagType(TAG_Long_Array)
         return tryWithPath { reader.readLongArray() }
     }
@@ -142,16 +143,16 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     final override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder =
         if (descriptor.kind == StructureKind.LIST) {
             when (elementListKind ?: descriptor.nbtListKind) {
-                NbtListKind.List -> beginList(descriptor)
-                NbtListKind.ByteArray -> beginByteArray(descriptor)
-                NbtListKind.IntArray -> beginIntArray(descriptor)
-                NbtListKind.LongArray -> beginLongArray(descriptor)
+                NbtListKind.List -> beginList()
+                NbtListKind.ByteArray -> beginByteArray()
+                NbtListKind.IntArray -> beginIntArray()
+                NbtListKind.LongArray -> beginLongArray()
             }
         } else {
             beginCompound(descriptor)
         }
 
-    override fun beginCompound(descriptor: SerialDescriptor): CompositeNbtDecoder {
+    private fun beginCompound(descriptor: SerialDescriptor): CompositeDecoder {
         beginNamedTagIfNamed(descriptor)
 
         expectTagType(TAG_Compound)
@@ -164,22 +165,22 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         }
     }
 
-    override fun beginList(descriptor: SerialDescriptor): CompositeNbtDecoder {
+    private fun beginList(): CompositeDecoder {
         expectTagType(TAG_List)
         return tryWithPath { ListNbtDecoder(nbt, reader, this) }
     }
 
-    override fun beginByteArray(descriptor: SerialDescriptor): CompositeNbtDecoder {
+    private fun beginByteArray(): CompositeDecoder {
         expectTagType(TAG_Byte_Array)
         return tryWithPath { ByteArrayNbtDecoder(nbt, reader, this) }
     }
 
-    override fun beginIntArray(descriptor: SerialDescriptor): CompositeNbtDecoder {
+    private fun beginIntArray(): CompositeDecoder {
         expectTagType(TAG_Int_Array)
         return tryWithPath { IntArrayNbtDecoder(nbt, reader, this) }
     }
 
-    override fun beginLongArray(descriptor: SerialDescriptor): CompositeNbtDecoder {
+    private fun beginLongArray(): CompositeDecoder {
         expectTagType(TAG_Long_Array)
         return tryWithPath { LongArrayNbtDecoder(nbt, reader, this) }
     }
@@ -235,6 +236,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
             isArraySerializer(ByteArraySerializer(), NbtListKind.ByteArray) -> decodeByteArray() as T
             isArraySerializer(IntArraySerializer(), NbtListKind.IntArray) -> decodeIntArray() as T
             isArraySerializer(LongArraySerializer(), NbtListKind.LongArray) -> decodeLongArray() as T
+            deserializer.descriptor.kind is PolymorphicKind -> throw NbtDecodingException("Polymorphic serialization is not yet supported")
             else -> super.decodeSerializableValue(deserializer)
         }
     }

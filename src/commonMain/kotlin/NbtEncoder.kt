@@ -1,87 +1,85 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.descriptors.PolymorphicKind
-import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.AbstractEncoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
-import net.benwoodworth.knbt.internal.NbtEncodingException
 
-public sealed interface NbtEncoder : Encoder {
+/**
+ * Encoder used by [Nbt] during serialization.
+ * This interface can be used to inject desired behaviour into a serialization process of [Nbt].
+ *
+ * Typical example of the usage:
+ * ```
+ * // Class representing Either<Left|Right>
+ * sealed class Either {
+ *     data class Left(val errorMsg: String) : Either()
+ *     data class Right(val data: Payload) : Either()
+ * }
+ *
+ * // Serializer injects custom behaviour by inspecting object content and writing
+ * object EitherSerializer : KSerializer<Either> {
+ *     override val descriptor: SerialDescriptor = buildSerialDescriptor("package.Either", PolymorphicKind.SEALED) {
+ *         // ..
+ *     }
+ *
+ *     override fun deserialize(decoder: Decoder): Either {
+ *         if (decoder !is NbtDecoder) throw SerializationException("This class can be decoded only by Nbt format")
+ *         val nbtTag = decoder.decodeNbtTag() as? NbtCompound ?: throw SerializationException("Expected NbtCompound")
+ *         return when {
+ *             "error" in nbtTag -> Either.Left(nbtTag["error"]!!.string)
+ *             else -> Either.Right(input.nbt.decodeFromNbtTag(Payload.serializer(), nbtTag))
+ *         }
+ *     }
+ *
+ *     override fun serialize(encoder: Encoder, value: Either) {
+ *         val output = encoder as? NbtEncoder ?: throw SerializationException("This class can be encoded only by Nbt format")
+ *         val nbtTag = when (value) {
+ *           is Either.Left -> buildNbtCompound { put("error", value.errorMsg) }
+ *           is Either.Right -> output.nbt.encodeToNbtTag(Payload.serializer(), value.data)
+ *         }
+ *         output.encodeNbtTag(nbtTag)
+ *     }
+ * }
+ * ```
+ */
+@Suppress("DEPRECATION")
+public sealed interface NbtEncoder : Encoder, CompositeEncoder, NbtEncoderDeprecations {
+    /**
+     * An instance of the current [Nbt].
+     */
     public val nbt: NbtFormat
 
-    public fun encodeByteArray(value: ByteArray)
-    public fun encodeIntArray(value: IntArray)
-    public fun encodeLongArray(value: LongArray)
-
-    public fun encodeNbtTag(value: NbtTag)
-
-    public fun beginCompound(descriptor: SerialDescriptor): CompositeNbtEncoder
-    public fun beginList(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder
-    public fun beginByteArray(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder
-    public fun beginIntArray(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder
-    public fun beginLongArray(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder
-}
-
-public fun Encoder.asNbtEncoder(): NbtEncoder =
-    this as? NbtEncoder ?: throw NbtEncodingException(
-        "This serializer can be used only with NBT format. Expected Encoder to be NbtEncoder, got ${this::class}"
-    )
-
-public sealed interface CompositeNbtEncoder : CompositeEncoder {
-    public val nbt: NbtFormat
-
-    public fun encodeByteArrayElement(descriptor: SerialDescriptor, index: Int, value: ByteArray)
-    public fun encodeIntArrayElement(descriptor: SerialDescriptor, index: Int, value: IntArray)
-    public fun encodeLongArrayElement(descriptor: SerialDescriptor, index: Int, value: LongArray)
-
-    public fun encodeNbtTagElement(descriptor: SerialDescriptor, index: Int, value: NbtTag)
+    /**
+     * Appends the given NBT [tag] to the current output.
+     * This method is allowed to invoke only as the part of the whole serialization process of the class,
+     * calling this method after invoking [beginStructure] or any `encode*` method will lead to unspecified behaviour
+     * and may produce an invalid NBT result.
+     * For example:
+     * ```
+     * class Holder(val value: Int, val list: List<Int>())
+     *
+     * // Holder serialize method
+     * fun serialize(encoder: Encoder, value: Holder) {
+     *     // Completely okay, the whole Holder object is read
+     *     val nbtCompound = NbtCompound(...) // build an NbtCompound from Holder
+     *     (encoder as NbtEncoder).encodeNbtTag(nbtCompound) // Write it
+     * }
+     *
+     * // Incorrect Holder serialize method
+     * fun serialize(encoder: Encoder, value: Holder) {
+     *     val composite = encoder.beginStructure(descriptor)
+     *     composite.encodeSerializableElement(descriptor, 0, Int.serializer(), value.value)
+     *     val array = NbtIntArray(value.list)
+     *     // Incorrect, encoder is already in an intermediate state after encodeSerializableElement
+     *     (composite as NbtEncoder).encodeNbtTag(array)
+     *     composite.endStructure(descriptor)
+     *     // ...
+     * }
+     * ```
+     */
+    public fun encodeNbtTag(tag: NbtTag)
 }
 
 @ExperimentalSerializationApi
-internal abstract class AbstractNbtEncoder : AbstractEncoder(), NbtEncoder, CompositeNbtEncoder {
-    override fun encodeByteArray(value: ByteArray): Unit = encodeValue(value)
-    override fun encodeIntArray(value: IntArray): Unit = encodeValue(value)
-    override fun encodeLongArray(value: LongArray): Unit = encodeValue(value)
-
-    override fun encodeNbtTag(value: NbtTag): Unit = encodeNbtTag(value)
-
-    final override fun encodeByteArrayElement(descriptor: SerialDescriptor, index: Int, value: ByteArray) {
-        if (encodeElement(descriptor, index)) encodeByteArray(value)
-    }
-
-    final override fun encodeIntArrayElement(descriptor: SerialDescriptor, index: Int, value: IntArray) {
-        if (encodeElement(descriptor, index)) encodeIntArray(value)
-    }
-
-    final override fun encodeLongArrayElement(descriptor: SerialDescriptor, index: Int, value: LongArray) {
-        if (encodeElement(descriptor, index)) encodeLongArray(value)
-    }
-
-    final override fun encodeNbtTagElement(
-        descriptor: SerialDescriptor,
-        index: Int,
-        value: NbtTag,
-    ) {
-        if (encodeElement(descriptor, index)) encodeNbtTag(value)
-    }
-
-    override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder =
-        beginCompound(descriptor)
-
-    abstract override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder
-
-    override fun beginCompound(descriptor: SerialDescriptor): CompositeNbtEncoder = this
-    override fun beginList(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder = this
-    override fun beginByteArray(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder = this
-    override fun beginIntArray(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder = this
-    override fun beginLongArray(descriptor: SerialDescriptor, size: Int): CompositeNbtEncoder = this
-
-    override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T): Unit =
-        when (serializer.descriptor.kind) {
-            is PolymorphicKind -> throw NbtEncodingException("Polymorphic serialization is not yet supported")
-            else -> super<AbstractEncoder>.encodeSerializableValue(serializer, value)
-        }
-}
+internal abstract class AbstractNbtEncoder : AbstractEncoder(), NbtEncoder
