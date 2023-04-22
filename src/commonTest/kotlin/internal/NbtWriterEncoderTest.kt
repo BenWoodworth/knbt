@@ -28,7 +28,7 @@ class NbtWriterEncoderTest {
 
         val actualTag = encodedTag
         actualTag.shouldBeInstanceOf<NbtCompound>()
-        actualTag shouldHaveSize 1
-        actualTag shouldHaveKey "RootKey"
+        actualTag.content shouldHaveSize 1
+        actualTag.content shouldHaveKey "RootKey"
     }
 }

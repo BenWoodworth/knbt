@@ -10,7 +10,7 @@ class ArraySerializationTest : SerializationTest() {
     fun should_serialize_ByteArray_correctly() {
         defaultNbt.testSerialization(
             byteArrayOf(1, 2, 3),
-            NbtByteArray(byteArrayOf(1, 2, 3)),
+            NbtByteArray(listOf(1, 2, 3)),
             ByteArray::asList
         )
     }
@@ -19,7 +19,7 @@ class ArraySerializationTest : SerializationTest() {
     fun should_serialize_IntArray_correctly() {
         defaultNbt.testSerialization(
             intArrayOf(1, 2, 3),
-            NbtIntArray(intArrayOf(1, 2, 3)),
+            NbtIntArray(listOf(1, 2, 3)),
             IntArray::asList
         )
     }
@@ -28,7 +28,7 @@ class ArraySerializationTest : SerializationTest() {
     fun should_serialize_LongArray_correctly() {
         defaultNbt.testSerialization(
             longArrayOf(1, 2, 3),
-            NbtLongArray(longArrayOf(1, 2, 3)),
+            NbtLongArray(listOf(1, 2, 3)),
             LongArray::asList,
         )
     }
@@ -38,7 +38,7 @@ class ArraySerializationTest : SerializationTest() {
         @OptIn(ExperimentalUnsignedTypes::class)
         defaultNbt.testSerialization(
             ubyteArrayOf(1u, 2u, 3u),
-            NbtByteArray(byteArrayOf(1, 2, 3)),
+            NbtByteArray(listOf(1, 2, 3)),
             UByteArray::asList
         )
     }
@@ -48,7 +48,7 @@ class ArraySerializationTest : SerializationTest() {
         @OptIn(ExperimentalUnsignedTypes::class)
         defaultNbt.testSerialization(
             uintArrayOf(1u, 2u, 3u),
-            NbtIntArray(intArrayOf(1, 2, 3)),
+            NbtIntArray(listOf(1, 2, 3)),
             UIntArray::asList
         )
     }
@@ -58,7 +58,7 @@ class ArraySerializationTest : SerializationTest() {
         @OptIn(ExperimentalUnsignedTypes::class)
         defaultNbt.testSerialization(
             ulongArrayOf(1u, 2u, 3u),
-            NbtLongArray(longArrayOf(1, 2, 3)),
+            NbtLongArray(listOf(1, 2, 3)),
             ULongArray::asList,
         )
     }

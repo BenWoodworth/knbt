@@ -1,16 +1,17 @@
 package net.benwoodworth.knbt
 
+import io.kotest.inspectors.forAll
+import io.kotest.property.Arb
 import io.kotest.property.Exhaustive
+import io.kotest.property.PropTestConfig
 import io.kotest.property.checkAll
 import io.kotest.property.exhaustive.bytes
 import io.kotest.property.exhaustive.filter
 import io.kotest.property.exhaustive.map
 import kotlinx.coroutines.test.runTest
+import net.benwoodworth.knbt.test.generators.nbtCompound
 import kotlin.reflect.KProperty1
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotEquals
+import kotlin.test.*
 
 class NbtByteTest {
     @Test
@@ -73,7 +74,7 @@ class NbtTagToStringTest {
 
     @Test
     fun converting_NbtByteArray_to_string() {
-        assertEquals("[B;4B,3B,2B,1B]", NbtByteArray(byteArrayOf(4, 3, 2, 1)).toString())
+        assertEquals("[B;4B,3B,2B,1B]", NbtByteArray(listOf(4, 3, 2, 1)).toString())
     }
 
     @Test
@@ -101,12 +102,12 @@ class NbtTagToStringTest {
 
     @Test
     fun converting_NbtIntArray_to_string() {
-        assertEquals("[I;4,3,2,1]", NbtIntArray(intArrayOf(4, 3, 2, 1)).toString())
+        assertEquals("[I;4,3,2,1]", NbtIntArray(listOf(4, 3, 2, 1)).toString())
     }
 
     @Test
     fun converting_NbtLongArray_to_string() {
-        assertEquals("[L;4L,3L,2L,1L]", NbtLongArray(longArrayOf(4, 3, 2, 1)).toString())
+        assertEquals("[L;4L,3L,2L,1L]", NbtLongArray(listOf(4, 3, 2, 1)).toString())
     }
 }
 
@@ -137,9 +138,9 @@ class NbtTagTestConversions {
         assertConversionFails(NbtDouble(1.0), NbtTag::nbtFloat)
 
         assertConversionSucceeds(NbtDouble(1.0), NbtTag::nbtDouble)
-        assertConversionFails(NbtByteArray(byteArrayOf(1)), NbtTag::nbtDouble)
+        assertConversionFails(NbtByteArray(listOf(1)), NbtTag::nbtDouble)
 
-        assertConversionSucceeds(NbtByteArray(byteArrayOf(1)), NbtTag::nbtByteArray)
+        assertConversionSucceeds(NbtByteArray(listOf(1)), NbtTag::nbtByteArray)
         assertConversionFails(NbtString("1"), NbtTag::nbtByteArray)
 
         assertConversionSucceeds(NbtString("1"), NbtTag::nbtString)
@@ -149,12 +150,12 @@ class NbtTagTestConversions {
         assertConversionFails(NbtCompound(emptyMap()), NbtTag::nbtList)
 
         assertConversionSucceeds(NbtCompound(emptyMap()), NbtTag::nbtCompound)
-        assertConversionFails(NbtIntArray(intArrayOf()), NbtTag::nbtCompound)
+        assertConversionFails(NbtIntArray(listOf()), NbtTag::nbtCompound)
 
-        assertConversionSucceeds(NbtIntArray(intArrayOf()), NbtTag::nbtIntArray)
-        assertConversionFails(NbtLongArray(longArrayOf()), NbtTag::nbtIntArray)
+        assertConversionSucceeds(NbtIntArray(listOf()), NbtTag::nbtIntArray)
+        assertConversionFails(NbtLongArray(listOf()), NbtTag::nbtIntArray)
 
-        assertConversionSucceeds(NbtLongArray(longArrayOf()), NbtTag::nbtLongArray)
+        assertConversionSucceeds(NbtLongArray(listOf()), NbtTag::nbtLongArray)
         assertConversionFails(NbtByte(1), NbtTag::nbtLongArray)
     }
 
@@ -198,9 +199,9 @@ class NbtTagTestConversions {
         assertConversionFails(NbtList(listOf(NbtDouble(1.0)))) { nbtList<NbtFloat>() }
 
         assertConversionSucceeds(NbtList(listOf(NbtDouble(1.0)))) { nbtList<NbtDouble>() }
-        assertConversionFails(NbtList(listOf(NbtByteArray(byteArrayOf(1))))) { nbtList<NbtDouble>() }
+        assertConversionFails(NbtList(listOf(NbtByteArray(listOf(1))))) { nbtList<NbtDouble>() }
 
-        assertConversionSucceeds(NbtList(listOf(NbtByteArray(byteArrayOf(1))))) { nbtList<NbtByteArray>() }
+        assertConversionSucceeds(NbtList(listOf(NbtByteArray(listOf(1))))) { nbtList<NbtByteArray>() }
         assertConversionFails(NbtList(listOf(NbtString("1")))) { nbtList<NbtByteArray>() }
 
         assertConversionSucceeds(NbtList(listOf(NbtString("1")))) { nbtList<NbtString>() }
@@ -210,21 +211,24 @@ class NbtTagTestConversions {
         assertConversionFails(NbtList(listOf(NbtCompound(emptyMap())))) { nbtList<NbtList<*>>() }
 
         assertConversionSucceeds(NbtList(listOf(NbtCompound(emptyMap())))) { nbtList<NbtCompound>() }
-        assertConversionFails(NbtList(listOf(NbtIntArray(intArrayOf())))) { nbtList<NbtCompound>() }
+        assertConversionFails(NbtList(listOf(NbtIntArray(listOf())))) { nbtList<NbtCompound>() }
 
-        assertConversionSucceeds(NbtList(listOf(NbtIntArray(intArrayOf())))) { nbtList<NbtIntArray>() }
-        assertConversionFails(NbtList(listOf(NbtLongArray(longArrayOf())))) { nbtList<NbtIntArray>() }
+        assertConversionSucceeds(NbtList(listOf(NbtIntArray(listOf())))) { nbtList<NbtIntArray>() }
+        assertConversionFails(NbtList(listOf(NbtLongArray(listOf())))) { nbtList<NbtIntArray>() }
 
-        assertConversionSucceeds(NbtList(listOf(NbtLongArray(longArrayOf())))) { nbtList<NbtLongArray>() }
+        assertConversionSucceeds(NbtList(listOf(NbtLongArray(listOf())))) { nbtList<NbtLongArray>() }
         assertConversionFails(NbtList(listOf(NbtByte(1)))) { nbtList<NbtLongArray>() }
     }
 }
 
-class NbtByteArrayTest {
+class NbtByteArrayTest { // TODO no longer valid
     @Test
     fun should_equal_List_of_same_contents() {
         fun assertWith(vararg elements: Byte): Unit =
-            assertEquals(elements.asList(), NbtByteArray(byteArrayOf(*elements)))
+            assertEquals(
+                NbtByteArray(elements.asList()),
+                NbtByteArray(elements.copyOf().asList())
+            )
 
         assertWith()
         assertWith(1)
@@ -233,52 +237,76 @@ class NbtByteArrayTest {
 
     @Test
     fun should_not_equal_NbtTag_of_different_type_but_same_contents() {
-        assertNotEquals<NbtTag>(NbtList(emptyList()), NbtByteArray(byteArrayOf()))
-        assertNotEquals<NbtTag>(NbtIntArray(intArrayOf()), NbtByteArray(byteArrayOf()))
-        assertNotEquals<NbtTag>(NbtLongArray(longArrayOf()), NbtByteArray(byteArrayOf()))
+        assertNotEquals<NbtTag>(NbtList(emptyList()), NbtByteArray(listOf()))
+        assertNotEquals<NbtTag>(NbtIntArray(listOf()), NbtByteArray(listOf()))
+        assertNotEquals<NbtTag>(NbtLongArray(listOf()), NbtByteArray(listOf()))
     }
 }
 
 class NbtListTest {
     @Test
-    fun should_equal_List_of_same_contents() {
+    fun should_equal_NbtList_of_same_contents() {
+        @OptIn(UnsafeNbtApi::class)
         fun assertWith(nbtList: NbtList<*>): Unit =
-            assertEquals(nbtList.toList(), nbtList)
+            assertEquals(
+                nbtList,
+                NbtList(nbtList.content.toList())
+            )
 
         assertWith(NbtList(emptyList()))
         assertWith(NbtList(listOf(NbtInt(1))))
         assertWith(NbtList(listOf(NbtString("a"), NbtString("b"))))
 
-        assertEquals(NbtList(listOf(NbtInt(1))), NbtList(NbtList(listOf(NbtInt(1)))))
+        assertEquals(NbtList(listOf(NbtInt(1))), NbtList(NbtList(listOf(NbtInt(1))).content))
     }
 
     @Test
     fun should_not_equal_NbtTag_of_different_type_but_same_contents() {
-        assertNotEquals<NbtTag>(NbtByteArray(byteArrayOf()), NbtList(emptyList()))
-        assertNotEquals<NbtTag>(NbtIntArray(intArrayOf()), NbtList(emptyList()))
-        assertNotEquals<NbtTag>(NbtLongArray(longArrayOf()), NbtList(emptyList()))
+        assertNotEquals<NbtTag>(NbtByteArray(listOf()), NbtList(emptyList()))
+        assertNotEquals<NbtTag>(NbtIntArray(listOf()), NbtList(emptyList()))
+        assertNotEquals<NbtTag>(NbtLongArray(listOf()), NbtList(emptyList()))
     }
 }
 
 class NbtCompoundTest {
+    private val arbNbtCompound = Arb.nbtCompound(1)
+
     @Test
-    fun should_equal_Map_of_same_contents() {
+    fun should_get_entry_with_given_name() = runTest {
+        checkAll(arbNbtCompound) { compound ->
+            val names = compound.content.keys
+
+            names.forAll { name ->
+                assertSame(compound.content[name], compound[name])
+            }
+        }
+    }
+
+
+    @Test
+    fun should_equal_NbtCompound_of_same_contents() {
         fun assertWith(vararg elements: Pair<String, NbtTag>): Unit =
-            assertEquals(elements.toMap(), NbtCompound(mapOf(*elements)))
+            assertEquals(
+                NbtCompound(elements.toMap()),
+                NbtCompound(elements.copyOf().toMap())
+            )
 
         assertWith()
         assertWith("one" to NbtInt(1))
         assertWith("a" to NbtString("a"), "b" to NbtString("b"))
 
-        assertEquals(NbtList(listOf(NbtInt(1))), NbtList(NbtList(listOf(NbtInt(1)))))
+        assertEquals(NbtList(listOf(NbtInt(1))), NbtList(NbtList(listOf(NbtInt(1))).content))
     }
 }
 
 class NbtIntArrayTest {
     @Test
-    fun should_equal_List_of_same_contents() {
+    fun should_equal_NbtIntArray_of_same_contents() {
         fun assertWith(vararg elements: Int): Unit =
-            assertEquals(elements.asList(), NbtIntArray(elements))
+            assertEquals(
+                NbtIntArray(elements.asList()),
+                NbtIntArray(elements.copyOf().asList())
+            )
 
         assertWith()
         assertWith(1)
@@ -287,9 +315,9 @@ class NbtIntArrayTest {
 
     @Test
     fun should_not_equal_NbtTag_of_different_type_but_same_contents() {
-        assertNotEquals<NbtTag>(NbtList(emptyList()), NbtIntArray(intArrayOf()))
-        assertNotEquals<NbtTag>(NbtByteArray(byteArrayOf()), NbtIntArray(intArrayOf()))
-        assertNotEquals<NbtTag>(NbtLongArray(longArrayOf()), NbtIntArray(intArrayOf()))
+        assertNotEquals<NbtTag>(NbtList(emptyList()), NbtIntArray(listOf()))
+        assertNotEquals<NbtTag>(NbtByteArray(listOf()), NbtIntArray(listOf()))
+        assertNotEquals<NbtTag>(NbtLongArray(listOf()), NbtIntArray(listOf()))
     }
 }
 
@@ -297,7 +325,10 @@ class NbtLongArrayTest {
     @Test
     fun should_equal_List_of_same_contents() {
         fun assertWith(vararg elements: Long): Unit =
-            assertEquals(elements.asList(), NbtLongArray(elements))
+            assertEquals(
+                NbtLongArray(elements.asList()),
+                NbtLongArray(elements.copyOf().asList())
+            )
 
         assertWith()
         assertWith(1)
@@ -306,8 +337,8 @@ class NbtLongArrayTest {
 
     @Test
     fun should_not_equal_NbtTag_of_different_type_but_same_contents() {
-        assertNotEquals<NbtTag>(NbtList(emptyList()), NbtLongArray(longArrayOf()))
-        assertNotEquals<NbtTag>(NbtIntArray(intArrayOf()), NbtLongArray(longArrayOf()))
-        assertNotEquals<NbtTag>(NbtByteArray(byteArrayOf()), NbtLongArray(longArrayOf()))
+        assertNotEquals<NbtTag>(NbtList(emptyList()), NbtLongArray(listOf()))
+        assertNotEquals<NbtTag>(NbtIntArray(listOf()), NbtLongArray(listOf()))
+        assertNotEquals<NbtTag>(NbtByteArray(listOf()), NbtLongArray(listOf()))
     }
 }

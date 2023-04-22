@@ -183,35 +183,35 @@ public sealed interface NbtEncoderDeprecations : Encoder, CompositeEncoder {
     @Deprecated(
         "Removed in favor of `encodeSerializableValue()`, or `beginCollection()` with `@NbtArray` in the serial descriptor",
         ReplaceWith(
-            "encodeSerializableValue(NbtByteArray.serializer(), NbtByteArray(value))",
+            "encodeSerializableValue(NbtByteArray.serializer(), NbtByteArray(value.asList()))",
             "net.benwoodworth.knbt.NbtByteArray"
         ),
         DeprecationLevel.ERROR,
     )
     public fun encodeByteArray(value: ByteArray, deprecated: Nothing? = null): Unit =
-        encodeSerializableValue(NbtByteArray.serializer(), NbtByteArray(value))
+        encodeSerializableValue(NbtByteArray.serializer(), NbtByteArray(value.asList()))
 
     @Deprecated(
         "Removed in favor of `encodeSerializableValue()`, or `beginCollection()` with `@NbtArray` in the serial descriptor",
         ReplaceWith(
-            "encodeSerializableValue(NbtIntArray.serializer(), NbtIntArray(value))",
+            "encodeSerializableValue(NbtIntArray.serializer(), NbtIntArray(value.asList()))",
             "net.benwoodworth.knbt.NbtIntArray"
         ),
         DeprecationLevel.ERROR,
     )
     public fun encodeIntArray(value: IntArray, deprecated: Nothing? = null): Unit =
-        encodeSerializableValue(NbtIntArray.serializer(), NbtIntArray(value))
+        encodeSerializableValue(NbtIntArray.serializer(), NbtIntArray(value.asList()))
 
     @Deprecated(
         "Removed in favor of `encodeSerializableValue()`, or `beginCollection()` with `@NbtArray` in the serial descriptor",
         ReplaceWith(
-            "encodeSerializableValue(NbtLongArray.serializer(), NbtLongArray(value))",
+            "encodeSerializableValue(NbtLongArray.serializer(), NbtLongArray(value.asList()))",
             "net.benwoodworth.knbt.NbtLongArray"
         ),
         DeprecationLevel.ERROR,
     )
     public fun encodeLongArray(value: LongArray, deprecated: Nothing? = null): Unit =
-        encodeSerializableValue(NbtLongArray.serializer(), NbtLongArray(value))
+        encodeSerializableValue(NbtLongArray.serializer(), NbtLongArray(value.asList()))
 
     @Deprecated(
         "Removed in favor of `beginStructure()`",
@@ -277,34 +277,34 @@ public sealed interface NbtEncoderDeprecations : Encoder, CompositeEncoder {
         DeprecationLevel.ERROR
     )
     public fun encodeByteArrayElement(descriptor: SerialDescriptor, index: Int, value: ByteArray): Unit =
-        encodeSerializableElement(descriptor, index, NbtByteArray.serializer(), NbtByteArray(value))
+        encodeSerializableElement(descriptor, index, NbtByteArray.serializer(), NbtByteArray(value.asList()))
 
     @Deprecated(
         "Removed in favor of `encodeSerializableElement()`, or `beginCollection()` with `@NbtArray` in the serial descriptor",
         ReplaceWith(
-            "encodeSerializableElement(descriptor, index, NbtIntArray.serializer(), NbtIntArray(value))",
+            "encodeSerializableElement(descriptor, index, NbtIntArray.serializer(), NbtIntArray(value.asList()))",
             "net.benwoodworth.knbt.NbtIntArray"
         ),
         DeprecationLevel.ERROR
     )
     public fun encodeIntArrayElement(descriptor: SerialDescriptor, index: Int, value: IntArray): Unit =
-        encodeSerializableElement(descriptor, index, NbtIntArray.serializer(), NbtIntArray(value))
+        encodeSerializableElement(descriptor, index, NbtIntArray.serializer(), NbtIntArray(value.asList()))
 
     @Deprecated(
         "Removed in favor of `encodeSerializableElement()`, or `beginCollection()` with `@NbtArray` in the serial descriptor",
         ReplaceWith(
-            "encodeSerializableElement(descriptor, index, NbtLongArray.serializer(), NbtLongArray(value))",
+            "encodeSerializableElement(descriptor, index, NbtLongArray.serializer(), NbtLongArray(value.asList()))",
             "net.benwoodworth.knbt.NbtLongArray"
         ),
         DeprecationLevel.ERROR
     )
     public fun encodeLongArrayElement(descriptor: SerialDescriptor, index: Int, value: LongArray): Unit =
-        encodeSerializableElement(descriptor, index, NbtLongArray.serializer(), NbtLongArray(value))
+        encodeSerializableElement(descriptor, index, NbtLongArray.serializer(), NbtLongArray(value.asList()))
 
     @Deprecated(
         "Removed in favor of `encodeSerializableElement()` or `encodeNbtTag()`",
         ReplaceWith(
-            "encodeSerializableElement(descriptor, index, NbtTag.serializer(), value)",
+            "encodeSerializableElement(descriptor, index, NbtTag.serializer(), value.asList())",
             "net.benwoodworth.knbt.NbtTag"
         ),
         DeprecationLevel.ERROR
@@ -339,35 +339,35 @@ public sealed interface NbtDecoderDeprecations : Decoder, CompositeDecoder {
     @Deprecated(
         "Removed in favor of `decodeSerializableValue()`, or `beginStructure()` with `@NbtArray` in the serial descriptor",
         ReplaceWith(
-            "decodeSerializableValue(NbtByteArray.serializer()).toByteArray()",
+            "decodeSerializableValue(NbtByteArray.serializer()).content.toByteArray()",
             "net.benwoodworth.knbt.NbtByteArray"
         ),
         DeprecationLevel.ERROR,
     )
     public fun decodeByteArray(deprecated: Nothing? = null): ByteArray =
-        decodeSerializableValue(NbtByteArray.serializer()).toByteArray()
+        decodeSerializableValue(NbtByteArray.serializer()).content.toByteArray()
 
     @Deprecated(
         "Removed in favor of `decodeSerializableValue()`, or `beginStructure()` with `@NbtArray` in the serial descriptor",
         ReplaceWith(
-            "decodeSerializableValue(NbtIntArray.serializer()).toIntArray()",
+            "decodeSerializableValue(NbtIntArray.serializer()).content.toIntArray()",
             "net.benwoodworth.knbt.NbIntArray"
         ),
         DeprecationLevel.ERROR,
     )
     public fun decodeIntArray(deprecated: Nothing? = null): IntArray =
-        decodeSerializableValue(NbtIntArray.serializer()).toIntArray()
+        decodeSerializableValue(NbtIntArray.serializer()).content.toIntArray()
 
     @Deprecated(
         "Removed in favor of `decodeSerializableValue()`, or `beginStructure()` with `@NbtArray` in the serial descriptor",
         ReplaceWith(
-            "decodeSerializableValue(NbtLongArray.serializer()).toLongArray()",
+            "decodeSerializableValue(NbtLongArray.serializer()).content.toLongArray()",
             "net.benwoodworth.knbt.NbtLongArray"
         ),
         DeprecationLevel.ERROR,
     )
     public fun decodeLongArray(deprecated: Nothing? = null): LongArray =
-        decodeSerializableValue(NbtLongArray.serializer()).toLongArray()
+        decodeSerializableValue(NbtLongArray.serializer()).content.toLongArray()
 
     @Deprecated(
         "Removed in favor of `beginStructure()`",
@@ -427,35 +427,35 @@ public sealed interface NbtDecoderDeprecations : Decoder, CompositeDecoder {
     @Deprecated(
         "Removed in favor of `decodeSerializableElement()`, or `beginStructure()` with `@NbtArray` in the serial descriptor",
         ReplaceWith(
-            "decodeSerializableElement(descriptor, index, NbtByteArray.serializer()).toByteArray()",
+            "decodeSerializableElement(descriptor, index, NbtByteArray.serializer()).content.toByteArray()",
             "net.benwoodworth.knbt.NbtByteArray"
         ),
         DeprecationLevel.ERROR
     )
     public fun decodeByteArrayElement(descriptor: SerialDescriptor, index: Int): ByteArray =
-        decodeSerializableElement(descriptor, index, NbtByteArray.serializer()).toByteArray()
+        decodeSerializableElement(descriptor, index, NbtByteArray.serializer()).content.toByteArray()
 
     @Deprecated(
         "Removed in favor of `decodeSerializableElement()`, or `beginStructure()` with `@NbtArray` in the serial descriptor",
         ReplaceWith(
-            "decodeSerializableElement(descriptor, index, NbtIntArray.serializer()).toIntArray()",
+            "decodeSerializableElement(descriptor, index, NbtIntArray.serializer()).content.toIntArray()",
             "net.benwoodworth.knbt.NbtIntArray"
         ),
         DeprecationLevel.ERROR
     )
     public fun decodeIntArrayElement(descriptor: SerialDescriptor, index: Int): IntArray =
-        decodeSerializableElement(descriptor, index, NbtIntArray.serializer()).toIntArray()
+        decodeSerializableElement(descriptor, index, NbtIntArray.serializer()).content.toIntArray()
 
     @Deprecated(
         "Removed in favor of `decodeSerializableElement()`, or `beginStructure()` with `@NbtArray` in the serial descriptor",
         ReplaceWith(
-            "decodeSerializableElement(descriptor, index, NbtLongArray.serializer()).toLongArray()",
+            "decodeSerializableElement(descriptor, index, NbtLongArray.serializer()).content.toLongArray()",
             "net.benwoodworth.knbt.NbtLongArray"
         ),
         DeprecationLevel.ERROR
     )
     public fun decodeLongArrayElement(descriptor: SerialDescriptor, index: Int): LongArray =
-        decodeSerializableElement(descriptor, index, NbtLongArray.serializer()).toLongArray()
+        decodeSerializableElement(descriptor, index, NbtLongArray.serializer()).content.toLongArray()
 
     @Deprecated(
         "Removed in favor of `decodeSerializableElement()` or `encodeNbtTag()`",
@@ -526,3 +526,59 @@ public sealed interface NbtByteDeprecations {
             else -> throw IllegalArgumentException("Expected value to be a boolean (0 or 1), but was $value")
         }
 }
+
+@Deprecated(
+    "Content is now a `List<Byte>` instead of a `ByteArray`",
+    ReplaceWith("NbtByteArray(content.asList())", "net.benwoodworth.knbt.NbtByteArray"),
+    DeprecationLevel.ERROR
+)
+public fun NbtByteArray(content: ByteArray): NbtByteArray =
+    NbtByteArray(content.asList())
+
+@Deprecated(
+    "Content is now a `List<Int>` instead of a `IntArray`",
+    ReplaceWith("NbtIntArray(content.asList())", "net.benwoodworth.knbt.NbtIntArray"),
+    DeprecationLevel.ERROR
+)
+public fun NbtIntArray(content: IntArray): NbtIntArray =
+    NbtIntArray(content.asList())
+
+@Deprecated(
+    "Content is now a `List<Long>` instead of a `LongArray`",
+    ReplaceWith("NbtLongArray(content.asList())", "net.benwoodworth.knbt.NbtLongArray"),
+    DeprecationLevel.ERROR
+)
+public fun NbtLongArray(content: LongArray): NbtLongArray =
+    NbtLongArray(content.asList())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

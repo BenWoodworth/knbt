@@ -99,12 +99,12 @@ internal object NbtByteArraySerializer : KSerializer<NbtByteArray> {
     override val descriptor: SerialDescriptor = NbtByteArrayDescriptor
 
     override fun serialize(encoder: Encoder, value: NbtByteArray): Unit =
-        encoder.asNbtEncoder().encodeCollection(descriptor, value) { index, element ->
+        encoder.asNbtEncoder().encodeCollection(descriptor, value.content) { index, element ->
             encodeByteElement(descriptor, index, element)
         }
 
     override fun deserialize(decoder: Decoder): NbtByteArray =
-        NbtByteArray(decoder.decodeList(descriptor, CompositeDecoder::decodeByteElement).toByteArray())
+        NbtByteArray(decoder.decodeList(descriptor, CompositeDecoder::decodeByteElement))
 }
 
 internal object NbtStringSerializer : KSerializer<NbtString> {
@@ -169,12 +169,12 @@ internal object NbtIntArraySerializer : KSerializer<NbtIntArray> {
     override val descriptor: SerialDescriptor = NbtIntArrayDescriptor
 
     override fun serialize(encoder: Encoder, value: NbtIntArray): Unit =
-        encoder.asNbtEncoder().encodeCollection(descriptor, value) { index, element ->
+        encoder.asNbtEncoder().encodeCollection(descriptor, value.content) { index, element ->
             encodeIntElement(descriptor, index, element)
         }
 
     override fun deserialize(decoder: Decoder): NbtIntArray =
-        NbtIntArray(decoder.decodeList(descriptor, CompositeDecoder::decodeIntElement).toIntArray())
+        NbtIntArray(decoder.decodeList(descriptor, CompositeDecoder::decodeIntElement))
 }
 
 internal object NbtLongArraySerializer : KSerializer<NbtLongArray> {
@@ -187,12 +187,12 @@ internal object NbtLongArraySerializer : KSerializer<NbtLongArray> {
     override val descriptor: SerialDescriptor = NbtLongArrayDescriptor
 
     override fun serialize(encoder: Encoder, value: NbtLongArray): Unit =
-        encoder.asNbtEncoder().encodeCollection(descriptor, value) { index, element ->
+        encoder.asNbtEncoder().encodeCollection(descriptor, value.content) { index, element ->
             encodeLongElement(descriptor, index, element)
         }
 
     override fun deserialize(decoder: Decoder): NbtLongArray =
-        NbtLongArray(decoder.decodeList(descriptor, CompositeDecoder::decodeLongElement).toLongArray())
+        NbtLongArray(decoder.decodeList(descriptor, CompositeDecoder::decodeLongElement))
 }
 
 internal fun Encoder.asNbtEncoder(): NbtEncoder =

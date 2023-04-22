@@ -93,7 +93,7 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
     }
 
     private inner class NbtCompoundReader(val parent: NbtTagReader, tag: NbtCompound) : NbtTagReader {
-        private val iterator = tag.iterator()
+        private val iterator = tag.content.iterator()
         private var next = if (iterator.hasNext()) iterator.next() else null
 
         private inline fun <reified T : NbtTag> readEntry(): T {
@@ -147,7 +147,7 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
     }
 
     private inner class NbtListReader(val parent: NbtTagReader, tag: NbtList<*>) : NbtTagReader {
-        private val iterator = tag.iterator()
+        private val iterator = tag.content.iterator()
         private var next = if (iterator.hasNext()) iterator.next() else null
 
         private inline fun <reified T : NbtTag> readEntry(): T {
@@ -203,7 +203,7 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         private val array = tag
         private var index = 0
 
-        override fun beginByteArrayEntry(): Boolean = index <= array.lastIndex
+        override fun beginByteArrayEntry(): Boolean = index <= array.content.lastIndex
 
         override fun endByteArray() {
             reader = parent
@@ -217,7 +217,7 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         private val array = tag
         private var index = 0
 
-        override fun beginIntArrayEntry(): Boolean = index <= array.lastIndex
+        override fun beginIntArrayEntry(): Boolean = index <= array.content.lastIndex
 
         override fun endIntArray() {
             reader = parent
@@ -231,7 +231,7 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         private val array = tag
         private var index = 0
 
-        override fun beginLongArrayEntry(): Boolean = index <= array.lastIndex
+        override fun beginLongArrayEntry(): Boolean = index <= array.content.lastIndex
 
         override fun endLongArray() {
             reader = parent

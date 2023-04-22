@@ -29,7 +29,7 @@ class ListSerializationTest : SerializationTest() {
     fun should_serialize_ByteArray_to_NbtByteArray() {
         defaultNbt.testSerialization(
             byteArrayOf(1, 2, 3),
-            NbtByteArray(byteArrayOf(1, 2, 3)),
+            NbtByteArray(listOf(1, 2, 3)),
             ByteArray::asList
         )
     }
@@ -38,7 +38,7 @@ class ListSerializationTest : SerializationTest() {
     fun should_serialize_IntArray_to_NbtIntArray() {
         defaultNbt.testSerialization(
             intArrayOf(1, 2, 3),
-            NbtIntArray(intArrayOf(1, 2, 3)),
+            NbtIntArray(listOf(1, 2, 3)),
             IntArray::asList
         )
     }
@@ -47,7 +47,7 @@ class ListSerializationTest : SerializationTest() {
     fun should_serialize_LongArray_to_NbtLongArray() {
         defaultNbt.testSerialization(
             longArrayOf(1L, 2L, 3L),
-            NbtLongArray(longArrayOf(1L, 2L, 3L)),
+            NbtLongArray(listOf(1L, 2L, 3L)),
             LongArray::asList
         )
     }

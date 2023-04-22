@@ -33,13 +33,13 @@ fun NbtTag.Companion.compareByBinary(): CompareBy<NbtTag> = CompareBy { nbtTag -
         is NbtFloat -> value.toRawBits()
         is NbtDouble -> value.toRawBits()
 
-        is NbtList<*> -> elementType to this.map { it.toBinaryEqualityStructure() }
+        is NbtList<*> -> elementType to content.map { it.toBinaryEqualityStructure() }
 
-        is NbtByteArray -> content.asList()
-        is NbtIntArray -> content.asList()
-        is NbtLongArray -> content.asList()
+        is NbtByteArray -> content
+        is NbtIntArray -> content
+        is NbtLongArray -> content
 
-        is NbtCompound -> mapValues { (_, value) -> value.toBinaryEqualityStructure() }
+        is NbtCompound -> content.mapValues { (_, value) -> value.toBinaryEqualityStructure() }
     }
 
     nbtTag.toBinaryEqualityStructure()

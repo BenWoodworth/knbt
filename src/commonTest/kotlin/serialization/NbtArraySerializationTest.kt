@@ -17,7 +17,7 @@ class NbtArraySerializationTest : SerializationTest() {
         defaultNbt.testSerialization(
             listAsNbtArraySerializer(),
             listOf<Byte>(1, 2, 3),
-            NbtByteArray(byteArrayOf(1, 2, 3))
+            NbtByteArray(listOf(1, 2, 3))
         )
     }
 
@@ -26,7 +26,7 @@ class NbtArraySerializationTest : SerializationTest() {
         defaultNbt.testSerialization(
             listAsNbtArraySerializer(),
             listOf(1, 2, 3),
-            NbtIntArray(intArrayOf(1, 2, 3))
+            NbtIntArray(listOf(1, 2, 3))
         )
     }
 
@@ -35,7 +35,7 @@ class NbtArraySerializationTest : SerializationTest() {
         defaultNbt.testSerialization(
             listAsNbtArraySerializer(),
             listOf(1L, 2L, 3L),
-            NbtLongArray(longArrayOf(1L, 2L, 3L))
+            NbtLongArray(listOf(1L, 2L, 3L))
         )
     }
 

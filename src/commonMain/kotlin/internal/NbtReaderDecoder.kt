@@ -194,12 +194,12 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         TAG_Long -> NbtLong(decodeLong())
         TAG_Float -> NbtFloat(decodeFloat())
         TAG_Double -> NbtDouble(decodeDouble())
-        TAG_Byte_Array -> NbtByteArray(decodeByteArray())
+        TAG_Byte_Array -> NbtByteArray(decodeByteArray().asList())
         TAG_String -> NbtString(decodeString())
         TAG_List -> decodeSerializableValue(NbtList.serializer(NbtTag.serializer()))
         TAG_Compound -> decodeSerializableValue(NbtCompound.serializer())
-        TAG_Int_Array -> NbtIntArray(decodeIntArray())
-        TAG_Long_Array -> NbtLongArray(decodeLongArray())
+        TAG_Int_Array -> NbtIntArray(decodeIntArray().asList())
+        TAG_Long_Array -> NbtLongArray(decodeLongArray().asList())
     }
 
     //region Unsupported types

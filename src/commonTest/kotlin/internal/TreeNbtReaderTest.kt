@@ -89,7 +89,7 @@ class TreeNbtReaderTest {
     @Test
     fun should_read_ByteArray_correctly() {
         TestValues.byteArrays.forEach { value ->
-            expectNbtReaderCalls(NbtByteArray(value)) {
+            expectNbtReaderCalls(NbtByteArray(value.asList())) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Byte_Array)
                 beginByteArray() shouldReturn ArrayInfo(value.size)
                 repeat(value.size) { index ->
@@ -105,7 +105,7 @@ class TreeNbtReaderTest {
     @Test
     fun should_read_IntArray_correctly() {
         TestValues.intArrays.forEach { value ->
-            expectNbtReaderCalls(NbtIntArray(value)) {
+            expectNbtReaderCalls(NbtIntArray(value.asList())) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Int_Array)
                 beginIntArray() shouldReturn ArrayInfo(value.size)
                 repeat(value.size) { index ->
@@ -121,7 +121,7 @@ class TreeNbtReaderTest {
     @Test
     fun should_read_LongArray_correctly() {
         TestValues.longArrays.forEach { value ->
-            expectNbtReaderCalls(NbtLongArray(value)) {
+            expectNbtReaderCalls(NbtLongArray(value.asList())) {
                 beginRootTag() shouldReturn RootTagInfo(TAG_Long_Array)
                 beginLongArray() shouldReturn ArrayInfo(value.size)
                 repeat(value.size) { index ->

@@ -27,7 +27,7 @@ internal class VerifyingNbtWriter(
         check(state is State.AwaitingValue)
         check(state.tag is NbtCompound)
 
-        stateHistory += State.InCompound(state.tag, state.tag.entries.toList(), 0, state.nextState)
+        stateHistory += State.InCompound(state.tag, state.tag.content.entries.toList(), 0, state.nextState)
     }
 
     override fun beginCompoundEntry(type: NbtTagType, name: String) {

@@ -61,6 +61,7 @@ kotlin {
             languageSettings.apply {
                 optIn("kotlin.contracts.ExperimentalContracts")
                 optIn("net.benwoodworth.knbt.InternalNbtApi")
+                optIn("net.benwoodworth.knbt.MIGRATION Acknowledge that NbtCompound now has a stricter get")
 
                 if (isTest) optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
             }

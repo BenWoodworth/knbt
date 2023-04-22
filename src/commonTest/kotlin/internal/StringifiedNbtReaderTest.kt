@@ -23,29 +23,23 @@ class StringifiedNbtReaderTest {
             is NbtFloat -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
             is NbtDouble -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
             is NbtByteArray -> assertContentEquals(
-                expected.toByteArray(),
+                expected.content.toByteArray(),
                 StringifiedNbt.decodeFromString(snbt)
             )
 
             is NbtIntArray -> assertContentEquals(
-                expected.toIntArray(),
+                expected.content.toIntArray(),
                 StringifiedNbt.decodeFromString(snbt)
             )
 
             is NbtLongArray -> assertContentEquals(
-                expected.toLongArray(),
+                expected.content.toLongArray(),
                 StringifiedNbt.decodeFromString(snbt)
             )
 
             is NbtString -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
-            is NbtCompound -> assertEquals(
-                expected.toMap(),
-                StringifiedNbt.decodeFromString(snbt)
-            )
-            is NbtList<*> -> assertEquals(
-                expected.toList(),
-                StringifiedNbt.decodeFromString(snbt)
-            )
+            is NbtCompound -> assertEquals(expected.content, StringifiedNbt.decodeFromString(snbt))
+            is NbtList<*> -> assertEquals(expected.content, StringifiedNbt.decodeFromString(snbt))
             else -> error("Unexpected type: ${expected::class}")
         }
     }
@@ -132,26 +126,26 @@ class StringifiedNbtReaderTest {
 
     @Test
     fun should_parse_ByteArray_correctly() {
-        check(NbtByteArray(byteArrayOf()), "[B;]")
-        check(NbtByteArray(byteArrayOf(1, 2, 3)), "[B; 1b, 2b, 3b]")
+        check(NbtByteArray(listOf()), "[B;]")
+        check(NbtByteArray(listOf(1, 2, 3)), "[B; 1b, 2b, 3b]")
 
-        check(NbtByteArray(byteArrayOf(1, 2, 3)), " [ B ; 1b , 2b , 3b ] ")
+        check(NbtByteArray(listOf(1, 2, 3)), " [ B ; 1b , 2b , 3b ] ")
     }
 
     @Test
     fun should_parse_IntArray_correctly() {
-        check(NbtIntArray(intArrayOf()), "[I;]")
-        check(NbtIntArray(intArrayOf(1, 2, 3)), "[I; 1, 2, 3]")
+        check(NbtIntArray(listOf()), "[I;]")
+        check(NbtIntArray(listOf(1, 2, 3)), "[I; 1, 2, 3]")
 
-        check(NbtIntArray(intArrayOf(1, 2, 3)), " [ I ; 1 , 2 , 3 ] ")
+        check(NbtIntArray(listOf(1, 2, 3)), " [ I ; 1 , 2 , 3 ] ")
     }
 
     @Test
     fun should_parse_LongArray_correctly() {
-        check(NbtLongArray(longArrayOf()), "[L;]")
-        check(NbtLongArray(longArrayOf(1, 2, 3)), "[L; 1l, 2l, 3l]")
+        check(NbtLongArray(listOf()), "[L;]")
+        check(NbtLongArray(listOf(1, 2, 3)), "[L; 1l, 2l, 3l]")
 
-        check(NbtLongArray(longArrayOf(1, 2, 3)), " [ L ; 1l , 2l , 3l ] ")
+        check(NbtLongArray(listOf(1, 2, 3)), " [ L ; 1l , 2l , 3l ] ")
     }
 
     @Test

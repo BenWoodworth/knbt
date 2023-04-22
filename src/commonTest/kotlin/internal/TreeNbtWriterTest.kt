@@ -91,7 +91,7 @@ class TreeNbtWriterTest {
     @Test
     fun should_write_ByteArray_correctly() {
         TestValues.byteArrays.forEach { value ->
-            expectNbtWriterCalls(NbtByteArray(value)) {
+            expectNbtWriterCalls(NbtByteArray(value.asList())) {
                 beginRootTag(TAG_Byte_Array)
                 beginByteArray(value.size)
                 value.forEach { entry ->
@@ -106,7 +106,7 @@ class TreeNbtWriterTest {
     @Test
     fun should_write_IntArray_correctly() {
         TestValues.intArrays.forEach { value ->
-            expectNbtWriterCalls(NbtIntArray(value)) {
+            expectNbtWriterCalls(NbtIntArray(value.asList())) {
                 beginRootTag(TAG_Int_Array)
                 beginIntArray(value.size)
                 value.forEach { entry ->
@@ -121,7 +121,7 @@ class TreeNbtWriterTest {
     @Test
     fun should_write_LongArray_correctly() {
         TestValues.longArrays.forEach { value ->
-            expectNbtWriterCalls(NbtLongArray(value)) {
+            expectNbtWriterCalls(NbtLongArray(value.asList())) {
                 beginRootTag(TAG_Long_Array)
                 beginLongArray(value.size)
                 value.forEach { entry ->

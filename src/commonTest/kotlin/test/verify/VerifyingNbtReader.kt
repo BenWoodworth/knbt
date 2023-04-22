@@ -27,7 +27,7 @@ internal class VerifyingNbtReader(
         check(state is State.AwaitingValue)
         check(state.tag is NbtCompound)
 
-        stateHistory += State.InCompound(state.tag, state.tag.entries.toList(), 0, false, state.nextState)
+        stateHistory += State.InCompound(state.tag, state.tag.content.entries.toList(), 0, false, state.nextState)
     }
 
     override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
@@ -59,8 +59,8 @@ internal class VerifyingNbtReader(
         check(state.tag is NbtList<*>)
 
         return if (knownSizes) {
-            val endState = State.InListOrArray(state.tag, state.tag.lastIndex + 1, true, state.nextState)
-            val consecutiveAwaitValueStates = state.tag.foldRight(endState, State::AwaitingValue)
+            val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
+            val consecutiveAwaitValueStates = state.tag.content.foldRight(endState, State::AwaitingValue)
             stateHistory += consecutiveAwaitValueStates
             NbtReader.ListInfo(state.tag.elementType, state.tag.size)
         } else {
@@ -101,8 +101,8 @@ internal class VerifyingNbtReader(
         check(state.tag is NbtByteArray)
 
         return if (knownSizes) {
-            val endState = State.InListOrArray(state.tag, state.tag.lastIndex + 1, true, state.nextState)
-            val consecutiveAwaitValueStates = state.tag.map(::NbtByte).foldRight(endState, State::AwaitingValue)
+            val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
+            val consecutiveAwaitValueStates = state.tag.content.map(::NbtByte).foldRight(endState, State::AwaitingValue)
             stateHistory += consecutiveAwaitValueStates
             NbtReader.ArrayInfo(state.tag.size)
         } else {
@@ -143,8 +143,8 @@ internal class VerifyingNbtReader(
         check(state.tag is NbtIntArray)
 
         return if (knownSizes) {
-            val endState = State.InListOrArray(state.tag, state.tag.lastIndex + 1, true, state.nextState)
-            val consecutiveAwaitValueStates = state.tag.map(::NbtInt).foldRight(endState, State::AwaitingValue)
+            val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
+            val consecutiveAwaitValueStates = state.tag.content.map(::NbtInt).foldRight(endState, State::AwaitingValue)
             stateHistory += consecutiveAwaitValueStates
             NbtReader.ArrayInfo(state.tag.size)
         } else {
@@ -185,8 +185,8 @@ internal class VerifyingNbtReader(
         check(state.tag is NbtLongArray)
 
         return if (knownSizes) {
-            val endState = State.InListOrArray(state.tag, state.tag.lastIndex + 1, true, state.nextState)
-            val consecutiveAwaitValueStates = state.tag.map(::NbtLong).foldRight(endState, State::AwaitingValue)
+            val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
+            val consecutiveAwaitValueStates = state.tag.content.map(::NbtLong).foldRight(endState, State::AwaitingValue)
             stateHistory += consecutiveAwaitValueStates
             NbtReader.ArrayInfo(state.tag.size)
         } else {

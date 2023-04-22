@@ -252,7 +252,7 @@ internal class NbtWriterEncoder(
             TAG_String -> writer.writeString((value as NbtString).value)
             TAG_Compound -> {
                 writer.beginCompound()
-                (value as NbtCompound).forEach { (key, value) ->
+                (value as NbtCompound).content.forEach { (key, value) ->
                     writer.beginCompoundEntry(value.type, key)
                     writeTag(value)
                 }
@@ -262,17 +262,40 @@ internal class NbtWriterEncoder(
                 val list = (value as NbtList<*>)
                 val listType = list.elementType
                 writer.beginList(listType, list.size)
-                list.forEach { entry ->
+                list.content.forEach { entry ->
                     writer.beginListEntry()
                     if (entry.type != listType) throw NbtEncodingException("Cannot encode ${entry.type} within a $TAG_List of $listType")
                     writeTag(entry)
                 }
                 writer.endList()
             }
-
-            TAG_Byte_Array -> writer.writeByteArray((value as NbtByteArray).content)
-            TAG_Int_Array -> writer.writeIntArray((value as NbtIntArray).content)
-            TAG_Long_Array -> writer.writeLongArray((value as NbtLongArray).content)
+            TAG_Byte_Array -> {
+                val array = (value as NbtByteArray)
+                writer.beginByteArray(array.size)
+                array.content.forEach { entry ->
+                    writer.beginByteArrayEntry()
+                    writer.writeByte(entry)
+                }
+                writer.endByteArray()
+            }
+            TAG_Int_Array -> {
+                val array = (value as NbtIntArray)
+                writer.beginIntArray(array.size)
+                array.content.forEach { entry ->
+                    writer.beginIntArrayEntry()
+                    writer.writeInt(entry)
+                }
+                writer.endIntArray()
+            }
+            TAG_Long_Array -> {
+                val array = (value as NbtLongArray)
+                writer.beginLongArray(array.size)
+                array.content.forEach { entry ->
+                    writer.beginLongArrayEntry()
+                    writer.writeLong(entry)
+                }
+                writer.endLongArray()
+            }
         }
 
         beginEncodingValue(tag.type)
