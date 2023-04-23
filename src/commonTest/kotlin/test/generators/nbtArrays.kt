@@ -7,20 +7,20 @@ import net.benwoodworth.knbt.NbtByteArray
 import net.benwoodworth.knbt.NbtIntArray
 import net.benwoodworth.knbt.NbtLongArray
 
-fun Arb.Companion.nbtByteArray(): Arb<NbtByteArray> = Arb
-    .list(Arb.nbtByte())
+fun Arb.Companion.nbtByteArray(size: IntRange = 0..4): Arb<NbtByteArray> = Arb
+    .list(Arb.nbtByte(), size)
     .map { list ->
         NbtByteArray(list.map { it.value })
     }
 
-fun Arb.Companion.nbtIntArray(): Arb<NbtIntArray> = Arb
-    .list(Arb.nbtInt())
+fun Arb.Companion.nbtIntArray(size: IntRange = 0..4): Arb<NbtIntArray> = Arb
+    .list(Arb.nbtInt(), size)
     .map { list ->
         NbtIntArray(list.map { it.value })
     }
 
-fun Arb.Companion.nbtLongArray(): Arb<NbtLongArray> = Arb
-    .list(Arb.nbtLong())
+fun Arb.Companion.nbtLongArray(size: IntRange = 0..4): Arb<NbtLongArray> = Arb
+    .list(Arb.nbtLong(), size)
     .map { list ->
         NbtLongArray(list.map { it.value })
     }
