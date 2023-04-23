@@ -9,13 +9,36 @@ import io.kotest.property.exhaustive.bytes
 import io.kotest.property.exhaustive.filter
 import io.kotest.property.exhaustive.map
 import kotlinx.coroutines.test.runTest
-import net.benwoodworth.knbt.test.generators.nbtCompound
-import net.benwoodworth.knbt.test.generators.nbtDouble
-import net.benwoodworth.knbt.test.generators.nbtFloat
+import net.benwoodworth.knbt.test.generators.*
 import kotlin.reflect.KProperty1
 import kotlin.test.*
 
 class NbtByteTest {
+    @Test
+    fun should_equal_another_NbtByte_with_the_same_value() = runTest {
+        checkAll(Arb.nbtByte()) { nbtByte ->
+            val nbtByteWithSameValue = NbtByte(nbtByte.value)
+
+            assertEquals(nbtByteWithSameValue, nbtByte)
+        }
+    }
+
+    @Test
+    fun should_not_equal_another_NbtByte_with_different_value() = runTest {
+        checkAll(Arb.nbtByte(), Arb.nbtByte()) { nbtByteA, nbtByteB ->
+            assume(nbtByteA.value != nbtByteB.value)
+
+            assertNotEquals(nbtByteA, nbtByteB)
+        }
+    }
+
+    @Test
+    fun hash_code_should_be_the_value_hash_code() = runTest {
+        checkAll(Arb.nbtByte()) { nbtByte ->
+            assertEquals(nbtByte.value.hashCode(), nbtByte.hashCode())
+        }
+    }
+
     @Test
     fun creating_from_false_boolean_should_return_0b() {
         assertEquals(NbtByte(0), NbtByte.fromBoolean(false))
@@ -39,6 +62,87 @@ class NbtByteTest {
 
         checkAll(nonZeroNbtBytes) { nbtByte ->
             assertEquals(true, nbtByte.toBoolean())
+        }
+    }
+}
+
+class NbtShortTest {
+    @Test
+    fun should_equal_another_NbtShort_with_the_same_value() = runTest {
+        checkAll(Arb.nbtShort()) { nbtShort ->
+            val nbtShortWithSameValue = NbtShort(nbtShort.value)
+
+            assertEquals(nbtShortWithSameValue, nbtShort)
+        }
+    }
+
+    @Test
+    fun should_not_equal_another_NbtShort_with_different_value() = runTest {
+        checkAll(Arb.nbtShort(), Arb.nbtShort()) { nbtShortA, nbtShortB ->
+            assume(nbtShortA.value != nbtShortB.value)
+
+            assertNotEquals(nbtShortA, nbtShortB)
+        }
+    }
+
+    @Test
+    fun hash_code_should_be_the_value_hash_code() = runTest {
+        checkAll(Arb.nbtShort()) { nbtShort ->
+            assertEquals(nbtShort.value.hashCode(), nbtShort.hashCode())
+        }
+    }
+}
+
+class NbtIntTest {
+    @Test
+    fun should_equal_another_NbtInt_with_the_same_value() = runTest {
+        checkAll(Arb.nbtInt()) { nbtInt ->
+            val nbtIntWithSameValue = NbtInt(nbtInt.value)
+
+            assertEquals(nbtIntWithSameValue, nbtInt)
+        }
+    }
+
+    @Test
+    fun should_not_equal_another_NbtInt_with_different_value() = runTest {
+        checkAll(Arb.nbtInt(), Arb.nbtInt()) { nbtIntA, nbtIntB ->
+            assume(nbtIntA.value != nbtIntB.value)
+
+            assertNotEquals(nbtIntA, nbtIntB)
+        }
+    }
+
+    @Test
+    fun hash_code_should_be_the_value_hash_code() = runTest {
+        checkAll(Arb.nbtInt()) { nbtInt ->
+            assertEquals(nbtInt.value.hashCode(), nbtInt.hashCode())
+        }
+    }
+}
+
+class NbtLongTest {
+    @Test
+    fun should_equal_another_NbtLong_with_the_same_value() = runTest {
+        checkAll(Arb.nbtLong()) { nbtLong ->
+            val nbtLongWithSameValue = NbtLong(nbtLong.value)
+
+            assertEquals(nbtLongWithSameValue, nbtLong)
+        }
+    }
+
+    @Test
+    fun should_not_equal_another_NbtLong_with_different_value() = runTest {
+        checkAll(Arb.nbtLong(), Arb.nbtLong()) { nbtLongA, nbtLongB ->
+            assume(nbtLongA.value != nbtLongB.value)
+
+            assertNotEquals(nbtLongA, nbtLongB)
+        }
+    }
+
+    @Test
+    fun hash_code_should_be_the_value_hash_code() = runTest {
+        checkAll(Arb.nbtLong()) { nbtLong ->
+            assertEquals(nbtLong.value.hashCode(), nbtLong.hashCode())
         }
     }
 }
@@ -93,6 +197,33 @@ class NbtDoubleTest {
     fun hash_code_should_be_the_value_bits_hash_code() = runTest {
         checkAll(Arb.nbtDouble()) { nbtDouble ->
             assertEquals(nbtDouble.value.toRawBits().hashCode(), nbtDouble.hashCode())
+        }
+    }
+}
+
+class NbtStringTest {
+    @Test
+    fun should_equal_another_NbtString_with_the_same_value() = runTest {
+        checkAll(Arb.nbtString()) { nbtString ->
+            val nbtStringWithSameValue = NbtString(nbtString.value)
+
+            assertEquals(nbtStringWithSameValue, nbtString)
+        }
+    }
+
+    @Test
+    fun should_not_equal_another_NbtString_with_different_value() = runTest {
+        checkAll(Arb.nbtString(), Arb.nbtString()) { nbtStringA, nbtStringB ->
+            assume(nbtStringA.value != nbtStringB.value)
+
+            assertNotEquals(nbtStringA, nbtStringB)
+        }
+    }
+
+    @Test
+    fun hash_code_should_be_the_value_hash_code() = runTest {
+        checkAll(Arb.nbtString()) { nbtString ->
+            assertEquals(nbtString.value.hashCode(), nbtString.hashCode())
         }
     }
 }

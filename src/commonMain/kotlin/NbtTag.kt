@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.internal.NbtTagType
 import net.benwoodworth.knbt.internal.appendNbtString
 import net.benwoodworth.knbt.internal.toNbtString
-import kotlin.jvm.JvmInline
 import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 
@@ -18,10 +17,14 @@ public sealed interface NbtTag {
     public val type: NbtTagType // TODO Make internal
 }
 
-@JvmInline
 @Serializable(with = NbtByteSerializer::class)
-public value class NbtByte(public val value: Byte) : NbtTag, @Suppress("DEPRECATION") NbtByteDeprecations {
+public class NbtByte(public val value: Byte) : NbtTag, @Suppress("DEPRECATION") NbtByteDeprecations {
     override val type: NbtTagType get() = NbtTagType.TAG_Byte
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other is NbtByte && value == other.value)
+
+    override fun hashCode(): Int = value.hashCode()
 
     override fun toString(): String = "${value}b"
 }
@@ -40,26 +43,38 @@ public fun NbtByte.Companion.fromBoolean(value: Boolean): NbtByte =
 public fun NbtByte.toBoolean(): Boolean =
     value != 0.toByte()
 
-@JvmInline
 @Serializable(NbtShortSerializer::class)
-public value class NbtShort(public val value: Short) : NbtTag {
+public class NbtShort(public val value: Short) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Short
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other is NbtShort && value == other.value)
+
+    override fun hashCode(): Int = value.hashCode()
 
     override fun toString(): String = "${value}s"
 }
 
-@JvmInline
 @Serializable(NbtIntSerializer::class)
-public value class NbtInt(public val value: Int) : NbtTag {
+public class NbtInt(public val value: Int) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Int
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other is NbtInt && value == other.value)
+
+    override fun hashCode(): Int = value.hashCode()
 
     override fun toString(): String = value.toString()
 }
 
-@JvmInline
 @Serializable(NbtLongSerializer::class)
-public value class NbtLong(public val value: Long) : NbtTag {
+public class NbtLong(public val value: Long) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Long
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other is NbtLong && value == other.value)
+
+    override fun hashCode(): Int = value.hashCode()
 
     override fun toString(): String = "${value}L"
 }
@@ -110,10 +125,14 @@ public class NbtByteArray(public val content: List<Byte>) : NbtTag, @Suppress("D
 public fun NbtByteArray.getOrNull(index: Int): Byte? =
     content.getOrNull(index)
 
-@JvmInline
 @Serializable(NbtStringSerializer::class)
-public value class NbtString(public val value: String) : NbtTag {
+public class NbtString(public val value: String) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_String
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other is NbtString && value == other.value)
+
+    override fun hashCode(): Int = value.hashCode()
 
     override fun toString(): String = value.toNbtString(true)
 }
