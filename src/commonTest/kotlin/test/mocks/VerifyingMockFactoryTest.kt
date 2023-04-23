@@ -1,10 +1,9 @@
 package net.benwoodworth.knbt.test.mocks
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.assertions.withClue
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.shouldBe
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 
 private interface MyInterface {
     fun functionWithReturn(arg: String): String
@@ -29,7 +28,7 @@ class VerifyingMockFactoryTest {
     //region Builder tests
     @Test
     fun builder_call_with_missing_return_at_the_end_should_error() {
-        shouldThrow<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             VerifyingMyInterfaceMock.create {
                 functionWithReturn("string") // missing `returns`
             }
@@ -38,7 +37,7 @@ class VerifyingMockFactoryTest {
 
     @Test
     fun builder_call_with_repeated_return_should_error() {
-        shouldThrow<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             VerifyingMyInterfaceMock.create {
                 val call = functionWithReturn("string")
                 call returns "normal return"
@@ -49,7 +48,7 @@ class VerifyingMockFactoryTest {
 
     @Test
     fun builder_call_with_return_from_another_call_should_error() {
-        shouldThrow<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             VerifyingMyInterfaceMock.create {
                 val wrongCall = functionWithReturn("string")
                 wrongCall returns "its own return value"
@@ -62,7 +61,7 @@ class VerifyingMockFactoryTest {
 
     @Test
     fun builder_with_call_that_is_missing_return_before_another_call_should_error() {
-        shouldThrow<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             VerifyingMyInterfaceMock.create {
                 functionWithReturn("string")
                 function(7)
@@ -94,7 +93,7 @@ class VerifyingMockFactoryTest {
             7
         }
 
-        returned shouldBe 7
+        assertEquals(7, returned)
     }
 
     @Test
@@ -106,14 +105,14 @@ class VerifyingMockFactoryTest {
             myInterface.function(2)
         }
 
-        firstResult.shouldBe("result")
+        assertEquals("result", firstResult)
     }
 
     @Test
     fun verify_with_incorrectly_repeated_call_should_fail() {
         var executedPastBadCall = false
 
-        shouldThrow<AssertionError> {
+        assertFailsWith<AssertionError> {
             verifier.verify { myInterface ->
                 myInterface.functionWithReturn("arg")
 
@@ -122,48 +121,42 @@ class VerifyingMockFactoryTest {
             }
         }
 
-        withClue("Executed past bad call") {
-            executedPastBadCall.shouldBe(false)
-        }
+        assertFalse(executedPastBadCall, "Executed past bad call")
     }
 
     @Test
     fun verify_with_incorrect_args_in_first_call_should_fail() {
         var executedPastBadCall = false
 
-        shouldThrow<AssertionError> {
+        assertFailsWith<AssertionError> {
             verifier.verify { myInterface ->
                 myInterface.functionWithReturn("incorrect arg")
                 executedPastBadCall = true
             }
         }
 
-        withClue("Executed past bad call") {
-            executedPastBadCall.shouldBeFalse()
-        }
+        assertFalse(executedPastBadCall, "Executed past bad call")
     }
 
     @Test
     fun verify_with_incorrect_function_for_first_call_should_fail() {
         var executedPastBadCall = false
 
-        shouldThrow<AssertionError> {
+        assertFailsWith<AssertionError> {
             verifier.verify { myInterface ->
                 myInterface.function(2)
                 executedPastBadCall = true
             }
         }
 
-        withClue("Executed past bad call") {
-            executedPastBadCall.shouldBeFalse()
-        }
+        assertFalse(executedPastBadCall, "Executed past bad call")
     }
 
     @Test
     fun verify_with_incorrect_arg_for_second_call_should_fail() {
         var executedPastBadCall = false
 
-        shouldThrow<AssertionError> {
+        assertFailsWith<AssertionError> {
             verifier.verify { myInterface ->
                 myInterface.functionWithReturn("arg")
                 myInterface.function(22222)
@@ -171,16 +164,14 @@ class VerifyingMockFactoryTest {
             }
         }
 
-        withClue("Executed past bad call") {
-            executedPastBadCall.shouldBeFalse()
-        }
+        assertFalse(executedPastBadCall, "Executed past bad call")
     }
 
     @Test
     fun verify_with_incorrect_function_for_second_call_should_fail() {
         var executedPastBadCall = false
 
-        shouldThrow<AssertionError> {
+        assertFailsWith<AssertionError> {
             verifier.verify { myInterface ->
                 myInterface.functionWithReturn("arg")
                 myInterface.functionWithReturn("arg")
@@ -188,14 +179,12 @@ class VerifyingMockFactoryTest {
             }
         }
 
-        withClue("Executed past bad call") {
-            executedPastBadCall.shouldBeFalse()
-        }
+        assertFalse(executedPastBadCall, "Executed past bad call")
     }
 
     @Test
     fun verify_with_call_is_missing_from_end_should_fail() {
-        shouldThrow<AssertionError> {
+        assertFailsWith<AssertionError> {
             verifier.verify { myInterface ->
                 myInterface.functionWithReturn("arg")
             }
@@ -206,7 +195,7 @@ class VerifyingMockFactoryTest {
     fun verify_with_extra_calls_at_end_should_fail() {
         var executedPastBadCall = false
 
-        shouldThrow<AssertionError> {
+        assertFailsWith<AssertionError> {
             verifier.verify { myInterface ->
                 myInterface.functionWithReturn("arg")
                 myInterface.function(2)
@@ -216,9 +205,7 @@ class VerifyingMockFactoryTest {
             }
         }
 
-        withClue("Executed past bad call") {
-            executedPastBadCall.shouldBeFalse()
-        }
+        assertFalse(executedPastBadCall, "Executed past bad call")
     }
     //endregion
 }

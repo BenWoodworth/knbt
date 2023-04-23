@@ -1,7 +1,5 @@
 package net.benwoodworth.knbt.internal
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.throwable.shouldHaveMessage
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
@@ -28,11 +26,11 @@ class BinaryNbtReaderTest {
                 reader.beginRootTag()
                 reader.beginCompound()
 
-                val error = shouldThrow<NbtDecodingException> {
+                val error = assertFailsWith<NbtDecodingException> {
                     reader.beginCompoundEntry()
                 }
 
-                error shouldHaveMessage "Unknown NBT tag type ID: 0xAB"
+                assertEquals(error.message, "Unknown NBT tag type ID: 0xAB", "Incorrect error message")
             }
     }
 
@@ -51,11 +49,11 @@ class BinaryNbtReaderTest {
                 reader.beginCompound()
                 reader.beginCompoundEntry()
 
-                val error = shouldThrow<NbtDecodingException> {
+                val error = assertFailsWith<NbtDecodingException> {
                     reader.beginList()
                 }
 
-                error shouldHaveMessage "Unknown NBT tag type ID: 0xCD"
+                assertEquals(error.message, "Unknown NBT tag type ID: 0xCD", "Incorrect error message")
             }
     }
 

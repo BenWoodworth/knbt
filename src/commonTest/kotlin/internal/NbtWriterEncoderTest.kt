@@ -1,13 +1,13 @@
 package net.benwoodworth.knbt.internal
 
-import io.kotest.matchers.maps.shouldHaveKey
-import io.kotest.matchers.maps.shouldHaveSize
-import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import net.benwoodworth.knbt.test.NbtFormat
 import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 class NbtWriterEncoderTest {
     @Test
@@ -27,8 +27,7 @@ class NbtWriterEncoderTest {
         encoder.encodeSerializableValue(MyClass.serializer(), myClass)
 
         val actualTag = encodedTag
-        actualTag.shouldBeInstanceOf<NbtCompound>()
-        actualTag.content shouldHaveSize 1
-        actualTag.content shouldHaveKey "RootKey"
+        assertIs<NbtCompound>(actualTag)
+        assertEquals(actualTag.content.keys, setOf("RootKey"), "Tag name")
     }
 }

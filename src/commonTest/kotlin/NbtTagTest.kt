@@ -1,7 +1,5 @@
 package net.benwoodworth.knbt
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.inspectors.forAll
 import io.kotest.property.Arb
 import io.kotest.property.Exhaustive
 import io.kotest.property.arbitrary.string
@@ -278,7 +276,7 @@ class NbtCompoundTest {
         checkAll(arbNbtCompound) { compound ->
             val names = compound.content.keys
 
-            names.forAll { containedName ->
+            names.forEach { containedName ->
                 assertSame(compound.content[containedName], compound[containedName])
             }
         }
@@ -289,7 +287,7 @@ class NbtCompoundTest {
         checkAll(arbNbtCompound, Arb.string()) { compound, nonContainedName ->
             assume(nonContainedName !in compound.content)
 
-            shouldThrow<NoSuchElementException> {
+            assertFailsWith<NoSuchElementException> {
                 compound[nonContainedName]
             }
         }
@@ -300,7 +298,7 @@ class NbtCompoundTest {
         checkAll(arbNbtCompound) { compound ->
             val names = compound.content.keys
 
-            names.forAll { containedName ->
+            names.forEach { containedName ->
                 assertSame(compound.content[containedName], compound[containedName])
             }
         }
@@ -311,7 +309,7 @@ class NbtCompoundTest {
         checkAll(arbNbtCompound, Arb.string()) { compound, nonContainedName ->
             assume(nonContainedName !in compound.content)
 
-            assertEquals(null, compound.getOrNull(nonContainedName))
+            assertNull(compound.getOrNull(nonContainedName))
         }
     }
 
@@ -320,7 +318,7 @@ class NbtCompoundTest {
         checkAll(arbNbtCompound) { compound ->
             val names = compound.content.keys
 
-            names.forAll { containedName ->
+            names.forEach { containedName ->
                 assertTrue(containedName in compound)
             }
         }

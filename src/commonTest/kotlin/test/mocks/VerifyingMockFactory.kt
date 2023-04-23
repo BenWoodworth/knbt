@@ -1,10 +1,9 @@
 package net.benwoodworth.knbt.test.mocks
 
-import io.kotest.assertions.withClue
-import io.kotest.matchers.collections.shouldStartWith
 import kotlin.jvm.JvmName
 import kotlin.reflect.KFunction
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 abstract class VerifyingMockFactory<T : Any, TBuilder : VerifyingMockFactory.Builder<T>>(
     private val builderConstructor: () -> TBuilder,
@@ -66,10 +65,13 @@ abstract class VerifyingMockFactory<T : Any, TBuilder : VerifyingMockFactory.Bui
             }
 
             if (assertionError != null) {
-                withClue(assertionError) {
                     val expectedCalls = expectedCallReturns.map { it.call }
-                    expectedCalls.shouldStartWith(actualCalls)
-                }
+
+                assertEquals(
+                    expectedCalls.take(actualCalls.size),
+                    actualCalls,
+                    "Began with the wrong calls. $assertionError"
+                )
             }
 
             // expectedCall == actualCall, so expectedCallReturn != null, and the return types are the same

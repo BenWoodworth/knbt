@@ -77,7 +77,6 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version")
-                implementation("io.kotest:kotest-assertions-core:$kotest_version")
                 implementation("io.kotest:kotest-property:$kotest_version")
             }
         }
