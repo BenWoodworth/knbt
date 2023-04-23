@@ -1,9 +1,11 @@
 package net.benwoodworth.knbt
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.inspectors.forAll
 import io.kotest.property.Arb
 import io.kotest.property.Exhaustive
-import io.kotest.property.PropTestConfig
+import io.kotest.property.arbitrary.string
+import io.kotest.property.assume
 import io.kotest.property.checkAll
 import io.kotest.property.exhaustive.bytes
 import io.kotest.property.exhaustive.filter
@@ -272,13 +274,64 @@ class NbtCompoundTest {
     private val arbNbtCompound = Arb.nbtCompound(1)
 
     @Test
-    fun should_get_entry_with_given_name() = runTest {
+    fun getting_a_tag_with_a_contained_name_should_return_the_tag_from_content() = runTest {
         checkAll(arbNbtCompound) { compound ->
             val names = compound.content.keys
 
-            names.forAll { name ->
-                assertSame(compound.content[name], compound[name])
+            names.forAll { containedName ->
+                assertSame(compound.content[containedName], compound[containedName])
             }
+        }
+    }
+
+    @Test
+    fun getting_a_tag_with_a_non_contained_name_should_throw_a_NoSuchElementException() = runTest {
+        checkAll(arbNbtCompound, Arb.string()) { compound, nonContainedName ->
+            assume(nonContainedName !in compound.content)
+
+            shouldThrow<NoSuchElementException> {
+                compound[nonContainedName]
+            }
+        }
+    }
+
+    @Test
+    fun getting_a_tag_or_null_with_a_contained_name_should_return_the_tag_from_content() = runTest {
+        checkAll(arbNbtCompound) { compound ->
+            val names = compound.content.keys
+
+            names.forAll { containedName ->
+                assertSame(compound.content[containedName], compound[containedName])
+            }
+        }
+    }
+
+    @Test
+    fun getting_a_tag_or_null_with_a_non_contained_name_should_return_null() = runTest {
+        checkAll(arbNbtCompound, Arb.string()) { compound, nonContainedName ->
+            assume(nonContainedName !in compound.content)
+
+            assertEquals(null, compound.getOrNull(nonContainedName))
+        }
+    }
+
+    @Test
+    fun checking_contains_with_a_name_in_the_content_should_return_true() = runTest {
+        checkAll(arbNbtCompound) { compound ->
+            val names = compound.content.keys
+
+            names.forAll { containedName ->
+                assertTrue(containedName in compound)
+            }
+        }
+    }
+
+    @Test
+    fun checking_contains_with_a_name_not_in_the_content_should_return_false() = runTest {
+        checkAll(arbNbtCompound, Arb.string()) { compound, nonContainedName ->
+            assume(nonContainedName !in compound.content)
+
+            assertFalse(nonContainedName in compound)
         }
     }
 
