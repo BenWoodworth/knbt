@@ -10,6 +10,8 @@ import io.kotest.property.exhaustive.filter
 import io.kotest.property.exhaustive.map
 import kotlinx.coroutines.test.runTest
 import net.benwoodworth.knbt.test.generators.nbtCompound
+import net.benwoodworth.knbt.test.generators.nbtDouble
+import net.benwoodworth.knbt.test.generators.nbtFloat
 import kotlin.reflect.KProperty1
 import kotlin.test.*
 
@@ -37,6 +39,60 @@ class NbtByteTest {
 
         checkAll(nonZeroNbtBytes) { nbtByte ->
             assertEquals(true, nbtByte.toBoolean())
+        }
+    }
+}
+
+class NbtFloatTest {
+    @Test
+    fun should_equal_another_NbtFloat_with_the_same_value_bits() = runTest {
+        checkAll(Arb.nbtFloat()) { nbtFloat ->
+            val nbtFloatWithSameValue = NbtFloat(nbtFloat.value)
+
+            assertEquals(nbtFloatWithSameValue, nbtFloat)
+        }
+    }
+
+    @Test
+    fun should_not_equal_another_NbtFloat_with_different_value_bits() = runTest {
+        checkAll(Arb.nbtFloat(), Arb.nbtFloat()) { nbtFloatA, nbtFloatB ->
+            assume(nbtFloatA.value.toRawBits() != nbtFloatB.value.toRawBits())
+
+            assertNotEquals(nbtFloatA, nbtFloatB)
+        }
+    }
+
+    @Test
+    fun hash_code_should_be_the_value_bits_hash_code() = runTest {
+        checkAll(Arb.nbtFloat()) { nbtFloat ->
+            assertEquals(nbtFloat.value.toRawBits().hashCode(), nbtFloat.hashCode())
+        }
+    }
+}
+
+class NbtDoubleTest {
+    @Test
+    fun should_equal_another_NbtDouble_with_the_same_value_bits() = runTest {
+        checkAll(Arb.nbtDouble()) { nbtDouble ->
+            val nbtDoubleWithSameValue = NbtDouble(nbtDouble.value)
+
+            assertEquals(nbtDoubleWithSameValue, nbtDouble)
+        }
+    }
+
+    @Test
+    fun should_not_equal_another_NbtDouble_with_different_value_bits() = runTest {
+        checkAll(Arb.nbtDouble(), Arb.nbtDouble()) { nbtDoubleA, nbtDoubleB ->
+            assume(nbtDoubleA.value.toRawBits() != nbtDoubleB.value.toRawBits())
+
+            assertNotEquals(nbtDoubleA, nbtDoubleB)
+        }
+    }
+
+    @Test
+    fun hash_code_should_be_the_value_bits_hash_code() = runTest {
+        checkAll(Arb.nbtDouble()) { nbtDouble ->
+            assertEquals(nbtDouble.value.toRawBits().hashCode(), nbtDouble.hashCode())
         }
     }
 }

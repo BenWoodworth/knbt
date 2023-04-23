@@ -64,18 +64,26 @@ public value class NbtLong(public val value: Long) : NbtTag {
     override fun toString(): String = "${value}L"
 }
 
-@JvmInline
 @Serializable(NbtFloatSerializer::class)
-public value class NbtFloat(public val value: Float) : NbtTag {
+public class NbtFloat(public val value: Float) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Float
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other is NbtFloat && value.toRawBits() == other.value.toRawBits())
+
+    override fun hashCode(): Int = value.toRawBits().hashCode()
 
     override fun toString(): String = "${value}f"
 }
 
-@JvmInline
 @Serializable(NbtDoubleSerializer::class)
-public value class NbtDouble(public val value: Double) : NbtTag {
+public class NbtDouble(public val value: Double) : NbtTag {
     override val type: NbtTagType get() = NbtTagType.TAG_Double
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other is NbtDouble && value.toRawBits() == other.value.toRawBits())
+
+    override fun hashCode(): Int = value.toRawBits().hashCode()
 
     override fun toString(): String = "${value}d"
 }

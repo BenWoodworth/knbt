@@ -338,19 +338,12 @@ public final class net/benwoodworth/knbt/NbtDeprecations$DefaultImpls {
 
 public final class net/benwoodworth/knbt/NbtDouble : net/benwoodworth/knbt/NbtTag {
 	public static final field Companion Lnet/benwoodworth/knbt/NbtDouble$Companion;
-	public static final synthetic fun box-impl (D)Lnet/benwoodworth/knbt/NbtDouble;
-	public static fun constructor-impl (D)D
+	public fun <init> (D)V
 	public fun equals (Ljava/lang/Object;)Z
-	public static fun equals-impl (DLjava/lang/Object;)Z
-	public static final fun equals-impl0 (DD)Z
 	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static fun getType-impl (D)Lnet/benwoodworth/knbt/internal/NbtTagType;
 	public final fun getValue ()D
 	public fun hashCode ()I
-	public static fun hashCode-impl (D)I
 	public fun toString ()Ljava/lang/String;
-	public static fun toString-impl (D)Ljava/lang/String;
-	public final synthetic fun unbox-impl ()D
 }
 
 public final class net/benwoodworth/knbt/NbtDouble$Companion {
@@ -427,19 +420,12 @@ public final class net/benwoodworth/knbt/NbtEncoderDeprecations$DefaultImpls {
 
 public final class net/benwoodworth/knbt/NbtFloat : net/benwoodworth/knbt/NbtTag {
 	public static final field Companion Lnet/benwoodworth/knbt/NbtFloat$Companion;
-	public static final synthetic fun box-impl (F)Lnet/benwoodworth/knbt/NbtFloat;
-	public static fun constructor-impl (F)F
+	public fun <init> (F)V
 	public fun equals (Ljava/lang/Object;)Z
-	public static fun equals-impl (FLjava/lang/Object;)Z
-	public static final fun equals-impl0 (FF)Z
 	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static fun getType-impl (F)Lnet/benwoodworth/knbt/internal/NbtTagType;
 	public final fun getValue ()F
 	public fun hashCode ()I
-	public static fun hashCode-impl (F)I
 	public fun toString ()Ljava/lang/String;
-	public static fun toString-impl (F)Ljava/lang/String;
-	public final synthetic fun unbox-impl ()F
 }
 
 public final class net/benwoodworth/knbt/NbtFloat$Companion {
@@ -885,6 +871,8 @@ public final class net/benwoodworth/knbt/NbtTagBuildersKt {
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;Ljava/lang/String;)Z
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;Lnet/benwoodworth/knbt/NbtByteArray;)Z
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;Lnet/benwoodworth/knbt/NbtCompound;)Z
+	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;Lnet/benwoodworth/knbt/NbtDouble;)Z
+	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;Lnet/benwoodworth/knbt/NbtFloat;)Z
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;Lnet/benwoodworth/knbt/NbtIntArray;)Z
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;Lnet/benwoodworth/knbt/NbtList;)Z
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;Lnet/benwoodworth/knbt/NbtLongArray;)Z
@@ -894,11 +882,9 @@ public final class net/benwoodworth/knbt/NbtTagBuildersKt {
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;[I)Z
 	public static final fun add (Lnet/benwoodworth/knbt/NbtListBuilder;[J)Z
 	public static final fun add-3lW3xnI (Lnet/benwoodworth/knbt/NbtListBuilder;B)Z
-	public static final fun add-D4QKtyY (Lnet/benwoodworth/knbt/NbtListBuilder;F)Z
 	public static final fun add-GRy0GgE (Lnet/benwoodworth/knbt/NbtListBuilder;S)Z
 	public static final fun add-M19EiRA (Lnet/benwoodworth/knbt/NbtListBuilder;Ljava/lang/String;)Z
 	public static final fun add-aovaPYI (Lnet/benwoodworth/knbt/NbtListBuilder;I)Z
-	public static final fun add-bYBW7uQ (Lnet/benwoodworth/knbt/NbtListBuilder;D)Z
 	public static final fun add-oD-xCG8 (Lnet/benwoodworth/knbt/NbtListBuilder;J)Z
 	public static final fun addNbtCompound (Lnet/benwoodworth/knbt/NbtListBuilder;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun addNbtList (Lnet/benwoodworth/knbt/NbtListBuilder;Lkotlin/jvm/functions/Function1;)Z
@@ -939,8 +925,8 @@ public final class net/benwoodworth/knbt/NbtTagKt {
 	public static final fun getNbtByte (Lnet/benwoodworth/knbt/NbtTag;)B
 	public static final fun getNbtByteArray (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtByteArray;
 	public static final fun getNbtCompound (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtCompound;
-	public static final fun getNbtDouble (Lnet/benwoodworth/knbt/NbtTag;)D
-	public static final fun getNbtFloat (Lnet/benwoodworth/knbt/NbtTag;)F
+	public static final fun getNbtDouble (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtDouble;
+	public static final fun getNbtFloat (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtFloat;
 	public static final fun getNbtInt (Lnet/benwoodworth/knbt/NbtTag;)I
 	public static final fun getNbtIntArray (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtIntArray;
 	public static final fun getNbtList (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtList;
