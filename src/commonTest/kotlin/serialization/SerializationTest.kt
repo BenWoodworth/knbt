@@ -29,6 +29,22 @@ abstract class SerializationTest {
         nbtTag: NbtTag,
         compareBy: CompareBy<T> = CompareBy.Self
     ) {
+        testEncoding(serializer, value, nbtTag)
+        testDecoding(serializer, nbtTag, value, compareBy)
+    }
+
+
+    protected inline fun <reified T> NbtFormat.testEncoding(
+        value: T,
+        nbtTag: NbtTag
+    ): Unit =
+        testEncoding(this.serializersModule.serializer(), value, nbtTag)
+
+    protected fun <T> NbtFormat.testEncoding(
+        serializer: KSerializer<T>,
+        value: T,
+        nbtTag: NbtTag
+    ) {
         run { // Serialize Value
             val writer = VerifyingNbtWriter(nbtTag)
             NbtWriterEncoder(this, writer).encodeSerializableValue(serializer, value)
@@ -42,18 +58,17 @@ abstract class SerializationTest {
 
             writer.assertComplete()
         }
-
-        testDeserialization(serializer, nbtTag, value, compareBy)
     }
 
-    protected inline fun <reified T> NbtFormat.testDeserialization(
+
+    protected inline fun <reified T> NbtFormat.testDecoding(
         nbtTag: NbtTag,
         value: T,
         compareBy: CompareBy<T> = CompareBy.Self
     ): Unit =
-        testDeserialization(this.serializersModule.serializer(), nbtTag, value, compareBy)
+        testDecoding(this.serializersModule.serializer(), nbtTag, value, compareBy)
 
-    protected fun <T> NbtFormat.testDeserialization(
+    protected fun <T> NbtFormat.testDecoding(
         serializer: KSerializer<T>,
         nbtTag: NbtTag,
         value: T,
