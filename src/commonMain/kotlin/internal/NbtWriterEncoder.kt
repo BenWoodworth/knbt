@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
@@ -9,6 +10,7 @@ import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeEncoder
+import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
@@ -106,7 +108,14 @@ internal class NbtWriterEncoder(
     }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder =
-        beginCompound(descriptor)
+        when (descriptor.kind) {
+            is PolymorphicKind -> throw UnsupportedOperationException(
+                "Unable to serialize type with serial name '${descriptor.serialName}'. " +
+                        "beginning structures with polymorphic serial kinds is not supported."
+            )
+
+            else -> beginCompound(descriptor)
+        }
 
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder =
         if (descriptor.kind == StructureKind.LIST) {
@@ -117,7 +126,7 @@ internal class NbtWriterEncoder(
                 NbtListKind.LongArray -> beginLongArray(collectionSize)
             }
         } else {
-            beginCompound(descriptor)
+            beginStructure(descriptor)
         }
 
     private fun beginCompound(descriptor: SerialDescriptor): CompositeEncoder {
@@ -302,6 +311,7 @@ internal class NbtWriterEncoder(
         writeTag(tag)
     }
 
+    @OptIn(InternalSerializationApi::class)
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
         fun isArraySerializer(arraySerializer: SerializationStrategy<*>, arrayKind: NbtListKind): Boolean =
             (elementListKind == null || elementListKind == arrayKind) && serializer == arraySerializer
@@ -310,7 +320,13 @@ internal class NbtWriterEncoder(
             isArraySerializer(ByteArraySerializer(), NbtListKind.ByteArray) -> encodeByteArray(value as ByteArray)
             isArraySerializer(IntArraySerializer(), NbtListKind.IntArray) -> encodeIntArray(value as IntArray)
             isArraySerializer(LongArraySerializer(), NbtListKind.LongArray) -> encodeLongArray(value as LongArray)
-            serializer.descriptor.kind is PolymorphicKind -> throw NbtEncodingException("Polymorphic serialization is not yet supported")
+
+            serializer is AbstractPolymorphicSerializer<*> ->
+                throw UnsupportedOperationException(
+                    "Unable to serialize type with serial name '${serializer.descriptor.serialName}'. " +
+                            "The builtin polymorphic serializers are not yet supported."
+                )
+
             else -> super.encodeSerializableValue(serializer, value)
         }
     }

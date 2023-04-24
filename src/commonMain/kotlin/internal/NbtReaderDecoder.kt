@@ -2,6 +2,7 @@ package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
@@ -11,6 +12,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
@@ -141,15 +143,20 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
 
     //region Structure begin*() functions
     final override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder =
-        if (descriptor.kind == StructureKind.LIST) {
-            when (elementListKind ?: descriptor.nbtListKind) {
+        when (descriptor.kind) {
+            StructureKind.LIST -> when (elementListKind ?: descriptor.nbtListKind) {
                 NbtListKind.List -> beginList()
                 NbtListKind.ByteArray -> beginByteArray()
                 NbtListKind.IntArray -> beginIntArray()
                 NbtListKind.LongArray -> beginLongArray()
             }
-        } else {
-            beginCompound(descriptor)
+
+            is PolymorphicKind -> throw UnsupportedOperationException(
+                "Unable to serialize type with serial name '${descriptor.serialName}'. " +
+                        "beginning structures with polymorphic serial kinds is not supported."
+            )
+
+            else -> beginCompound(descriptor)
         }
 
     private fun beginCompound(descriptor: SerialDescriptor): CompositeDecoder {
@@ -227,6 +234,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         super.decodeSerializableValue(deserializer, previousValue)
     //endregion
 
+    @OptIn(InternalSerializationApi::class)
     override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
         fun isArraySerializer(arraySerializer: SerializationStrategy<*>, arrayKind: NbtListKind): Boolean =
             deserializer == arraySerializer && (elementListKind == null || elementListKind == arrayKind)
@@ -236,7 +244,13 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
             isArraySerializer(ByteArraySerializer(), NbtListKind.ByteArray) -> decodeByteArray() as T
             isArraySerializer(IntArraySerializer(), NbtListKind.IntArray) -> decodeIntArray() as T
             isArraySerializer(LongArraySerializer(), NbtListKind.LongArray) -> decodeLongArray() as T
-            deserializer.descriptor.kind is PolymorphicKind -> throw NbtDecodingException("Polymorphic serialization is not yet supported")
+
+            deserializer is AbstractPolymorphicSerializer<*> ->
+                throw UnsupportedOperationException(
+                    "Unable to serialize type with serial name '${deserializer.descriptor.serialName}'. " +
+                            "The builtin polymorphic serializers are not yet supported."
+                )
+
             else -> super.decodeSerializableValue(deserializer)
         }
     }
