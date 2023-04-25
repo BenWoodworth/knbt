@@ -919,6 +919,15 @@ public final class net/benwoodworth/knbt/NbtTagKt {
 	public static final fun toBoolean (Lnet/benwoodworth/knbt/NbtByte;)Z
 }
 
+public abstract class net/benwoodworth/knbt/NbtTransformingSerializer : kotlinx/serialization/KSerializer {
+	public fun <init> (Lkotlinx/serialization/KSerializer;)V
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	protected fun transformDeserialize (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtTag;
+	protected fun transformSerialize (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtTag;
+}
+
 public abstract class net/benwoodworth/knbt/NbtVariant {
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun toString ()Ljava/lang/String;
