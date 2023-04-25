@@ -1,58 +1,68 @@
 /*
+ * NOTICE: Modified from `JsonTransformingSerializer` in kotlinx.serialization v1.5.0.
+ *
  * Copyright 2017-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
 @file:Suppress("DeprecatedCallableAddReplaceWith")
 
-package kotlinx.serialization.json
+package net.benwoodworth.knbt
 
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import kotlinx.serialization.json.internal.*
+import net.benwoodworth.knbt.internal.*
+import net.benwoodworth.knbt.internal.NbtDecoder
+import net.benwoodworth.knbt.internal.TreeNbtReader
+import net.benwoodworth.knbt.internal.TreeNbtWriter
 
 /**
- * Base class for custom serializers that allows manipulating an abstract JSON
+ * Base class for custom serializers that allows manipulating an abstract NBT
  * representation of the class before serialization or deserialization.
  *
- * [JsonTransformingSerializer] provides capabilities to manipulate [JsonElement] representation
+ * [NbtTransformingSerializer] provides capabilities to manipulate [NbtTag] representation
  * directly instead of interacting with [Encoder] and [Decoder] in order to apply a custom
- * transformation to the JSON.
- * Please note that this class expects that [Encoder] and [Decoder] are implemented by [JsonDecoder] and [JsonEncoder],
- * i.e. serializers derived from this class work only with [Json] format.
+ * transformation to the NBT.
+ * Please note that this class expects that [Encoder] and [Decoder] are implemented by [NbtDecoder] and [NbtEncoder],
+ * i.e. serializers derived from this class work only with [NBT format][NbtFormat].
  *
- * There are two methods in which JSON transformation can be defined: [transformSerialize] and [transformDeserialize].
+ * There are two methods in which NBT transformation can be defined: [transformSerialize] and [transformDeserialize].
  * You can override one or both of them. Consult their documentation for details.
  *
  * Usage example:
  *
  * ```
  * @Serializable
+ * @SerialName("Example")
  * data class Example(
- *     @Serializable(UnwrappingJsonListSerializer::class) val data: String
+ *     @Serializable(UnwrappingNbtListSerializer::class)
+ *     val data: String
  * )
+ *
  * // Unwraps a list to a single object
- * object UnwrappingJsonListSerializer :
- *     JsonTransformingSerializer<String>(String.serializer()) {
- *     override fun transformDeserialize(element: JsonElement): JsonElement {
- *         if (element !is JsonArray) return element
- *         require(element.size == 1) { "Array size must be equal to 1 to unwrap it" }
- *         return element.first()
+ * object UnwrappingNbtListSerializer :
+ *     NbtTransformingSerializer<String>(String.serializer()) {
+ *
+ *     override fun transformDeserialize(tag: NbtTag): NbtTag {
+ *         if (tag !is NbtList<*>) return tag
+ *         require(tag.size == 1) { "List size must be equal to 1 to unwrap it" }
+ *         return tag[0]
  *     }
  * }
+ *
  * // Now these functions both yield correct result:
- * Json.parse(Example.serializer(), """{"data":["str1"]}""")
- * Json.parse(Example.serializer(), """{"data":"str1"}""")
+ * StringifiedNbt.decodeFromString(Example.serializer(), """{Example:{data:["str1"]}}""")
+ * StringifiedNbt.decodeFromString(Example.serializer(), """{Example:{data:"str1"}}""")
  * ```
  *
  * @param T A type for Kotlin property for which this serializer could be applied.
- *        **Not** the type that you may encounter in JSON. (e.g. if you unwrap a list
+ *        **Not** the type that you may encounter in NBT. (e.g. if you unwrap a list
  *        to a single value `T`, use `T`, not `List<T>`)
- * @param tSerializer A serializer for type [T]. Determines [JsonElement] which is passed to [transformSerialize].
- *        Should be able to parse [JsonElement] from [transformDeserialize] function.
+ * @param tSerializer A serializer for type [T]. Determines [NbtTag] which is passed to [transformSerialize].
+ *        Should be able to parse [NbtTag] from [transformDeserialize] function.
  *        Usually, default [serializer] is sufficient.
  */
-public abstract class JsonTransformingSerializer<T : Any>(
+public abstract class NbtTransformingSerializer<T : Any>(
     private val tSerializer: KSerializer<T>
 ) : KSerializer<T> {
 
@@ -60,40 +70,47 @@ public abstract class JsonTransformingSerializer<T : Any>(
      * A descriptor for this transformation.
      * By default, it delegates to [tSerializer]'s descriptor.
      *
-     * However, this descriptor can be overridden to achieve better representation of the resulting JSON shape
+     * However, this descriptor can be overridden to achieve better representation of the resulting NBT shape
      * for schema generating or introspection purposes.
      */
     override val descriptor: SerialDescriptor get() = tSerializer.descriptor
 
     final override fun serialize(encoder: Encoder, value: T) {
-        val output = encoder.asJsonEncoder()
-        var element = output.json.writeJson(value, tSerializer)
-        element = transformSerialize(element)
-        output.encodeJsonElement(element)
+        val output = encoder.asNbtEncoder()
+        var element: NbtTag? = null
+
+        @OptIn(ExperimentalSerializationApi::class)
+        DefaultNbtEncoder(output.nbt, TreeNbtWriter { element = it })
+            .encodeSerializableValue(tSerializer, value)
+
+        checkNotNull(element) { "Expected element to be initialized by TreeNbtWriter"}
+        output.encodeNbtTag(transformSerialize(element!!))
     }
 
     final override fun deserialize(decoder: Decoder): T {
-        val input = decoder.asJsonDecoder()
-        val element = input.decodeJsonElement()
-        return input.json.decodeFromJsonElement(tSerializer, transformDeserialize(element))
+        val input = decoder.asNbtDecoder()
+        val element = input.decodeNbtTag()
+
+        return NbtDecoder(input.nbt, TreeNbtReader(transformDeserialize(element)))
+            .decodeSerializableValue(tSerializer)
     }
 
     /**
      * Transformation that happens during [deserialize] call.
      * Does nothing by default.
      *
-     * During deserialization, a value from JSON is firstly decoded to a [JsonElement],
+     * During deserialization, a value from NBT is firstly decoded to a [NbtTag],
      * user transformation in [transformDeserialize] is applied,
-     * and then resulting [JsonElement] is deserialized to [T] with [tSerializer].
+     * and then resulting [NbtTag] is deserialized to [T] with [tSerializer].
      */
-    protected open fun transformDeserialize(element: JsonElement): JsonElement = element
+    protected open fun transformDeserialize(tag: NbtTag): NbtTag = tag
 
     /**
      * Transformation that happens during [serialize] call.
      * Does nothing by default.
      *
-     * During serialization, a value of type [T] is serialized with [tSerializer] to a [JsonElement],
-     * user transformation in [transformSerialize] is applied, and then resulting [JsonElement] is encoded to a JSON string.
+     * During serialization, a value of type [T] is serialized with [tSerializer] to a [NbtTag],
+     * user transformation in [transformSerialize] is applied, and then resulting [NbtTag] is encoded to NBT.
      */
-    protected open fun transformSerialize(element: JsonElement): JsonElement = element
+    protected open fun transformSerialize(tag: NbtTag): NbtTag = tag
 }
