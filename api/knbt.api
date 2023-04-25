@@ -233,6 +233,14 @@ public final class net/benwoodworth/knbt/NbtConfiguration : net/benwoodworth/knb
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract class net/benwoodworth/knbt/NbtContentPolymorphicSerializer : kotlinx/serialization/KSerializer {
+	public fun <init> (Lkotlin/reflect/KClass;)V
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	protected abstract fun selectDeserializer (Lnet/benwoodworth/knbt/NbtTag;)Lkotlinx/serialization/DeserializationStrategy;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
 public abstract interface class net/benwoodworth/knbt/NbtDecoder : kotlinx/serialization/encoding/Decoder {
 	public abstract fun beginByteArray (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lnet/benwoodworth/knbt/CompositeNbtDecoder;
 	public abstract fun beginCompound (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lnet/benwoodworth/knbt/CompositeNbtDecoder;
