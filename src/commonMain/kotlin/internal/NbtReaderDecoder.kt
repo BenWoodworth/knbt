@@ -151,10 +151,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
                 NbtListKind.LongArray -> beginLongArray()
             }
 
-            is PolymorphicKind -> throw UnsupportedOperationException(
-                "Unable to serialize type with serial name '${descriptor.serialName}'. " +
-                        "beginning structures with polymorphic serial kinds is not supported."
-            )
+            is PolymorphicKind -> NbtPolymorphicStructureDecoder(this)
 
             else -> beginCompound(descriptor)
         }
@@ -234,7 +231,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         super.decodeSerializableValue(deserializer, previousValue)
     //endregion
 
-    @OptIn(InternalSerializationApi::class)
     override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
         fun isArraySerializer(arraySerializer: SerializationStrategy<*>, arrayKind: NbtListKind): Boolean =
             deserializer == arraySerializer && (elementListKind == null || elementListKind == arrayKind)
@@ -244,12 +240,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
             isArraySerializer(ByteArraySerializer(), NbtListKind.ByteArray) -> decodeByteArray() as T
             isArraySerializer(IntArraySerializer(), NbtListKind.IntArray) -> decodeIntArray() as T
             isArraySerializer(LongArraySerializer(), NbtListKind.LongArray) -> decodeLongArray() as T
-
-            deserializer is AbstractPolymorphicSerializer<*> ->
-                throw UnsupportedOperationException(
-                    "Unable to serialize type with serial name '${deserializer.descriptor.serialName}'. " +
-                            "The builtin polymorphic serializers are not yet supported."
-                )
 
             else -> super.decodeSerializableValue(deserializer)
         }
@@ -503,4 +493,65 @@ private class LongArrayNbtDecoder(
     override fun beginEntry(): Boolean = reader.beginLongArrayEntry()
 
     override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endLongArray()
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+private class NbtPolymorphicStructureDecoder(
+    private val parentDecoder: NbtDecoder,
+) : AbstractNbtDecoder() {
+    override val serializersModule: SerializersModule
+        get() = parentDecoder.serializersModule
+
+    override val nbt: NbtFormat
+        get() = parentDecoder.nbt
+
+    override fun decodeNbtTag(): NbtTag {
+        TODO("Not yet implemented")
+    }
+
+//    override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
+//        descriptor.getElementName(index)
+//
+//
+//    }
+
+    var elementIndex = 0
+
+    private val type: String
+    private val serializedValue: NbtTag
+
+    init {
+        val serializedTag = parentDecoder.decodeNbtTag().nbtCompound
+
+        type = serializedTag["type"].string
+
+        serializedValue = buildNbtCompound {
+            serializedTag.content.entries.forEach { (name, tag) ->
+                if (name != "type") put(name, tag)
+            }
+        }
+    }
+
+    override fun decodeElementIndex(descriptor: SerialDescriptor): Int = elementIndex
+
+    override fun decodeString(): String {
+        elementIndex = 1
+        return type
+    }
+
+    override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
+        elementIndex = CompositeDecoder.DECODE_DONE
+        return nbt.decodeFromNbtTag(deserializer, serializedValue)
+    }
+
+//    override fun endStructure(descriptor: SerialDescriptor) {
+//        val valueWithType = buildNbtCompound {
+//            put("type", type!!)
+//            serializedValue!!.nbtCompound.content.forEach { (name, tag) ->
+//                put(name, tag)
+//            }
+//        }
+//
+//        parentEncoder.encodeNbtTag(valueWithType)
+//    }
 }

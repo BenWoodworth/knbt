@@ -109,11 +109,7 @@ internal class NbtWriterEncoder(
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder =
         when (descriptor.kind) {
-            is PolymorphicKind -> throw UnsupportedOperationException(
-                "Unable to serialize type with serial name '${descriptor.serialName}'. " +
-                        "beginning structures with polymorphic serial kinds is not supported."
-            )
-
+            is PolymorphicKind -> NbtPolymorphicStructureEncoder(this)
             else -> beginCompound(descriptor)
         }
 
@@ -311,7 +307,6 @@ internal class NbtWriterEncoder(
         writeTag(tag)
     }
 
-    @OptIn(InternalSerializationApi::class)
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
         fun isArraySerializer(arraySerializer: SerializationStrategy<*>, arrayKind: NbtListKind): Boolean =
             (elementListKind == null || elementListKind == arrayKind) && serializer == arraySerializer
@@ -321,13 +316,50 @@ internal class NbtWriterEncoder(
             isArraySerializer(IntArraySerializer(), NbtListKind.IntArray) -> encodeIntArray(value as IntArray)
             isArraySerializer(LongArraySerializer(), NbtListKind.LongArray) -> encodeLongArray(value as LongArray)
 
-            serializer is AbstractPolymorphicSerializer<*> ->
-                throw UnsupportedOperationException(
-                    "Unable to serialize type with serial name '${serializer.descriptor.serialName}'. " +
-                            "The builtin polymorphic serializers are not yet supported."
-                )
-
             else -> super.encodeSerializableValue(serializer, value)
         }
+    }
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+private class NbtPolymorphicStructureEncoder(
+    private val parentEncoder: NbtEncoder,
+) : AbstractNbtEncoder() {
+    override val serializersModule: SerializersModule
+        get() = parentEncoder.serializersModule
+
+    override val nbt: NbtFormat
+        get() = parentEncoder.nbt
+
+    override fun encodeNbtTag(tag: NbtTag) {
+        TODO("Not yet implemented")
+    }
+
+    private var type: String? = null
+    private var serializedValue: NbtTag? = null
+
+//    override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
+//        descriptor.getElementName(index)
+//
+//
+//    }
+
+    override fun encodeString(value: String) {
+        type = value
+    }
+
+    override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
+        serializedValue = nbt.encodeToNbtTag(serializer, value)
+    }
+
+    override fun endStructure(descriptor: SerialDescriptor) {
+        val valueWithType = buildNbtCompound {
+            put("type", type!!)
+            serializedValue!!.nbtCompound.content.forEach { (name, tag) ->
+                put(name, tag)
+            }
+        }
+
+        parentEncoder.encodeNbtTag(valueWithType)
     }
 }
