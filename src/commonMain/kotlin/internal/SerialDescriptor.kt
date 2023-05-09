@@ -4,6 +4,8 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.SerialKind
+import kotlinx.serialization.descriptors.elementNames
 import net.benwoodworth.knbt.NbtArray
 import net.benwoodworth.knbt.NbtNamed
 
@@ -55,3 +57,29 @@ internal val SerialDescriptor.nbtNamed: String?
         .firstOrNull { it is NbtNamed }
         ?.let { it as NbtNamed }
         ?.name
+
+@OptIn(ExperimentalSerializationApi::class)
+internal inline fun SerialDescriptor.checkPolymorphicStructure(onError: (message: String) -> Unit) {
+    val message = when {
+        elementsCount != 2 -> {
+            val elements = elementNames.toList()
+            "Expected polymorphic structure 2 elements named 'type' and 'value', but got $elementsCount: $elements"
+        }
+
+        getElementName(0) != "type" ->
+            "Expected polymorphic structure element 0 to be named 'type', but got '${getElementName(0)}'"
+
+        getElementDescriptor(0).kind != PrimitiveKind.STRING ->
+            "Expected polymorphic structure 'type' to have kind STRING, but got ${getElementDescriptor(0).kind}"
+
+        getElementName(1) != "value" ->
+            "Expected polymorphic structure element 1 to be named 'value', but got '${getElementName(1)}'"
+
+        getElementDescriptor(1).kind != SerialKind.CONTEXTUAL ->
+            "Expected polymorphic structure 'value' to have kind CONTEXTUAL, but got ${getElementDescriptor(1).kind}"
+
+        else -> null
+    }
+
+    if (message != null) onError(message)
+}

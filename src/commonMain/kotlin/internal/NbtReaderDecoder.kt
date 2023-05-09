@@ -2,17 +2,16 @@ package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
 import kotlinx.serialization.descriptors.PolymorphicKind
+import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
@@ -151,7 +150,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
                 NbtListKind.LongArray -> beginLongArray()
             }
 
-            is PolymorphicKind -> NbtPolymorphicStructureDecoder(this)
+            is PolymorphicKind -> NbtPolymorphicStructureDecoder(this, descriptor)
 
             else -> beginCompound(descriptor)
         }
@@ -498,7 +497,14 @@ private class LongArrayNbtDecoder(
 @OptIn(ExperimentalSerializationApi::class)
 private class NbtPolymorphicStructureDecoder(
     private val parentDecoder: NbtDecoder,
+    private val descriptor: SerialDescriptor
 ) : AbstractNbtDecoder() {
+    init {
+        descriptor.checkPolymorphicStructure { errorMessage ->
+            throw NbtDecodingException(errorMessage)
+        }
+    }
+
     override val serializersModule: SerializersModule
         get() = parentDecoder.serializersModule
 
@@ -508,6 +514,8 @@ private class NbtPolymorphicStructureDecoder(
     override fun decodeNbtTag(): NbtTag {
         TODO("Not yet implemented")
     }
+
+
 
 //    override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
 //        descriptor.getElementName(index)
@@ -532,6 +540,9 @@ private class NbtPolymorphicStructureDecoder(
         }
     }
 
+    @ExperimentalSerializationApi
+    override fun decodeSequentially(): Boolean = true
+
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int = elementIndex
 
     override fun decodeString(): String {
@@ -539,10 +550,13 @@ private class NbtPolymorphicStructureDecoder(
         return type
     }
 
-    override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
-        elementIndex = CompositeDecoder.DECODE_DONE
-        return nbt.decodeFromNbtTag(deserializer, serializedValue)
-    }
+    override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T =
+        if (elementIndex == 0) {
+            deserializer.deserialize(this)
+        } else {
+            elementIndex = CompositeDecoder.DECODE_DONE
+            nbt.decodeFromNbtTag(deserializer, serializedValue)
+        }
 
 //    override fun endStructure(descriptor: SerialDescriptor) {
 //        val valueWithType = buildNbtCompound {

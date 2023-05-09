@@ -1,9 +1,12 @@
 package net.benwoodworth.knbt.serialization
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.internal.NbtDecodingException
+import net.benwoodworth.knbt.internal.NbtEncodingException
 import net.benwoodworth.knbt.internal.NbtReaderDecoder
 import net.benwoodworth.knbt.internal.NbtWriterEncoder
 import net.benwoodworth.knbt.test.CompareBy
@@ -12,8 +15,16 @@ import net.benwoodworth.knbt.test.assertEquals
 import net.benwoodworth.knbt.test.compareByBinary
 import net.benwoodworth.knbt.test.verify.VerifyingNbtReader
 import net.benwoodworth.knbt.test.verify.VerifyingNbtWriter
+import kotlin.test.assertFailsWith
 
 abstract class SerializationTest {
+    protected data class TestCase<T>(
+        val serializer: KSerializer<T>,
+        val value: T,
+        val nbtTag: NbtTag,
+        val compareBy: CompareBy<T> = CompareBy.Self
+    )
+
     protected val defaultNbt: NbtFormat = NbtFormat()
 
     protected inline fun <reified T> NbtFormat.testSerialization(
@@ -31,6 +42,11 @@ abstract class SerializationTest {
     ) {
         testEncoding(serializer, value, nbtTag)
         testDecoding(serializer, nbtTag, value, compareBy)
+    }
+
+    protected fun <T> NbtFormat.testSerialization(testCase: TestCase<T>) {
+        testEncoding(testCase.serializer, testCase.value, testCase.nbtTag)
+        testDecoding(testCase.serializer, testCase.nbtTag, testCase.value, testCase.compareBy)
     }
 
 
@@ -101,4 +117,39 @@ abstract class SerializationTest {
             NbtTag.compareByBinary().assertEquals(nbtTag, deserializedNbtTag, "Deserialized nbtTag incorrectly")
         }
     }
+
+
+    protected fun <T> NbtFormat.testSerializationForNbtException(
+        serializer: KSerializer<T>,
+        value: T,
+        nbtTag: NbtTag,
+        failureAssertions: (failure: SerializationException) -> Unit = {}
+    ) {
+        run { // Serialize Value
+            val failure = assertFailsWith<NbtEncodingException> { // Serialize Value
+                val writer = VerifyingNbtWriter(nbtTag)
+                NbtWriterEncoder(this, writer).encodeSerializableValue(serializer, value)
+
+                writer.assertComplete()
+            }
+            failureAssertions(failure)
+        }
+
+        run { // Deserialize Value
+            val failure = assertFailsWith<NbtDecodingException> { // Deserialize Value
+                val reader = VerifyingNbtReader(nbtTag)
+                val decoder = NbtReaderDecoder(this, reader)
+                decoder.decodeSerializableValue(serializer)
+
+                reader.assertComplete()
+            }
+            failureAssertions(failure)
+        }
+    }
+
+    protected fun <T> NbtFormat.testSerializationForNbtException(
+        testCase: TestCase<T>,
+        failureAssertions: (failure: SerializationException) -> Unit = {}
+    ): Unit =
+        testSerializationForNbtException(testCase.serializer, testCase.value, testCase.nbtTag, failureAssertions)
 }

@@ -1,16 +1,15 @@
 package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
 import kotlinx.serialization.descriptors.PolymorphicKind
+import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeEncoder
-import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
@@ -59,33 +58,41 @@ internal class NbtWriterEncoder(
             null -> {
                 writer.beginRootTag(type)
             }
+
             TAG_Compound -> {
                 if (encodingMapKey) throw NbtEncodingException("Only String tag names are supported")
                 writer.beginCompoundEntry(type, elementName)
             }
+
             TAG_List -> when (val listType = listTypeStack.last()) {
                 TAG_End -> {
                     listTypeStack[listTypeStack.lastIndex] = type
                     writer.beginList(type, listSize)
                     writer.beginListEntry()
                 }
+
                 type -> {
                     writer.beginListEntry()
                 }
+
                 else -> throw NbtEncodingException("Cannot encode $type within a $TAG_List of $listType")
             }
+
             TAG_Byte_Array -> {
                 if (type != TAG_Byte) throw NbtEncodingException("Cannot encode $type within a $TAG_Byte_Array")
                 writer.beginByteArrayEntry()
             }
+
             TAG_Int_Array -> {
                 if (type != TAG_Int) throw NbtEncodingException("Cannot encode $type within a $TAG_Int_Array")
                 writer.beginIntArrayEntry()
             }
+
             TAG_Long_Array -> {
                 if (type != TAG_Long) throw NbtEncodingException("Cannot encode $type within a $TAG_Long_Array")
                 writer.beginLongArrayEntry()
             }
+
             else -> error("Unhandled structure type: $structureType")
         }
     }
@@ -109,7 +116,7 @@ internal class NbtWriterEncoder(
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder =
         when (descriptor.kind) {
-            is PolymorphicKind -> NbtPolymorphicStructureEncoder(this)
+            is PolymorphicKind -> NbtPolymorphicStructureEncoder(this, descriptor)
             else -> beginCompound(descriptor)
         }
 
@@ -168,10 +175,12 @@ internal class NbtWriterEncoder(
                 writer.endCompound()
                 endNamedTagIfNamed(descriptor)
             }
+
             TAG_List -> {
                 if (listTypeStack.removeLast() == TAG_End) writer.beginList(TAG_End, listSize)
                 writer.endList()
             }
+
             TAG_Byte_Array -> writer.endByteArray()
             TAG_Int_Array -> writer.endIntArray()
             TAG_Long_Array -> writer.endLongArray()
@@ -263,6 +272,7 @@ internal class NbtWriterEncoder(
                 }
                 writer.endCompound()
             }
+
             TAG_List -> {
                 val list = (value as NbtList<*>)
                 val listType = list.elementType
@@ -274,6 +284,7 @@ internal class NbtWriterEncoder(
                 }
                 writer.endList()
             }
+
             TAG_Byte_Array -> {
                 val array = (value as NbtByteArray)
                 writer.beginByteArray(array.size)
@@ -283,6 +294,7 @@ internal class NbtWriterEncoder(
                 }
                 writer.endByteArray()
             }
+
             TAG_Int_Array -> {
                 val array = (value as NbtIntArray)
                 writer.beginIntArray(array.size)
@@ -292,6 +304,7 @@ internal class NbtWriterEncoder(
                 }
                 writer.endIntArray()
             }
+
             TAG_Long_Array -> {
                 val array = (value as NbtLongArray)
                 writer.beginLongArray(array.size)
@@ -324,7 +337,14 @@ internal class NbtWriterEncoder(
 @OptIn(ExperimentalSerializationApi::class)
 private class NbtPolymorphicStructureEncoder(
     private val parentEncoder: NbtEncoder,
+    descriptor: SerialDescriptor,
 ) : AbstractNbtEncoder() {
+    init {
+        descriptor.checkPolymorphicStructure { errorMessage ->
+            throw NbtEncodingException(errorMessage)
+        }
+    }
+
     override val serializersModule: SerializersModule
         get() = parentEncoder.serializersModule
 
@@ -335,21 +355,25 @@ private class NbtPolymorphicStructureEncoder(
         TODO("Not yet implemented")
     }
 
+    private var elementIndex: Int = -1
     private var type: String? = null
     private var serializedValue: NbtTag? = null
 
-//    override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
-//        descriptor.getElementName(index)
-//
-//
-//    }
+    override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
+        elementIndex = index
+        return true
+    }
 
     override fun encodeString(value: String) {
         type = value
     }
 
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
-        serializedValue = nbt.encodeToNbtTag(serializer, value)
+        if (elementIndex == 0) {
+            serializer.serialize(this, value)
+        } else {
+            serializedValue = nbt.encodeToNbtTag(serializer, value)
+        }
     }
 
     override fun endStructure(descriptor: SerialDescriptor) {
