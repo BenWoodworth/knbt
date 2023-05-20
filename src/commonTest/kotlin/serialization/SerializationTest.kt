@@ -22,7 +22,7 @@ abstract class SerializationTest {
         compareBy: CompareBy<T> = CompareBy.Self
     ) {
         testEncoding(serializer, value, nbtTag)
-        testDecoding(serializer, nbtTag, value, compareBy)
+        testDecoding(serializer, value, nbtTag, compareBy)
     }
 
     protected fun <T> NbtFormat.testEncoding(
@@ -47,8 +47,8 @@ abstract class SerializationTest {
 
     protected fun <T> NbtFormat.testDecoding(
         serializer: KSerializer<T>,
-        nbtTag: NbtTag,
         value: T,
+        nbtTag: NbtTag,
         compareBy: CompareBy<T> = CompareBy.Self
     ) {
         run { // Deserialize Value

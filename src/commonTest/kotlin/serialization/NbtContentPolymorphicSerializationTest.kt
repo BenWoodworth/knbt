@@ -55,8 +55,8 @@ class NbtContentPolymorphicSerializationTest : SerializationTest() {
         for (i in testDataInput.indices) {
             defaultNbt.testDecoding(
                 WithChoices.serializer(),
-                StringifiedNbt.decodeFromString(testDataInput[i]),
-                testDataOutput[i]
+                testDataOutput[i],
+                StringifiedNbt.decodeFromString(testDataInput[i])
             )
         }
     }
@@ -93,13 +93,13 @@ class NbtContentPolymorphicSerializationTest : SerializationTest() {
     fun testDocumentationSample() {
         defaultNbt.testDecoding(
             PaymentSerializer,
-            StringifiedNbt.decodeFromString("""{"amount":"1.0","date":"03.02.2020"}"""),
             SuccessfulPayment("1.0", "03.02.2020"),
+            StringifiedNbt.decodeFromString("""{"amount":"1.0","date":"03.02.2020"}"""),
         )
         defaultNbt.testDecoding(
             PaymentSerializer,
-            StringifiedNbt.decodeFromString("""{"amount":"2.0","date":"03.02.2020","reason":"complaint"}"""),
             RefundedPayment("2.0", "03.02.2020", "complaint"),
+            StringifiedNbt.decodeFromString("""{"amount":"2.0","date":"03.02.2020","reason":"complaint"}"""),
         )
     }
 }

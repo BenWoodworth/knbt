@@ -57,8 +57,8 @@ class JsonTransformingSerializationTest : SerializationTest() {
         for (i in testDataInput.indices) {
             defaultNbt.testDecoding(
                 Example.serializer(),
-                StringifiedNbt.decodeFromString(testDataInput[i]),
-                goldenVal
+                goldenVal,
+                StringifiedNbt.decodeFromString(testDataInput[i])
             )
         }
     }
@@ -100,7 +100,7 @@ class JsonTransformingSerializationTest : SerializationTest() {
     @Test
     fun testDocumentationSample() {
         val correctExample = DocExample("str1")
-        defaultNbt.testDecoding(DocExample.serializer(), StringifiedNbt.decodeFromString("""{"data":["str1"]}"""), correctExample)
-        defaultNbt.testDecoding(DocExample.serializer(), StringifiedNbt.decodeFromString("""{"data":"str1"}"""), correctExample)
+        defaultNbt.testDecoding(DocExample.serializer(), correctExample, StringifiedNbt.decodeFromString("""{"data":["str1"]}"""))
+        defaultNbt.testDecoding(DocExample.serializer(), correctExample, StringifiedNbt.decodeFromString("""{"data":"str1"}"""))
     }
 }

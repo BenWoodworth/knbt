@@ -66,7 +66,7 @@ class PrimitiveSerializationTest : SerializationTest() {
     @Test
     fun should_deserialize_booleans_according_to_NbtByte_boolean_converter() = runTest {
         checkAll(Exhaustive.bytes().map(::NbtByte)) { nbtByte ->
-            defaultNbt.testDecoding(Boolean.serializer(), nbtByte, nbtByte.toBoolean())
+            defaultNbt.testDecoding(Boolean.serializer(), nbtByte.toBoolean(), nbtByte)
         }
     }
 
