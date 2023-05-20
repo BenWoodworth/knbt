@@ -42,6 +42,7 @@ class CustomPolymorphicSerializationTest : SerializationTest() {
     fun custom_open_polymorphic_serializer() = runTest {
         checkAll(Arb.nbtString()) { value ->
             defaultNbt.testSerialization(
+                Open.serializer(),
                 value = OpenImplementation(value.value) as Open,
                 nbtTag = value,
             )
@@ -83,7 +84,7 @@ class CustomPolymorphicSerializationTest : SerializationTest() {
         )
 
         checkAll(testCaseArb) { (intOrString, nbtTag) ->
-            defaultNbt.testSerialization(intOrString, nbtTag)
+            defaultNbt.testSerialization(IntOrString.serializer(), intOrString, nbtTag)
         }
     }
 }

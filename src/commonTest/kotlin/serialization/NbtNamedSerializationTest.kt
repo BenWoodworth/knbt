@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt.serialization
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
 import net.benwoodworth.knbt.*
 import kotlin.test.Test
 
@@ -25,6 +26,7 @@ class NbtNamedSerializationTest : SerializationTest() {
     @Test
     fun should_serialize_nested_under_name() {
         defaultNbt.testSerialization(
+            TestNbtClass.serializer(),
             testNbt,
             testNbtTag
         )
@@ -36,6 +38,7 @@ class NbtNamedSerializationTest : SerializationTest() {
         data class OuterClass(val testNbtClass: TestNbtClass)
 
         defaultNbt.testSerialization(
+            OuterClass.serializer(),
             OuterClass(testNbt),
             buildNbtCompound {
                 put("testNbtClass", testNbtTag)
@@ -46,6 +49,7 @@ class NbtNamedSerializationTest : SerializationTest() {
     @Test
     fun should_serialize_nested_under_name_when_within_a_list() {
         defaultNbt.testSerialization(
+            ListSerializer(TestNbtClass.serializer()),
             listOf(testNbt),
             buildNbtList {
                 add(testNbtTag)

@@ -1,7 +1,6 @@
 package net.benwoodworth.knbt.serialization
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.internal.NbtReaderDecoder
@@ -16,13 +15,6 @@ import net.benwoodworth.knbt.test.verify.VerifyingNbtWriter
 abstract class SerializationTest {
     protected val defaultNbt: NbtFormat = NbtFormat()
 
-    protected inline fun <reified T> NbtFormat.testSerialization(
-        value: T,
-        nbtTag: NbtTag,
-        compareBy: CompareBy<T> = CompareBy.Self
-    ): Unit =
-        testSerialization(this.serializersModule.serializer(), value, nbtTag, compareBy)
-
     protected fun <T> NbtFormat.testSerialization(
         serializer: KSerializer<T>,
         value: T,
@@ -32,13 +24,6 @@ abstract class SerializationTest {
         testEncoding(serializer, value, nbtTag)
         testDecoding(serializer, nbtTag, value, compareBy)
     }
-
-
-    protected inline fun <reified T> NbtFormat.testEncoding(
-        value: T,
-        nbtTag: NbtTag
-    ): Unit =
-        testEncoding(this.serializersModule.serializer(), value, nbtTag)
 
     protected fun <T> NbtFormat.testEncoding(
         serializer: KSerializer<T>,
@@ -59,14 +44,6 @@ abstract class SerializationTest {
             writer.assertComplete()
         }
     }
-
-
-    protected inline fun <reified T> NbtFormat.testDecoding(
-        nbtTag: NbtTag,
-        value: T,
-        compareBy: CompareBy<T> = CompareBy.Self
-    ): Unit =
-        testDecoding(this.serializersModule.serializer(), nbtTag, value, compareBy)
 
     protected fun <T> NbtFormat.testDecoding(
         serializer: KSerializer<T>,

@@ -46,6 +46,7 @@ class NbtArraySerializationTest : SerializationTest() {
         data class Class(@NbtArray val property: List<Byte>)
 
         defaultNbt.testSerialization(
+            Class.serializer(),
             value = Class(listOf(123)),
             nbtTag = buildNbtCompound("Class") {
                 put("property", byteArrayOf(123))
@@ -60,6 +61,7 @@ class NbtArraySerializationTest : SerializationTest() {
         data class Class(@NbtArray val property: List<Int>)
 
         defaultNbt.testSerialization(
+            Class.serializer(),
             value = Class(listOf(123)),
             nbtTag = buildNbtCompound("Class") {
                 put("property", intArrayOf(123))
@@ -74,6 +76,7 @@ class NbtArraySerializationTest : SerializationTest() {
         data class Class(@NbtArray val property: List<Long>)
 
         defaultNbt.testSerialization(
+            Class.serializer(),
             value = Class(listOf(123)),
             nbtTag = buildNbtCompound("Class") {
                 put("property", longArrayOf(123))

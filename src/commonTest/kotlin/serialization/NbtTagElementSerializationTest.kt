@@ -18,6 +18,7 @@ class NbtTagElementSerializationTest : SerializationTest() {
         }
 
         defaultNbt.testSerialization(
+            NbtTagContainer.serializer(),
             NbtTagContainer(compound),
             buildNbtCompound("") {
                 put(NbtTagContainer::nbtTag.name, compound)

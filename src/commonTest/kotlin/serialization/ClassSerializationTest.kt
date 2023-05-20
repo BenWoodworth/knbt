@@ -5,10 +5,7 @@ import net.benwoodworth.knbt.NbtNamed
 import net.benwoodworth.knbt.buildNbtCompound
 import net.benwoodworth.knbt.put
 import net.benwoodworth.knbt.putNbtCompound
-import net.benwoodworth.knbt.test.data.bigTestClass
-import net.benwoodworth.knbt.test.data.bigTestTag
-import net.benwoodworth.knbt.test.data.testClass
-import net.benwoodworth.knbt.test.data.testTag
+import net.benwoodworth.knbt.test.data.*
 import kotlin.test.Test
 
 class ClassSerializationTest : SerializationTest() {
@@ -19,6 +16,7 @@ class ClassSerializationTest : SerializationTest() {
         data class MyClass(val property: String)
 
         defaultNbt.testSerialization(
+            MyClass.serializer(),
             MyClass("value"),
             buildNbtCompound {
                 putNbtCompound("RootKey") {
@@ -30,12 +28,12 @@ class ClassSerializationTest : SerializationTest() {
 
     @Test
     fun should_serialize_TestNbt_class_correctly() {
-        defaultNbt.testSerialization(testClass, testTag)
+        defaultNbt.testSerialization(TestNbt.serializer(), testClass, testTag)
     }
 
     @Test
     fun should_serialize_BigTestNbt_class_correctly() {
-        defaultNbt.testSerialization(bigTestClass, bigTestTag)
+        defaultNbt.testSerialization(BigTestNbt.serializer(), bigTestClass, bigTestTag)
     }
 
     @Test
@@ -45,6 +43,7 @@ class ClassSerializationTest : SerializationTest() {
         data class OneProperty(val property: Int)
 
         defaultNbt.testSerialization(
+            OneProperty.serializer(),
             OneProperty(7),
             buildNbtCompound("OneProperty") {
                 put("property", 7)
@@ -59,6 +58,7 @@ class ClassSerializationTest : SerializationTest() {
         data class TwoProperties(val entry1: String, val entry2: Long)
 
         defaultNbt.testSerialization(
+            TwoProperties.serializer(),
             TwoProperties(entry1 = "value1", entry2 = 1234L),
             buildNbtCompound("TwoProperties") {
                 put("entry1", "value1")
