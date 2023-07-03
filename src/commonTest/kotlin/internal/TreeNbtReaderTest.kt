@@ -3,10 +3,10 @@ package net.benwoodworth.knbt.internal
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtReader.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
-import net.benwoodworth.knbt.test.NbtFormat
-import net.benwoodworth.knbt.test.TestValues
+import net.benwoodworth.knbt.test.*
 import net.benwoodworth.knbt.test.data.*
-import net.benwoodworth.knbt.test.shouldReturn
+import net.benwoodworth.knbt.test.parameterize.*
+import net.benwoodworth.knbt.test.parameterize.arguments.*
 import kotlin.test.Test
 
 class TreeNbtReaderTest {
@@ -27,62 +27,62 @@ class TreeNbtReaderTest {
     )
 
     @Test
-    fun should_read_Byte_correctly() {
-        TestValues.bytes.forEach { value ->
-            expectNbtReaderCalls(NbtByte(value)) {
-                beginRootTag() shouldReturn RootTagInfo(TAG_Byte)
-                readByte() shouldReturn value
-            }
+    fun should_read_Byte_correctly() = parameterize {
+        val value by parameter { byteEdgeCases() }
+
+        expectNbtReaderCalls(NbtByte(value)) {
+            beginRootTag() shouldReturn RootTagInfo(TAG_Byte)
+            readByte() shouldReturn value
         }
     }
 
     @Test
-    fun should_read_Short_correctly() {
-        TestValues.shorts.forEach { value ->
-            expectNbtReaderCalls(NbtShort(value)) {
-                beginRootTag() shouldReturn RootTagInfo(TAG_Short)
-                readShort() shouldReturn value
-            }
+    fun should_read_Short_correctly() = parameterize {
+        val value by parameter { shortEdgeCases() }
+
+        expectNbtReaderCalls(NbtShort(value)) {
+            beginRootTag() shouldReturn RootTagInfo(TAG_Short)
+            readShort() shouldReturn value
         }
     }
 
     @Test
-    fun should_read_Int_correctly() {
-        TestValues.ints.forEach { value ->
-            expectNbtReaderCalls(NbtInt(value)) {
-                beginRootTag() shouldReturn RootTagInfo(TAG_Int)
-                readInt() shouldReturn value
-            }
+    fun should_read_Int_correctly() = parameterize {
+        val value by parameter { intEdgeCases() }
+
+        expectNbtReaderCalls(NbtInt(value)) {
+            beginRootTag() shouldReturn RootTagInfo(TAG_Int)
+            readInt() shouldReturn value
         }
     }
 
     @Test
-    fun should_read_Long_correctly() {
-        TestValues.longs.forEach { value ->
-            expectNbtReaderCalls(NbtLong(value)) {
-                beginRootTag() shouldReturn RootTagInfo(TAG_Long)
-                readLong() shouldReturn value
-            }
+    fun should_read_Long_correctly() = parameterize {
+        val value by parameter { longEdgeCases() }
+
+        expectNbtReaderCalls(NbtLong(value)) {
+            beginRootTag() shouldReturn RootTagInfo(TAG_Long)
+            readLong() shouldReturn value
         }
     }
 
     @Test
-    fun should_read_Float_correctly() {
-        TestValues.floats.forEach { value ->
-            expectNbtReaderCalls(NbtFloat(value)) {
-                beginRootTag() shouldReturn RootTagInfo(TAG_Float)
-                readFloat() shouldReturn value
-            }
+    fun should_read_Float_correctly() = parameterize {
+        val value by parameter { floatEdgeCases() }
+
+        expectNbtReaderCalls(NbtFloat(value)) {
+            beginRootTag() shouldReturn RootTagInfo(TAG_Float)
+            readFloat() shouldReturn value
         }
     }
 
     @Test
-    fun should_read_Double_correctly() {
-        TestValues.doubles.forEach { value ->
-            expectNbtReaderCalls(NbtDouble(value)) {
-                beginRootTag() shouldReturn RootTagInfo(TAG_Double)
-                readDouble() shouldReturn value
-            }
+    fun should_read_Double_correctly() = parameterize {
+        val value by parameter { doubleEdgeCases() }
+
+        expectNbtReaderCalls(NbtDouble(value)) {
+            beginRootTag() shouldReturn RootTagInfo(TAG_Double)
+            readDouble() shouldReturn value
         }
     }
 

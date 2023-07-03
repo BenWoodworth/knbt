@@ -1,9 +1,5 @@
 package net.benwoodworth.knbt
 
-import io.kotest.property.Exhaustive
-import io.kotest.property.checkAll
-import io.kotest.property.exhaustive.of
-import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -13,6 +9,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildSerialDescriptor
 import kotlinx.serialization.encoding.*
 import net.benwoodworth.knbt.test.NbtFormat
+import net.benwoodworth.knbt.test.parameterize.parameterize
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -62,36 +59,31 @@ class UnsupportedPolymorphicBeginStructureTest {
     }
 
     @Test
-    fun encoding_structure_with_polymorphic_serial_kind_should_throw_UnsupportedOperationException() = runTest {
-        val serializerArb = Exhaustive.of(
-            SealedStructureSerializer,
-            SealedCollectionSerializer,
-            OpenStructureSerializer,
-            OpenCollectionSerializer,
-        )
-
-        checkAll(serializerArb) { serializer ->
-            val failure = assertFailsWith<UnsupportedOperationException> {
-                NbtFormat().encodeToNbtTag(serializer, Unit)
-            }
-
-            assertEquals(expectedInformativeMessage(serializer.descriptor), failure.message)
+    fun encoding_structure_with_polymorphic_serial_kind_should_throw_UnsupportedOperationException() = parameterize {
+        val serializer by parameter {
+            listOf(
+                SealedStructureSerializer, SealedCollectionSerializer,
+                OpenStructureSerializer, OpenCollectionSerializer
+            )
         }
+
+        val failure = assertFailsWith<UnsupportedOperationException> {
+            NbtFormat().encodeToNbtTag(serializer, Unit)
+        }
+
+        assertEquals(expectedInformativeMessage(serializer.descriptor), failure.message)
     }
 
     @Test
-    fun decoding_structure_with_polymorphic_serial_kind_should_throw_UnsupportedOperationException() = runTest {
-        val serializerArb = Exhaustive.of(
-            SealedStructureSerializer,
-            OpenStructureSerializer,
-        )
-
-        checkAll(serializerArb) { serializer ->
-            val failure = assertFailsWith<UnsupportedOperationException> {
-                NbtFormat().decodeFromNbtTag(serializer, NbtList(emptyList()))
-            }
-
-            assertEquals(expectedInformativeMessage(serializer.descriptor), failure.message)
+    fun decoding_structure_with_polymorphic_serial_kind_should_throw_UnsupportedOperationException() = parameterize {
+        val serializer: KSerializer<Unit> by parameter {
+            listOf(SealedStructureSerializer, OpenStructureSerializer)
         }
+
+        val failure = assertFailsWith<UnsupportedOperationException> {
+            NbtFormat().decodeFromNbtTag(serializer, NbtList(emptyList()))
+        }
+
+        assertEquals(expectedInformativeMessage(serializer.descriptor), failure.message)
     }
 }

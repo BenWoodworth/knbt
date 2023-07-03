@@ -1,6 +1,6 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.test.parameterize
+import net.benwoodworth.knbt.test.parameterize.parameterize
 import okio.Buffer
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -23,21 +23,25 @@ class LittleEndianBase128Test {
         map { it.toString(2).padStart(8, '0') }.toTypedArray()
 
     @Test
-    fun should_write_LEB128_correctly() = parameterize(leb128TestValues, { ulong }) {
+    fun should_write_LEB128_correctly() = parameterize {
+        val testValues by parameter { leb128TestValues }
+
         val actualBytes = Buffer()
-            .apply { writeLEB128(ulong) }
+            .apply { writeLEB128(testValues.ulong) }
             .readByteArray().toUByteArray()
 
-        assertContentEquals(bytes.toBinary(), actualBytes.toBinary())
+        assertContentEquals(testValues.bytes.toBinary(), actualBytes.toBinary())
     }
 
     @Test
-    fun should_read_LEB128_correctly() = parameterize(leb128TestValues, { bytes.contentToString() }) {
+    fun should_read_LEB128_correctly() = parameterize {
+        val testValues by parameter { leb128TestValues }
+
         val actualULong = Buffer()
-            .apply { write(bytes.toByteArray()) }
+            .apply { write(testValues.bytes.toByteArray()) }
             .readLEB128(10)
 
-        assertEquals(ulong, actualULong)
+        assertEquals(testValues.ulong, actualULong)
     }
 
     private data class ZigZagParameters(val long: Long, val zigZagULong: ULong)
@@ -54,12 +58,16 @@ class LittleEndianBase128Test {
     )
 
     @Test
-    fun should_ZigZag_encode_correctly() = parameterize(zigZagTestValues, { zigZagULong }) {
-        assertEquals(zigZagULong, long.zigZagEncode())
+    fun should_ZigZag_encode_correctly() = parameterize {
+        val testValues by parameter { zigZagTestValues }
+
+        assertEquals(testValues.zigZagULong, testValues.long.zigZagEncode())
     }
 
     @Test
-    fun should_ZigZag_decode_correctly() = parameterize(zigZagTestValues, { "$zigZagULong" }) {
-        assertEquals(long, zigZagULong.zigZagDecode())
+    fun should_ZigZag_decode_correctly() = parameterize {
+        val testValues by parameter { zigZagTestValues }
+
+        assertEquals(testValues.long, testValues.zigZagULong.zigZagDecode())
     }
 }
