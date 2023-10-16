@@ -7,7 +7,6 @@ import net.benwoodworth.knbt.NbtVariant.Java
 import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.test.TestSource
 import net.benwoodworth.knbt.test.file.nbtFiles
-import net.benwoodworth.knbt.test.mocks.VerifyingBinarySourceMock
 import net.benwoodworth.knbt.test.parameterize
 import okio.buffer
 import okio.use
@@ -15,48 +14,6 @@ import kotlin.test.*
 
 @OptIn(OkioApi::class)
 class BinaryNbtReaderTest {
-    @Test
-    fun should_throw_decoding_exception_when_reading_invalid_tag_type_ID_from_compound_entry() {
-        VerifyingBinarySourceMock
-            .create {
-                readByte() returns 0xAB.toByte() // beginCompoundEntry type
-            }
-            .verify { source ->
-                val reader = BinaryNbtReader(source)
-                reader.beginRootTag()
-                reader.beginCompound()
-
-                val error = assertFailsWith<NbtDecodingException> {
-                    reader.beginCompoundEntry()
-                }
-
-                assertEquals(error.message, "Unknown NBT tag type ID: 0xAB", "Incorrect error message")
-            }
-    }
-
-    @Test
-    fun should_throw_decoding_exception_when_reading_invalid_tag_type_ID_from_list_entry_type() {
-        VerifyingBinarySourceMock
-            .create {
-                readByte() returns NbtTagType.TAG_List.id // beginCompoundEntry type
-                readString() returns "ListWithInvalidType" // beginCompoundEntry name
-
-                readByte() returns 0xCD.toByte() // beginList type
-            }
-            .verify { source ->
-                val reader = BinaryNbtReader(source)
-                reader.beginRootTag()
-                reader.beginCompound()
-                reader.beginCompoundEntry()
-
-                val error = assertFailsWith<NbtDecodingException> {
-                    reader.beginList()
-                }
-
-                assertEquals(error.message, "Unknown NBT tag type ID: 0xCD", "Incorrect error message")
-            }
-    }
-
     @Test
     fun should_decode_to_class_correctly() = parameterize(nbtFiles) {
         assertEquals(

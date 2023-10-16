@@ -3,8 +3,6 @@ package net.benwoodworth.knbt.okio
 import kotlinx.serialization.*
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.encodeToNbtWriter
-import net.benwoodworth.knbt.internal.BinaryNbtReader
-import net.benwoodworth.knbt.internal.BinaryNbtWriter
 import net.benwoodworth.knbt.internal.NbtDecodingException
 import net.benwoodworth.knbt.internal.NonClosingSink
 import net.benwoodworth.knbt.internal.NonClosingSource
@@ -20,11 +18,11 @@ import okio.*
 public fun <T> Nbt.encodeToBufferedSink(
     serializer: SerializationStrategy<T>, value: T, sink: BufferedSink
 ) {
-    val binarySink = configuration.variant.getBinarySink(
+    val writer = configuration.variant.getNbtWriter(
         configuration.compression.compress(NonClosingSink(sink), configuration.compressionLevel).buffer()
     )
 
-    BinaryNbtWriter(binarySink).use { writer ->
+    writer.use {
         encodeToNbtWriter(writer, serializer, value)
     }
 }
@@ -65,11 +63,11 @@ public fun <T> Nbt.decodeFromBufferedSource(
         throw NbtDecodingException("Expected compression to be $compression, but was $detectedCompression")
     }
 
-    val binarySource = variant.getBinarySource(
+    val reader = variant.getNbtReader(
         compression.decompress(nonClosingSource).buffer()
     )
 
-    return BinaryNbtReader(binarySource).use { reader ->
+    return reader.use {
         decodeFromNbtReader(reader, deserializer)
     }
 }

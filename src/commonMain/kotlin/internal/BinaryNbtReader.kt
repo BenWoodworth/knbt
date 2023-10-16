@@ -1,11 +1,12 @@
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.internal.NbtTagType.*
+import okio.BufferedSource
 import okio.Closeable
 
-internal class BinaryNbtReader(
-    private val source: BinarySource,
-) : NbtReader, Closeable {
+internal abstract class BinaryNbtReader : NbtReader, Closeable {
+    protected abstract val source: BufferedSource
+
     private var compoundNesting = 0
     private var readRootEntry = false
 
@@ -16,7 +17,7 @@ internal class BinaryNbtReader(
 
     private fun <T> ArrayDeque<T>.replaceLast(element: T): T = set(lastIndex, element)
 
-    private fun BinarySource.readNbtTagType(): NbtTagType {
+    private fun BufferedSource.readNbtTagType(): NbtTagType {
         val tagId = readByte()
 
         return tagId.toNbtTagTypeOrNull()
@@ -30,16 +31,16 @@ internal class BinaryNbtReader(
         }
     }
 
-    override fun beginRootTag(): NbtReader.RootTagInfo =
+    final override fun beginRootTag(): NbtReader.RootTagInfo =
         NbtReader.RootTagInfo(TAG_Compound)
 
-    override fun beginCompound() {
+    final override fun beginCompound() {
         checkTagType(TAG_Compound)
         compoundNesting++
         tagTypeStack += TAG_End
     }
 
-    override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
+    final override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
         if (compoundNesting == 1) {
             if (readRootEntry) return NbtReader.CompoundEntryInfo.End
             readRootEntry = true
@@ -50,11 +51,11 @@ internal class BinaryNbtReader(
             NbtReader.CompoundEntryInfo.End
         } else {
             tagTypeStack.replaceLast(type)
-            NbtReader.CompoundEntryInfo(type, source.readString())
+            NbtReader.CompoundEntryInfo(type, source.readNbtString())
         }
     }
 
-    override fun endCompound() {
+    final override fun endCompound() {
         if (compoundNesting == 1 && !readRootEntry) throw NbtDecodingException("The binary NBT format only supports $TAG_Compound with one entry")
         compoundNesting--
         tagTypeStack.removeLast()
@@ -80,91 +81,170 @@ internal class BinaryNbtReader(
         elementsRemainingStack.removeLast()
     }
 
-    override fun beginList(): NbtReader.ListInfo {
+    final override fun beginList(): NbtReader.ListInfo {
         checkTagType(TAG_List)
 
         val type = source.readNbtTagType()
-        val size = source.readInt()
+        val size = source.readNbtInt()
         beginCollection(type, size)
 
         return NbtReader.ListInfo(type, size)
     }
 
-    override fun beginListEntry(): Boolean = beginCollectionEntry()
+    final override fun beginListEntry(): Boolean = beginCollectionEntry()
 
-    override fun endList(): Unit = endCollection()
+    final override fun endList(): Unit = endCollection()
 
-    override fun beginByteArray(): NbtReader.ArrayInfo {
+    final override fun beginByteArray(): NbtReader.ArrayInfo {
         checkTagType(TAG_Byte_Array)
 
-        val size = source.readInt()
+        val size = source.readNbtInt()
         beginCollection(TAG_Byte, size)
 
         return NbtReader.ArrayInfo(size)
     }
 
-    override fun beginByteArrayEntry(): Boolean = beginCollectionEntry()
+    final override fun beginByteArrayEntry(): Boolean = beginCollectionEntry()
 
-    override fun endByteArray(): Unit = endCollection()
+    final override fun endByteArray(): Unit = endCollection()
 
-    override fun beginIntArray(): NbtReader.ArrayInfo {
+    final override fun beginIntArray(): NbtReader.ArrayInfo {
         checkTagType(TAG_Int_Array)
 
-        val size = source.readInt()
+        val size = source.readNbtInt()
         beginCollection(TAG_Int, size)
 
         return NbtReader.ArrayInfo(size)
     }
 
-    override fun beginIntArrayEntry(): Boolean = beginCollectionEntry()
+    final override fun beginIntArrayEntry(): Boolean = beginCollectionEntry()
 
-    override fun endIntArray(): Unit = endCollection()
+    final override fun endIntArray(): Unit = endCollection()
 
-    override fun beginLongArray(): NbtReader.ArrayInfo {
+    final override fun beginLongArray(): NbtReader.ArrayInfo {
         checkTagType(TAG_Long_Array)
 
-        val size = source.readInt()
+        val size = source.readNbtInt()
         beginCollection(TAG_Long, size)
 
         return NbtReader.ArrayInfo(size)
     }
 
-    override fun beginLongArrayEntry(): Boolean = beginCollectionEntry()
+    final override fun beginLongArrayEntry(): Boolean = beginCollectionEntry()
 
-    override fun endLongArray(): Unit = endCollection()
+    final override fun endLongArray(): Unit = endCollection()
 
-    override fun readByte(): Byte {
+    final override fun readByte(): Byte {
         checkTagType(TAG_Byte)
         return source.readByte()
     }
 
-    override fun readShort(): Short {
+    final override fun readShort(): Short {
         checkTagType(TAG_Short)
-        return source.readShort()
+        return source.readNbtShort()
     }
 
-    override fun readInt(): Int {
+    final override fun readInt(): Int {
         checkTagType(TAG_Int)
-        return source.readInt()
+        return source.readNbtInt()
     }
 
-    override fun readLong(): Long {
+    final override fun readLong(): Long {
         checkTagType(TAG_Long)
-        return source.readLong()
+        return source.readNbtLong()
     }
 
-    override fun readFloat(): Float {
+    final override fun readFloat(): Float {
         checkTagType(TAG_Float)
-        return Float.fromBits(source.readInt())
+        return source.readNbtFloat()
     }
 
-    override fun readDouble(): Double {
+    final override fun readDouble(): Double {
         checkTagType(TAG_Double)
-        return Double.fromBits(source.readLong())
+        return source.readNbtDouble()
     }
 
-    override fun readString(): String {
+    final override fun readString(): String {
         checkTagType(TAG_String)
-        return source.readString()
+        return source.readNbtString()
+    }
+
+    protected abstract fun BufferedSource.readNbtShort(): Short
+    protected abstract fun BufferedSource.readNbtInt(): Int
+    protected abstract fun BufferedSource.readNbtLong(): Long
+    protected abstract fun BufferedSource.readNbtFloat(): Float
+    protected abstract fun BufferedSource.readNbtDouble(): Double
+    protected abstract fun BufferedSource.readNbtString(): String
+}
+
+internal class JavaNbtReader(
+    override val source: BufferedSource
+) : BinaryNbtReader() {
+    override fun BufferedSource.readNbtShort(): Short =
+        readShort()
+
+    override fun BufferedSource.readNbtInt(): Int =
+        readInt()
+
+    override fun BufferedSource.readNbtLong(): Long =
+        readLong()
+
+    override fun BufferedSource.readNbtFloat(): Float =
+        Float.fromBits(readInt())
+
+    override fun BufferedSource.readNbtDouble(): Double =
+        Double.fromBits(readLong())
+
+    override fun BufferedSource.readNbtString(): String {
+        val byteCount = readShort().toUShort().toLong()
+        return readUtf8(byteCount)
+    }
+}
+
+internal class BedrockNbtReader(
+    override val source: BufferedSource
+) : BinaryNbtReader() {
+    override fun BufferedSource.readNbtShort(): Short =
+        readShortLe()
+
+    override fun BufferedSource.readNbtInt(): Int =
+        readIntLe()
+
+    override fun BufferedSource.readNbtLong(): Long =
+        readLongLe()
+
+    override fun BufferedSource.readNbtFloat(): Float =
+        Float.fromBits(readIntLe())
+
+    override fun BufferedSource.readNbtDouble(): Double =
+        Double.fromBits(readLongLe())
+
+    override fun BufferedSource.readNbtString(): String {
+        val byteCount = readShortLe().toUShort().toLong()
+        return readUtf8(byteCount)
+    }
+}
+
+internal class BedrockNetworkNbtReader(
+    override val source: BufferedSource
+) : BinaryNbtReader() {
+    override fun BufferedSource.readNbtShort(): Short =
+        readShortLe()
+
+    override fun BufferedSource.readNbtInt(): Int =
+        readLEB128(5).zigZagDecode().toInt()
+
+    override fun BufferedSource.readNbtLong(): Long =
+        readLEB128(10).zigZagDecode()
+
+    override fun BufferedSource.readNbtFloat(): Float =
+        Float.fromBits(readLEB128(5).zigZagDecode().toInt())
+
+    override fun BufferedSource.readNbtDouble(): Double =
+        Double.fromBits(readLEB128(10).zigZagDecode())
+
+    override fun BufferedSource.readNbtString(): String {
+        val byteCount = readLEB128(5).toLong()
+        return readUtf8(byteCount)
     }
 }

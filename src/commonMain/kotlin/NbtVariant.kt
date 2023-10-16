@@ -5,32 +5,32 @@ import okio.BufferedSink
 import okio.BufferedSource
 
 public abstract class NbtVariant private constructor(private val name: String) {
-    internal abstract fun getBinarySource(source: BufferedSource): BinarySource
-    internal abstract fun getBinarySink(sink: BufferedSink): BinarySink
+    internal abstract fun getNbtReader(source: BufferedSource): BinaryNbtReader
+    internal abstract fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter
 
     override fun toString(): String = name
 
     public object Java : NbtVariant("Java") {
-        override fun getBinarySource(source: BufferedSource): BinarySource =
-            BigEndianBinarySource(source)
+        override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
+            JavaNbtReader(source)
 
-        override fun getBinarySink(sink: BufferedSink): BinarySink =
-            BigEndianBinarySink(sink)
+        override fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter =
+            JavaNbtWriter(sink)
     }
 
     public object Bedrock : NbtVariant("Bedrock") {
-        override fun getBinarySource(source: BufferedSource): BinarySource =
-            LittleEndianBinarySource(source)
+        override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
+            BedrockNbtReader(source)
 
-        override fun getBinarySink(sink: BufferedSink): BinarySink =
-            LittleEndianBinarySink(sink)
+        override fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter =
+            BedrockNbtWriter(sink)
     }
 
     public object BedrockNetwork : NbtVariant("BedrockNetwork") {
-        override fun getBinarySource(source: BufferedSource): BinarySource =
-            LittleEndianBase128BinarySource(source)
+        override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
+            BedrockNetworkNbtReader(source)
 
-        override fun getBinarySink(sink: BufferedSink): BinarySink =
-            LittleEndianBase128BinarySink(sink)
+        override fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter =
+            BedrockNetworkNbtWriter(sink)
     }
 }
