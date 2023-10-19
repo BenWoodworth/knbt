@@ -114,3 +114,10 @@ inline fun <T> parameterize(
  */
 fun Float.fix(): Float =
     Float.fromBits(this.toRawBits())
+
+/**
+ * Work around Kotlin/JS representing Double values slightly differently.
+ * TODO https://github.com/BenWoodworth/knbt/issues/3
+ */
+fun Double.fix(): Double =
+    Double.fromBits(this.toRawBits())

@@ -929,20 +929,29 @@ public abstract class net/benwoodworth/knbt/NbtTransformingSerializer : kotlinx/
 }
 
 public abstract class net/benwoodworth/knbt/NbtVariant {
-	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$Bedrock : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Bedrock;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$BedrockNetwork : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$BedrockNetwork;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$Java : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Java;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/benwoodworth/knbt/NbtVariant$JavaNetwork : net/benwoodworth/knbt/NbtVariant {
+	public fun <init> (I)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getProtocolVersion ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface annotation class net/benwoodworth/knbt/OkioApi : java/lang/annotation/Annotation {

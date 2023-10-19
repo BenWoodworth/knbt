@@ -29,7 +29,7 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 import net.benwoodworth.knbt.*
 
 val nbt = Nbt {
-    variant = NbtVariant. // Java, Bedrock, BedrockNetwork
+    variant = NbtVariant. // Java, JavaNetwork, Bedrock, BedrockNetwork
     compression = NbtCompression. // None, Gzip, Zlib
     //compressionLevel = null // in 0..9
     //encodeDefaults = false

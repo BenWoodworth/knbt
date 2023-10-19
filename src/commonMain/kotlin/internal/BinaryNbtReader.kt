@@ -7,9 +7,6 @@ import okio.Closeable
 internal abstract class BinaryNbtReader : NbtReader, Closeable {
     protected abstract val source: BufferedSource
 
-    private var compoundNesting = 0
-    private var readRootEntry = false
-
     private val tagTypeStack = ArrayDeque<NbtTagType>()
     private val elementsRemainingStack = ArrayDeque<Int>()
 
@@ -17,7 +14,7 @@ internal abstract class BinaryNbtReader : NbtReader, Closeable {
 
     private fun <T> ArrayDeque<T>.replaceLast(element: T): T = set(lastIndex, element)
 
-    private fun BufferedSource.readNbtTagType(): NbtTagType {
+    protected fun BufferedSource.readNbtTagType(): NbtTagType {
         val tagId = readByte()
 
         return tagId.toNbtTagTypeOrNull()
@@ -31,21 +28,14 @@ internal abstract class BinaryNbtReader : NbtReader, Closeable {
         }
     }
 
-    final override fun beginRootTag(): NbtReader.RootTagInfo =
-        NbtReader.RootTagInfo(TAG_Compound)
+    abstract override fun beginRootTag(): NbtReader.RootTagInfo
 
-    final override fun beginCompound() {
+    override fun beginCompound() {
         checkTagType(TAG_Compound)
-        compoundNesting++
         tagTypeStack += TAG_End
     }
 
-    final override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
-        if (compoundNesting == 1) {
-            if (readRootEntry) return NbtReader.CompoundEntryInfo.End
-            readRootEntry = true
-        }
-
+    override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
         val type = source.readNbtTagType()
         return if (type == TAG_End) {
             NbtReader.CompoundEntryInfo.End
@@ -55,9 +45,7 @@ internal abstract class BinaryNbtReader : NbtReader, Closeable {
         }
     }
 
-    final override fun endCompound() {
-        if (compoundNesting == 1 && !readRootEntry) throw NbtDecodingException("The binary NBT format only supports $TAG_Compound with one entry")
-        compoundNesting--
+    override fun endCompound() {
         tagTypeStack.removeLast()
     }
 
@@ -177,9 +165,38 @@ internal abstract class BinaryNbtReader : NbtReader, Closeable {
     protected abstract fun BufferedSource.readNbtString(): String
 }
 
+internal abstract class NamedBinaryNbtReader : BinaryNbtReader() {
+    private var compoundNesting = 0
+    private var readRootEntry = false
+
+    final override fun beginRootTag(): NbtReader.RootTagInfo =
+        NbtReader.RootTagInfo(TAG_Compound)
+
+    final override fun beginCompound() {
+        super.beginCompound()
+        compoundNesting++
+    }
+
+    final override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
+        if (compoundNesting == 1) {
+            if (readRootEntry) return NbtReader.CompoundEntryInfo.End
+            readRootEntry = true
+        }
+
+        return super.beginCompoundEntry()
+    }
+
+    final override fun endCompound() {
+        if (compoundNesting == 1 && !readRootEntry) throw NbtDecodingException("The binary NBT format only supports $TAG_Compound with one entry")
+
+        super.endCompound()
+        compoundNesting--
+    }
+}
+
 internal class JavaNbtReader(
     override val source: BufferedSource
-) : BinaryNbtReader() {
+) : NamedBinaryNbtReader() {
     override fun BufferedSource.readNbtShort(): Short =
         readShort()
 
@@ -201,9 +218,54 @@ internal class JavaNbtReader(
     }
 }
 
+internal abstract class JavaNetworkNbtReader : BinaryNbtReader() {
+    override fun BufferedSource.readNbtShort(): Short =
+        readShort()
+
+    override fun BufferedSource.readNbtInt(): Int =
+        readInt()
+
+    override fun BufferedSource.readNbtLong(): Long =
+        readLong()
+
+    override fun BufferedSource.readNbtFloat(): Float =
+        Float.fromBits(readInt())
+
+    override fun BufferedSource.readNbtDouble(): Double =
+        Double.fromBits(readLong())
+
+    override fun BufferedSource.readNbtString(): String {
+        val byteCount = readShort().toUShort().toLong()
+        return readUtf8(byteCount)
+    }
+
+    class EmptyNamedRoot(
+        override val source: BufferedSource
+    ) : JavaNetworkNbtReader() {
+        private fun BufferedSource.discardTagName() {
+            val nameLength = readShort().toUShort().toLong()
+            skip(nameLength)
+        }
+
+        override fun beginRootTag(): NbtReader.RootTagInfo {
+            val type = source.readNbtTagType()
+            source.discardTagName()
+
+            return NbtReader.RootTagInfo(type)
+        }
+    }
+
+    class UnnamedRoot(
+        override val source: BufferedSource
+    ) : JavaNetworkNbtReader() {
+        override fun beginRootTag(): NbtReader.RootTagInfo =
+            NbtReader.RootTagInfo(source.readNbtTagType())
+    }
+}
+
 internal class BedrockNbtReader(
     override val source: BufferedSource
-) : BinaryNbtReader() {
+) : NamedBinaryNbtReader() {
     override fun BufferedSource.readNbtShort(): Short =
         readShortLe()
 
@@ -227,7 +289,7 @@ internal class BedrockNbtReader(
 
 internal class BedrockNetworkNbtReader(
     override val source: BufferedSource
-) : BinaryNbtReader() {
+) : NamedBinaryNbtReader() {
     override fun BufferedSource.readNbtShort(): Short =
         readShortLe()
 
