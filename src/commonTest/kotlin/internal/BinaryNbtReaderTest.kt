@@ -106,8 +106,8 @@ class BinaryNbtReaderTest {
 
         val compressions = listOf(
             NbtCompression.None,
-            NbtCompression.Gzip,
-            NbtCompression.Zlib,
+            NbtCompression.Gzip(),
+            NbtCompression.Zlib(),
         )
 
         val mismatchedCompressions = compressions

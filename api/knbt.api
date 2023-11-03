@@ -217,18 +217,38 @@ public final class net/benwoodworth/knbt/NbtCompression$Companion {
 }
 
 public final class net/benwoodworth/knbt/NbtCompression$Gzip : net/benwoodworth/knbt/NbtCompression {
-	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtCompression$Gzip;
+	public static final field Companion Lnet/benwoodworth/knbt/NbtCompression$Gzip$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLevel ()Ljava/lang/Integer;
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/benwoodworth/knbt/NbtCompression$Gzip$Companion {
 }
 
 public final class net/benwoodworth/knbt/NbtCompression$None : net/benwoodworth/knbt/NbtCompression {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtCompression$None;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtCompression$Zlib : net/benwoodworth/knbt/NbtCompression {
-	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtCompression$Zlib;
+	public static final field Companion Lnet/benwoodworth/knbt/NbtCompression$Zlib$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLevel ()Ljava/lang/Integer;
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/benwoodworth/knbt/NbtCompression$Zlib$Companion {
 }
 
 public final class net/benwoodworth/knbt/NbtCompressionJvmKt {
@@ -241,7 +261,6 @@ public final class net/benwoodworth/knbt/NbtCompressionKt {
 
 public final class net/benwoodworth/knbt/NbtConfiguration : net/benwoodworth/knbt/NbtFormatConfiguration {
 	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
-	public final fun getCompressionLevel ()Ljava/lang/Integer;
 	public fun getEncodeDefaults ()Z
 	public fun getIgnoreUnknownKeys ()Z
 	public final fun getVariant ()Lnet/benwoodworth/knbt/NbtVariant;

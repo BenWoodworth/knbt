@@ -175,7 +175,7 @@ public inline fun <reified T> Nbt.decodeFromSource(source: BufferedSource): T =
 )
 @Suppress("UNUSED_PARAMETER") // The `deprecated` parameter lowers the overload precedence so the relocated function takes priority when replaced
 public fun NbtCompression.Companion.detect(source: BufferedSource, deprecated: Nothing? = null): NbtCompression =
-    detect(source.peek().readByte())
+    detect(source.peek().readByte(), 0)
 
 
 @Deprecated("For organizing deprecations")

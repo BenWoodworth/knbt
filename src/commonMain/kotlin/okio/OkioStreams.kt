@@ -21,7 +21,7 @@ public fun <T> Nbt.encodeToBufferedSink(
     serializer: SerializationStrategy<T>, value: T, sink: BufferedSink
 ) {
     val binarySink = configuration.variant.getBinarySink(
-        configuration.compression.compress(NonClosingSink(sink), configuration.compressionLevel).buffer()
+        configuration.compression.compress(NonClosingSink(sink)).buffer()
     )
 
     BinaryNbtWriter(binarySink).use { writer ->
@@ -87,4 +87,9 @@ public inline fun <reified T> Nbt.decodeFromBufferedSource(source: BufferedSourc
 
 @OkioApi
 public fun NbtCompression.Companion.detect(source: BufferedSource): NbtCompression =
-    detect(source.peek().readByte())
+    with (source.peek()) {
+        val firstByte = readByte()
+        val secondByte = if (!exhausted()) readByte() else 0
+
+        detect(firstByte, secondByte)
+    }

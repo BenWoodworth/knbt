@@ -24,7 +24,6 @@ private object DefaultNbt : Nbt(
     configuration = NbtConfiguration(
         variant = NbtVariant.Java, // Will be ignored by NbtBuilder
         compression = NbtCompression.None, // Will be ignored by NbtBuilder
-        compressionLevel = null,
         encodeDefaults = false,
         ignoreUnknownKeys = false,
     ),
@@ -60,20 +59,10 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
     public var compression: NbtCompression? =
         if (nbt === DefaultNbt) null else nbt.configuration.compression
 
-    /**
-     * The compression level, in `0..9` or `null`.
-     * `null` by default.
-     *
-     * - `0` gives no compression at all
-     * - `1` gives the best speed
-     * - `9` gives the best compression.
-     * - `null` requests a compromise between speed and compression.
-     */
-    public var compressionLevel: Int? = nbt.configuration.compressionLevel
-        set(value) {
-            require(value == null || value in 0..9) { "Compression level must be in 0..9 or null." }
-            field = value
-        }
+    @Deprecated("Replaced with NbtCompression.Gzip(level = ...) and .Zlib(level = ...)", level = DeprecationLevel.ERROR)
+    public var compressionLevel: Int?
+        get() = error("Deprecated. Use NbtCompression.Gzip(level = ...) or .Zlib(level = ...) instead.")
+        set(_) = error("Deprecated. Use NbtCompression.Gzip(level = ...) or .Zlib(level = ...) instead.")
 
     /**
      * Specifies whether default values of Kotlin properties should be encoded.
@@ -109,7 +98,6 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
             configuration = NbtConfiguration(
                 variant = variant,
                 compression = compression,
-                compressionLevel = compressionLevel,
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
             ),

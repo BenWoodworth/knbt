@@ -13,10 +13,15 @@ import java.io.InputStream
 public fun NbtCompression.Companion.detect(stream: InputStream): NbtCompression {
     if (!stream.markSupported()) throw UnsupportedOperationException("The stream must support marking")
 
-    stream.mark(1)
+    stream.mark(2)
+
     val firstByte = stream.read()
     if (firstByte == -1) throw EOFException()
+
+    val secondByte = stream.read()
+        .let { if (it != -1) it else 0 }
+
     stream.reset()
 
-    return detect(firstByte.toByte())
+    return detect(firstByte.toByte(), secondByte.toByte())
 }
