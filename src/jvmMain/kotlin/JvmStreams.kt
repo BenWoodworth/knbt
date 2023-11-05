@@ -5,9 +5,7 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.okio.encodeToBufferedSink
-import okio.buffer
-import okio.sink
-import okio.source
+import okio.*
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -34,8 +32,18 @@ public inline fun <reified T> Nbt.encodeToStream(value: T, output: OutputStream)
  * *Note*: It is the caller's responsibility to close the [input].
  */
 @OptIn(OkioApi::class)
-public fun <T> Nbt.decodeFromStream(deserializer: DeserializationStrategy<T>, input: InputStream): T =
-    decodeFromBufferedSource(deserializer, input.source().buffer())
+public fun <T> Nbt.decodeFromStream(deserializer: DeserializationStrategy<T>, input: InputStream): T {
+    val source = input.source()
+
+    val restrictedSource = object : Source by source {
+        // Restrict to reading 1 byte at a time, since the BufferedSource will pull a whole segment, and the caller
+        // won't have access to the extra bytes anymore in the case that the input needs to be decoded from again.
+        override fun read(sink: Buffer, byteCount: Long): Long =
+            source.read(sink, if (byteCount > 1) 1 else byteCount)
+    }
+
+    return decodeFromBufferedSource(deserializer, restrictedSource.buffer())
+}
 
 /**
  * Decode NBT from an [InputStream].
