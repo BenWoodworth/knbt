@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
@@ -8,6 +9,44 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+
+internal object NbtTagSerializer : KSerializer<NbtTag> {
+    @OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
+    override val descriptor: SerialDescriptor =
+        buildSerialDescriptor("kotlinx.serialization.json.JsonElement", PolymorphicKind.SEALED) {
+            // Resolve cyclic dependency in descriptors by late binding
+            element("NbtByteSerializer", defer { NbtByteSerializer.descriptor })
+            element("NbtShortSerializer", defer { NbtShortSerializer.descriptor })
+            element("NbtIntSerializer", defer { NbtIntSerializer.descriptor })
+            element("NbtLongSerializer", defer { NbtLongSerializer.descriptor })
+            element("NbtFloatSerializer", defer { NbtFloatSerializer.descriptor })
+            element("NbtDoubleSerializer", defer { NbtDoubleSerializer.descriptor })
+            element("NbtByteArraySerializer", defer { NbtByteArraySerializer.descriptor })
+            element("NbtStringSerializer", defer { NbtStringSerializer.descriptor })
+            element("NbtListSerializer", defer { NbtListSerializer(NbtTagSerializer).descriptor })
+            element("NbtCompoundSerializer", defer { NbtCompoundSerializer.descriptor })
+            element("NbtIntArraySerializer", defer { NbtIntArraySerializer.descriptor })
+            element("NbtLongArraySerializer", defer { NbtLongArraySerializer.descriptor })
+        }
+
+    override fun serialize(encoder: Encoder, value: NbtTag): Unit = when (value) {
+        is NbtByte -> encoder.asNbtEncoder().encodeSerializableValue(NbtByteSerializer, value)
+        is NbtShort -> encoder.asNbtEncoder().encodeSerializableValue(NbtShortSerializer, value)
+        is NbtInt -> encoder.asNbtEncoder().encodeSerializableValue(NbtIntSerializer, value)
+        is NbtLong -> encoder.asNbtEncoder().encodeSerializableValue(NbtLongSerializer, value)
+        is NbtFloat -> encoder.asNbtEncoder().encodeSerializableValue(NbtFloatSerializer, value)
+        is NbtDouble -> encoder.asNbtEncoder().encodeSerializableValue(NbtDoubleSerializer, value)
+        is NbtByteArray -> encoder.asNbtEncoder().encodeSerializableValue(NbtByteArraySerializer, value)
+        is NbtString -> encoder.asNbtEncoder().encodeSerializableValue(NbtStringSerializer, value)
+        is NbtList<*> -> encoder.asNbtEncoder().encodeSerializableValue(NbtListSerializer(this), value)
+        is NbtCompound -> encoder.asNbtEncoder().encodeSerializableValue(NbtCompoundSerializer, value)
+        is NbtIntArray -> encoder.asNbtEncoder().encodeSerializableValue(NbtIntArraySerializer, value)
+        is NbtLongArray -> encoder.asNbtEncoder().encodeSerializableValue(NbtLongArraySerializer, value)
+    }
+
+    override fun deserialize(decoder: Decoder): NbtTag =
+        decoder.asNbtDecoder().decodeNbtTag()
+}
 
 internal object NbtByteSerializer : KSerializer<NbtByte> {
     override val descriptor: SerialDescriptor =
@@ -170,4 +209,27 @@ internal object NbtLongArraySerializer : KSerializer<NbtLongArray> {
 
     override fun deserialize(decoder: Decoder): NbtLongArray =
         NbtLongArray(decoder.asNbtDecoder().decodeLongArray())
+}
+
+
+/**
+ * Returns serial descriptor that delegates all the calls to descriptor returned by [deferred] block.
+ * Used to resolve cyclic dependencies between recursive serializable structures.
+ */
+@OptIn(ExperimentalSerializationApi::class)
+private fun defer(deferred: () -> SerialDescriptor): SerialDescriptor = object : SerialDescriptor {
+    private val original: SerialDescriptor by lazy(deferred)
+
+    override val serialName: String
+        get() = original.serialName
+    override val kind: SerialKind
+        get() = original.kind
+    override val elementsCount: Int
+        get() = original.elementsCount
+
+    override fun getElementName(index: Int): String = original.getElementName(index)
+    override fun getElementIndex(name: String): Int = original.getElementIndex(name)
+    override fun getElementAnnotations(index: Int): List<Annotation> = original.getElementAnnotations(index)
+    override fun getElementDescriptor(index: Int): SerialDescriptor = original.getElementDescriptor(index)
+    override fun isElementOptional(index: Int): Boolean = original.isElementOptional(index)
 }
