@@ -2,6 +2,7 @@ package net.benwoodworth.knbt
 
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import net.benwoodworth.knbt.internal.*
 
 public sealed interface NbtFormat : SerialFormat {
@@ -37,9 +38,12 @@ public inline fun <reified T> NbtFormat.encodeToNbtTag(value: T): NbtTag =
 public inline fun <reified T> NbtFormat.decodeFromNbtTag(tag: NbtTag): T =
     decodeFromNbtTag(serializersModule.serializer(), tag)
 
-@OptIn(ExperimentalSerializationApi::class)
+@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
 internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: SerializationStrategy<T>, value: T) {
-    val rootSerializer = if (serializer.descriptor.kind == StructureKind.CLASS) {
+    val rootSerializer = if (
+        serializer.descriptor.kind == StructureKind.CLASS ||
+        serializer is AbstractPolymorphicSerializer
+    ) {
         RootClassSerializer(serializer)
     } else {
         serializer
@@ -49,9 +53,12 @@ internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: Seri
         .encodeSerializableValue(rootSerializer, value)
 }
 
-@OptIn(ExperimentalSerializationApi::class)
+@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
 internal fun <T> NbtFormat.decodeFromNbtReader(reader: NbtReader, deserializer: DeserializationStrategy<T>): T {
-    val rootDeserializer = if (deserializer.descriptor.kind == StructureKind.CLASS) {
+    val rootDeserializer = if (
+        deserializer.descriptor.kind == StructureKind.CLASS ||
+        deserializer is AbstractPolymorphicSerializer
+    ) {
         RootClassDeserializer(deserializer)
     } else {
         deserializer

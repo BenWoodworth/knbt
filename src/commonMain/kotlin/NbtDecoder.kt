@@ -2,17 +2,18 @@ package net.benwoodworth.knbt
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
-import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.AbstractDecoder
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import net.benwoodworth.knbt.internal.NbtDecodingException
-import net.benwoodworth.knbt.internal.NbtEncodingException
+import net.benwoodworth.knbt.internal.PolymorphicSerializerNbtAdapter
 
 public sealed interface NbtDecoder : Decoder {
     public val nbt: NbtFormat
@@ -76,19 +77,19 @@ internal abstract class AbstractNbtDecoder : AbstractDecoder(), NbtDecoder, Comp
     override fun beginIntArray(descriptor: SerialDescriptor): CompositeNbtDecoder = this
     override fun beginLongArray(descriptor: SerialDescriptor): CompositeNbtDecoder = this
 
+    @OptIn(InternalSerializationApi::class)
     override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T =
         @Suppress("UNCHECKED_CAST")
         when (deserializer) {
-            NbtTagSerializer -> super<AbstractDecoder>.decodeSerializableValue(deserializer)
             ByteArraySerializer() -> decodeByteArray() as T
             IntArraySerializer() -> decodeIntArray() as T
             LongArraySerializer() -> decodeLongArray() as T
-            else -> {
-                if (deserializer.descriptor.kind is PolymorphicKind) {
-                    throw NbtEncodingException("Polymorphic serialization is not yet supported")
-                }
 
-                super<AbstractDecoder>.decodeSerializableValue(deserializer)
+            is AbstractPolymorphicSerializer -> {
+                val adapter = PolymorphicSerializerNbtAdapter(deserializer as AbstractPolymorphicSerializer<Any>)
+                super<AbstractDecoder>.decodeSerializableValue(adapter) as T
             }
+
+            else -> super<AbstractDecoder>.decodeSerializableValue(deserializer)
         }
 }
