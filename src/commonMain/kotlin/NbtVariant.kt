@@ -8,9 +8,7 @@ public abstract class NbtVariant private constructor() {
     internal abstract fun getNbtReader(source: BufferedSource): BinaryNbtReader
     internal abstract fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter
 
-    public object Java : NbtVariant() {
-        override fun toString(): String = "Java"
-
+    public data object Java : NbtVariant() {
         override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
             JavaNbtReader(source)
 
@@ -71,9 +69,7 @@ public abstract class NbtVariant private constructor() {
         }
     }
 
-    public object Bedrock : NbtVariant() {
-        override fun toString(): String = "Bedrock"
-
+    public data object Bedrock : NbtVariant() {
         override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
             BedrockNbtReader(source)
 
@@ -81,9 +77,7 @@ public abstract class NbtVariant private constructor() {
             BedrockNbtWriter(sink)
     }
 
-    public object BedrockNetwork : NbtVariant() {
-        override fun toString(): String = "BedrockNetwork"
-
+    public data object BedrockNetwork : NbtVariant() {
         override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
             BedrockNetworkNbtReader(source)
 

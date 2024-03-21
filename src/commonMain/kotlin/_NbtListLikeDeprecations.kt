@@ -557,7 +557,8 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.associateWith(valueSelector)"),
         DeprecationLevel.ERROR
     )
-    public fun <V> associateWith(valueSelector: (@UnsafeVariance T) -> V) =
+    // Unsafe variance is okay here since pre-deprecation usages of this function must have already been safe.
+    public fun <V> associateWith(valueSelector: (T) -> V): Map<@UnsafeVariance T, V> =
         content.associateWith(valueSelector)
 
     @Deprecated(
@@ -876,7 +877,8 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.groupingBy(keySelector)"),
         DeprecationLevel.ERROR
     )
-    public fun <K> groupingBy(/*crossinline*/ keySelector: (@UnsafeVariance T) -> K) =
+    // Unsafe variance is okay here since pre-deprecation usages of this function must have already been safe.
+    public fun <K> groupingBy(/*crossinline*/ keySelector: (T) -> K): Grouping<@UnsafeVariance T, K> =
         content.groupingBy(keySelector)
 
     @Deprecated(

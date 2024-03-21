@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package net.benwoodworth.knbt.internal.zlib
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.toKString
 import platform.zlib.*
 

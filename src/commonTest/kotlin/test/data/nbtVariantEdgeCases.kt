@@ -12,7 +12,7 @@ val NbtVariant.JavaNetwork.isEmptyNamedVersion: Boolean
 
 
 private val javaNetworkUnnamedProtocolVersions = listOf(
-    764 until 0x40000000,
+    764..<0x40000000,
     0x40000090..Int.MAX_VALUE
 )
 
