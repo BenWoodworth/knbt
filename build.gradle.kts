@@ -1,4 +1,6 @@
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val kotlinx_serialization_version: String by extra
 val kotlinx_coroutines_version: String by extra
@@ -14,10 +16,10 @@ System.getenv("GIT_REF")?.let { gitRef ->
 val isSnapshot = version.toString().contains("SNAPSHOT", true)
 
 plugins {
-    kotlin("multiplatform") version "1.8.10"
-    kotlin("plugin.serialization") version "1.8.10"
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.0"
-    id("org.jetbrains.dokka") version "1.7.20"
+    kotlin("multiplatform") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.20"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.16.3"
+    id("org.jetbrains.dokka") version "1.9.20"
     id("maven-publish")
     id("signing")
 }
@@ -30,9 +32,16 @@ kotlin {
     explicitApi()
 
     jvm {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_1_8
+        }
+        testRuns["test"].executionTask.configure {
+            useJUnitPlatform()
+        }
     }
 
-    js(IR) {
+    js {
         browser {
             testTask {
                 useKarma {
@@ -44,16 +53,30 @@ kotlin {
         nodejs()
     }
 
+    //wasmJs()   // Requires gzip/zlib support to be implemented
+    //wasmWasi() //
+
     linuxX64()
+    //linuxArm64() // Not supported by okio/kx-coroutines/kotest yet
+    //androidNativeArm32() // Not supported by Okio yet
+    //androidNativeArm64() // https://github.com/square/okio/issues/1242#issuecomment-1759357336
+    //androidNativeX86()   //
+    //androidNativeX64()   //
     macosX64()
-    iosArm64()
+    macosArm64()
+    iosSimulatorArm64()
     iosX64()
+    watchosSimulatorArm64()
+    watchosX64()
     watchosArm32()
     watchosArm64()
-    watchosX86()
+    tvosSimulatorArm64()
+    tvosX64()
+    tvosArm64()
+    iosArm64()
+    //watchosDeviceArm64() // Not supported by kotest yet
     mingwX64()
 
-    @Suppress("UNUSED_VARIABLE")
     sourceSets {
         configureEach {
             val isTest = name.endsWith("Test")
@@ -97,18 +120,6 @@ kotlin {
                 implementation(devNpm("node-polyfill-webpack-plugin", "^2.0.1"))
             }
         }
-        val nativeMain by creating {
-            dependsOn(commonMain)
-        }
-
-        val linuxX64Main by getting { dependsOn(nativeMain) }
-        val macosX64Main by getting { dependsOn(nativeMain) }
-        val iosArm64Main by getting { dependsOn(nativeMain) }
-        val iosX64Main by getting { dependsOn(nativeMain) }
-        val watchosArm32Main by getting { dependsOn(nativeMain) }
-        val watchosArm64Main by getting { dependsOn(nativeMain) }
-        val watchosX86Main by getting { dependsOn(nativeMain) }
-        val mingwX64Main by getting { dependsOn(nativeMain) }
     }
 }
 

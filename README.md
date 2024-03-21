@@ -3,8 +3,8 @@
 [![Maven Central](https://img.shields.io/maven-central/v/net.benwoodworth.knbt/knbt)](https://search.maven.org/artifact/net.benwoodworth.knbt/knbt)
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/net.benwoodworth.knbt/knbt?server=https%3A%2F%2Fs01.oss.sonatype.org)](https://s01.oss.sonatype.org/content/repositories/snapshots/net/benwoodworth/knbt/knbt/)
 [![KDoc](https://img.shields.io/badge/api-KDoc-blue)](https://benwoodworth.github.io/knbt)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.7.20-blue.svg?logo=kotlin)](http://kotlinlang.org)
-[![kotlinx.serialization](https://img.shields.io/badge/kotlinx.serialization-1.4.0-blue.svg?logo=kotlin)](https://github.com/Kotlin/kotlinx.serialization)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.0.20-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![kotlinx.serialization](https://img.shields.io/badge/kotlinx.serialization-1.3.0-blue.svg?logo=kotlin)](https://github.com/Kotlin/kotlinx.serialization)
 
 An implementation of [Minecraft's NBT format](https://minecraft.fandom.com/wiki/NBT_format)
 for [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization).
@@ -13,7 +13,7 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 
 ### Features
 
-- Kotlin Multiplatform: JVM, JS (IR), Linux, Windows, macOS, iOS, watchOS
+- Kotlin Multiplatform: JVM, JS, Linux, Windows, macOS, iOS, watchOS
 - Serialize any data to/from NBT or SNBT
 - Support for all NBT variants: Java, Bedrock Files, Bedrock Network
 - Support for all NBT compressions: gzip, zlib
@@ -241,8 +241,8 @@ Replacement refactorings will be provided where possible for broken APIs. Change
 
 ```kotlin
 plugins {
-    kotlin("jvm") version "1.7.20" // or kotlin("multiplatform"), etc.
-    //kotlin("plugin.serialization") version "1.7.20"
+    kotlin("jvm") version "2.0.20" // or kotlin("multiplatform"), etc.
+    //kotlin("plugin.serialization") version "2.0.20"
 }
 
 repositories {

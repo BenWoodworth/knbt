@@ -27,7 +27,7 @@ public abstract class net/benwoodworth/knbt/Nbt : kotlinx/serialization/BinaryFo
 public abstract interface annotation class net/benwoodworth/knbt/NbtArray : java/lang/annotation/Annotation {
 }
 
-public final class net/benwoodworth/knbt/NbtArray$Impl : net/benwoodworth/knbt/NbtArray {
+public synthetic class net/benwoodworth/knbt/NbtArray$Impl : net/benwoodworth/knbt/NbtArray {
 	public fun <init> ()V
 }
 
@@ -218,16 +218,22 @@ public final class net/benwoodworth/knbt/NbtCompression$Companion {
 
 public final class net/benwoodworth/knbt/NbtCompression$Gzip : net/benwoodworth/knbt/NbtCompression {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtCompression$Gzip;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtCompression$None : net/benwoodworth/knbt/NbtCompression {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtCompression$None;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtCompression$Zlib : net/benwoodworth/knbt/NbtCompression {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtCompression$Zlib;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -801,7 +807,7 @@ public abstract interface annotation class net/benwoodworth/knbt/NbtNamed : java
 	public abstract fun name ()Ljava/lang/String;
 }
 
-public final class net/benwoodworth/knbt/NbtNamed$Impl : net/benwoodworth/knbt/NbtNamed {
+public synthetic class net/benwoodworth/knbt/NbtNamed$Impl : net/benwoodworth/knbt/NbtNamed {
 	public fun <init> (Ljava/lang/String;)V
 	public final synthetic fun name ()Ljava/lang/String;
 }
@@ -942,16 +948,22 @@ public abstract class net/benwoodworth/knbt/NbtVariant {
 
 public final class net/benwoodworth/knbt/NbtVariant$Bedrock : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Bedrock;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$BedrockNetwork : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$BedrockNetwork;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/NbtVariant$Java : net/benwoodworth/knbt/NbtVariant {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Java;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1034,6 +1046,7 @@ public final class net/benwoodworth/knbt/internal/NbtTagType : java/lang/Enum {
 	public static final field TAG_Long_Array Lnet/benwoodworth/knbt/internal/NbtTagType;
 	public static final field TAG_Short Lnet/benwoodworth/knbt/internal/NbtTagType;
 	public static final field TAG_String Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lnet/benwoodworth/knbt/internal/NbtTagType;
 	public static fun values ()[Lnet/benwoodworth/knbt/internal/NbtTagType;
 }

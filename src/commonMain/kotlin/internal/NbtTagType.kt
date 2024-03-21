@@ -26,12 +26,8 @@ public enum class NbtTagType(internal val id: Byte) {
     TAG_Long_Array(12),
 }
 
-// NbtTagType entries for quick lookup, with the ID equalling the list index
-// Can be replaced with this in the future: https://youtrack.jetbrains.com/issue/KT-48872
-private val tags = NbtTagType.values().asList()
-
 internal fun Byte.toNbtTagTypeOrNull(): NbtTagType? =
-    tags.getOrNull(this.toInt())
+    NbtTagType.entries.getOrNull(this.toInt())
 
 internal fun KClass<out NbtTag>.toNbtTagType(): NbtTagType =
     when (simpleName) { // String cases so it's optimized to a jump table

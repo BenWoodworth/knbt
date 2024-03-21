@@ -12,25 +12,19 @@ public abstract class NbtCompression private constructor() {
 
     public companion object;
 
-    public object None : NbtCompression() {
+    public data object None : NbtCompression() {
         override fun decompress(source: Source): Source = source
         override fun compress(sink: Sink, level: Int?): Sink = sink
-
-        override fun toString(): String = "None"
     }
 
-    public object Gzip : NbtCompression() {
+    public data object Gzip : NbtCompression() {
         override fun decompress(source: Source): Source = source.asGzipSource()
         override fun compress(sink: Sink, level: Int?): Sink = sink.asGzipSink(level ?: -1)
-
-        override fun toString(): String = "Gzip"
     }
 
-    public object Zlib : NbtCompression() {
+    public data object Zlib : NbtCompression() {
         override fun decompress(source: Source): Source = source.asZlibSource()
         override fun compress(sink: Sink, level: Int?): Sink = sink.asZlibSink(level ?: -1)
-
-        override fun toString(): String = "Zlib"
     }
 }
 

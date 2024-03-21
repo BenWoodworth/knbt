@@ -75,14 +75,14 @@ private class ZlibSink(private val sink: BufferedSink, gzip: Boolean, level: Int
         windowBits = 15 + (if (gzip) 16 else 0),
     ).apply {
         onData = { data ->
-            for (i in 0 until data.byteLength) {
+            for (i in 0..<data.byteLength) {
                 sink.writeByte(data[i].toInt())
             }
         }
     }
 
     override fun write(source: Buffer, byteCount: Long) {
-        for (i in 0 until byteCount) {
+        for (i in 0..<byteCount) {
             inbuf[0] = source.readByte()
             deflate.push(inbuf)
         }

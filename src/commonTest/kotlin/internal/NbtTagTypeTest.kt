@@ -24,7 +24,7 @@ class NbtTagTypeTest {
 
     @Test
     fun converting_to_NbtTagType_or_null_from_an_invalid_ID_byte_should_return_null() = runTest {
-        val validIds = NbtTagType.values().map { it.id }
+        val validIds = NbtTagType.entries.map { it.id }
 
         val invalidIds = Exhaustive.bytes()
             .filter { it !in validIds }

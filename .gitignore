@@ -1,5 +1,8 @@
 .DS_Store
 
+# Kotlin
+.kotlin/
+
 # IntelliJ files
 **/.idea/*
 out/
