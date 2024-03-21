@@ -89,6 +89,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation("com.benwoodworth.parameterize:parameterize:0.3.0")
             }
         }
         val jvmTest by getting {

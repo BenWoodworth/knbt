@@ -2,6 +2,7 @@
 
 package net.benwoodworth.knbt.internal
 
+import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
@@ -22,9 +23,11 @@ class BinaryNbtWriterTest {
     }
 
     @Test
-    fun Should_encode_from_class_correctly() = parameterize(nbtFiles) {
+    fun Should_encode_from_class_correctly() = parameterizeTest {
+        val nbtFile by parameter(nbtFiles)
+
         @Suppress("UNCHECKED_CAST")
-        val out = nbt.encodeToByteArray(valueSerializer as KSerializer<Any>, value)
+        val out = nbt.encodeToByteArray(nbtFile.valueSerializer as KSerializer<Any>, nbtFile.value)
 
         val outCompression = try {
             NbtCompression.detect(out.asSource().buffer())
@@ -44,12 +47,14 @@ class BinaryNbtWriterTest {
             throw Exception("Unable to decode compressed value", t)
         }
 
-        assertEquals(nbtTag, tag, "Unable to decode encoded data correctly")
+        assertEquals(nbtFile.nbtTag, tag, "Unable to decode encoded data correctly")
     }
 
     @Test
-    fun Should_encode_from_NbtTag_correctly() = parameterize(nbtFiles) {
-        val out = nbt.encodeToByteArray(NbtTag.serializer(), nbtTag)
+    fun Should_encode_from_NbtTag_correctly() = parameterizeTest {
+        val nbtFile by parameter(nbtFiles)
+
+        val out = nbt.encodeToByteArray(NbtTag.serializer(), nbtFile.nbtTag)
 
         val outCompression = try {
             NbtCompression.detect(out.asSource().buffer())
@@ -69,7 +74,7 @@ class BinaryNbtWriterTest {
             throw Exception("Unable to decode compressed value", t)
         }
 
-        assertEquals(nbtTag, tag, "Unable to decode encoded data correctly")
+        assertEquals(nbtFile.nbtTag, tag, "Unable to decode encoded data correctly")
     }
 
     @Test
@@ -150,10 +155,12 @@ class BinaryNbtWriterTest {
     }
 
     @Test
-    fun Should_not_close_sink() = parameterize(nbtFiles) {
+    fun Should_not_close_sink() = parameterizeTest {
+        val nbtFile by parameter(nbtFiles)
+
         TestSink(blackholeSink()).use { sink ->
             @Suppress("UNCHECKED_CAST")
-            nbt.encodeToSink(valueSerializer as KSerializer<Any>, value, sink)
+            nbt.encodeToSink(nbtFile.valueSerializer as KSerializer<Any>, nbtFile.value, sink)
             assertFalse(sink.isClosed, "Sink closed while decoding")
         }
     }
