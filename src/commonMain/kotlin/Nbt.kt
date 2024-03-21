@@ -10,7 +10,7 @@ import okio.Sink
 import okio.Source
 import okio.use
 
-public sealed class Nbt constructor(
+public sealed class Nbt(
     override val configuration: NbtConfiguration,
     override val serializersModule: SerializersModule,
 ) : NbtFormat, BinaryFormat {
@@ -45,7 +45,7 @@ public sealed class Nbt constructor(
         decodeFromSource(deserializer, Buffer().apply { write(bytes) })
 }
 
-@OptIn(ExperimentalNbtApi::class, ExperimentalSerializationApi::class)
+@OptIn(ExperimentalSerializationApi::class)
 private object DefaultNbt : Nbt(
     configuration = NbtConfiguration(
         variant = NbtVariant.Java, // Will be ignored by NbtBuilder

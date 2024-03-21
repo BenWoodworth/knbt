@@ -9,14 +9,14 @@ import net.benwoodworth.knbt.internal.StringifiedNbtReader
 import net.benwoodworth.knbt.internal.StringifiedNbtWriter
 import kotlin.native.concurrent.ThreadLocal
 
-public sealed class StringifiedNbt constructor(
+public sealed class StringifiedNbt(
     override val configuration: StringifiedNbtConfiguration,
     override val serializersModule: SerializersModule,
 ) : NbtFormat, StringFormat {
     /**
      * The default instance of [StringifiedNbt] with default configuration.
      */
-    @OptIn(ExperimentalNbtApi::class, ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class)
     @ThreadLocal
     public companion object Default : StringifiedNbt(
         configuration = StringifiedNbtConfiguration(

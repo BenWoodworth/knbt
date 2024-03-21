@@ -4,13 +4,11 @@ import net.benwoodworth.knbt.internal.*
 import okio.BufferedSink
 import okio.BufferedSource
 
-public abstract class NbtVariant private constructor(private val name: String) {
+public abstract class NbtVariant private constructor() {
     internal abstract fun getBinarySource(source: BufferedSource): BinarySource
     internal abstract fun getBinarySink(sink: BufferedSink): BinarySink
 
-    override fun toString(): String = name
-
-    public object Java : NbtVariant("Java") {
+    public data object Java : NbtVariant() {
         override fun getBinarySource(source: BufferedSource): BinarySource =
             BigEndianBinarySource(source)
 
@@ -18,7 +16,7 @@ public abstract class NbtVariant private constructor(private val name: String) {
             BigEndianBinarySink(sink)
     }
 
-    public object Bedrock : NbtVariant("Bedrock") {
+    public data object Bedrock : NbtVariant() {
         override fun getBinarySource(source: BufferedSource): BinarySource =
             LittleEndianBinarySource(source)
 
@@ -26,7 +24,7 @@ public abstract class NbtVariant private constructor(private val name: String) {
             LittleEndianBinarySink(sink)
     }
 
-    public object BedrockNetwork : NbtVariant("BedrockNetwork") {
+    public data object BedrockNetwork : NbtVariant() {
         override fun getBinarySource(source: BufferedSource): BinarySource =
             LittleEndianBase128BinarySource(source)
 

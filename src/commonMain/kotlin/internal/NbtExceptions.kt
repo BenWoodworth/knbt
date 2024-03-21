@@ -9,8 +9,11 @@ internal sealed class NbtException(
 ) : SerializationException(message, cause) {
     protected abstract val coding: String
 
+    // On Kotlin/JS, `super.message` seems to be calling `this.message` instead, resulting in infinite recursion
+    private val superMessage = message
+
     override val message: String?
-        get() = path?.let { "Error while $coding '$path': ${super.message}" } ?: super.message
+        get() = path?.let { "Error while $coding '$path': $superMessage" } ?: superMessage
 }
 
 internal class NbtEncodingException(

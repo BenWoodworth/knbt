@@ -31,7 +31,6 @@ public class NbtListBuilder<T : NbtTag> @PublishedApi internal constructor(size:
     }
 
     @PublishedApi
-    @Suppress("UNCHECKED_CAST")
     @OptIn(UnsafeNbtApi::class)
     internal fun build(): NbtList<T> {
         built = true

@@ -24,13 +24,17 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
+      - name: Clean
+        if: ${{ false }} # Skip, since it fails on Windows: https://youtrack.jetbrains.com/issue/KT-50545/
+        run: .\gradlew.bat clean
       - name: Publish to Maven
         run: >-
-          .\gradlew.bat clean
+          .\gradlew.bat
           publishKotlinMultiplatformPublicationToMavenRepository
           publishJvmPublicationToMavenRepository
           publishJsPublicationToMavenRepository
           publishLinuxX64PublicationToMavenRepository
+          publishLinuxArm64PublicationToMavenRepository
           publishMingwX64PublicationToMavenRepository
 
   macos:
@@ -43,12 +47,21 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
+      - name: Clean
+        run: ./gradlew clean
       - name: Publish to Maven
         run: >-
-          ./gradlew clean
+          ./gradlew
           publishMacosX64PublicationToMavenRepository
-          publishIosArm64PublicationToMavenRepository
+          publishMacosArm64PublicationToMavenRepository
+          publishIosSimulatorArm64PublicationToMavenRepository
           publishIosX64PublicationToMavenRepository
+          publishWatchosSimulatorArm64PublicationToMavenRepository
+          publishWatchosX64PublicationToMavenRepository
           publishWatchosArm32PublicationToMavenRepository
           publishWatchosArm64PublicationToMavenRepository
-          publishWatchosX86PublicationToMavenRepository
+          publishTvosSimulatorArm64PublicationToMavenRepository
+          publishTvosX64PublicationToMavenRepository
+          publishTvosArm64PublicationToMavenRepository
+          publishIosArm64PublicationToMavenRepository
+          publishWatchosDeviceArm64PublicationToMavenRepository

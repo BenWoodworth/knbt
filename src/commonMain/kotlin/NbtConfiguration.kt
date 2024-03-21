@@ -7,7 +7,6 @@ public class NbtConfiguration internal constructor(
     override val encodeDefaults: Boolean,
     override val ignoreUnknownKeys: Boolean,
 ) : NbtFormatConfiguration {
-    @OptIn(ExperimentalNbtApi::class)
     override fun toString(): String =
         "NbtConfiguration(" +
                 "variant=$variant" +

@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 
-@OptIn(OkioApi::class, ExperimentalNbtApi::class)
+@OptIn(OkioApi::class)
 class BinaryNbtWriterTest {
     val nbt = Nbt {
         variant = NbtVariant.Java

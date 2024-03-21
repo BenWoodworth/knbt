@@ -124,7 +124,6 @@ internal class DefaultNbtEncoder(
         }
     }
 
-    @OptIn(ExperimentalNbtApi::class)
     override fun shouldEncodeElementDefault(descriptor: SerialDescriptor, index: Int): Boolean =
         nbt.configuration.encodeDefaults
 

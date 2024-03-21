@@ -30,12 +30,13 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Clean
+        if: ${{ false }} # Skip, since it fails on Windows: https://youtrack.jetbrains.com/issue/KT-50545/
         run: .\gradlew.bat clean
       - name: Test
         run: .\gradlew.bat mingwX64Test
 
   macos:
-    name: "Test: macos, ios, watchos"
+    name: "Test: macos, ios, watchos, tvos"
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -46,5 +47,10 @@ jobs:
           distribution: 'adopt'
       - name: Clean
         run: ./gradlew clean
-      - name: Test # TODO Arm tests: iosArm64Test watchosArm32Test watchosArm64Test
-        run: ./gradlew macosX64Test iosX64Test watchosX86Test
+      - name: Test
+        run: >
+          ./gradlew
+          macosArm64Test macosX64Test
+          iosSimulatorArm64Test iosX64Test
+          tvosSimulatorArm64Test tvosX64Test
+          watchosSimulatorArm64Test watchosX64Test

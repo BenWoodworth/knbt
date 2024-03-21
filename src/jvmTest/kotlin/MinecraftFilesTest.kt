@@ -1,7 +1,7 @@
 package net.benwoodworth.knbt
 
-import org.junit.Test
 import java.io.IOException
+import kotlin.test.Test
 
 class MinecraftFilesTest {
     private fun testFiles(nbt: Nbt, resources: List<String>) {

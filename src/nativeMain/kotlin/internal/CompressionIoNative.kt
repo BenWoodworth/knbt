@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package net.benwoodworth.knbt.internal
 
 import kotlinx.cinterop.*
