@@ -174,8 +174,8 @@ private abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     final override fun decodeNull(): Nothing? =
         super.decodeNull()
 
-    final override fun decodeInline(inlineDescriptor: SerialDescriptor): Decoder =
-        super.decodeInline(inlineDescriptor)
+    final override fun decodeInline(descriptor: SerialDescriptor): Decoder =
+        super.decodeInline(descriptor)
 
     final override fun decodeValue(): Any =
         super.decodeValue()

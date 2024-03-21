@@ -45,7 +45,6 @@ public sealed class Nbt(
         decodeFromSource(deserializer, Buffer().apply { write(bytes) })
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 private object DefaultNbt : Nbt(
     configuration = NbtConfiguration(
         variant = NbtVariant.Java, // Will be ignored by NbtBuilder
@@ -54,7 +53,7 @@ private object DefaultNbt : Nbt(
         encodeDefaults = false,
         ignoreUnknownKeys = false,
     ),
-    serializersModule = EmptySerializersModule,
+    serializersModule = EmptySerializersModule(),
 )
 
 /**
