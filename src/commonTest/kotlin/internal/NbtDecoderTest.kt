@@ -2,6 +2,8 @@
 
 package net.benwoodworth.knbt.internal
 
+import com.benwoodworth.parameterize.ParameterizeScope
+import com.benwoodworth.parameterize.parameter
 import data.testTag
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.serializer
@@ -10,7 +12,7 @@ import kotlin.math.PI
 import kotlin.test.*
 
 class NbtDecoderTest {
-    private fun <T> assertDecodesCorrectly(
+    private fun <T> ParameterizeScope.assertDecodesCorrectly(
         serializer: DeserializationStrategy<T>,
         tag: NbtTag,
         expectedValue: T,
@@ -20,7 +22,7 @@ class NbtDecoderTest {
         val reader = LoggingNbtReader(TreeNbtReader(tag), stringBuilder)
 
         val actualValue = try {
-            NbtDecoder(NbtFormat(), reader).decodeSerializableValue(serializer)
+            NbtDecoder(parameterizedNbtFormat(), reader).decodeSerializableValue(serializer)
         } catch (e: Exception) {
             val log = stringBuilder.toString().trimIndent()
             val expectedLogTrimmed = expectedLog.trimIndent()
@@ -47,11 +49,15 @@ class NbtDecoderTest {
         assertEquals(expectedLog.trimIndent(), stringBuilder.toString().trimIndent())
     }
 
-    private inline fun <reified T> assertDecodesCorrectly(tag: NbtTag, expectedValue: T, expectedLog: String): Unit =
+    private inline fun <reified T> ParameterizeScope.assertDecodesCorrectly(
+        tag: NbtTag,
+        expectedValue: T,
+        expectedLog: String
+    ): Unit =
         assertDecodesCorrectly(serializer(), tag, expectedValue, expectedLog)
 
     @Test
-    fun Decoding_TestNbt_should_read_correctly() {
+    fun Decoding_TestNbt_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             serializer = NbtTag.serializer(),
             tag = testTag,
@@ -81,7 +87,7 @@ class NbtDecoderTest {
 //    }
 
     @Test
-    fun Decoding_compound_with_no_entries_to_Map_should_read_correctly() {
+    fun Decoding_compound_with_no_entries_to_Map_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = buildNbtCompound {},
             expectedValue = mapOf<String, Int>(),
@@ -95,7 +101,7 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_compound_with_one_entry_to_Map_should_read_correctly() {
+    fun Decoding_compound_with_one_entry_to_Map_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = buildNbtCompound { put("property", 7) },
             expectedValue = mapOf("property" to 7),
@@ -114,7 +120,7 @@ class NbtDecoderTest {
     data class OneProperty<T>(val property: T)
 
     @Test
-    fun Decoding_compound_with_one_entry_to_class_should_read_correctly() {
+    fun Decoding_compound_with_one_entry_to_class_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             serializer = OneProperty.serializer(Int.serializer()),
             tag = buildNbtCompound { put("property", 7) },
@@ -131,7 +137,7 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_List_should_read_correctly() {
+    fun Decoding_List_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = buildNbtList<NbtList<*>> {
                 add(NbtList(listOf(NbtByte(1))))
@@ -152,7 +158,7 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_ByteArray_should_read_correctly() {
+    fun Decoding_ByteArray_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = NbtByteArray(byteArrayOf(1, 2, 3)),
             expectedValue = byteArrayOf(1, 2, 3),
@@ -168,7 +174,7 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_IntArray_should_read_correctly() {
+    fun Decoding_IntArray_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = NbtIntArray(intArrayOf(1, 2, 3)),
             expectedValue = intArrayOf(1, 2, 3),
@@ -184,7 +190,7 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_LongArray_should_read_correctly() {
+    fun Decoding_LongArray_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = NbtLongArray(longArrayOf(1, 2, 3)),
             expectedValue = longArrayOf(1, 2, 3),
@@ -203,7 +209,7 @@ class NbtDecoderTest {
     private data class TwoProperties(val entry1: String, val entry2: Long)
 
     @Test
-    fun Decoding_compound_with_two_entries_should_read_correctly() {
+    fun Decoding_compound_with_two_entries_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             serializer = TwoProperties.serializer(),
             tag = buildNbtCompound {
@@ -225,7 +231,7 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_Byte_should_read_correctly() {
+    fun Decoding_Byte_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = NbtByte(4),
             expectedValue = 4.toByte(),
@@ -237,7 +243,7 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_Short_should_read_correctly() {
+    fun Decoding_Short_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = NbtShort(5),
             expectedValue = 5.toShort(),
@@ -249,7 +255,7 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_Int_should_read_correctly() {
+    fun Decoding_Int_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = NbtInt(6),
             expectedValue = 6,
@@ -261,7 +267,7 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_Long_should_read_correctly() {
+    fun Decoding_Long_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = NbtLong(7L),
             expectedValue = 7L,
@@ -273,7 +279,7 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_Float_should_read_correctly() {
+    fun Decoding_Float_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = NbtFloat(3.14f),
             expectedValue = 3.14f,
@@ -285,7 +291,7 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_Double_should_read_correctly() {
+    fun Decoding_Double_should_read_correctly() = parameterizeTest {
         assertDecodesCorrectly(
             tag = NbtDouble(3.14),
             expectedValue = 3.14,
@@ -314,8 +320,8 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_should_fail_on_unknown_key_if_not_ignoring() {
-        val nbt = NbtFormat(ignoreUnknownKeys = false)
+    fun Decoding_should_fail_on_unknown_key_if_not_ignoring() = parameterizeTest {
+        val nbt = parameterizedNbtFormat { ignoreUnknownKeys = false }
 
         assertFailsWith<NbtDecodingException> {
             nbt.decodeFromNbtTag(UnknownKeys.serializer(), unknownKeysTag)
@@ -323,8 +329,8 @@ class NbtDecoderTest {
     }
 
     @Test
-    fun Decoding_should_not_fail_on_unknown_key_if_ignoring() {
-        val nbt = NbtFormat(ignoreUnknownKeys = true)
+    fun Decoding_should_not_fail_on_unknown_key_if_ignoring() = parameterizeTest {
+        val nbt = parameterizedNbtFormat { ignoreUnknownKeys = true }
 
         val actual = nbt.decodeFromNbtTag(UnknownKeys.serializer(), unknownKeysTag)
         assertEquals(UnknownKeys.expected, actual)

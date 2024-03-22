@@ -1,5 +1,6 @@
 package net.benwoodworth.knbt
 
+import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -16,8 +17,8 @@ class NbtFormatConfigurationTest {
     )
 
     @Test
-    fun Should_ignore_unknown_key_at_beginning() {
-        val nbt = NbtFormat(ignoreUnknownKeys = true)
+    fun Should_ignore_unknown_key_at_beginning() = parameterizeTest {
+        val nbt = parameterizedNbtFormat { ignoreUnknownKeys = true }
 
         val tag = buildNbtCompound("") {
             put("unknown", "value")
@@ -31,8 +32,8 @@ class NbtFormatConfigurationTest {
     }
 
     @Test
-    fun Should_ignore_unknown_key_at_middle() {
-        val nbt = NbtFormat(ignoreUnknownKeys = true)
+    fun Should_ignore_unknown_key_at_middle() = parameterizeTest {
+        val nbt = parameterizedNbtFormat { ignoreUnknownKeys = true }
 
         val tag = buildNbtCompound("") {
             put("a", 1)
@@ -46,8 +47,8 @@ class NbtFormatConfigurationTest {
     }
 
     @Test
-    fun Should_ignore_unknown_key_at_end() {
-        val nbt = NbtFormat(ignoreUnknownKeys = true)
+    fun Should_ignore_unknown_key_at_end() = parameterizeTest {
+        val nbt = parameterizedNbtFormat { ignoreUnknownKeys = true }
 
         val tag = buildNbtCompound("") {
             put("a", 1)
@@ -61,8 +62,8 @@ class NbtFormatConfigurationTest {
     }
 
     @Test
-    fun Should_throw_for_unknown_keys_if_not_permitted() {
-        val nbt = NbtFormat(ignoreUnknownKeys = false)
+    fun Should_throw_for_unknown_keys_if_not_permitted() = parameterizeTest {
+        val nbt = parameterizedNbtFormat { ignoreUnknownKeys = false }
 
         val tag = buildNbtCompound("") {
             put("a", 1)

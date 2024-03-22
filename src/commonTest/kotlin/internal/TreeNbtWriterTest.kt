@@ -17,16 +17,20 @@ class TreeNbtWriterTest {
     }
 
     @Test
-    fun Should_encode_test_from_class_correctly(): Unit = assertEquals(
-        expected = testTag,
-        actual = NbtFormat().encodeToNbtTag(testClass),
-    )
+    fun Should_encode_test_from_class_correctly() = parameterizeTest {
+        assertEquals(
+            expected = testTag,
+            actual = parameterizedNbtFormat().encodeToNbtTag(testClass),
+        )
+    }
 
     @Test
-    fun Should_encode_bigtest_from_class_correctly(): Unit = assertEquals(
-        expected = testTag,
-        actual = NbtFormat().encodeToNbtTag(testClass),
-    )
+    fun Should_encode_bigtest_from_class_correctly() = parameterizeTest {
+        assertEquals(
+            expected = testTag,
+            actual = parameterizedNbtFormat().encodeToNbtTag(testClass),
+        )
+    }
 
     @Test
     fun Should_write_Byte_correctly() {

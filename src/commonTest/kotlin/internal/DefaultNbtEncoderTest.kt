@@ -2,19 +2,20 @@
 
 package net.benwoodworth.knbt.internal
 
+import com.benwoodworth.parameterize.ParameterizeScope
 import data.testTag
 import net.benwoodworth.knbt.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DefaultNbtEncoderTest {
-    private fun assertEncodesCorrectly(tag: NbtTag, expectedLog: String) {
+    private fun ParameterizeScope.assertEncodesCorrectly(tag: NbtTag, expectedLog: String) {
         val stringBuilder = StringBuilder()
         var actualTag: NbtTag? = null
         val writer = LoggingNbtWriter(TreeNbtWriter { actualTag = it }, stringBuilder)
 
         try {
-            DefaultNbtEncoder(NbtFormat(), writer).encodeSerializableValue(NbtTag.serializer(), tag)
+            DefaultNbtEncoder(parameterizedNbtFormat(), writer).encodeSerializableValue(NbtTag.serializer(), tag)
         } catch (e: Exception) {
             throw Exception("Error encoding. NbtWriter log: <\n$stringBuilder>", e)
         }
@@ -24,7 +25,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_TestNbt_should_write_correctly() {
+    fun Encoding_TestNbt_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = testTag,
             expectedLog = """
@@ -49,7 +50,7 @@ class DefaultNbtEncoderTest {
 //    }
 
     @Test
-    fun Encoding_compound_with_no_entries_should_write_correctly() {
+    fun Encoding_compound_with_no_entries_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = buildNbtCompound {},
             expectedLog = """
@@ -61,7 +62,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_compound_with_one_entry_should_write_correctly() {
+    fun Encoding_compound_with_one_entry_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = buildNbtCompound { put("property", 7) },
             expectedLog = """
@@ -75,7 +76,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_compound_with_two_entries_should_write_correctly() {
+    fun Encoding_compound_with_two_entries_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = buildNbtCompound {
                 put("entry1", "value1")
@@ -94,7 +95,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_List_should_write_correctly() {
+    fun Encoding_List_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = buildNbtList<NbtList<*>> {
                 add(NbtList(listOf(NbtByte(1))))
@@ -117,7 +118,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_ByteArray_should_write_correctly() {
+    fun Encoding_ByteArray_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = NbtByteArray(byteArrayOf(1, 2, 3)),
             expectedLog = """
@@ -135,7 +136,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_IntArray_should_write_correctly() {
+    fun Encoding_IntArray_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = NbtIntArray(intArrayOf(1, 2, 3)),
             expectedLog = """
@@ -153,7 +154,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_LongArray_should_write_correctly() {
+    fun Encoding_LongArray_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = NbtLongArray(longArrayOf(1, 2, 3)),
             expectedLog = """
@@ -171,7 +172,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_Byte_should_write_correctly() {
+    fun Encoding_Byte_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = NbtByte(4),
             expectedLog = """
@@ -182,7 +183,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_Short_should_write_correctly() {
+    fun Encoding_Short_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = NbtShort(5),
             expectedLog = """
@@ -193,7 +194,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_Int_should_write_correctly() {
+    fun Encoding_Int_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = NbtInt(6),
             expectedLog = """
@@ -204,7 +205,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_Long_should_write_correctly() {
+    fun Encoding_Long_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = NbtLong(7L),
             expectedLog = """
@@ -215,7 +216,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_Float_should_write_correctly() {
+    fun Encoding_Float_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = NbtFloat(3.14f),
             expectedLog = """
@@ -226,7 +227,7 @@ class DefaultNbtEncoderTest {
     }
 
     @Test
-    fun Encoding_Double_should_write_correctly() {
+    fun Encoding_Double_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
             tag = NbtDouble(3.14),
             expectedLog = """

@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt
 
 import com.benwoodworth.parameterize.ParameterizeScope
+import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterize
 import okio.Buffer
 import okio.Source
@@ -86,3 +87,39 @@ inline fun parameterizeTest(block: ParameterizeScope.() -> Unit): Unit =
  */
 fun Float.fix(): Float =
     Float.fromBits(this.toRawBits())
+
+class NbtFormatForParameter(
+    private val name: String,
+    private val build: ((NbtFormatBuilder.() -> Unit)) -> NbtFormat
+) {
+    override fun toString() = name
+    operator fun invoke(builderAction: NbtFormatBuilder.() -> Unit = {}) = build(builderAction)
+}
+
+val nbtFormats = listOf(
+    NbtFormatForParameter("Nbt { ... }") { builderAction ->
+        Nbt {
+            variant = NbtVariant.Java
+            compression = NbtCompression.None
+            builderAction()
+        }
+    },
+    NbtFormatForParameter("StringifiedNbt { ... }") { builderAction ->
+        StringifiedNbt {
+            builderAction()
+        }
+    },
+)
+
+/**
+ * Declares a "NbtFormat" parameter declared with [Nbt] and [StringifiedNbt] arguments,
+ * and returns its current argument.
+ */
+fun ParameterizeScope.parameterizedNbtFormat(
+    builderAction: NbtFormatBuilder.() -> Unit = {}
+): NbtFormat {
+    @Suppress("LocalVariableName") // Parameter name
+    val NbtFormat by parameter(nbtFormats)
+
+    return NbtFormat(builderAction)
+}

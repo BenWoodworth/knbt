@@ -1,5 +1,6 @@
 package net.benwoodworth.knbt
 
+import com.benwoodworth.parameterize.ParameterizeScope
 import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
@@ -9,6 +10,8 @@ import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
+import net.benwoodworth.knbt.BuiltinPolymorphicSerializerTest.ConflictingDiscriminatorTestCase.Companion.conflictingDiscriminatorTestCases
+import net.benwoodworth.knbt.BuiltinPolymorphicSerializerTest.PolymorphicTestCase.Companion.polymorphicTestCases
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -16,32 +19,39 @@ import kotlin.test.assertIs
 
 @OptIn(ExperimentalSerializationApi::class)
 class BuiltinPolymorphicSerializerTest {
-    private data class PolymorphicTestCase<T>(
-        private val serializersModule: SerializersModule,
+    private class PolymorphicTestCase<T>(
+        nbtFormat: NbtFormatForParameter,
+        serializersModule: SerializersModule,
         val polymorphicSerializer: KSerializer<T>,
         val data: T
     ) {
-        val nbt = NbtFormat(serializersModule = serializersModule)
-        val json = Json { serializersModule = this@PolymorphicTestCase.serializersModule }
+        val nbt = nbtFormat { this.serializersModule = serializersModule }
+        val json = Json { this.serializersModule = serializersModule }
 
         override fun toString(): String =
             polymorphicSerializer.descriptor.serialName
 
         companion object {
-            val testCases = listOf(
-                PolymorphicTestCase(
-                    EmptySerializersModule(),
-                    SealedData.serializer(),
-                    ConcreteSealedData("value")
-                ),
-                PolymorphicTestCase(
-                    SerializersModule {
-                        polymorphic(OpenData::class, ConcreteOpenData::class, ConcreteOpenData.serializer())
-                    },
-                    OpenData.serializer(),
-                    ConcreteOpenData("value")
-                ),
-            )
+            fun ParameterizeScope.polymorphicTestCases(): List<PolymorphicTestCase<*>> {
+                val nbtFormat by parameter(nbtFormats)
+
+                return listOf(
+                    PolymorphicTestCase(
+                        nbtFormat,
+                        EmptySerializersModule(),
+                        SealedData.serializer(),
+                        ConcreteSealedData("value")
+                    ),
+                    PolymorphicTestCase(
+                        nbtFormat,
+                        SerializersModule {
+                            polymorphic(OpenData::class, ConcreteOpenData::class, ConcreteOpenData.serializer())
+                        },
+                        OpenData.serializer(),
+                        ConcreteOpenData("value")
+                    ),
+                )
+            }
         }
 
         @Serializable
@@ -68,7 +78,7 @@ class BuiltinPolymorphicSerializerTest {
 
     @Test
     fun should_encode_root_sealed_class_nested_under_polymorphic_serial_name() = parameterizeTest {
-        val testCase by parameter(PolymorphicTestCase.testCases)
+        val testCase by parameter(polymorphicTestCases())
 
         fun <T> PolymorphicTestCase<T>.test() {
             val dataNbt = nbt.encodeToNbtTag(polymorphicSerializer, data)
@@ -83,7 +93,7 @@ class BuiltinPolymorphicSerializerTest {
 
     @Test
     fun should_encode_sealed_data_the_same_as_json() = parameterizeTest {
-        val testCase by parameter(PolymorphicTestCase.testCases)
+        val testCase by parameter(polymorphicTestCases())
 
         fun <T> PolymorphicTestCase<T>.test() {
             val dataNbt = nbt.encodeToNbtTag(polymorphicSerializer, data)
@@ -97,7 +107,7 @@ class BuiltinPolymorphicSerializerTest {
 
     @Test
     fun should_decode_sealed_data() = parameterizeTest {
-        val testCase by parameter(PolymorphicTestCase.testCases)
+        val testCase by parameter(polymorphicTestCases())
 
         fun <T> PolymorphicTestCase<T>.test() {// TODO
             val dataNbt = nbt.encodeToNbtTag(polymorphicSerializer, data)
@@ -114,7 +124,7 @@ class BuiltinPolymorphicSerializerTest {
 
     @Test
     fun should_encode_nested_sealed_data_the_same_as_json() = parameterizeTest {
-        val testCase by parameter(PolymorphicTestCase.testCases)
+        val testCase by parameter(polymorphicTestCases())
 
         fun <T> PolymorphicTestCase<T>.test() {
             val nested = Parent(data)
@@ -131,14 +141,14 @@ class BuiltinPolymorphicSerializerTest {
 
     @Test
     fun should_decode_nested_sealed_data() = parameterizeTest {
-        val testCase by parameter(PolymorphicTestCase.testCases)
+        val testCase by parameter(polymorphicTestCases())
 
         fun <T> PolymorphicTestCase<T>.test() {
             val nested = Parent(data)
 
             val serializer = Parent.serializer(polymorphicSerializer)
-            val dataNbt = NbtFormat().encodeToNbtTag(serializer, nested)
-            val dataDecoded = NbtFormat().decodeFromNbtTag(serializer, dataNbt)
+            val dataNbt = nbt.encodeToNbtTag(serializer, nested)
+            val dataDecoded = nbt.decodeFromNbtTag(serializer, dataNbt)
 
             assertEquals(nested, dataDecoded)
         }
@@ -147,13 +157,13 @@ class BuiltinPolymorphicSerializerTest {
 
     @Test
     fun should_encode_list_nested_sealed_data_the_same_as_json() = parameterizeTest {
-        val testCase by parameter(PolymorphicTestCase.testCases)
+        val testCase by parameter(polymorphicTestCases())
 
         fun <T> PolymorphicTestCase<T>.test() {
             val dataList = listOf(data)
 
             val serializer = ListSerializer(polymorphicSerializer)
-            val dataListNbt = NbtFormat().encodeToNbtTag(serializer, dataList)
+            val dataListNbt = nbt.encodeToNbtTag(serializer, dataList)
             val dataListJson = Json.encodeToJsonElement(serializer, dataList)
 
             assertEquals(dataListJson, dataListNbt.toJsonElement())
@@ -163,14 +173,14 @@ class BuiltinPolymorphicSerializerTest {
 
     @Test
     fun should_decode_list_nested_sealed_data() = parameterizeTest {
-        val testCase by parameter(PolymorphicTestCase.testCases)
+        val testCase by parameter(polymorphicTestCases())
 
         fun <T> PolymorphicTestCase<T>.test() {
             val dataList = listOf(data)
 
             val serializer = ListSerializer(polymorphicSerializer)
-            val dataListNbt = NbtFormat().encodeToNbtTag(serializer, dataList)
-            val dataListDecoded = NbtFormat().decodeFromNbtTag(serializer, dataListNbt)
+            val dataListNbt = nbt.encodeToNbtTag(serializer, dataList)
+            val dataListDecoded = nbt.decodeFromNbtTag(serializer, dataListNbt)
 
             assertEquals(dataList, dataListDecoded)
         }
@@ -179,13 +189,13 @@ class BuiltinPolymorphicSerializerTest {
 
     @Test
     fun should_encode_map_nested_sealed_data_the_same_as_json() = parameterizeTest {
-        val testCase by parameter(PolymorphicTestCase.testCases)
+        val testCase by parameter(polymorphicTestCases())
 
         fun <T> PolymorphicTestCase<T>.test() {
             val dataMap = mapOf("key" to data)
 
             val serializer = MapSerializer(String.serializer(), polymorphicSerializer)
-            val dataMapNbt = NbtFormat().encodeToNbtTag(serializer, dataMap)
+            val dataMapNbt = nbt.encodeToNbtTag(serializer, dataMap)
             val dataMapJson = Json.encodeToJsonElement(serializer, dataMap)
 
             assertEquals(dataMapJson, dataMapNbt.toJsonElement())
@@ -195,48 +205,55 @@ class BuiltinPolymorphicSerializerTest {
 
     @Test
     fun should_decode_map_nested_sealed_data() = parameterizeTest {
-        val testCase by parameter(PolymorphicTestCase.testCases)
+        val testCase by parameter(polymorphicTestCases())
 
         fun <T> PolymorphicTestCase<T>.test() {
             val dataMap = mapOf("key" to data)
 
             val serializer = MapSerializer(String.serializer(), polymorphicSerializer)
-            val dataMapNbt = NbtFormat().encodeToNbtTag(serializer, dataMap)
-            val dataMapDecoded = NbtFormat().decodeFromNbtTag(serializer, dataMapNbt)
+            val dataMapNbt = nbt.encodeToNbtTag(serializer, dataMap)
+            val dataMapDecoded = nbt.decodeFromNbtTag(serializer, dataMapNbt)
 
             assertEquals(dataMap, dataMapDecoded)
         }
         testCase.test()
     }
 
-    private data class ConflictingDiscriminatorPolymorphicTestCase<T>(
-        private val serializersModule: SerializersModule,
+    private class ConflictingDiscriminatorTestCase<T>(
+        nbtFormat: NbtFormatForParameter,
+        serializersModule: SerializersModule,
         val polymorphicSerializer: SerializationStrategy<T>,
         val concreteSerializer: SerializationStrategy<T>,
         val data: T
     ) {
-        val nbt = NbtFormat(serializersModule = serializersModule)
+        val nbt = nbtFormat { this.serializersModule = serializersModule }
 
         override fun toString(): String =
             polymorphicSerializer.descriptor.serialName
 
         companion object {
-            val testCases = listOf(
-                ConflictingDiscriminatorPolymorphicTestCase(
-                    EmptySerializersModule(),
-                    SealedData.serializer(),
-                    ConcreteSealedData.serializer(),
-                    ConcreteSealedData("value")
-                ),
-                ConflictingDiscriminatorPolymorphicTestCase(
-                    SerializersModule {
-                        polymorphic(OpenData::class, ConcreteOpenData::class, ConcreteOpenData.serializer())
-                    },
-                    OpenData.serializer(),
-                    ConcreteOpenData.serializer(),
-                    ConcreteOpenData("value")
-                ),
-            )
+            fun ParameterizeScope.conflictingDiscriminatorTestCases(): List<ConflictingDiscriminatorTestCase<*>> {
+                val nbtFormat by parameter(nbtFormats)
+
+                return listOf(
+                    ConflictingDiscriminatorTestCase(
+                        nbtFormat,
+                        EmptySerializersModule(),
+                        SealedData.serializer(),
+                        ConcreteSealedData.serializer(),
+                        ConcreteSealedData("value")
+                    ),
+                    ConflictingDiscriminatorTestCase(
+                        nbtFormat,
+                        SerializersModule {
+                            polymorphic(OpenData::class, ConcreteOpenData::class, ConcreteOpenData.serializer())
+                        },
+                        OpenData.serializer(),
+                        ConcreteOpenData.serializer(),
+                        ConcreteOpenData("value")
+                    ),
+                )
+            }
         }
 
         @Serializable
@@ -282,9 +299,9 @@ class BuiltinPolymorphicSerializerTest {
      */
     @Test
     fun encoding_bad_data_with_conflicting_class_discriminator_should_have_same_failure_as_json() = parameterizeTest {
-        val testCase by parameter(ConflictingDiscriminatorPolymorphicTestCase.testCases)
+        val testCase by parameter(conflictingDiscriminatorTestCases())
 
-        fun <T> ConflictingDiscriminatorPolymorphicTestCase<T>.test() {
+        fun <T> ConflictingDiscriminatorTestCase<T>.test() {
             val jsonFailure = checkNotNull(conflictingSealedDiscriminatorJsonResult.exceptionOrNull()) { "jsonFailure" }
 
             val nbtFailure = assertFailsWith(jsonFailure::class) {

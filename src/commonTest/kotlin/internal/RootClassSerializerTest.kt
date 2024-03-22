@@ -2,8 +2,9 @@ package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.buildNbtCompound
+import net.benwoodworth.knbt.parameterizeTest
+import net.benwoodworth.knbt.parameterizedNbtFormat
 import net.benwoodworth.knbt.put
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,12 +28,12 @@ class RootClassSerializerTest {
     }
 
     @Test
-    fun Should_encode_correctly() {
-        assertEquals(testNbtTag, NbtFormat().encodeToNbtTag(TestNbtClass.serializer(), testNbt))
+    fun Should_encode_correctly() = parameterizeTest {
+        assertEquals(testNbtTag, parameterizedNbtFormat().encodeToNbtTag(TestNbtClass.serializer(), testNbt))
     }
 
     @Test
-    fun Should_decode_correctly() {
-        assertEquals(testNbt, NbtFormat().decodeFromNbtTag(TestNbtClass.serializer(), testNbtTag))
+    fun Should_decode_correctly() = parameterizeTest {
+        assertEquals(testNbt, parameterizedNbtFormat().decodeFromNbtTag(TestNbtClass.serializer(), testNbtTag))
     }
 }
