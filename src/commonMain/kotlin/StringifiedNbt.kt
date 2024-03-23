@@ -65,19 +65,10 @@ public fun StringifiedNbt(
  * Builder of the [StringifiedNbt] instance provided by `StringifiedNbt { ... }` factory function.
  */
 @NbtDslMarker
-public class StringifiedNbtBuilder internal constructor(stringifiedNbt: StringifiedNbt) {
-    /**
-     * Specifies whether default values of Kotlin properties should be encoded.
-     * `false` by default.
-     */
-    public var encodeDefaults: Boolean = stringifiedNbt.configuration.encodeDefaults
+public class StringifiedNbtBuilder internal constructor(stringifiedNbt: StringifiedNbt) : NbtFormatBuilder {
+    override var encodeDefaults: Boolean = stringifiedNbt.configuration.encodeDefaults
 
-    /**
-     * Specifies whether encounters of unknown properties in the input NBT
-     * should be ignored instead of throwing [SerializationException].
-     * `false` by default.
-     */
-    public var ignoreUnknownKeys: Boolean = stringifiedNbt.configuration.ignoreUnknownKeys
+    override var ignoreUnknownKeys: Boolean = stringifiedNbt.configuration.ignoreUnknownKeys
 
     /**
      * Specifies whether resulting Stringified NBT should be pretty-printed.
@@ -97,7 +88,7 @@ public class StringifiedNbtBuilder internal constructor(stringifiedNbt: Stringif
     /**
      * Module with contextual and polymorphic serializers to be used in the resulting [StringifiedNbt] instance.
      */
-    public var serializersModule: SerializersModule = stringifiedNbt.serializersModule
+    override var serializersModule: SerializersModule = stringifiedNbt.serializersModule
 
     @OptIn(ExperimentalNbtApi::class)
     internal fun build(): StringifiedNbt {
