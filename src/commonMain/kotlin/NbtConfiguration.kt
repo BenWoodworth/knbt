@@ -6,6 +6,7 @@ public class NbtConfiguration internal constructor(
     public val compressionLevel: Int?,
     override val encodeDefaults: Boolean,
     override val ignoreUnknownKeys: Boolean,
+    override val classDiscriminator: String,
 ) : NbtFormatConfiguration {
     override fun toString(): String =
         "NbtConfiguration(" +
@@ -14,5 +15,6 @@ public class NbtConfiguration internal constructor(
                 ", compressionLevel=$compressionLevel" +
                 ", encodeDefaults=$encodeDefaults" +
                 ", ignoreUnknownKeys=$ignoreUnknownKeys" +
+                ", classDiscriminator='$classDiscriminator'" +
                 ")"
 }

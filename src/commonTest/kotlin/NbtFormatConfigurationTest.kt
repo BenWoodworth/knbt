@@ -1,9 +1,11 @@
 package net.benwoodworth.knbt
 
 import com.benwoodworth.parameterize.parameter
+import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -74,5 +76,27 @@ class NbtFormatConfigurationTest {
         assertFailsWith<SerializationException> {
             nbt.decodeFromNbtTag(TestData.serializer(), tag)
         }
+    }
+
+    @Test
+    fun class_discriminator_default_should_be_the_same_as_JSON() = parameterizeTest {
+        var actualDefault: String? = null
+
+        parameterizedNbtFormat {
+            actualDefault = classDiscriminator
+        }
+
+        assertEquals(Json.configuration.classDiscriminator, actualDefault)
+    }
+
+    @Test
+    fun class_discriminator_should_apply_when_built() = parameterizeTest {
+        val classDiscriminatorValue by parameterOf("type1", "type2")
+
+        val nbt = parameterizedNbtFormat {
+            classDiscriminator = classDiscriminatorValue
+        }
+
+        assertEquals(classDiscriminatorValue, nbt.configuration.classDiscriminator)
     }
 }

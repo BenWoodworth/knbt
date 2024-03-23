@@ -6,6 +6,7 @@ public class StringifiedNbtConfiguration internal constructor(
     public val prettyPrint: Boolean,
     @ExperimentalNbtApi
     public val prettyPrintIndent: String,
+    override val classDiscriminator: String,
 ) : NbtFormatConfiguration {
     @OptIn(ExperimentalNbtApi::class)
     override fun toString(): String =
@@ -14,5 +15,6 @@ public class StringifiedNbtConfiguration internal constructor(
                 ", ignoreUnknownKeys=$ignoreUnknownKeys" +
                 ", prettyPrint=$prettyPrint" +
                 ", prettyPrintIndent='$prettyPrintIndent'" +
+                ", classDiscriminator='$classDiscriminator'" +
                 ")"
 }

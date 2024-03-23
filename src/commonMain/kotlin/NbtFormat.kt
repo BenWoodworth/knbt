@@ -40,6 +40,12 @@ public sealed interface NbtFormatBuilder {
     public var ignoreUnknownKeys: Boolean
 
     /**
+     * Name of the class descriptor property for polymorphic serialization.
+     * "type" by default.
+     */
+    public var classDiscriminator: String
+
+    /**
      * Module with contextual and polymorphic serializers to be used in the resulting [NbtFormat] instance.
      */
     public var serializersModule: SerializersModule

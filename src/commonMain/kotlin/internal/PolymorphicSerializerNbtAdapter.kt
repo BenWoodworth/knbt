@@ -17,6 +17,7 @@ internal class PolymorphicSerializerNbtAdapter<T : Any>(
 
     override fun serialize(encoder: Encoder, value: T) {
         val nbtEncoder = encoder.asNbtEncoder()
+        val classDiscriminator = nbtEncoder.nbt.configuration.classDiscriminator
 
         val polymorphicEncoder = PolymorphicEncoder(nbtEncoder)
         polymorphicSerializer.serialize(polymorphicEncoder, value)
@@ -35,7 +36,7 @@ internal class PolymorphicSerializerNbtAdapter<T : Any>(
             throw NbtDecodingException("Expected polymorphic data to be a ${NbtTagType.TAG_Compound}, but was ${encodedValue.type}")
         }
 
-        if (CLASS_DISCRIMINATOR in encodedValue) {
+        if (classDiscriminator in encodedValue) {
             val baseName = polymorphicSerializer.descriptor.serialName
             val actualName = encodedValueDescriptor.serialName
 
@@ -44,13 +45,13 @@ internal class PolymorphicSerializerNbtAdapter<T : Any>(
 
             error(
                 "$classType class '$actualName' cannot be serialized as base class '$baseName' because it " +
-                        "has property name that conflicts with NBT class discriminator '$CLASS_DISCRIMINATOR'. " +
+                        "has property name that conflicts with NBT class discriminator '$classDiscriminator'. " +
                         "Consider renaming property with @SerialName annotation"
             )
         }
 
         val encodedValueWithDiscriminator = buildNbtCompound {
-            put(CLASS_DISCRIMINATOR, encodedType)
+            put(classDiscriminator, encodedType)
             encodedValue.forEach { (key, value) ->
                 put(key, value)
             }
@@ -61,14 +62,16 @@ internal class PolymorphicSerializerNbtAdapter<T : Any>(
 
     override fun deserialize(decoder: Decoder): T {
         val nbtDecoder = decoder.asNbtDecoder()
+        val classDiscriminator = nbtDecoder.nbt.configuration.classDiscriminator
+
         val decodedValueWithDiscriminator = nbtDecoder.decodeSerializableValue(NbtTag.serializer())
 
         if (decodedValueWithDiscriminator !is NbtCompound) {
-            throw NbtDecodingException("Expected polymorphic data to be a ${NbtTagType.TAG_Compound} with a '$CLASS_DISCRIMINATOR' class discriminator, but was ${decodedValueWithDiscriminator.type}")
+            throw NbtDecodingException("Expected polymorphic data to be a ${NbtTagType.TAG_Compound} with a '$classDiscriminator' class discriminator, but was ${decodedValueWithDiscriminator.type}")
         }
 
-        val decodedType = decodedValueWithDiscriminator[CLASS_DISCRIMINATOR]
-            ?: throw NbtDecodingException("Expected polymorphic data to be a ${NbtTagType.TAG_Compound} with a '$CLASS_DISCRIMINATOR' class discriminator, but was ${decodedValueWithDiscriminator.type}")
+        val decodedType = decodedValueWithDiscriminator[classDiscriminator]
+            ?: throw NbtDecodingException("Expected polymorphic data to be a ${NbtTagType.TAG_Compound} with a '$classDiscriminator' class discriminator, but was ${decodedValueWithDiscriminator.type}")
 
         if (decodedType !is NbtString) {
             throw NbtDecodingException("Expected polymorphic 'type' class discriminator to be a ${NbtTagType.TAG_String}, but was ${decodedType.type}")
@@ -76,15 +79,11 @@ internal class PolymorphicSerializerNbtAdapter<T : Any>(
 
         val decodedValue = buildNbtCompound {
             decodedValueWithDiscriminator.forEach { (key, value) ->
-                if (key != CLASS_DISCRIMINATOR) put(key, value)
+                if (key != classDiscriminator) put(key, value)
             }
         }
 
         return polymorphicSerializer.deserialize(PolymorphicDecoder(nbtDecoder, decodedType.value, decodedValue))
-    }
-
-    private companion object {
-        const val CLASS_DISCRIMINATOR = "type"
     }
 
     private class PolymorphicEncoder(

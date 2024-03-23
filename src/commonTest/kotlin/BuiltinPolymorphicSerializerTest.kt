@@ -2,6 +2,7 @@ package net.benwoodworth.knbt
 
 import com.benwoodworth.parameterize.ParameterizeScope
 import com.benwoodworth.parameterize.parameter
+import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
@@ -22,11 +23,18 @@ class BuiltinPolymorphicSerializerTest {
     private class PolymorphicTestCase<T>(
         nbtFormat: NbtFormatForParameter,
         serializersModule: SerializersModule,
+        classDiscriminator: String,
         val polymorphicSerializer: KSerializer<T>,
         val data: T
     ) {
-        val nbt = nbtFormat { this.serializersModule = serializersModule }
-        val json = Json { this.serializersModule = serializersModule }
+        val nbt = nbtFormat {
+            this.serializersModule = serializersModule
+            this.classDiscriminator = classDiscriminator
+        }
+        val json = Json {
+            this.serializersModule = serializersModule
+            this.classDiscriminator = classDiscriminator
+        }
 
         override fun toString(): String =
             polymorphicSerializer.descriptor.serialName
@@ -34,11 +42,13 @@ class BuiltinPolymorphicSerializerTest {
         companion object {
             fun ParameterizeScope.polymorphicTestCases(): List<PolymorphicTestCase<*>> {
                 val nbtFormat by parameter(nbtFormats)
+                val classDiscriminator by parameterOf("typeA", "typeB")
 
                 return listOf(
                     PolymorphicTestCase(
                         nbtFormat,
                         EmptySerializersModule(),
+                        classDiscriminator,
                         SealedData.serializer(),
                         ConcreteSealedData("value")
                     ),
@@ -47,6 +57,7 @@ class BuiltinPolymorphicSerializerTest {
                         SerializersModule {
                             polymorphic(OpenData::class, ConcreteOpenData::class, ConcreteOpenData.serializer())
                         },
+                        classDiscriminator,
                         OpenData.serializer(),
                         ConcreteOpenData("value")
                     ),
@@ -164,7 +175,7 @@ class BuiltinPolymorphicSerializerTest {
 
             val serializer = ListSerializer(polymorphicSerializer)
             val dataListNbt = nbt.encodeToNbtTag(serializer, dataList)
-            val dataListJson = Json.encodeToJsonElement(serializer, dataList)
+            val dataListJson = json.encodeToJsonElement(serializer, dataList)
 
             assertEquals(dataListJson, dataListNbt.toJsonElement())
         }
@@ -196,7 +207,7 @@ class BuiltinPolymorphicSerializerTest {
 
             val serializer = MapSerializer(String.serializer(), polymorphicSerializer)
             val dataMapNbt = nbt.encodeToNbtTag(serializer, dataMap)
-            val dataMapJson = Json.encodeToJsonElement(serializer, dataMap)
+            val dataMapJson = json.encodeToJsonElement(serializer, dataMap)
 
             assertEquals(dataMapJson, dataMapNbt.toJsonElement())
         }
