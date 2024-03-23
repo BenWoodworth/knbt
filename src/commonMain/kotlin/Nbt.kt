@@ -47,7 +47,7 @@ public fun Nbt(from: Nbt = DefaultNbt, builderAction: NbtBuilder.() -> Unit): Nb
  * Builder of the [Nbt] instance provided by `Nbt { ... }` factory function.
  */
 @NbtDslMarker
-public class NbtBuilder internal constructor(nbt: Nbt) {
+public class NbtBuilder internal constructor(nbt: Nbt) : NbtFormatBuilder {
     /**
      * The variant of NBT binary format to use. Required.
      */
@@ -75,23 +75,14 @@ public class NbtBuilder internal constructor(nbt: Nbt) {
             field = value
         }
 
-    /**
-     * Specifies whether default values of Kotlin properties should be encoded.
-     * `false` by default.
-     */
-    public var encodeDefaults: Boolean = nbt.configuration.encodeDefaults
+    override var encodeDefaults: Boolean = nbt.configuration.encodeDefaults
 
-    /**
-     * Specifies whether encounters of unknown properties in the input NBT
-     * should be ignored instead of throwing [SerializationException].
-     * `false` by default.
-     */
-    public var ignoreUnknownKeys: Boolean = nbt.configuration.ignoreUnknownKeys
+    override var ignoreUnknownKeys: Boolean = nbt.configuration.ignoreUnknownKeys
 
     /**
      * Module with contextual and polymorphic serializers to be used in the resulting [Nbt] instance.
      */
-    public var serializersModule: SerializersModule = nbt.serializersModule
+    override var serializersModule: SerializersModule = nbt.serializersModule
 
     internal fun build(): Nbt {
         val variant = variant

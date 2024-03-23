@@ -1,9 +1,7 @@
 package net.benwoodworth.knbt
 
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.SerialFormat
-import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.serializer
+import kotlinx.serialization.*
+import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 
 public sealed interface NbtFormat : SerialFormat {
@@ -23,6 +21,26 @@ public sealed interface NbtFormat : SerialFormat {
      */
     public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
         decodeFromNbtReader(TreeNbtReader(tag), deserializer)
+}
+
+public sealed interface NbtFormatBuilder {
+    /**
+     * Specifies whether default values of Kotlin properties should be encoded.
+     * `false` by default.
+     */
+    public var encodeDefaults: Boolean
+
+    /**
+     * Specifies whether encounters of unknown properties in the input NBT
+     * should be ignored instead of throwing [SerializationException].
+     * `false` by default.
+     */
+    public var ignoreUnknownKeys: Boolean
+
+    /**
+     * Module with contextual and polymorphic serializers to be used in the resulting [NbtFormat] instance.
+     */
+    public var serializersModule: SerializersModule
 }
 
 /**
