@@ -23,7 +23,8 @@ public sealed class StringifiedNbt(
             ignoreUnknownKeys = false,
             prettyPrint = false,
             prettyPrintIndent = "    ",
-            classDiscriminator = "type"
+            classDiscriminator = "type",
+            nameRootClasses = true
         ),
         serializersModule = EmptySerializersModule(),
     )
@@ -88,6 +89,8 @@ public class StringifiedNbtBuilder internal constructor(stringifiedNbt: Stringif
 
     override var classDiscriminator: String = stringifiedNbt.configuration.classDiscriminator
 
+    override var nameRootClasses: Boolean = stringifiedNbt.configuration.nameRootClasses
+
     /**
      * Module with contextual and polymorphic serializers to be used in the resulting [StringifiedNbt] instance.
      */
@@ -113,7 +116,8 @@ public class StringifiedNbtBuilder internal constructor(stringifiedNbt: Stringif
                 ignoreUnknownKeys = ignoreUnknownKeys,
                 prettyPrint = prettyPrint,
                 prettyPrintIndent = prettyPrintIndent,
-                classDiscriminator = classDiscriminator
+                classDiscriminator = classDiscriminator,
+                nameRootClasses = nameRootClasses
             ),
             serializersModule = serializersModule,
         )

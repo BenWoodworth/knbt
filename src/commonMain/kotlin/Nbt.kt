@@ -53,6 +53,7 @@ private object DefaultNbt : Nbt(
         encodeDefaults = false,
         ignoreUnknownKeys = false,
         classDiscriminator = "type",
+        nameRootClasses = true,
     ),
     serializersModule = EmptySerializersModule(),
 )
@@ -107,6 +108,8 @@ public class NbtBuilder internal constructor(nbt: Nbt) : NbtFormatBuilder {
 
     override var classDiscriminator: String = nbt.configuration.classDiscriminator
 
+    override var nameRootClasses: Boolean = nbt.configuration.nameRootClasses
+
     /**
      * Module with contextual and polymorphic serializers to be used in the resulting [Nbt] instance.
      */
@@ -131,7 +134,8 @@ public class NbtBuilder internal constructor(nbt: Nbt) : NbtFormatBuilder {
                 compressionLevel = compressionLevel,
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
-                classDiscriminator = classDiscriminator
+                classDiscriminator = classDiscriminator,
+                nameRootClasses = nameRootClasses
             ),
             serializersModule = serializersModule,
         )

@@ -123,3 +123,9 @@ fun ParameterizeScope.parameterizedNbtFormat(
 
     return NbtFormat(builderAction)
 }
+
+fun NbtFormat(from: NbtFormat, builderAction: NbtFormatBuilder.() -> Unit): NbtFormat =
+    when (from) {
+        is Nbt -> Nbt(from, builderAction)
+        is StringifiedNbt -> StringifiedNbt(from, builderAction)
+    }

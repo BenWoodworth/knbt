@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt
 
-import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -98,5 +97,27 @@ class NbtFormatConfigurationTest {
         }
 
         assertEquals(classDiscriminatorValue, nbt.configuration.classDiscriminator)
+    }
+
+    @Test
+    fun name_root_classes_default_should_be_true() = parameterizeTest {
+        var actualDefault: Boolean? = null
+
+        parameterizedNbtFormat {
+            actualDefault = nameRootClasses
+        }
+
+        assertEquals(true, actualDefault)
+    }
+
+    @Test
+    fun name_root_classes_should_apply_when_built() = parameterizeTest {
+        val nameRootClassesValue by parameterOf(true, false)
+
+        val nbt = parameterizedNbtFormat {
+            nameRootClasses = nameRootClassesValue
+        }
+
+        assertEquals(nameRootClassesValue, nbt.configuration.nameRootClasses)
     }
 }

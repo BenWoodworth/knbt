@@ -7,6 +7,7 @@ public class NbtConfiguration internal constructor(
     override val encodeDefaults: Boolean,
     override val ignoreUnknownKeys: Boolean,
     override val classDiscriminator: String,
+    override val nameRootClasses: Boolean,
 ) : NbtFormatConfiguration {
     override fun toString(): String =
         "NbtConfiguration(" +
@@ -16,5 +17,6 @@ public class NbtConfiguration internal constructor(
                 ", encodeDefaults=$encodeDefaults" +
                 ", ignoreUnknownKeys=$ignoreUnknownKeys" +
                 ", classDiscriminator='$classDiscriminator'" +
+                ", nameRootClasses=$nameRootClasses" +
                 ")"
 }

@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
@@ -46,6 +47,32 @@ public sealed interface NbtFormatBuilder {
     public var classDiscriminator: String
 
     /**
+     * Specifies whether classes serialized as the root NBT tag should be named with their
+     * [serial name][SerialDescriptor.serialName].
+     * `true` by default.
+     *
+     * Specifically, a named tag is represented as a single entry in an NBT compound. Encoding root classes with names
+     * will nest them into a NBT compound using the serial name for the entry. This applies to serializers with
+     * [StructureKind.CLASS] and the [default polymorphic serializers][AbstractPolymorphicSerializer].
+     *
+     * For example, based on the NBT spec's `test.nbt` file:
+     * ```
+     * @Serializable
+     * @SerialName("hello world")
+     * class Test(val name: String)
+     *
+     * val test = Test(name = "Bananarama")
+     *
+     * // Encoding `test` with naming root classes:
+     * // {"hello world":{name:"Bananarama"}}
+     *
+     * // Encoding `test` without naming root classes:
+     * // {name:"Bananarama"}
+     * ```
+     */
+    public var nameRootClasses: Boolean
+
+    /**
      * Module with contextual and polymorphic serializers to be used in the resulting [NbtFormat] instance.
      */
     public var serializersModule: SerializersModule
@@ -68,8 +95,8 @@ public inline fun <reified T> NbtFormat.decodeFromNbtTag(tag: NbtTag): T =
 @OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
 internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: SerializationStrategy<T>, value: T) {
     val rootSerializer = if (
-        serializer.descriptor.kind == StructureKind.CLASS ||
-        serializer is AbstractPolymorphicSerializer
+        configuration.nameRootClasses &&
+        (serializer.descriptor.kind == StructureKind.CLASS || serializer is AbstractPolymorphicSerializer)
     ) {
         RootClassSerializer(serializer)
     } else {
@@ -83,8 +110,8 @@ internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: Seri
 @OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
 internal fun <T> NbtFormat.decodeFromNbtReader(reader: NbtReader, deserializer: DeserializationStrategy<T>): T {
     val rootDeserializer = if (
-        deserializer.descriptor.kind == StructureKind.CLASS ||
-        deserializer is AbstractPolymorphicSerializer
+        configuration.nameRootClasses &&
+        (deserializer.descriptor.kind == StructureKind.CLASS || deserializer is AbstractPolymorphicSerializer)
     ) {
         RootClassDeserializer(deserializer)
     } else {
