@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Install ncurses5
         run: sudo apt-get install libncurses5
       - name: Clean
@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Clean
         if: ${{ false }} # Skip, since it fails on Windows: https://youtrack.jetbrains.com/issue/KT-50545/
         run: .\gradlew.bat clean
@@ -46,7 +46,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Clean
         run: ./gradlew clean
       - name: Test
