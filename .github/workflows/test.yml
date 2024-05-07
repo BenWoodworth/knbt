@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Clean
         run: ./gradlew clean
       - name: Test
@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Clean
         run: .\gradlew.bat clean
       - name: Test
@@ -42,7 +42,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Clean
         run: ./gradlew clean
       - name: Test # TODO Arm tests: iosArm64Test watchosArm32Test watchosArm64Test

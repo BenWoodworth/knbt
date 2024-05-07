@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Publish to Maven
         run: >-
           .\gradlew.bat clean
@@ -42,7 +42,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Publish to Maven
         run: >-
           ./gradlew clean
