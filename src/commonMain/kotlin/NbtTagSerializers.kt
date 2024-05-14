@@ -2,8 +2,6 @@ package net.benwoodworth.knbt
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -216,6 +214,7 @@ private inline fun <T> Decoder.decodeList(
         decodeSequentially() -> List(size) { index ->
             decodeElement(descriptor, index)
         }
+
         size >= 0 -> buildList(size) {
             while (true) {
                 val index = decodeElementIndex(descriptor)
@@ -224,6 +223,7 @@ private inline fun <T> Decoder.decodeList(
                 add(index, decodeElement(descriptor, index))
             }
         }
+
         else -> buildList {
             while (true) {
                 val index = decodeElementIndex(descriptor)

@@ -7,7 +7,6 @@ import io.kotest.property.exhaustive.of
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
-import net.benwoodworth.knbt.internal.NbtDecodingException
 import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.test.asSource
 import net.benwoodworth.knbt.test.data.isEmptyNamedVersion
@@ -55,7 +54,11 @@ class NbtVariantJavaNetworkTest {
 
         val versionHex = baseVersion.toString(16)
         val firstVersionHex = (baseVersion + 1).toString(16)
-        assertEquals("Invalid snapshot protocol version: 0x$versionHex. Snapshot versions start at 0x$firstVersionHex", failure.message)
+
+        assertEquals(
+            "Invalid snapshot protocol version: 0x$versionHex. Snapshot versions start at 0x$firstVersionHex",
+            failure.message
+        )
     }
 
     @Test

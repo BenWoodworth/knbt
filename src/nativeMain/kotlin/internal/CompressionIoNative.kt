@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalForeignApi::class)
+@file:Suppress("ConstPropertyName")
 
 package net.benwoodworth.knbt.internal
 
@@ -85,6 +86,7 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
                     inflateEnd(strm.ptr)
                     throw ZlibException(Z_DATA_ERROR, strm)
                 }
+
                 Z_DATA_ERROR,
                 Z_MEM_ERROR,
                 -> {

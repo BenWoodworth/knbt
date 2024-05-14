@@ -2,8 +2,8 @@ package net.benwoodworth.knbt
 
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
-import kotlin.test.Test
 import java.io.IOException
+import kotlin.test.Test
 
 class MinecraftFilesTest {
     private fun testFiles(nbt: Nbt, resources: List<String>) {

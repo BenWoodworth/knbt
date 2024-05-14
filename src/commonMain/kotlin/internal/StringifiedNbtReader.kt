@@ -66,6 +66,7 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
                     quote, backslash -> buffer.append(esc)
                     else -> throw NbtDecodingException("Invalid escape: \\$esc")
                 }
+
                 else -> buffer.append(char.toChar())
             }
         }
@@ -90,6 +91,7 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
                 ReadResult('L') -> if (peek.skipWhitespace().read() == ReadResult(';')) TAG_Long_Array else TAG_List
                 else -> TAG_List
             }
+
             ReadResult('{') -> TAG_Compound
             ReadResult('\''), ReadResult('"') -> TAG_String
             else -> {
@@ -119,6 +121,7 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
                 bufferQuotedString()
                 buffer.toString()
             }
+
             else -> {
                 bufferUnquotedString()
                 buffer.takeUnless { it.isEmpty() }?.toString()

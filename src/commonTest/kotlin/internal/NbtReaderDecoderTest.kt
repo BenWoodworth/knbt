@@ -6,13 +6,13 @@ import io.kotest.property.arbitrary.map
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 import kotlinx.coroutines.test.runTest
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.internal.NbtReader.*
-import net.benwoodworth.knbt.internal.NbtTagType.*
 import net.benwoodworth.knbt.test.NbtFormat
 import kotlin.math.PI
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class NbtReaderDecoderTest {
     @Serializable
