@@ -104,7 +104,9 @@ public class NbtDouble(public val value: Double) : NbtTag {
 }
 
 @Serializable(NbtByteArraySerializer::class)
-public class NbtByteArray(public val content: List<Byte>) : NbtTag, @Suppress("DEPRECATION") NbtByteArrayDeprecations() {
+public class NbtByteArray(public val content: List<Byte>) : NbtTag,
+    @Suppress("DEPRECATION") NbtByteArrayDeprecations() {
+
     override val type: NbtTagType get() = NbtTagType.TAG_Byte_Array
 
     public val size: Int
@@ -225,7 +227,9 @@ public fun <T : NbtTag> NbtList<T>.getOrNull(index: Int): T? =
     content.getOrNull(index)
 
 @Serializable(NbtCompoundSerializer::class)
-public class NbtCompound(public val content: Map<String, NbtTag>) : NbtTag, @Suppress("DEPRECATION") NbtCompoundDeprecations() {
+public class NbtCompound(public val content: Map<String, NbtTag>) : NbtTag,
+    @Suppress("DEPRECATION") NbtCompoundDeprecations() {
+
     override val type: NbtTagType get() = NbtTagType.TAG_Compound
 
     /**
@@ -303,7 +307,9 @@ public fun NbtIntArray.getOrNull(index: Int): Int? =
     content.getOrNull(index)
 
 @Serializable(NbtLongArraySerializer::class)
-public class NbtLongArray(public val content: List<Long>) : NbtTag, @Suppress("DEPRECATION") NbtLongArrayDeprecations() {
+public class NbtLongArray(public val content: List<Long>) : NbtTag,
+    @Suppress("DEPRECATION") NbtLongArrayDeprecations() {
+
     override val type: NbtTagType get() = NbtTagType.TAG_Long_Array
 
     public val size: Int
@@ -413,9 +419,11 @@ internal fun <T : NbtTag> NbtTag.nbtList(type: KClass<T>): NbtList<T> = when {
     this !is NbtList<*> -> {
         throw IllegalArgumentException("Element ${this::class.simpleName} is not an NbtList<${type.simpleName}>")
     }
+
     size > 0 && !type.isInstance(this[0]) -> {
         throw IllegalArgumentException("Element NbtList<${this[0]::class.simpleName}> is not an NbtList<${type.simpleName}>")
     }
+
     else -> this as NbtList<T>
 }
 //endregion

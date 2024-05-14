@@ -1,8 +1,16 @@
 package net.benwoodworth.knbt.internal
-import kotlinx.serialization.*
-import kotlinx.serialization.builtins.*
-import kotlinx.serialization.descriptors.*
-import net.benwoodworth.knbt.*
+
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.builtins.ByteArraySerializer
+import kotlinx.serialization.builtins.IntArraySerializer
+import kotlinx.serialization.builtins.LongArraySerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.buildSerialDescriptor
+import kotlinx.serialization.serializer
+import net.benwoodworth.knbt.NbtArray
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -129,9 +137,10 @@ class SerialDescriptorTest {
 
 
     @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
-    private val nbtArrayDescriptorWithZeroElements = buildSerialDescriptor("ListDescriptorWithZeroElements", StructureKind.LIST) {
-        annotations = listOf(NbtArray())
-    }
+    private val nbtArrayDescriptorWithZeroElements =
+        buildSerialDescriptor("ListDescriptorWithZeroElements", StructureKind.LIST) {
+            annotations = listOf(NbtArray())
+        }
 
     @Test
     fun getting_kind_for_NbtArray_descriptor_should_throw_SerializationException_if_it_has_zero_elements() {

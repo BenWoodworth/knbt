@@ -1,6 +1,8 @@
 package net.benwoodworth.knbt
 
-import kotlinx.serialization.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.StringFormat
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.CharSource
@@ -9,7 +11,7 @@ import net.benwoodworth.knbt.internal.StringifiedNbtReader
 import net.benwoodworth.knbt.internal.StringifiedNbtWriter
 import kotlin.native.concurrent.ThreadLocal
 
-public sealed class StringifiedNbt constructor(
+public sealed class StringifiedNbt(
     override val configuration: StringifiedNbtConfiguration,
     override val serializersModule: SerializersModule,
 ) : NbtFormat, StringFormat {
