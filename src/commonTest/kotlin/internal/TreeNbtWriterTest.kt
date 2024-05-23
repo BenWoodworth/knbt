@@ -2,8 +2,7 @@ package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
-import net.benwoodworth.knbt.test.NbtFormat
-import net.benwoodworth.knbt.test.TestValues
+import net.benwoodworth.knbt.test.*
 import net.benwoodworth.knbt.test.data.testClass
 import net.benwoodworth.knbt.test.data.testTag
 import kotlin.test.Test
@@ -29,107 +28,107 @@ class TreeNbtWriterTest {
     )
 
     @Test
-    fun should_write_Byte_correctly() {
-        TestValues.bytes.forEach { value ->
-            expectNbtWriterCalls(NbtByte(value)) {
-                beginRootTag(TAG_Byte)
-                writeByte(value)
-            }
+    fun should_write_Byte_correctly() = parameterizeTest {
+        val value by parameterOfBytes()
+
+        expectNbtWriterCalls(NbtByte(value)) {
+            beginRootTag(TAG_Byte)
+            writeByte(value)
         }
     }
 
     @Test
-    fun should_write_Short_correctly() {
-        TestValues.shorts.forEach { value ->
-            expectNbtWriterCalls(NbtShort(value)) {
-                beginRootTag(TAG_Short)
-                writeShort(value)
-            }
+    fun should_write_Short_correctly() = parameterizeTest {
+        val value by parameterOfShorts()
+
+        expectNbtWriterCalls(NbtShort(value)) {
+            beginRootTag(TAG_Short)
+            writeShort(value)
         }
     }
 
     @Test
-    fun should_write_Int_correctly() {
-        TestValues.ints.forEach { value ->
-            expectNbtWriterCalls(NbtInt(value)) {
-                beginRootTag(TAG_Int)
-                writeInt(value)
-            }
+    fun should_write_Int_correctly() = parameterizeTest {
+        val value by parameterOfInts()
+
+        expectNbtWriterCalls(NbtInt(value)) {
+            beginRootTag(TAG_Int)
+            writeInt(value)
         }
     }
 
     @Test
-    fun should_write_Long_correctly() {
-        TestValues.longs.forEach { value ->
-            expectNbtWriterCalls(NbtLong(value)) {
-                beginRootTag(TAG_Long)
-                writeLong(value)
-            }
+    fun should_write_Long_correctly() = parameterizeTest {
+        val value by parameterOfLongs()
+
+        expectNbtWriterCalls(NbtLong(value)) {
+            beginRootTag(TAG_Long)
+            writeLong(value)
         }
     }
 
     @Test
-    fun should_write_Float_correctly() {
-        TestValues.floats.forEach { value ->
-            expectNbtWriterCalls(NbtFloat(value)) {
-                beginRootTag(TAG_Float)
-                writeFloat(value)
-            }
+    fun should_write_Float_correctly() = parameterizeTest {
+        val value by parameterOfFloats()
+
+        expectNbtWriterCalls(NbtFloat(value)) {
+            beginRootTag(TAG_Float)
+            writeFloat(value)
         }
     }
 
     @Test
-    fun should_write_Double_correctly() {
-        TestValues.doubles.forEach { value ->
-            expectNbtWriterCalls(NbtDouble(value)) {
-                beginRootTag(TAG_Double)
-                writeDouble(value)
-            }
+    fun should_write_Double_correctly() = parameterizeTest {
+        val value by parameterOfDoubles()
+
+        expectNbtWriterCalls(NbtDouble(value)) {
+            beginRootTag(TAG_Double)
+            writeDouble(value)
         }
     }
 
     @Test
-    fun should_write_ByteArray_correctly() {
-        TestValues.byteArrays.forEach { value ->
-            expectNbtWriterCalls(NbtByteArray(value.asList())) {
-                beginRootTag(TAG_Byte_Array)
-                beginByteArray(value.size)
-                value.forEach { entry ->
-                    beginByteArrayEntry()
-                    writeByte(entry)
-                }
-                endByteArray()
+    fun should_write_ByteArray_correctly() = parameterizeTest {
+        val value by parameterOfByteArrays()
+
+        expectNbtWriterCalls(NbtByteArray(value.asList())) {
+            beginRootTag(TAG_Byte_Array)
+            beginByteArray(value.size)
+            value.forEach { entry ->
+                beginByteArrayEntry()
+                writeByte(entry)
             }
+            endByteArray()
         }
     }
 
     @Test
-    fun should_write_IntArray_correctly() {
-        TestValues.intArrays.forEach { value ->
-            expectNbtWriterCalls(NbtIntArray(value.asList())) {
-                beginRootTag(TAG_Int_Array)
-                beginIntArray(value.size)
-                value.forEach { entry ->
-                    beginIntArrayEntry()
-                    writeInt(entry)
-                }
-                endIntArray()
+    fun should_write_IntArray_correctly() = parameterizeTest {
+        val value by parameterOfIntArrays()
+
+        expectNbtWriterCalls(NbtIntArray(value.asList())) {
+            beginRootTag(TAG_Int_Array)
+            beginIntArray(value.size)
+            value.forEach { entry ->
+                beginIntArrayEntry()
+                writeInt(entry)
             }
+            endIntArray()
         }
     }
 
     @Test
-    fun should_write_LongArray_correctly() {
-        TestValues.longArrays.forEach { value ->
-            expectNbtWriterCalls(NbtLongArray(value.asList())) {
-                beginRootTag(TAG_Long_Array)
-                beginLongArray(value.size)
-                value.forEach { entry ->
-                    beginLongArrayEntry()
-                    writeLong(entry)
-                }
-                endLongArray()
+    fun should_write_LongArray_correctly() = parameterizeTest {
+        val value by parameterOfLongArrays()
+
+        expectNbtWriterCalls(NbtLongArray(value.asList())) {
+            beginRootTag(TAG_Long_Array)
+            beginLongArray(value.size)
+            value.forEach { entry ->
+                beginLongArrayEntry()
+                writeLong(entry)
             }
+            endLongArray()
         }
     }
 

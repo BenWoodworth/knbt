@@ -6,12 +6,14 @@
 
 package net.benwoodworth.knbt.serialization
 
+import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.test.parameterizeTest
 import kotlin.test.Test
 
 class JsonTransformingSerializationTest : SerializationTest() {
@@ -47,8 +49,8 @@ class JsonTransformingSerializationTest : SerializationTest() {
     }
 
     @Test
-    fun testExampleCanBeParsed() {
-        val testDataInput = listOf(
+    fun testExampleCanBeParsed() = parameterizeTest {
+        val testDataInput by parameterOf(
             """{"name":"test","data":{"data":"str1"},"more_data":[{"data":"str2"}]}""",
             """{"name":"test","data":{"data":"str1"},"more_data":{"data":"str2"}}""",
             """{"name":"test","data":[{"data":"str1"}],"more_data":[{"data":"str2"}]}""",
@@ -56,34 +58,27 @@ class JsonTransformingSerializationTest : SerializationTest() {
         )
         val goldenVal = Example("test", StringData("str1"), listOf(StringData("str2")))
 
-
-        for (i in testDataInput.indices) {
-            defaultNbt.testDecoding(
-                Example.serializer(),
-                goldenVal,
-                StringifiedNbt.decodeFromString(testDataInput[i])
-            )
-        }
+        defaultNbt.testDecoding(
+            Example.serializer(),
+            goldenVal,
+            StringifiedNbt.decodeFromString(testDataInput)
+        )
     }
 
     @Test
-    fun testExampleDroppingNameSerializer() {
-        val testDataInput = listOf(
-            Example("First", StringData("str1")),
-            Example("Second", StringData("str1"))
+    fun testExampleDroppingNameSerializer() = parameterizeTest {
+        val testData by parameterOf(
+            Example("First", StringData("str1")) to """{"data":{"data":"str1"}}""",
+            Example("Second", StringData("str1")) to """{"name":"Second","data":{"data":"str1"}}"""
         )
 
-        val goldenVals = listOf(
-            """{"data":{"data":"str1"}}""",
-            """{"name":"Second","data":{"data":"str1"}}"""
+        val (input, goldenVal) = testData
+
+        defaultNbt.testEncoding(
+            DroppingNameSerializer,
+            input,
+            StringifiedNbt.decodeFromString(goldenVal)
         )
-        for (i in testDataInput.indices) {
-            defaultNbt.testEncoding(
-                DroppingNameSerializer,
-                testDataInput[i],
-                StringifiedNbt.decodeFromString(goldenVals[i])
-            )
-        }
     }
 
     @Serializable
@@ -101,18 +96,18 @@ class JsonTransformingSerializationTest : SerializationTest() {
     }
 
     @Test
-    fun testDocumentationSample() {
+    fun testDocumentationSample() = parameterizeTest {
+        val input by parameterOf(
+            """{"data":["str1"]}""",
+            """{"data":"str1"}"""
+        )
+
         val correctExample = DocExample("str1")
 
         defaultNbt.testDecoding(
             DocExample.serializer(),
             correctExample,
-            StringifiedNbt.decodeFromString("""{"data":["str1"]}""")
-        )
-        defaultNbt.testDecoding(
-            DocExample.serializer(),
-            correctExample,
-            StringifiedNbt.decodeFromString("""{"data":"str1"}""")
+            StringifiedNbt.decodeFromString(input)
         )
     }
 }

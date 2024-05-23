@@ -1,10 +1,6 @@
 package net.benwoodworth.knbt.serialization
 
-import io.kotest.property.Arb
-import io.kotest.property.arbitrary.choice
-import io.kotest.property.arbitrary.map
-import io.kotest.property.checkAll
-import kotlinx.coroutines.test.runTest
+import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -14,8 +10,7 @@ import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtInt
 import net.benwoodworth.knbt.NbtString
-import net.benwoodworth.knbt.test.generators.nbtInt
-import net.benwoodworth.knbt.test.generators.nbtString
+import net.benwoodworth.knbt.test.parameterizeTest
 import kotlin.test.Test
 
 @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
@@ -39,14 +34,12 @@ class CustomPolymorphicSerializationTest : SerializationTest() {
     }
 
     @Test
-    fun custom_open_polymorphic_serializer() = runTest {
-        checkAll(Arb.nbtString()) { value ->
-            defaultNbt.testSerialization(
-                Open.serializer(),
-                value = OpenImplementation(value.value) as Open,
-                nbtTag = value,
-            )
-        }
+    fun custom_open_polymorphic_serializer() {
+        defaultNbt.testSerialization(
+            Open.serializer(),
+            value = OpenImplementation("value") as Open,
+            nbtTag = NbtString("value"),
+        )
     }
 
 
@@ -77,14 +70,14 @@ class CustomPolymorphicSerializationTest : SerializationTest() {
     }
 
     @Test
-    fun custom_sealed_polymorphic_serializer() = runTest {
-        val testCaseArb = Arb.choice(
-            Arb.nbtInt().map { IntOrString.OfInt(it.value) to it },
-            Arb.nbtString().map { IntOrString.OfString(it.value) to it },
+    fun custom_sealed_polymorphic_serializer() = parameterizeTest {
+        val testCase by parameterOf(
+            IntOrString.OfInt(0) to NbtInt(0),
+            IntOrString.OfString("") to NbtString(""),
         )
 
-        checkAll(testCaseArb) { (intOrString, nbtTag) ->
-            defaultNbt.testSerialization(IntOrString.serializer(), intOrString, nbtTag)
-        }
+        val (intOrString, nbtTag) = testCase
+
+        defaultNbt.testSerialization(IntOrString.serializer(), intOrString, nbtTag)
     }
 }

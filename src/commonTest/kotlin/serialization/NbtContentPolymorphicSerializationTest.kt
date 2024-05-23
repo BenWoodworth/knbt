@@ -6,6 +6,8 @@
 
 package net.benwoodworth.knbt.serialization
 
+import com.benwoodworth.parameterize.parameter
+import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -14,6 +16,7 @@ import net.benwoodworth.knbt.NbtContentPolymorphicSerializer
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.StringifiedNbt
 import net.benwoodworth.knbt.nbtCompound
+import net.benwoodworth.knbt.test.parameterizeTest
 import kotlin.test.Test
 
 class NbtContentPolymorphicSerializationTest : SerializationTest() {
@@ -44,38 +47,34 @@ class NbtContentPolymorphicSerializationTest : SerializationTest() {
     @Serializable
     private data class WithChoices(@Serializable(ChoicesParametricSerializer::class) val response: Choices)
 
-    private val testDataInput = listOf(
-        """{"response":{"a":"string"}}""",
-        """{"response":{"b":42}}""",
-        """{"response":{"c":true}}"""
-    )
-
-    private val testDataOutput = listOf(
-        WithChoices(Choices.HasA("string")),
-        WithChoices(Choices.HasB(42)),
-        WithChoices(Choices.HasC(true))
+    private val testData = listOf(
+        """{"response":{"a":"string"}}""" to WithChoices(Choices.HasA("string")),
+        """{"response":{"b":42}}""" to WithChoices(Choices.HasB(42)),
+        """{"response":{"c":true}}""" to WithChoices(Choices.HasC(true))
     )
 
     @Test
-    fun testParsesParametrically() {
-        for (i in testDataInput.indices) {
-            defaultNbt.testDecoding(
-                WithChoices.serializer(),
-                testDataOutput[i],
-                StringifiedNbt.decodeFromString(testDataInput[i])
-            )
-        }
+    fun testParsesParametrically() = parameterizeTest {
+        val testCase by parameter(testData)
+        val (input, output) = testCase
+
+        defaultNbt.testDecoding(
+            WithChoices.serializer(),
+            output,
+            StringifiedNbt.decodeFromString(input)
+        )
     }
 
     @Test
-    fun testSerializesParametrically() {
-        for (i in testDataOutput.indices) {
-            defaultNbt.testEncoding(
-                WithChoices.serializer(),
-                testDataOutput[i],
-                StringifiedNbt.decodeFromString(testDataInput[i])
-            )
-        }
+    fun testSerializesParametrically() = parameterizeTest {
+        val testCase by parameter(testData)
+        val (input, output) = testCase
+
+        defaultNbt.testEncoding(
+            WithChoices.serializer(),
+            output,
+            StringifiedNbt.decodeFromString(input)
+        )
     }
 
     private interface Payment {
@@ -96,16 +95,21 @@ class NbtContentPolymorphicSerializationTest : SerializationTest() {
     }
 
     @Test
-    fun testDocumentationSample() {
-        defaultNbt.testDecoding(
-            PaymentSerializer,
-            SuccessfulPayment("1.0", "03.02.2020"),
-            StringifiedNbt.decodeFromString("""{"amount":"1.0","date":"03.02.2020"}"""),
+    fun testDocumentationSample() = parameterizeTest {
+        val testCase by parameterOf(
+            """{"amount":"1.0","date":"03.02.2020"}""" to
+                    SuccessfulPayment("1.0", "03.02.2020"),
+
+            """{"amount":"2.0","date":"03.02.2020","reason":"complaint"}""" to
+                    RefundedPayment("2.0", "03.02.2020", "complaint")
         )
+
+        val (input, output) = testCase
+
         defaultNbt.testDecoding(
             PaymentSerializer,
-            RefundedPayment("2.0", "03.02.2020", "complaint"),
-            StringifiedNbt.decodeFromString("""{"amount":"2.0","date":"03.02.2020","reason":"complaint"}"""),
+            output,
+            StringifiedNbt.decodeFromString(input)
         )
     }
 }

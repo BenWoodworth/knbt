@@ -1,51 +1,85 @@
 package net.benwoodworth.knbt.test.generators
 
-import io.kotest.property.Arb
-import io.kotest.property.arbitrary.*
+import com.benwoodworth.parameterize.ParameterizeScope
+import com.benwoodworth.parameterize.parameter
 import net.benwoodworth.knbt.*
 
-fun Arb.Companion.nbtByte(): Arb<NbtByte> =
-    byte().map(::NbtByte)
+fun ParameterizeScope.parameterOfNbtByteEdgeCases() = parameter {
+    sequenceOf(
+        NbtByte(0),
+        NbtByte(1),
+        NbtByte(-1),
+        NbtByte(Byte.MAX_VALUE),
+        NbtByte(Byte.MIN_VALUE),
 
-fun Arb.Companion.nbtShort(): Arb<NbtShort> =
-    short().map(::NbtShort)
-
-fun Arb.Companion.nbtInt(): Arb<NbtInt> =
-    int().map(::NbtInt)
-
-fun Arb.Companion.nbtLong(): Arb<NbtLong> =
-    long().map(::NbtLong)
-
-
-private val floatNaNs = Arb
-    .choice(
-        Arb.uInt(0x7F80_0001u..0x7FBF_FFFFu), // Signaling NaNs
-        Arb.uInt(0xFF80_0001u..0xFFBF_FFFFu), // Signaling NaNs
-        Arb.uInt(0x7FC0_0000u..0x7FFF_FFFFu), // Quiet NaNs
-        Arb.uInt(0xFFC0_0000u..0xFFFF_FFFFu), // Quiet NaNs
+        NbtByte(2), // Boolean edge case
     )
-    .map { Float.fromBits(it.toInt()) }
+}
 
-fun Arb.Companion.nbtFloat(): Arb<NbtFloat> = Arb
-    .choose(
-        9 to float(),
-        1 to floatNaNs
+fun ParameterizeScope.parameterOfNbtShortEdgeCases() = parameter {
+    sequenceOf(
+        NbtShort(0),
+        NbtShort(1),
+        NbtShort(-1),
+        NbtShort(Short.MAX_VALUE),
+        NbtShort(Short.MIN_VALUE),
     )
-    .map { NbtFloat(it) }
+}
 
-
-private val doubleNaNs = Arb
-    .choice(
-        Arb.uLong(0x7FF0_0000_0000_0001uL..0x7FF7_FFFF_FFFF_FFFFuL), // Signaling NaNs
-        Arb.uLong(0xFFF0_0000_0000_0001uL..0xFFF7_FFFF_FFFF_FFFFuL), // Signaling NaNs
-        Arb.uLong(0x7FF8_0000_0000_0000uL..0x7FFF_FFFF_FFFF_FFFFuL), // Quiet NaNs
-        Arb.uLong(0xFFF8_0000_0000_0000uL..0xFFFF_FFFF_FFFF_FFFFuL), // Quiet NaNs
+fun ParameterizeScope.parameterOfNbtIntEdgeCases() = parameter {
+    sequenceOf(
+        NbtInt(0),
+        NbtInt(1),
+        NbtInt(-1),
+        NbtInt(Int.MAX_VALUE),
+        NbtInt(Int.MIN_VALUE),
     )
-    .map { Double.fromBits(it.toLong()) }
+}
 
-fun Arb.Companion.nbtDouble(): Arb<NbtDouble> = Arb
-    .choose(
-        9 to double(),
-        1 to doubleNaNs
+fun ParameterizeScope.parameterOfNbtLongEdgeCases() = parameter {
+    sequenceOf(
+        NbtLong(0),
+        NbtLong(1),
+        NbtLong(-1),
+        NbtLong(Long.MAX_VALUE),
+        NbtLong(Long.MIN_VALUE),
     )
-    .map { NbtDouble(it) }
+}
+
+fun ParameterizeScope.parameterOfNbtFloatEdgeCases() = parameter {
+    sequenceOf(
+        NbtFloat(0.0f),
+        NbtFloat(-0.0f), // Different zero in binary representation
+
+        NbtFloat(Float.MIN_VALUE),
+        NbtFloat(-Float.MIN_VALUE),
+
+        NbtFloat(Float.MAX_VALUE),
+        NbtFloat(-Float.MAX_VALUE),
+
+        NbtFloat(Float.POSITIVE_INFINITY),
+        NbtFloat(Float.NEGATIVE_INFINITY),
+
+        NbtFloat(Float.NaN),
+        NbtFloat(-Float.NaN), // Different NaN in binary representation
+    )
+}
+
+fun ParameterizeScope.parameterOfNbtDoubleEdgeCases() = parameter {
+    sequenceOf(
+        NbtDouble(0.0),
+        NbtDouble(-0.0), // Different zero in binary representation
+
+        NbtDouble(Double.MIN_VALUE),
+        NbtDouble(-Double.MIN_VALUE),
+
+        NbtDouble(Double.MAX_VALUE),
+        NbtDouble(-Double.MAX_VALUE),
+
+        NbtDouble(Double.POSITIVE_INFINITY),
+        NbtDouble(Double.NEGATIVE_INFINITY),
+
+        NbtDouble(Double.NaN),
+        NbtDouble(-Double.NaN), // Different NaN in binary representation
+    )
+}
