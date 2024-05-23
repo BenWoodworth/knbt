@@ -5,7 +5,7 @@ import net.benwoodworth.knbt.NbtNamed
 import net.benwoodworth.knbt.buildNbtCompound
 import net.benwoodworth.knbt.put
 import net.benwoodworth.knbt.putNbtCompound
-import net.benwoodworth.knbt.test.data.*
+import net.benwoodworth.knbt.test.file.*
 import kotlin.test.Test
 
 class ClassSerializationTest : SerializationTest() {

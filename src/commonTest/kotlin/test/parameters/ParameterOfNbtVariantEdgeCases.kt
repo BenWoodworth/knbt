@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.test.data
+package net.benwoodworth.knbt.test.parameters
 
 import com.benwoodworth.parameterize.ParameterizeScope
 import com.benwoodworth.parameterize.parameter

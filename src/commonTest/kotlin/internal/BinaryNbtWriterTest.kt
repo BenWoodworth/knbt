@@ -11,8 +11,8 @@ import net.benwoodworth.knbt.test.TestSink
 import net.benwoodworth.knbt.test.asSource
 import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.file.nbtFiles
-import net.benwoodworth.knbt.test.generators.parameterOfNbtTagSubtypeEdgeCases
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.parameterOfNbtTagSubtypeEdgeCases
 import okio.blackholeSink
 import okio.buffer
 import okio.use

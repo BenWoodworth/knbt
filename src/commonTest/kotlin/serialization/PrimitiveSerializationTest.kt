@@ -5,9 +5,8 @@ import kotlinx.serialization.builtins.serializer
 import net.benwoodworth.knbt.NbtByte
 import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.fromBoolean
-import net.benwoodworth.knbt.test.generators.*
-import net.benwoodworth.knbt.test.parameterOfBooleans
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.*
 import net.benwoodworth.knbt.toBoolean
 import kotlin.test.Test
 

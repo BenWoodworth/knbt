@@ -2,9 +2,11 @@ package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
-import net.benwoodworth.knbt.test.*
-import net.benwoodworth.knbt.test.data.testClass
-import net.benwoodworth.knbt.test.data.testTag
+import net.benwoodworth.knbt.test.NbtFormat
+import net.benwoodworth.knbt.test.file.testClass
+import net.benwoodworth.knbt.test.file.testTag
+import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

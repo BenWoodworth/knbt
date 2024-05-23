@@ -8,11 +8,11 @@ import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.test.asSource
 import net.benwoodworth.knbt.test.assume
-import net.benwoodworth.knbt.test.data.isEmptyNamedVersion
-import net.benwoodworth.knbt.test.data.isUnnamedVersion
-import net.benwoodworth.knbt.test.data.parameterOfNbtVariantEdgeCases
-import net.benwoodworth.knbt.test.generators.parameterOfNbtTagSubtypeEdgeCases
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.isEmptyNamedVersion
+import net.benwoodworth.knbt.test.parameters.isUnnamedVersion
+import net.benwoodworth.knbt.test.parameters.parameterOfNbtTagSubtypeEdgeCases
+import net.benwoodworth.knbt.test.parameters.parameterOfNbtVariantEdgeCases
 import okio.buffer
 import kotlin.test.*
 

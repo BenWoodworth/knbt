@@ -4,8 +4,8 @@ import com.benwoodworth.parameterize.ParameterizeScope
 import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterOf
 import net.benwoodworth.knbt.test.assume
-import net.benwoodworth.knbt.test.generators.*
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.*
 import kotlin.reflect.KProperty1
 import kotlin.test.*
 
