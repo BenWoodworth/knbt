@@ -1,14 +1,10 @@
 package net.benwoodworth.knbt.internal
 
-import io.kotest.property.Arb
-import io.kotest.property.arbitrary.filter
-import io.kotest.property.arbitrary.map
-import io.kotest.property.arbitrary.string
-import io.kotest.property.checkAll
-import kotlinx.coroutines.test.runTest
+import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.test.NbtFormat
+import net.benwoodworth.knbt.test.parameterizeTest
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -50,15 +46,15 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun decoding_char_should_throw_if_string_length_is_not_1() = runTest {
-        checkAll(
-            Arb.string(0..10)
-                .filter { it.length != 1 }
-                .map(::NbtString)
-        ) { invalidCharNbtString ->
-            assertFailsWith<NbtDecodingException> {
-                NbtFormat().decodeFromNbtTag<Char>(invalidCharNbtString)
-            }
+    fun decoding_char_should_throw_if_string_length_is_not_1() = parameterizeTest {
+        val invalidCharNbtString by parameter {
+            (0..10)
+                .filter { length -> length != 1 }
+                .map { length -> NbtString("x".repeat(length)) }
+        }
+
+        assertFailsWith<NbtDecodingException> {
+            NbtFormat().decodeFromNbtTag<Char>(invalidCharNbtString)
         }
     }
 }

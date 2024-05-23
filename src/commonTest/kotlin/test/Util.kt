@@ -72,42 +72,6 @@ fun ByteArray.asSource(): Source = object : Source {
     override fun timeout(): Timeout = Timeout.NONE
 }
 
-inline fun <T> parameterize(
-    parameters: List<T>,
-    description: T.() -> Any? = { this },
-    assert: T.() -> Unit,
-) {
-    val errors = parameters.map { parameter ->
-        val error = try {
-            parameter.assert()
-            null
-        } catch (t: Throwable) {
-            t
-        }
-
-        parameter to error
-    }
-
-    errors.forEach { (parameter, error) ->
-        val passOrFail = if (error == null) "PASS" else "FAIL"
-
-        println("[$passOrFail] ${description(parameter)}")
-        if (error != null) {
-            if (error is AssertionError) {
-                println("- ${error.message}")
-            } else {
-                error.printStackTrace()
-            }
-        }
-        if (error != null) println()
-    }
-
-    val failCount = errors.count { (_, error) -> error != null }
-    println("Passed: ${parameters.size - failCount}/${parameters.size}")
-
-    if (failCount > 0) fail()
-}
-
 /**
  * Work around Kotlin/JS representing Float values slightly differently.
  * TODO https://github.com/BenWoodworth/knbt/issues/3

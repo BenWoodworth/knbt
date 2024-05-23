@@ -1,202 +1,226 @@
 package net.benwoodworth.knbt.internal
 
+import com.benwoodworth.parameterize.ParameterizeScope
+import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.decodeFromString
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.test.parameterizeTest
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class StringifiedNbtReaderTest {
-    private fun check(expected: NbtTag, snbt: String) {
-        assertEquals(
-            expected = expected,
-            actual = StringifiedNbt.decodeFromString(snbt),
-            message = "Parsed \"$snbt\" incorrectly.",
-        )
+    private data class DecodeTestCase(val expected: NbtTag, val snbt: String) {
+        override fun toString(): String = snbt
+    }
 
-        when (expected) {
-            is NbtByte -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
-            is NbtShort -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
-            is NbtInt -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
-            is NbtLong -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
-            is NbtFloat -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
-            is NbtDouble -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
-            is NbtByteArray -> assertContentEquals(
-                expected.content.toByteArray(),
-                StringifiedNbt.decodeFromString(snbt)
-            )
-
-            is NbtIntArray -> assertContentEquals(
-                expected.content.toIntArray(),
-                StringifiedNbt.decodeFromString(snbt)
-            )
-
-            is NbtLongArray -> assertContentEquals(
-                expected.content.toLongArray(),
-                StringifiedNbt.decodeFromString(snbt)
-            )
-
-            is NbtString -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
-            is NbtCompound -> assertEquals(expected.content, StringifiedNbt.decodeFromString(snbt))
-            is NbtList<*> -> assertEquals(expected.content, StringifiedNbt.decodeFromString(snbt))
+    private fun ParameterizeScope.parameterOfDecodeTestCases(
+        vararg testCases: Pair<String, NbtTag>
+    ) = parameter {
+        testCases.asSequence().map { (snbt, expected) ->
+            DecodeTestCase(expected, snbt)
         }
     }
 
     @Test
-    fun should_read_Byte_correctly() {
-        check(NbtByte(0), "0b")
-        check(NbtByte(Byte.MIN_VALUE), "${Byte.MIN_VALUE}b")
-        check(NbtByte(Byte.MAX_VALUE), "${Byte.MAX_VALUE}b")
-        check(NbtByte(0), "false")
-        check(NbtByte(1), "true")
+    fun should_read_Byte_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "0b" to NbtByte(0),
+            "${Byte.MIN_VALUE}b" to NbtByte(Byte.MIN_VALUE),
+            "${Byte.MAX_VALUE}b" to NbtByte(Byte.MAX_VALUE),
+            "false" to NbtByte(0),
+            "true" to NbtByte(1),
 
-        check(NbtByte(0), " 0b ")
+            " 0b " to NbtByte(0),
+        )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test
-    fun should_read_Short_correctly() {
-        check(NbtShort(0), "0s")
-        check(NbtShort(Short.MIN_VALUE), "${Short.MIN_VALUE}s")
-        check(NbtShort(Short.MAX_VALUE), "${Short.MAX_VALUE}s")
+    fun should_read_Short_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "0s" to NbtShort(0),
+            "${Short.MIN_VALUE}s" to NbtShort(Short.MIN_VALUE),
+            "${Short.MAX_VALUE}s" to NbtShort(Short.MAX_VALUE),
 
-        check(NbtShort(0), " 0s ")
+            " 0s " to NbtShort(0),
+        )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test
-    fun should_read_Int_correctly() {
-        check(NbtInt(0), "0")
-        check(NbtInt(Int.MIN_VALUE), "${Int.MIN_VALUE}")
-        check(NbtInt(Int.MAX_VALUE), "${Int.MAX_VALUE}")
+    fun should_read_Int_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "0" to NbtInt(0),
+            "${Int.MIN_VALUE}" to NbtInt(Int.MIN_VALUE),
+            "${Int.MAX_VALUE}" to NbtInt(Int.MAX_VALUE),
 
-        check(NbtInt(0), " 0 ")
+            " 0 " to NbtInt(0),
+        )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test
-    fun should_read_Long_correctly() {
-        check(NbtLong(0), "0l")
-        check(NbtLong(Long.MIN_VALUE), "${Long.MIN_VALUE}l")
-        check(NbtLong(Long.MAX_VALUE), "${Long.MAX_VALUE}l")
+    fun should_read_Long_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "0l" to NbtLong(0),
+            "${Long.MIN_VALUE}l" to NbtLong(Long.MIN_VALUE),
+            "${Long.MAX_VALUE}l" to NbtLong(Long.MAX_VALUE),
 
-        check(NbtLong(0), " 0l ")
+            " 0l " to NbtLong(0),
+        )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test
-    fun should_read_Float_correctly() {
-        check(NbtFloat(0.0f), "0f")
-        check(NbtFloat(0.1f), "0.1f")
-        check(NbtFloat(0.1f), ".1f")
-        check(NbtFloat(1.0f), "1.f")
-        check(NbtFloat(Float.MIN_VALUE), "${Float.MIN_VALUE}f")
-        check(NbtFloat(Float.MAX_VALUE), "${Float.MAX_VALUE}f")
-        check(NbtFloat(-Float.MIN_VALUE), "-${Float.MIN_VALUE}f")
-        check(NbtFloat(-Float.MAX_VALUE), "-${Float.MAX_VALUE}f")
-        check(NbtFloat(1.23e4f), "1.23e4f")
-        check(NbtFloat(-56.78e-9f), "-56.78e-9f")
+    fun should_read_Float_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "0f" to NbtFloat(0.0f),
+            "0.1f" to NbtFloat(0.1f),
+            ".1f" to NbtFloat(0.1f),
+            "1.f" to NbtFloat(1.0f),
+            "${Float.MIN_VALUE}f" to NbtFloat(Float.MIN_VALUE),
+            "${Float.MAX_VALUE}f" to NbtFloat(Float.MAX_VALUE),
+            "-${Float.MIN_VALUE}f" to NbtFloat(-Float.MIN_VALUE),
+            "-${Float.MAX_VALUE}f" to NbtFloat(-Float.MAX_VALUE),
+            "1.23e4f" to NbtFloat(1.23e4f),
+            "-56.78e-9f" to NbtFloat(-56.78e-9f),
 
-        check(NbtFloat(0f), " 0f ")
+            " 0f " to NbtFloat(0f),
+        )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test
-    fun should_read_Double_correctly() {
-        check(NbtDouble(0.0), "0d")
-        check(NbtDouble(0.1), "0.1d")
-        check(NbtDouble(0.1), ".1d")
-        check(NbtDouble(1.0), "1.d")
-        check(NbtDouble(Double.MIN_VALUE), "${Double.MIN_VALUE}d")
-        check(NbtDouble(Double.MAX_VALUE), "${Double.MAX_VALUE}d")
-        check(NbtDouble(-Double.MIN_VALUE), "-${Double.MIN_VALUE}d")
-        check(NbtDouble(-Double.MAX_VALUE), "-${Double.MAX_VALUE}d")
-        check(NbtDouble(1.23e4), "1.23e4d")
-        check(NbtDouble(-56.78e-9), "-56.78e-9d")
+    fun should_read_Double_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "0d" to NbtDouble(0.0),
+            "0.1d" to NbtDouble(0.1),
+            ".1d" to NbtDouble(0.1),
+            "1.d" to NbtDouble(1.0),
+            "${Double.MIN_VALUE}d" to NbtDouble(Double.MIN_VALUE),
+            "${Double.MAX_VALUE}d" to NbtDouble(Double.MAX_VALUE),
+            "-${Double.MIN_VALUE}d" to NbtDouble(-Double.MIN_VALUE),
+            "-${Double.MAX_VALUE}d" to NbtDouble(-Double.MAX_VALUE),
+            "1.23e4d" to NbtDouble(1.23e4),
+            "-56.78e-9d" to NbtDouble(-56.78e-9),
 
-        check(NbtDouble(0.1), "0.1")
-        check(NbtDouble(0.1), ".1")
-        check(NbtDouble(1.0), "1.")
-        check(NbtDouble(Double.MIN_VALUE), "${Double.MIN_VALUE}")
-        check(NbtDouble(Double.MAX_VALUE), "${Double.MAX_VALUE}")
-        check(NbtDouble(-Double.MIN_VALUE), "-${Double.MIN_VALUE}")
-        check(NbtDouble(-Double.MAX_VALUE), "-${Double.MAX_VALUE}")
-        check(NbtDouble(1.23e4), "1.23e4")
-        check(NbtDouble(-56.78e-9), "-56.78e-9")
+            "0.1" to NbtDouble(0.1),
+            ".1" to NbtDouble(0.1),
+            "1." to NbtDouble(1.0),
+            "${Double.MIN_VALUE}" to NbtDouble(Double.MIN_VALUE),
+            "${Double.MAX_VALUE}" to NbtDouble(Double.MAX_VALUE),
+            "-${Double.MIN_VALUE}" to NbtDouble(-Double.MIN_VALUE),
+            "-${Double.MAX_VALUE}" to NbtDouble(-Double.MAX_VALUE),
+            "1.23e4" to NbtDouble(1.23e4),
+            "-56.78e-9" to NbtDouble(-56.78e-9),
 
-        check(NbtDouble(0.0), " .0 ")
+            " .0 " to NbtDouble(0.0),
+        )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test
-    fun should_parse_ByteArray_correctly() {
-        check(NbtByteArray(listOf()), "[B;]")
-        check(NbtByteArray(listOf(1, 2, 3)), "[B; 1b, 2b, 3b]")
+    fun should_parse_ByteArray_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "[B;]" to NbtByteArray(listOf()),
+            "[B; 1b , 2b, 3b]" to NbtByteArray(listOf(1, 2, 3)),
 
-        check(NbtByteArray(listOf(1, 2, 3)), " [ B ; 1b , 2b , 3b ] ")
+            " [ B ; 1b , 2b , 3b ] " to NbtByteArray(listOf(1, 2, 3)),
+        )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test
-    fun should_parse_IntArray_correctly() {
-        check(NbtIntArray(listOf()), "[I;]")
-        check(NbtIntArray(listOf(1, 2, 3)), "[I; 1, 2, 3]")
+    fun should_parse_IntArray_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "[I;]" to NbtIntArray(listOf()),
+            "[I; 1, 2, 3]" to NbtIntArray(listOf(1, 2, 3)),
 
-        check(NbtIntArray(listOf(1, 2, 3)), " [ I ; 1 , 2 , 3 ] ")
+            " [ I ; 1 , 2 , 3 ] " to NbtIntArray(listOf(1, 2, 3)),
+        )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test
-    fun should_parse_LongArray_correctly() {
-        check(NbtLongArray(listOf()), "[L;]")
-        check(NbtLongArray(listOf(1, 2, 3)), "[L; 1l, 2l, 3l]")
+    fun should_parse_LongArray_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "[L;]" to NbtLongArray(listOf()),
+            "[L; 1l, 2l, 3l]" to NbtLongArray(listOf(1, 2, 3)),
 
-        check(NbtLongArray(listOf(1, 2, 3)), " [ L ; 1l , 2l , 3l ] ")
+            " [ L ; 1l , 2l , 3l ] " to NbtLongArray(listOf(1, 2, 3)),
+        )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test
-    fun should_parse_String_correctly() {
-        check(NbtString(""), "''")
-        check(NbtString(""), "\"\"")
-        check(NbtString("one"), "one")
-        check(NbtString("a1"), "a1")
-        check(NbtString("2x"), "2x")
-        check(NbtString("2_2"), "2_2")
-        check(NbtString("'"), "\"'\"")
-        check(NbtString("\""), "'\"'")
-        check(NbtString("'"), "'\\''")
-        check(NbtString("\""), "\"\\\"\"")
+    fun should_parse_String_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "''" to NbtString(""),
+            "\"\"" to NbtString(""),
+            "one" to NbtString("one"),
+            "a1" to NbtString("a1"),
+            "2x" to NbtString("2x"),
+            "2_2" to NbtString("2_2"),
+            "\"'\"" to NbtString("'"),
+            "'\"'" to NbtString("\""),
+            "'\\''" to NbtString("'"),
+            "\"\\\"\"" to NbtString("\""),
+        )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test
-    fun should_parse_List_correctly() {
-        check(buildNbtList<Nothing> { }, "[]")
-        check(buildNbtList<NbtByte> { add(0) }, "[0b]")
-        check(buildNbtList<NbtShort> { add(0) }, "[0s]")
-        check(buildNbtList<NbtInt> { add(0) }, "[0]")
-        check(buildNbtList<NbtLong> { add(0) }, "[0l]")
-        check(buildNbtList<NbtFloat> { add(0f) }, "[0f]")
-        check(buildNbtList<NbtDouble> { add(0.0) }, "[0d]")
-        check(buildNbtList<NbtByteArray> { add(byteArrayOf()) }, "[[B;]]")
-        check(buildNbtList<NbtIntArray> { add(intArrayOf()) }, "[[I;]]")
-        check(buildNbtList<NbtLongArray> { add(longArrayOf()) }, "[[L;]]")
-        check(buildNbtList<NbtList<*>> { add(buildNbtList<Nothing> { }) }, "[[]]")
-        check(buildNbtList { add(buildNbtCompound { }) }, "[{}]")
+    fun should_parse_List_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "[]" to buildNbtList<Nothing> { },
+            "[0b]" to buildNbtList<NbtByte> { add(0) },
+            "[0s]" to buildNbtList<NbtShort> { add(0) },
+            "[0]" to buildNbtList<NbtInt> { add(0) },
+            "[0l]" to buildNbtList<NbtLong> { add(0) },
+            "[0f]" to buildNbtList<NbtFloat> { add(0f) },
+            "[0d]" to buildNbtList<NbtDouble> { add(0.0) },
+            "[[B;]]" to buildNbtList<NbtByteArray> { add(byteArrayOf()) },
+            "[[I;]]" to buildNbtList<NbtIntArray> { add(intArrayOf()) },
+            "[[L;]]" to buildNbtList<NbtLongArray> { add(longArrayOf()) },
+            "[[]]" to buildNbtList<NbtList<*>> { add(buildNbtList<Nothing> { }) },
+            "[{}]" to buildNbtList { add(buildNbtCompound { }) },
 
-        check(buildNbtList<NbtList<*>> {
-            add(buildNbtList<NbtInt> { add(1) })
-            add(buildNbtList<NbtByte> { add(2); add(3) })
-        }, " [ [ 1 ] , [ 2b , 3b ] ] ")
+            " [ [ 1 ] , [ 2b , 3b ] ] " to buildNbtList<NbtList<*>> {
+                add(buildNbtList<NbtInt> { add(1) })
+                add(buildNbtList<NbtByte> { add(2); add(3) })
+            }
+        )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test
-    fun should_parse_Compound_correctly() {
-        check(buildNbtCompound { }, "{}")
-        check(buildNbtCompound { put("one", 1) }, "{one: 1}")
-        check(buildNbtCompound { put("", 0) }, "{'': 0}")
-        check(buildNbtCompound { put("", 0.toByte()) }, "{\"\": 0b}")
+    fun should_parse_Compound_correctly() = parameterizeTest {
+        val testCase by parameterOfDecodeTestCases(
+            "{}" to buildNbtCompound { },
+            "{one: 1}" to buildNbtCompound { put("one", 1) },
+            "{'': 0}" to buildNbtCompound { put("", 0) },
+            "{\"\": 0b}" to buildNbtCompound { put("", 0.toByte()) },
 
-        check(
-            buildNbtCompound {
+            " { '' : { 1234 : 1234 } } " to buildNbtCompound {
                 putNbtCompound("") {
                     put("1234", 1234)
                 }
             },
-            " { '' : { 1234 : 1234 } } ",
         )
+
+        assertEquals(testCase.expected, StringifiedNbt.decodeFromString(testCase.snbt))
     }
 
     @Test

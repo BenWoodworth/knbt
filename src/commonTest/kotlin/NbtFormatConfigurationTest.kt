@@ -1,8 +1,10 @@
 package net.benwoodworth.knbt
 
+import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import net.benwoodworth.knbt.test.NbtFormat
+import net.benwoodworth.knbt.test.parameterizeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -16,43 +18,22 @@ class NbtFormatConfigurationTest {
     )
 
     @Test
-    fun should_ignore_unknown_key_at_beginning() {
+    fun should_ignore_unknown_key() = parameterizeTest {
         val nbt = NbtFormat(ignoreUnknownKeys = true)
 
+        val entries = mutableListOf<Pair<String, NbtTag>>(
+            "a" to NbtInt(1),
+            "b" to NbtInt(2),
+        )
+
+        val unknownKey = "unknown" to NbtString("value")
+        val unknownKeyIndex by parameter(0..entries.size)
+
+        entries.add(unknownKeyIndex, unknownKey)
         val tag = buildNbtCompound("") {
-            put("unknown", "value")
-            put("a", 1)
-            put("b", 2)
-        }
-
-        val expected = TestData(1, 2)
-
-        assertEquals(expected, nbt.decodeFromNbtTag(tag))
-    }
-
-    @Test
-    fun should_ignore_unknown_key_at_middle() {
-        val nbt = NbtFormat(ignoreUnknownKeys = true)
-
-        val tag = buildNbtCompound("") {
-            put("a", 1)
-            put("unknown", "value")
-            put("b", 2)
-        }
-
-        val expected = TestData(1, 2)
-
-        assertEquals(expected, nbt.decodeFromNbtTag(tag))
-    }
-
-    @Test
-    fun should_ignore_unknown_key_at_end() {
-        val nbt = NbtFormat(ignoreUnknownKeys = true)
-
-        val tag = buildNbtCompound("") {
-            put("a", 1)
-            put("b", 2)
-            put("unknown", "value")
+            entries.forEach { (name, value) ->
+                put(name, value)
+            }
         }
 
         val expected = TestData(1, 2)

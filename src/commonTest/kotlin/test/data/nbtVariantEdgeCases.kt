@@ -1,5 +1,7 @@
 package net.benwoodworth.knbt.test.data
 
+import com.benwoodworth.parameterize.ParameterizeScope
+import com.benwoodworth.parameterize.parameter
 import net.benwoodworth.knbt.NbtVariant
 
 private val javaNetworkEmptyNamedProtocolVersions = listOf(
@@ -20,19 +22,21 @@ val NbtVariant.JavaNetwork.isUnnamedVersion: Boolean
     get() = javaNetworkUnnamedProtocolVersions.any { protocolVersion in it }
 
 
-val nbtVariantEdgeCases = buildList {
-    add(NbtVariant.Java)
+fun ParameterizeScope.parameterOfNbtVariantEdgeCases() = parameter {
+    buildList {
+        add(NbtVariant.Java)
 
-    javaNetworkEmptyNamedProtocolVersions.forEach { range ->
-        add(NbtVariant.JavaNetwork(range.first))
-        add(NbtVariant.JavaNetwork(range.last))
+        javaNetworkEmptyNamedProtocolVersions.forEach { range ->
+            add(NbtVariant.JavaNetwork(range.first))
+            add(NbtVariant.JavaNetwork(range.last))
+        }
+
+        javaNetworkUnnamedProtocolVersions.forEach { range ->
+            add(NbtVariant.JavaNetwork(range.first))
+            add(NbtVariant.JavaNetwork(range.last))
+        }
+
+        add(NbtVariant.Bedrock)
+        add(NbtVariant.BedrockNetwork)
     }
-
-    javaNetworkUnnamedProtocolVersions.forEach { range ->
-        add(NbtVariant.JavaNetwork(range.first))
-        add(NbtVariant.JavaNetwork(range.last))
-    }
-
-    add(NbtVariant.Bedrock)
-    add(NbtVariant.BedrockNetwork)
 }

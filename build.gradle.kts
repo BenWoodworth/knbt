@@ -3,9 +3,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val kotlinx_serialization_version: String by extra
-val kotlinx_coroutines_version: String by extra
 val okio_version: String by extra
-val kotest_version: String by extra
+val parameterize_version: String by extra
 
 System.getenv("GIT_REF")?.let { gitRef ->
     Regex("refs/tags/v(.*)").matchEntire(gitRef)?.let { gitVersionMatch ->
@@ -57,7 +56,7 @@ kotlin {
     //wasmWasi() //
 
     linuxX64()
-    //linuxArm64() // Not supported by kx-coroutines/kotest yet
+    linuxArm64()
     //androidNativeArm32() // Not supported by Okio yet
     //androidNativeArm64() // https://github.com/square/okio/issues/1242#issuecomment-1759357336
     //androidNativeX86()   //
@@ -74,19 +73,15 @@ kotlin {
     tvosX64()
     tvosArm64()
     iosArm64()
-    //watchosDeviceArm64() // Not supported by kotest yet
+    watchosDeviceArm64()
     mingwX64()
 
     sourceSets {
         configureEach {
-            val isTest = name.endsWith("Test")
-
             languageSettings.apply {
                 optIn("kotlin.contracts.ExperimentalContracts")
                 optIn("net.benwoodworth.knbt.InternalNbtApi")
                 optIn("net.benwoodworth.knbt.MIGRATION Acknowledge that NbtCompound now has a stricter get")
-
-                if (isTest) optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
             }
         }
 
@@ -99,8 +94,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version")
-                implementation("io.kotest:kotest-property:$kotest_version")
+                implementation("com.benwoodworth.parameterize:parameterize:$parameterize_version")
             }
         }
         val jvmTest by getting {

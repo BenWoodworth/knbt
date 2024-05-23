@@ -1,5 +1,7 @@
 package net.benwoodworth.knbt.internal
 
+import com.benwoodworth.parameterize.ParameterizeScope
+import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SealedSerializationApi
@@ -12,130 +14,77 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.buildSerialDescriptor
 import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.NbtArray
+import net.benwoodworth.knbt.test.parameterOfBooleans
+import net.benwoodworth.knbt.test.parameterizeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class SerialDescriptorTest {
-    @OptIn(SealedSerializationApi::class)
-    private fun SerialDescriptor.asNbtArray(): SerialDescriptor =
-        object : SerialDescriptor by this {
-            override val annotations: List<Annotation> = this@asNbtArray.annotations + NbtArray()
-        }
-
-
-    private fun test(expectedKind: NbtListKind, descriptor: SerialDescriptor): Unit =
-        assertEquals(expectedKind, descriptor.nbtListKind)
-
-    private fun testElement(expectedKind: NbtListKind, elementDescriptor: SerialDescriptor) {
-        val descriptor = buildClassSerialDescriptor("Parent", elementDescriptor) {
-            element("element", elementDescriptor)
-        }
-
-        assertEquals(expectedKind, descriptor.getElementNbtListKind(0))
+    private class NbtListKindTestCase(val expectedKind: NbtListKind, val descriptor: SerialDescriptor) {
+        @OptIn(SealedSerializationApi::class)
+        override fun toString(): String =
+            "${descriptor.serialName} (of ${descriptor.getElementDescriptor(0).serialName})"
     }
 
-    private fun testNbtArrayElement(expectedKind: NbtListKind, elementDescriptor: SerialDescriptor) {
-        val descriptor = buildClassSerialDescriptor("Parent", elementDescriptor) {
-            element("element", elementDescriptor, listOf(NbtArray()))
+    private fun ParameterizeScope.parameterOfNbtListKindTestCases(
+        vararg testCases: Pair<SerialDescriptor, NbtListKind>
+    ) = parameter {
+        testCases.asSequence().map { (serialDescriptor, nbtListKind) ->
+            NbtListKindTestCase(nbtListKind, serialDescriptor)
         }
-
-        assertEquals(expectedKind, descriptor.getElementNbtListKind(0))
     }
 
+    @Test
+    fun nbt_list_kind_should_be_correct() = parameterizeTest {
+        @OptIn(SealedSerializationApi::class)
+        fun SerialDescriptor.withNbtArrayAnnotation(): SerialDescriptor =
+            object : SerialDescriptor by this {
+                override val serialName: String = "WithNbtArrayAnnotation<${this@withNbtArrayAnnotation.serialName}>"
+                override val annotations: List<Annotation> = this@withNbtArrayAnnotation.annotations + NbtArray()
+            }
+
+        val testCase by parameterOfNbtListKindTestCases(
+            ByteArraySerializer().descriptor to NbtListKind.ByteArray,
+            IntArraySerializer().descriptor to NbtListKind.IntArray,
+            LongArraySerializer().descriptor to NbtListKind.LongArray,
+
+            serializer<List<Byte>>().descriptor to NbtListKind.List,
+            serializer<List<Int>>().descriptor to NbtListKind.List,
+            serializer<List<Long>>().descriptor to NbtListKind.List,
+
+            serializer<List<Byte>>().descriptor.withNbtArrayAnnotation() to NbtListKind.ByteArray,
+            serializer<List<Int>>().descriptor.withNbtArrayAnnotation() to NbtListKind.IntArray,
+            serializer<List<Long>>().descriptor.withNbtArrayAnnotation() to NbtListKind.LongArray,
+        )
+
+        val asElement by parameterOfBooleans()
+
+        val nbtListKind = if (asElement) {
+            buildClassSerialDescriptor("Parent") {
+                element("element", testCase.descriptor)
+            }.getElementNbtListKind(0)
+        } else {
+            testCase.descriptor.nbtListKind
+        }
+
+        assertEquals(testCase.expectedKind, nbtListKind)
+    }
 
     @Test
-    fun kind_for_ByteArray_should_be_ByteArray(): Unit =
-        test(NbtListKind.ByteArray, ByteArraySerializer().descriptor)
+    fun nbt_list_kind_of_NbtArray_element_should_be_correct() = parameterizeTest {
+        val testCase by parameterOfNbtListKindTestCases(
+            serializer<List<Byte>>().descriptor to NbtListKind.ByteArray,
+            serializer<List<Int>>().descriptor to NbtListKind.IntArray,
+            serializer<List<Long>>().descriptor to NbtListKind.LongArray,
+        )
 
-    @Test
-    fun kind_for_element_ByteArray_should_be_ByteArray(): Unit =
-        testElement(NbtListKind.ByteArray, ByteArraySerializer().descriptor)
+        val descriptor = buildClassSerialDescriptor("Parent") {
+            element("element", testCase.descriptor, listOf(NbtArray()))
+        }
 
-
-    @Test
-    fun kind_for_IntArray_should_be_IntArray(): Unit =
-        test(NbtListKind.IntArray, IntArraySerializer().descriptor)
-
-    @Test
-    fun kind_for_element_IntArray_should_be_IntArray(): Unit =
-        testElement(NbtListKind.IntArray, IntArraySerializer().descriptor)
-
-
-    @Test
-    fun kind_for_LongArray_should_be_LongArray(): Unit =
-        test(NbtListKind.LongArray, LongArraySerializer().descriptor)
-
-    @Test
-    fun kind_for_element_LongArray_should_be_LongArray(): Unit =
-        testElement(NbtListKind.LongArray, LongArraySerializer().descriptor)
-
-
-    @Test
-    fun kind_for_Byte_List_should_be_List(): Unit =
-        test(NbtListKind.List, serializer<List<Byte>>().descriptor)
-
-    @Test
-    fun kind_for_element_Byte_List_should_be_List(): Unit =
-        testElement(NbtListKind.List, serializer<List<Byte>>().descriptor)
-
-    @Test
-    fun kind_for_NbtArray_element_Byte_List_should_be_ByteArray(): Unit =
-        testNbtArrayElement(NbtListKind.ByteArray, serializer<List<Byte>>().descriptor)
-
-
-    @Test
-    fun kind_for_Int_List_should_be_List(): Unit =
-        test(NbtListKind.List, serializer<List<Int>>().descriptor)
-
-    @Test
-    fun kind_for_element_Int_List_should_be_List(): Unit =
-        testElement(NbtListKind.List, serializer<List<Int>>().descriptor)
-
-    @Test
-    fun kind_for_NbtArray_element_Int_List_should_be_IntArray(): Unit =
-        testNbtArrayElement(NbtListKind.IntArray, serializer<List<Int>>().descriptor)
-
-
-    @Test
-    fun kind_for_Long_List_should_be_List(): Unit =
-        test(NbtListKind.List, serializer<List<Long>>().descriptor)
-
-    @Test
-    fun kind_for_element_Long_List_should_be_List(): Unit =
-        testElement(NbtListKind.List, serializer<List<Long>>().descriptor)
-
-    @Test
-    fun kind_for_NbtArray_element_Long_List_should_be_LongArray(): Unit =
-        testNbtArrayElement(NbtListKind.LongArray, serializer<List<Long>>().descriptor)
-
-
-    @Test
-    fun kind_for_Byte_NbtArrayList_should_be_ByteArray(): Unit =
-        test(NbtListKind.ByteArray, serializer<List<Byte>>().descriptor.asNbtArray())
-
-    @Test
-    fun kind_for_element_Byte_NbtArrayList_should_be_ByteArray(): Unit =
-        testElement(NbtListKind.ByteArray, serializer<List<Byte>>().descriptor.asNbtArray())
-
-
-    @Test
-    fun kind_for_Int_NbtArrayList_should_be_IntArray(): Unit =
-        test(NbtListKind.IntArray, serializer<List<Int>>().descriptor.asNbtArray())
-
-    @Test
-    fun kind_for_element_Int_NbtArrayList_should_be_IntArray(): Unit =
-        testElement(NbtListKind.IntArray, serializer<List<Int>>().descriptor.asNbtArray())
-
-
-    @Test
-    fun kind_for_Long_NbtArrayList_should_be_LongArray(): Unit =
-        test(NbtListKind.LongArray, serializer<List<Long>>().descriptor.asNbtArray())
-
-    @Test
-    fun kind_for_element_Long_NbtArrayList_should_be_LongArray(): Unit =
-        testElement(NbtListKind.LongArray, serializer<List<Long>>().descriptor.asNbtArray())
-
+        assertEquals(testCase.expectedKind, descriptor.getElementNbtListKind(0))
+    }
 
     @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
     private val nbtArrayDescriptorWithZeroElements =

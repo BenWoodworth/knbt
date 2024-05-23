@@ -1,42 +1,59 @@
 package net.benwoodworth.knbt
 
-import io.kotest.property.Arb
-import io.kotest.property.Exhaustive
-import io.kotest.property.arbitrary.string
-import io.kotest.property.assume
-import io.kotest.property.checkAll
-import io.kotest.property.exhaustive.bytes
-import io.kotest.property.exhaustive.filter
-import io.kotest.property.exhaustive.map
-import kotlinx.coroutines.test.runTest
+import com.benwoodworth.parameterize.ParameterizeScope
+import com.benwoodworth.parameterize.parameter
+import com.benwoodworth.parameterize.parameterOf
+import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.generators.*
+import net.benwoodworth.knbt.test.parameterizeTest
 import kotlin.reflect.KProperty1
 import kotlin.test.*
 
+class NbtTagTest {
+    private fun ParameterizeScope.parameterOfNbtTagsWithSameContent() = parameter<NbtTag> {
+        val content = emptyList<Nothing>()
+
+        listOf(
+            NbtList(content),
+            NbtByteArray(content),
+            NbtIntArray(content),
+            NbtLongArray(content)
+        )
+    }
+
+    @Test
+    fun should_not_equal_NbtTag_with_different_type_but_same_content() = parameterizeTest {
+        val nbtTag by parameterOfNbtTagsWithSameContent()
+        val differentNbtTagWithSameContent by parameterOfNbtTagsWithSameContent()
+        assume(nbtTag.type != differentNbtTagWithSameContent.type)
+
+        assertNotEquals(differentNbtTagWithSameContent, nbtTag)
+    }
+}
+
 class NbtByteTest {
     @Test
-    fun should_equal_another_NbtByte_with_the_same_value() = runTest {
-        checkAll(Arb.nbtByte()) { nbtByte ->
-            val nbtByteWithSameValue = NbtByte(nbtByte.value)
+    fun should_equal_another_NbtByte_with_the_same_value() = parameterizeTest {
+        val nbtByte by parameterOfNbtByteEdgeCases()
+        val nbtByteWithSameValue = NbtByte(nbtByte.value)
 
-            assertEquals(nbtByteWithSameValue, nbtByte)
-        }
+        assertEquals(nbtByteWithSameValue, nbtByte)
     }
 
     @Test
-    fun should_not_equal_another_NbtByte_with_different_value() = runTest {
-        checkAll(Arb.nbtByte(), Arb.nbtByte()) { nbtByteA, nbtByteB ->
-            assume(nbtByteA.value != nbtByteB.value)
+    fun should_not_equal_another_NbtByte_with_different_value() = parameterizeTest {
+        val nbtByte by parameterOfNbtByteEdgeCases()
+        val differentNbtByte by parameterOfNbtByteEdgeCases()
+        assume(nbtByte.value != differentNbtByte.value)
 
-            assertNotEquals(nbtByteA, nbtByteB)
-        }
+        assertNotEquals(nbtByte, differentNbtByte)
     }
 
     @Test
-    fun hash_code_should_be_the_value_hash_code() = runTest {
-        checkAll(Arb.nbtByte()) { nbtByte ->
-            assertEquals(nbtByte.value.hashCode(), nbtByte.hashCode())
-        }
+    fun hash_code_should_be_the_value_hash_code() = parameterizeTest {
+        val nbtByte by parameterOfNbtByteEdgeCases()
+
+        assertEquals(nbtByte.value.hashCode(), nbtByte.hashCode())
     }
 
     @Test
@@ -55,176 +72,167 @@ class NbtByteTest {
     }
 
     @Test
-    fun converting_non_zero_to_boolean_should_be_true() = runTest {
-        val nonZeroNbtBytes = Exhaustive.bytes()
-            .filter { it != 0.toByte() }
-            .map { NbtByte(it) }
+    fun converting_non_zero_to_boolean_should_be_true() = parameterizeTest {
+        val nonZeroNbtByte by parameterOfNbtByteEdgeCases()
+        assume(nonZeroNbtByte.value != 0.toByte())
 
-        checkAll(nonZeroNbtBytes) { nbtByte ->
-            assertEquals(true, nbtByte.toBoolean())
-        }
+        assertEquals(true, nonZeroNbtByte.toBoolean())
     }
 }
 
 class NbtShortTest {
     @Test
-    fun should_equal_another_NbtShort_with_the_same_value() = runTest {
-        checkAll(Arb.nbtShort()) { nbtShort ->
-            val nbtShortWithSameValue = NbtShort(nbtShort.value)
+    fun should_equal_another_NbtShort_with_the_same_value() = parameterizeTest {
+        val nbtShort by parameterOfNbtShortEdgeCases()
+        val nbtShortWithSameValue = NbtShort(nbtShort.value)
 
-            assertEquals(nbtShortWithSameValue, nbtShort)
-        }
+        assertEquals(nbtShortWithSameValue, nbtShort)
     }
 
     @Test
-    fun should_not_equal_another_NbtShort_with_different_value() = runTest {
-        checkAll(Arb.nbtShort(), Arb.nbtShort()) { nbtShortA, nbtShortB ->
-            assume(nbtShortA.value != nbtShortB.value)
+    fun should_not_equal_another_NbtShort_with_different_value() = parameterizeTest {
+        val nbtShort by parameterOfNbtShortEdgeCases()
+        val differentNbtShort by parameterOfNbtShortEdgeCases()
+        assume(nbtShort.value != differentNbtShort.value)
 
-            assertNotEquals(nbtShortA, nbtShortB)
-        }
+        assertNotEquals(nbtShort, differentNbtShort)
     }
 
     @Test
-    fun hash_code_should_be_the_value_hash_code() = runTest {
-        checkAll(Arb.nbtShort()) { nbtShort ->
-            assertEquals(nbtShort.value.hashCode(), nbtShort.hashCode())
-        }
+    fun hash_code_should_be_the_value_hash_code() = parameterizeTest {
+        val nbtShort by parameterOfNbtShortEdgeCases()
+
+        assertEquals(nbtShort.value.hashCode(), nbtShort.hashCode())
     }
 }
 
 class NbtIntTest {
     @Test
-    fun should_equal_another_NbtInt_with_the_same_value() = runTest {
-        checkAll(Arb.nbtInt()) { nbtInt ->
-            val nbtIntWithSameValue = NbtInt(nbtInt.value)
+    fun should_equal_another_NbtInt_with_the_same_value() = parameterizeTest {
+        val nbtInt by parameterOfNbtIntEdgeCases()
+        val nbtIntWithSameValue = NbtInt(nbtInt.value)
 
-            assertEquals(nbtIntWithSameValue, nbtInt)
-        }
+        assertEquals(nbtIntWithSameValue, nbtInt)
     }
 
     @Test
-    fun should_not_equal_another_NbtInt_with_different_value() = runTest {
-        checkAll(Arb.nbtInt(), Arb.nbtInt()) { nbtIntA, nbtIntB ->
-            assume(nbtIntA.value != nbtIntB.value)
+    fun should_not_equal_another_NbtInt_with_different_value() = parameterizeTest {
+        val nbtInt by parameterOfNbtIntEdgeCases()
+        val differentNbtInt by parameterOfNbtIntEdgeCases()
+        assume(nbtInt.value != differentNbtInt.value)
 
-            assertNotEquals(nbtIntA, nbtIntB)
-        }
+        assertNotEquals(nbtInt, differentNbtInt)
     }
 
     @Test
-    fun hash_code_should_be_the_value_hash_code() = runTest {
-        checkAll(Arb.nbtInt()) { nbtInt ->
-            assertEquals(nbtInt.value.hashCode(), nbtInt.hashCode())
-        }
+    fun hash_code_should_be_the_value_hash_code() = parameterizeTest {
+        val nbtInt by parameterOfNbtIntEdgeCases()
+
+        assertEquals(nbtInt.value.hashCode(), nbtInt.hashCode())
     }
 }
 
 class NbtLongTest {
     @Test
-    fun should_equal_another_NbtLong_with_the_same_value() = runTest {
-        checkAll(Arb.nbtLong()) { nbtLong ->
-            val nbtLongWithSameValue = NbtLong(nbtLong.value)
+    fun should_equal_another_NbtLong_with_the_same_value() = parameterizeTest {
+        val nbtLong by parameterOfNbtLongEdgeCases()
+        val nbtLongWithSameValue = NbtLong(nbtLong.value)
 
-            assertEquals(nbtLongWithSameValue, nbtLong)
-        }
+        assertEquals(nbtLongWithSameValue, nbtLong)
     }
 
     @Test
-    fun should_not_equal_another_NbtLong_with_different_value() = runTest {
-        checkAll(Arb.nbtLong(), Arb.nbtLong()) { nbtLongA, nbtLongB ->
-            assume(nbtLongA.value != nbtLongB.value)
+    fun should_not_equal_another_NbtLong_with_different_value() = parameterizeTest {
+        val nbtLong by parameterOfNbtLongEdgeCases()
+        val differentNbtLong by parameterOfNbtLongEdgeCases()
+        assume(nbtLong.value != differentNbtLong.value)
 
-            assertNotEquals(nbtLongA, nbtLongB)
-        }
+        assertNotEquals(nbtLong, differentNbtLong)
     }
 
     @Test
-    fun hash_code_should_be_the_value_hash_code() = runTest {
-        checkAll(Arb.nbtLong()) { nbtLong ->
-            assertEquals(nbtLong.value.hashCode(), nbtLong.hashCode())
-        }
+    fun hash_code_should_be_the_value_hash_code() = parameterizeTest {
+        val nbtLong by parameterOfNbtLongEdgeCases()
+
+        assertEquals(nbtLong.value.hashCode(), nbtLong.hashCode())
     }
 }
 
 class NbtFloatTest {
     @Test
-    fun should_equal_another_NbtFloat_with_the_same_value_bits() = runTest {
-        checkAll(Arb.nbtFloat()) { nbtFloat ->
-            val nbtFloatWithSameValue = NbtFloat(nbtFloat.value)
+    fun should_equal_another_NbtFloat_with_the_same_value_bits() = parameterizeTest {
+        val nbtFloat by parameterOfNbtFloatEdgeCases()
+        val nbtFloatWithSameValue = NbtFloat(nbtFloat.value)
 
-            assertEquals(nbtFloatWithSameValue, nbtFloat)
-        }
+        assertEquals(nbtFloatWithSameValue, nbtFloat)
     }
 
     @Test
-    fun should_not_equal_another_NbtFloat_with_different_value_bits() = runTest {
-        checkAll(Arb.nbtFloat(), Arb.nbtFloat()) { nbtFloatA, nbtFloatB ->
-            assume(nbtFloatA.value.toRawBits() != nbtFloatB.value.toRawBits())
+    fun should_not_equal_another_NbtFloat_with_different_value_bits() = parameterizeTest {
+        val nbtFloat by parameterOfNbtFloatEdgeCases()
+        val differentNbtFloat by parameterOfNbtFloatEdgeCases()
+        assume(nbtFloat.value.toRawBits() != differentNbtFloat.value.toRawBits())
 
-            assertNotEquals(nbtFloatA, nbtFloatB)
-        }
+        assertNotEquals(nbtFloat, differentNbtFloat)
     }
 
     @Test
-    fun hash_code_should_be_the_value_bits_hash_code() = runTest {
-        checkAll(Arb.nbtFloat()) { nbtFloat ->
-            assertEquals(nbtFloat.value.toRawBits().hashCode(), nbtFloat.hashCode())
-        }
+    fun hash_code_should_be_the_value_bits_hash_code() = parameterizeTest {
+        val nbtFloat by parameterOfNbtFloatEdgeCases()
+
+        assertEquals(nbtFloat.value.toRawBits().hashCode(), nbtFloat.hashCode())
     }
 }
 
 class NbtDoubleTest {
     @Test
-    fun should_equal_another_NbtDouble_with_the_same_value_bits() = runTest {
-        checkAll(Arb.nbtDouble()) { nbtDouble ->
-            val nbtDoubleWithSameValue = NbtDouble(nbtDouble.value)
+    fun should_equal_another_NbtDouble_with_the_same_value_bits() = parameterizeTest {
+        val nbtDouble by parameterOfNbtDoubleEdgeCases()
+        val nbtDoubleWithSameValue = NbtDouble(nbtDouble.value)
 
-            assertEquals(nbtDoubleWithSameValue, nbtDouble)
-        }
+        assertEquals(nbtDoubleWithSameValue, nbtDouble)
     }
 
     @Test
-    fun should_not_equal_another_NbtDouble_with_different_value_bits() = runTest {
-        checkAll(Arb.nbtDouble(), Arb.nbtDouble()) { nbtDoubleA, nbtDoubleB ->
-            assume(nbtDoubleA.value.toRawBits() != nbtDoubleB.value.toRawBits())
+    fun should_not_equal_another_NbtDouble_with_different_value_bits() = parameterizeTest {
+        val nbtDouble by parameterOfNbtDoubleEdgeCases()
+        val differentNbtDouble by parameterOfNbtDoubleEdgeCases()
+        assume(nbtDouble.value.toRawBits() != differentNbtDouble.value.toRawBits())
 
-            assertNotEquals(nbtDoubleA, nbtDoubleB)
-        }
+        assertNotEquals(nbtDouble, differentNbtDouble)
     }
 
     @Test
-    fun hash_code_should_be_the_value_bits_hash_code() = runTest {
-        checkAll(Arb.nbtDouble()) { nbtDouble ->
-            assertEquals(nbtDouble.value.toRawBits().hashCode(), nbtDouble.hashCode())
-        }
+    fun hash_code_should_be_the_value_bits_hash_code() = parameterizeTest {
+        val nbtDouble by parameterOfNbtDoubleEdgeCases()
+
+        assertEquals(nbtDouble.value.toRawBits().hashCode(), nbtDouble.hashCode())
     }
 }
 
 class NbtStringTest {
     @Test
-    fun should_equal_another_NbtString_with_the_same_value() = runTest {
-        checkAll(Arb.nbtString()) { nbtString ->
-            val nbtStringWithSameValue = NbtString(nbtString.value)
+    fun should_equal_another_NbtString_with_the_same_value() = parameterizeTest {
+        val nbtString by parameterOfNbtStringEdgeCases()
+        val nbtStringWithSameValue = NbtString(nbtString.value)
 
-            assertEquals(nbtStringWithSameValue, nbtString)
-        }
+        assertEquals(nbtStringWithSameValue, nbtString)
     }
 
     @Test
-    fun should_not_equal_another_NbtString_with_different_value() = runTest {
-        checkAll(Arb.nbtString(), Arb.nbtString()) { nbtStringA, nbtStringB ->
-            assume(nbtStringA.value != nbtStringB.value)
+    fun should_not_equal_another_NbtString_with_different_value() = parameterizeTest {
+        val nbtString by parameterOfNbtStringEdgeCases()
+        val differentNbtString by parameterOfNbtStringEdgeCases()
+        assume(nbtString.value != differentNbtString.value)
 
-            assertNotEquals(nbtStringA, nbtStringB)
-        }
+        assertNotEquals(nbtString, differentNbtString)
     }
 
     @Test
-    fun hash_code_should_be_the_value_hash_code() = runTest {
-        checkAll(Arb.nbtString()) { nbtString ->
-            assertEquals(nbtString.value.hashCode(), nbtString.hashCode())
-        }
+    fun hash_code_should_be_the_value_hash_code() = parameterizeTest {
+        val nbtString by parameterOfNbtStringEdgeCases()
+
+        assertEquals(nbtString.value.hashCode(), nbtString.hashCode())
     }
 }
 
@@ -408,175 +416,132 @@ class NbtTagTestConversions {
     }
 }
 
-class NbtByteArrayTest { // TODO no longer valid
+class NbtByteArrayTest {
     @Test
-    fun should_equal_List_of_same_contents() {
-        fun assertWith(vararg elements: Byte): Unit =
-            assertEquals(
-                NbtByteArray(elements.asList()),
-                NbtByteArray(elements.copyOf().asList())
-            )
+    fun should_equal_NbtByteArray_of_equal_content() = parameterizeTest {
+        val content: List<Byte> by parameterOf(
+            listOf(),
+            listOf(1),
+            listOf(1, 2, 4, 8)
+        )
 
-        assertWith()
-        assertWith(1)
-        assertWith(1, 2, 4, 8)
-    }
-
-    @Test
-    fun should_not_equal_NbtTag_of_different_type_but_same_contents() {
-        assertNotEquals<NbtTag>(NbtList(emptyList()), NbtByteArray(listOf()))
-        assertNotEquals<NbtTag>(NbtIntArray(listOf()), NbtByteArray(listOf()))
-        assertNotEquals<NbtTag>(NbtLongArray(listOf()), NbtByteArray(listOf()))
+        assertEquals(
+            NbtByteArray(content),
+            NbtByteArray(content.toList())
+        )
     }
 }
 
 class NbtListTest {
     @Test
-    fun should_equal_NbtList_of_same_contents() {
-        @OptIn(UnsafeNbtApi::class)
-        fun assertWith(nbtList: NbtList<*>): Unit =
-            assertEquals(
-                nbtList,
-                NbtList(nbtList.content.toList())
-            )
+    fun should_equal_NbtList_with_equal_content() = parameterizeTest {
+        val nbtList by parameterOfNbtListContentEdgeCases()
+        val nbtListWithEqualContent by parameterOfNbtListContentEdgeCases()
+        assume(nbtList.content == nbtListWithEqualContent.content)
 
-        assertWith(NbtList(emptyList()))
-        assertWith(NbtList(listOf(NbtInt(1))))
-        assertWith(NbtList(listOf(NbtString("a"), NbtString("b"))))
-
-        assertEquals(NbtList(listOf(NbtInt(1))), NbtList(NbtList(listOf(NbtInt(1))).content))
+        assertEquals(nbtListWithEqualContent, nbtList)
     }
 
     @Test
-    fun should_not_equal_NbtTag_of_different_type_but_same_contents() {
-        assertNotEquals<NbtTag>(NbtByteArray(listOf()), NbtList(emptyList()))
-        assertNotEquals<NbtTag>(NbtIntArray(listOf()), NbtList(emptyList()))
-        assertNotEquals<NbtTag>(NbtLongArray(listOf()), NbtList(emptyList()))
+    fun should_not_equal_NbtList_with_different_content() = parameterizeTest {
+        val nbtList by parameterOfNbtListContentEdgeCases()
+        val nbtListWithDifferentContent by parameterOfNbtListContentEdgeCases()
+        assume(nbtList.content != nbtListWithDifferentContent.content)
+
+        assertNotEquals(nbtListWithDifferentContent, nbtList)
     }
 }
 
 class NbtCompoundTest {
-    private val arbNbtCompound = Arb.nbtCompound(1)
+    private val containedName = "containedName"
+    private val containedTag = NbtString("containedTag")
+
+    private val nonContainedName = "nonContainedName"
+
+    private val content = mapOf(containedName to containedTag)
+    private val nbtCompound = NbtCompound(content)
 
     @Test
-    fun getting_a_tag_with_a_contained_name_should_return_the_tag_from_content() = runTest {
-        checkAll(arbNbtCompound) { compound ->
-            val names = compound.content.keys
+    fun getting_a_tag_with_a_contained_name_should_return_the_tag_from_content() {
+        assertSame(containedTag, nbtCompound[containedName])
+    }
 
-            names.forEach { containedName ->
-                assertSame(compound.content[containedName], compound[containedName])
-            }
+    @Test
+    fun getting_a_tag_with_a_non_contained_name_should_throw_a_NoSuchElementException() {
+        assertFailsWith<NoSuchElementException> {
+            nbtCompound[nonContainedName]
         }
     }
 
     @Test
-    fun getting_a_tag_with_a_non_contained_name_should_throw_a_NoSuchElementException() = runTest {
-        checkAll(arbNbtCompound, Arb.string()) { compound, nonContainedName ->
-            assume(nonContainedName !in compound.content)
-
-            assertFailsWith<NoSuchElementException> {
-                compound[nonContainedName]
-            }
-        }
+    fun getting_a_tag_or_null_with_a_contained_name_should_return_the_tag_from_content() {
+        assertSame(containedTag, nbtCompound.getOrNull(containedName))
     }
 
     @Test
-    fun getting_a_tag_or_null_with_a_contained_name_should_return_the_tag_from_content() = runTest {
-        checkAll(arbNbtCompound) { compound ->
-            val names = compound.content.keys
-
-            names.forEach { containedName ->
-                assertSame(compound.content[containedName], compound[containedName])
-            }
-        }
+    fun getting_a_tag_or_null_with_a_non_contained_name_should_return_null() {
+        assertNull(nbtCompound.getOrNull(nonContainedName))
     }
 
     @Test
-    fun getting_a_tag_or_null_with_a_non_contained_name_should_return_null() = runTest {
-        checkAll(arbNbtCompound, Arb.string()) { compound, nonContainedName ->
-            assume(nonContainedName !in compound.content)
-
-            assertNull(compound.getOrNull(nonContainedName))
-        }
+    fun checking_contains_with_a_name_in_the_content_should_return_true() {
+        assertTrue(containedName in nbtCompound)
     }
 
     @Test
-    fun checking_contains_with_a_name_in_the_content_should_return_true() = runTest {
-        checkAll(arbNbtCompound) { compound ->
-            val names = compound.content.keys
-
-            names.forEach { containedName ->
-                assertTrue(containedName in compound)
-            }
-        }
-    }
-
-    @Test
-    fun checking_contains_with_a_name_not_in_the_content_should_return_false() = runTest {
-        checkAll(arbNbtCompound, Arb.string()) { compound, nonContainedName ->
-            assume(nonContainedName !in compound.content)
-
-            assertFalse(nonContainedName in compound)
-        }
+    fun checking_contains_with_a_name_not_in_the_content_should_return_false() {
+        assertFalse(nonContainedName in nbtCompound)
     }
 
 
     @Test
-    fun should_equal_NbtCompound_of_same_contents() {
-        fun assertWith(vararg elements: Pair<String, NbtTag>): Unit =
-            assertEquals(
-                NbtCompound(elements.toMap()),
-                NbtCompound(elements.copyOf().toMap())
-            )
+    fun should_equal_NbtCompound_of_equal_contents() = parameterizeTest {
+        val content: Map<String, NbtTag> by parameterOf(
+            mapOf(),
+            mapOf("one" to NbtInt(1)),
+            mapOf("a" to NbtString("a"), "b" to NbtString("b"))
+        )
 
-        assertWith()
-        assertWith("one" to NbtInt(1))
-        assertWith("a" to NbtString("a"), "b" to NbtString("b"))
+        val differentButEqualContent = content.entries
+            .map { it.toPair() }
+            .reversed()
+            .toMap()
 
-        assertEquals(NbtList(listOf(NbtInt(1))), NbtList(NbtList(listOf(NbtInt(1))).content))
+        assertEquals(
+            NbtCompound(content),
+            NbtCompound(differentButEqualContent)
+        )
     }
 }
 
 class NbtIntArrayTest {
     @Test
-    fun should_equal_NbtIntArray_of_same_contents() {
-        fun assertWith(vararg elements: Int): Unit =
-            assertEquals(
-                NbtIntArray(elements.asList()),
-                NbtIntArray(elements.copyOf().asList())
-            )
+    fun should_equal_NbtIntArray_of_equal_content() = parameterizeTest {
+        val content by parameterOf(
+            listOf(),
+            listOf(1),
+            listOf(1, 2, 4, 8)
+        )
 
-        assertWith()
-        assertWith(1)
-        assertWith(1, 2, 4, 8)
-    }
-
-    @Test
-    fun should_not_equal_NbtTag_of_different_type_but_same_contents() {
-        assertNotEquals<NbtTag>(NbtList(emptyList()), NbtIntArray(listOf()))
-        assertNotEquals<NbtTag>(NbtByteArray(listOf()), NbtIntArray(listOf()))
-        assertNotEquals<NbtTag>(NbtLongArray(listOf()), NbtIntArray(listOf()))
+        assertEquals(
+            NbtIntArray(content),
+            NbtIntArray(content.toList())
+        )
     }
 }
 
 class NbtLongArrayTest {
     @Test
-    fun should_equal_List_of_same_contents() {
-        fun assertWith(vararg elements: Long): Unit =
-            assertEquals(
-                NbtLongArray(elements.asList()),
-                NbtLongArray(elements.copyOf().asList())
-            )
+    fun should_equal_List_of_equal_content() = parameterizeTest {
+        val content by parameterOf(
+            listOf(),
+            listOf(1L),
+            listOf(1L, 2L, 4L, 8L)
+        )
 
-        assertWith()
-        assertWith(1)
-        assertWith(1, 2, 4, 8)
-    }
-
-    @Test
-    fun should_not_equal_NbtTag_of_different_type_but_same_contents() {
-        assertNotEquals<NbtTag>(NbtList(emptyList()), NbtLongArray(listOf()))
-        assertNotEquals<NbtTag>(NbtIntArray(listOf()), NbtLongArray(listOf()))
-        assertNotEquals<NbtTag>(NbtByteArray(listOf()), NbtLongArray(listOf()))
+        assertEquals(
+            NbtLongArray(content),
+            NbtLongArray(content.toList())
+        )
     }
 }
