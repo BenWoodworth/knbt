@@ -57,7 +57,7 @@ kotlin {
     //wasmWasi() //
 
     linuxX64()
-    //linuxArm64() // Not supported by okio/kx-coroutines/kotest yet
+    //linuxArm64() // Not supported by kx-coroutines/kotest yet
     //androidNativeArm32() // Not supported by Okio yet
     //androidNativeArm64() // https://github.com/square/okio/issues/1242#issuecomment-1759357336
     //androidNativeX86()   //
