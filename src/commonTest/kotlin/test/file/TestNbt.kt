@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.test.data
+package net.benwoodworth.knbt.test.file
 
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompound

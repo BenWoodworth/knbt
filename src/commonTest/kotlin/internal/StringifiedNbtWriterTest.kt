@@ -3,8 +3,8 @@ package net.benwoodworth.knbt.internal
 import kotlinx.serialization.encodeToString
 import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.StringifiedNbt
-import net.benwoodworth.knbt.test.data.bigTestExtendedTag
-import net.benwoodworth.knbt.test.data.testTag
+import net.benwoodworth.knbt.test.file.bigTestExtendedTag
+import net.benwoodworth.knbt.test.file.testTag
 import net.benwoodworth.knbt.test.fix
 import kotlin.test.Test
 import kotlin.test.assertEquals

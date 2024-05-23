@@ -1,7 +1,7 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.test.parameterOfBytes
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.parameterOfBytes
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
