@@ -9,8 +9,9 @@ import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildSerialDescriptor
 import kotlinx.serialization.encoding.*
-import net.benwoodworth.knbt.test.NbtFormat
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
+import net.benwoodworth.knbt.test.parameters.parameterOfEncoderVerifyingNbt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -61,6 +62,8 @@ class UnsupportedPolymorphicBeginStructureTest {
 
     @Test
     fun encoding_structure_with_polymorphic_kind_should_throw_UnsupportedOperationException() = parameterizeTest {
+        val nbt by parameterOfEncoderVerifyingNbt()
+
         val serializer by parameterOf(
             SealedStructureSerializer,
             SealedCollectionSerializer,
@@ -69,7 +72,7 @@ class UnsupportedPolymorphicBeginStructureTest {
         )
 
         val failure = assertFailsWith<UnsupportedOperationException> {
-            NbtFormat().encodeToNbtTag(serializer, Unit)
+            nbt.verifyEncoder(serializer, Unit, buildNbtCompound {})
         }
 
         assertEquals(expectedInformativeMessage(serializer.descriptor), failure.message)
@@ -77,13 +80,15 @@ class UnsupportedPolymorphicBeginStructureTest {
 
     @Test
     fun decoding_structure_with_polymorphic_kind_should_throw_UnsupportedOperationException() = parameterizeTest {
+        val nbt by parameterOfDecoderVerifyingNbt()
+
         val serializer by parameterOf(
             SealedStructureSerializer,
             OpenStructureSerializer,
         )
 
         val failure = assertFailsWith<UnsupportedOperationException> {
-            NbtFormat().decodeFromNbtTag(serializer, NbtList(emptyList()))
+            nbt.verifyDecoder(serializer, buildNbtCompound {})
         }
 
         assertEquals(expectedInformativeMessage(serializer.descriptor), failure.message)

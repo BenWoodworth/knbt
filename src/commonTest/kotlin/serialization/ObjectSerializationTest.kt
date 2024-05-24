@@ -3,9 +3,12 @@ package net.benwoodworth.knbt.serialization
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtNamed
 import net.benwoodworth.knbt.buildNbtCompound
+import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
-class ObjectSerializationTest : SerializationTest() {
+class ObjectSerializationTest {
     @Serializable
     @NbtNamed("RootKey")
     private object MyObject {
@@ -19,12 +22,17 @@ class ObjectSerializationTest : SerializationTest() {
     }
 
     @Test
-    fun serializing_an_object_should_nest_into_a_compound_with_the_class_serial_name_as_the_key() {
-        defaultNbt.testSerialization(
+    fun serializing_an_object_should_nest_into_a_compound_with_the_class_serial_name_as_the_key() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt()
+
+        nbt.verifyEncoderOrDecoder(
             MyObject.serializer(),
             MyObject,
             buildNbtCompound("RootKey") {
                 // empty
+            },
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
             }
         )
     }
