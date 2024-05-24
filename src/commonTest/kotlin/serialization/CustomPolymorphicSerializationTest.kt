@@ -11,10 +11,12 @@ import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtInt
 import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
-class CustomPolymorphicSerializationTest : SerializationTest() {
+class CustomPolymorphicSerializationTest {
     @Serializable(OpenSerializer::class)
     private abstract class Open {
         abstract val a: String
@@ -34,11 +36,16 @@ class CustomPolymorphicSerializationTest : SerializationTest() {
     }
 
     @Test
-    fun custom_open_polymorphic_serializer() {
-        defaultNbt.testSerialization(
+    fun custom_open_polymorphic_serializer() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt()
+
+        nbt.verifyEncoderOrDecoder(
             Open.serializer(),
-            value = OpenImplementation("value") as Open,
-            nbtTag = NbtString("value"),
+            OpenImplementation("value"),
+            NbtString("value"),
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
+            }
         )
     }
 
@@ -71,6 +78,8 @@ class CustomPolymorphicSerializationTest : SerializationTest() {
 
     @Test
     fun custom_sealed_polymorphic_serializer() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt()
+
         val testCase by parameterOf(
             IntOrString.OfInt(0) to NbtInt(0),
             IntOrString.OfString("") to NbtString(""),
@@ -78,6 +87,13 @@ class CustomPolymorphicSerializationTest : SerializationTest() {
 
         val (intOrString, nbtTag) = testCase
 
-        defaultNbt.testSerialization(IntOrString.serializer(), intOrString, nbtTag)
+        nbt.verifyEncoderOrDecoder(
+            IntOrString.serializer(),
+            intOrString,
+            nbtTag,
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
+            }
+        )
     }
 }

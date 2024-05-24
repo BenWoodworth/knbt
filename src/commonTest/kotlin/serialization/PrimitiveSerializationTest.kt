@@ -9,72 +9,145 @@ import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.*
 import net.benwoodworth.knbt.toBoolean
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
-class PrimitiveSerializationTest : SerializationTest() {
+class PrimitiveSerializationTest {
     @Test
     fun should_serialize_Byte_correctly() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt()
         val nbtByte by parameterOfNbtByteEdgeCases()
 
-        defaultNbt.testSerialization(Byte.serializer(), nbtByte.value, nbtByte)
+        nbt.verifyEncoderOrDecoder(
+            Byte.serializer(),
+            nbtByte.value,
+            nbtByte,
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
+            }
+        )
     }
 
     @Test
     fun should_serialize_Short_correctly() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt()
         val nbtShort by parameterOfNbtShortEdgeCases()
 
-        defaultNbt.testSerialization(Short.serializer(), nbtShort.value, nbtShort)
+        nbt.verifyEncoderOrDecoder(
+            Short.serializer(),
+            nbtShort.value,
+            nbtShort,
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
+            }
+        )
     }
 
     @Test
     fun should_serialize_Int_correctly() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt()
         val nbtInt by parameterOfNbtIntEdgeCases()
 
-        defaultNbt.testSerialization(Int.serializer(), nbtInt.value, nbtInt)
+        nbt.verifyEncoderOrDecoder(
+            Int.serializer(),
+            nbtInt.value,
+            nbtInt,
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
+            }
+        )
     }
 
     @Test
     fun should_serialize_Long_correctly() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt()
         val nbtLong by parameterOfNbtLongEdgeCases()
 
-        defaultNbt.testSerialization(Long.serializer(), nbtLong.value, nbtLong)
+        nbt.verifyEncoderOrDecoder(
+            Long.serializer(),
+            nbtLong.value,
+            nbtLong,
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
+            }
+        )
     }
 
     @Test
     fun should_serialize_Float_correctly() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt()
         val nbtFloat by parameterOfNbtFloatEdgeCases()
 
-        defaultNbt.testSerialization(Float.serializer(), nbtFloat.value, nbtFloat)
+        nbt.verifyEncoderOrDecoder(
+            Float.serializer(),
+            nbtFloat.value,
+            nbtFloat,
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
+            }
+        )
     }
 
     @Test
     fun should_serialize_Double_correctly() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt()
         val nbtDouble by parameterOfNbtDoubleEdgeCases()
 
-        defaultNbt.testSerialization(Double.serializer(), nbtDouble.value, nbtDouble)
+        nbt.verifyEncoderOrDecoder(
+            Double.serializer(),
+            nbtDouble.value,
+            nbtDouble,
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
+            }
+        )
     }
 
     @Test
     fun should_serialize_booleans_according_to_NbtByte_boolean_converter() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt()
         val boolean by parameterOfBooleans()
 
-        defaultNbt.testSerialization(Boolean.serializer(), boolean, NbtByte.fromBoolean(boolean))
+        nbt.verifyEncoderOrDecoder(
+            Boolean.serializer(),
+            boolean,
+            NbtByte.fromBoolean(boolean),
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
+            }
+        )
     }
 
     @Test
     fun should_deserialize_booleans_according_to_NbtByte_boolean_converter() = parameterizeTest {
+        val nbt by parameterOfDecoderVerifyingNbt()
         val nbtByte by parameterOfNbtByteEdgeCases()
 
-        defaultNbt.testDecoding(Boolean.serializer(), nbtByte.toBoolean(), nbtByte)
+        nbt.verifyDecoder(
+            Boolean.serializer(),
+            nbtByte,
+            testDecodedValue = { decodedValue ->
+                assertEquals(nbtByte.toBoolean(), decodedValue)
+            }
+        )
     }
 
     @Test
     fun should_serialize_Char_correctly() = parameterizeTest {
-        // Character that appears in the NbtString edge cases, including half of a surrogate pair.
+        val nbt by parameterOfVerifyingNbt()
+
+        // Character that appears in the NbtString edge cases, potentially being an incomplete part of a surrogate pair.
         val char by parameter {
             this@parameterizeTest.parameterOfNbtStringEdgeCases().arguments
                 .flatMap { it.value.asIterable() }
         }
 
-        defaultNbt.testSerialization(Char.serializer(), char, NbtString(char.toString()))
+        nbt.verifyEncoderOrDecoder(
+            Char.serializer(),
+            char,
+            NbtString(char.toString()),
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
+            }
+        )
     }
 }

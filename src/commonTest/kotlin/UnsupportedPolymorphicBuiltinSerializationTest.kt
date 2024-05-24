@@ -1,9 +1,11 @@
 package net.benwoodworth.knbt
 
+import com.benwoodworth.parameterize.ParameterizeScope
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
-import net.benwoodworth.knbt.test.NbtFormat
+import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -29,51 +31,35 @@ class UnsupportedPolymorphicBuiltinSerializationTest {
         data class Actual(val a: String) : PolymorphicClass()
     }
 
-    private val nbt = NbtFormat(
+    private fun ParameterizeScope.parameterOfConfiguredNbtFormats() = parameterOfVerifyingNbt {
         serializersModule = SerializersModule {
             polymorphic(PolymorphicClass::class, PolymorphicClass.Actual::class, PolymorphicClass.Actual.serializer())
         }
-    )
-
-    @Test
-    fun encoding_with_the_builtin_sealed_class_serializer_should_fail_with_an_informative_unsupported_error() {
-        val failure = assertFailsWith<UnsupportedOperationException> {
-            nbt.encodeToNbtTag<SealedInterface>(SealedInterface.A(""))
-        }
-
-        assertEquals(expectedInformativeMessage<SealedInterface>(), failure.message)
     }
 
-    @Test
-    fun decoding_with_the_builtin_sealed_class_serializer_should_fail_with_an_informative_unsupported_error() {
-        val failure = assertFailsWith<UnsupportedOperationException> {
-            nbt.decodeFromNbtTag<SealedInterface>(
-                buildNbtCompound { put("a", "") }
-            )
-        }
-
-        assertEquals(expectedInformativeMessage<SealedInterface>(), failure.message)
-    }
+    private val encodedNbtTag = buildNbtCompound { put("a", "") }
 
     @Test
-    fun encoding_with_the_builtin_polymorphic_serializer_should_fail_with_an_informative_unsupported_error() {
-        val failure = assertFailsWith<UnsupportedOperationException> {
-            nbt.encodeToNbtTag<PolymorphicClass>(
-                PolymorphicClass.Actual("")
-            )
-        }
+    fun serializing_with_the_builtin_sealed_class_serializer_should_fail_with_an_informative_unsupported_error() =
+        parameterizeTest {
+            val nbt by parameterOfConfiguredNbtFormats()
 
-        assertEquals(expectedInformativeMessage<PolymorphicClass>(), failure.message)
-    }
+            val failure = assertFailsWith<UnsupportedOperationException> {
+                nbt.verifyEncoderOrDecoder(SealedInterface.serializer(), SealedInterface.A(""), encodedNbtTag)
+            }
+
+            assertEquals(expectedInformativeMessage<SealedInterface>(), failure.message)
+        }
 
     @Test
-    fun decoding_with_the_builtin_polymorphic_serializer_should_fail_with_an_informative_unsupported_error() {
-        val failure = assertFailsWith<UnsupportedOperationException> {
-            nbt.decodeFromNbtTag<PolymorphicClass>(
-                buildNbtCompound { put("a", "") }
-            )
-        }
+    fun serializing_with_the_builtin_polymorphic_serializer_should_fail_with_an_informative_unsupported_error() =
+        parameterizeTest {
+            val nbt by parameterOfConfiguredNbtFormats()
 
-        assertEquals(expectedInformativeMessage<PolymorphicClass>(), failure.message)
-    }
+            val failure = assertFailsWith<UnsupportedOperationException> {
+                nbt.verifyEncoderOrDecoder(PolymorphicClass.serializer(), PolymorphicClass.Actual(""), encodedNbtTag)
+            }
+
+            assertEquals(expectedInformativeMessage<PolymorphicClass>(), failure.message)
+        }
 }

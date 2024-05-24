@@ -17,10 +17,13 @@ import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.StringifiedNbt
 import net.benwoodworth.knbt.nbtCompound
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
+import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import net.benwoodworth.knbt.test.reportedAs
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
-class NbtContentPolymorphicSerializationTest : SerializationTest() {
+class NbtContentPolymorphicSerializationTest {
     @Serializable
     private sealed class Choices {
         @Serializable
@@ -55,30 +58,19 @@ class NbtContentPolymorphicSerializationTest : SerializationTest() {
     )
 
     @Test
-    fun testParsesParametrically() = parameterizeTest {
-        val testCase by parameter(testData)
-            .reportedAs(this, "input") { it.first }
-
-        val (input, output) = testCase
-
-        defaultNbt.testDecoding(
-            WithChoices.serializer(),
-            output,
-            StringifiedNbt.decodeFromString(input)
-        )
-    }
-
-    @Test
     fun testSerializesParametrically() = parameterizeTest {
-        val testCase by parameter(testData)
-            .reportedAs(this, "output") { it.second }
+        val nbt by parameterOfVerifyingNbt()
 
+        val testCase by parameter(testData)
         val (input, output) = testCase
 
-        defaultNbt.testEncoding(
+        nbt.verifyEncoderOrDecoder(
             WithChoices.serializer(),
             output,
-            StringifiedNbt.decodeFromString(input)
+            StringifiedNbt.decodeFromString(input),
+            testDecodedValue = { value, decodedValue ->
+                assertEquals(value, decodedValue, "decodedValue")
+            }
         )
     }
 
@@ -101,20 +93,25 @@ class NbtContentPolymorphicSerializationTest : SerializationTest() {
 
     @Test
     fun testDocumentationSample() = parameterizeTest {
+        val nbt by parameterOfDecoderVerifyingNbt()
+
         val testCase by parameterOf(
             """{"amount":"1.0","date":"03.02.2020"}""" to
                     SuccessfulPayment("1.0", "03.02.2020"),
 
             """{"amount":"2.0","date":"03.02.2020","reason":"complaint"}""" to
                     RefundedPayment("2.0", "03.02.2020", "complaint")
-        )
+
+        ).reportedAs(this, "input") { (input, _) -> input }
 
         val (input, output) = testCase
 
-        defaultNbt.testDecoding(
+        nbt.verifyDecoder(
             PaymentSerializer,
-            output,
-            StringifiedNbt.decodeFromString(input)
+            StringifiedNbt.decodeFromString(input),
+            testDecodedValue = { decodedValue ->
+                assertEquals(output, decodedValue)
+            }
         )
     }
 }

@@ -3,8 +3,8 @@ package net.benwoodworth.knbt
 import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
-import net.benwoodworth.knbt.test.NbtFormat
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -19,7 +19,7 @@ class NbtFormatConfigurationTest {
 
     @Test
     fun should_ignore_unknown_key() = parameterizeTest {
-        val nbt = NbtFormat(ignoreUnknownKeys = true)
+        val nbt by parameterOfDecoderVerifyingNbt { ignoreUnknownKeys = true }
 
         val entries = mutableListOf<Pair<String, NbtTag>>(
             "a" to NbtInt(1),
@@ -36,14 +36,18 @@ class NbtFormatConfigurationTest {
             }
         }
 
-        val expected = TestData(1, 2)
-
-        assertEquals(expected, nbt.decodeFromNbtTag(tag))
+        nbt.verifyDecoder(
+            TestData.serializer(),
+            tag,
+            testDecodedValue = { decodedValue ->
+                assertEquals(TestData(1, 2), decodedValue)
+            }
+        )
     }
 
     @Test
-    fun should_throw_for_unknown_keys_if_not_permitted() {
-        val nbt = NbtFormat(ignoreUnknownKeys = false)
+    fun should_throw_for_unknown_keys_if_not_permitted() = parameterizeTest {
+        val nbt by parameterOfDecoderVerifyingNbt { ignoreUnknownKeys = false }
 
         val tag = buildNbtCompound("") {
             put("a", 1)
@@ -52,7 +56,10 @@ class NbtFormatConfigurationTest {
         }
 
         assertFailsWith<SerializationException> {
-            nbt.decodeFromNbtTag<TestData>(tag)
+            nbt.verifyDecoder(
+                TestData.serializer(),
+                tag
+            )
         }
     }
 }
