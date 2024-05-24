@@ -14,6 +14,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.reportedAs
 import kotlin.test.Test
 
 class JsonTransformingSerializationTest : SerializationTest() {
@@ -70,7 +71,7 @@ class JsonTransformingSerializationTest : SerializationTest() {
         val testData by parameterOf(
             Example("First", StringData("str1")) to """{"data":{"data":"str1"}}""",
             Example("Second", StringData("str1")) to """{"name":"Second","data":{"data":"str1"}}"""
-        )
+        ).reportedAs(this, "input") { it.first }
 
         val (input, goldenVal) = testData
 

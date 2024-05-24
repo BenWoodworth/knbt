@@ -17,6 +17,7 @@ import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.StringifiedNbt
 import net.benwoodworth.knbt.nbtCompound
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.reportedAs
 import kotlin.test.Test
 
 class NbtContentPolymorphicSerializationTest : SerializationTest() {
@@ -56,6 +57,8 @@ class NbtContentPolymorphicSerializationTest : SerializationTest() {
     @Test
     fun testParsesParametrically() = parameterizeTest {
         val testCase by parameter(testData)
+            .reportedAs(this, "input") { it.first }
+
         val (input, output) = testCase
 
         defaultNbt.testDecoding(
@@ -68,6 +71,8 @@ class NbtContentPolymorphicSerializationTest : SerializationTest() {
     @Test
     fun testSerializesParametrically() = parameterizeTest {
         val testCase by parameter(testData)
+            .reportedAs(this, "output") { it.second }
+
         val (input, output) = testCase
 
         defaultNbt.testEncoding(

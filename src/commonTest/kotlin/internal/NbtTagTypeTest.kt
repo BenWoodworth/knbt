@@ -5,6 +5,7 @@ import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.parameterOfBytes
+import net.benwoodworth.knbt.test.reportedAs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -48,6 +49,8 @@ class NbtTagTypeTest {
             .map { it.nbtTagClass() to it }
 
         val expectedConversion by parameter(expectedConversions)
+            .reportedAs(this, "class") { it.first }
+
         val (nbtTagClass, nbtTagType) = expectedConversion
 
         assertEquals(nbtTagType, nbtTagClass.toNbtTagType())
