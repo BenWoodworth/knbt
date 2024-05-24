@@ -2,6 +2,7 @@ package net.benwoodworth.knbt.internal
 
 import com.benwoodworth.parameterize.parameter
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.reportedAs
 import okio.Buffer
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -26,6 +27,8 @@ class LittleEndianBase128Test {
     @Test
     fun should_write_LEB128_correctly() = parameterizeTest {
         val value by parameter(leb128TestValues)
+            .reportedAs(this, "ulong") { it.ulong }
+
         val (ulong, bytes) = value
 
         val actualBytes = Buffer()
@@ -38,6 +41,8 @@ class LittleEndianBase128Test {
     @Test
     fun should_read_LEB128_correctly() = parameterizeTest {
         val value by parameter(leb128TestValues)
+            .reportedAs(this, "bytes") { it.bytes.toBinary() }
+
         val (ulong, bytes) = value
 
         val actualULong = Buffer()
@@ -63,6 +68,8 @@ class LittleEndianBase128Test {
     @Test
     fun should_ZigZag_encode_correctly() = parameterizeTest {
         val value by parameter(zigZagTestValues)
+            .reportedAs(this, "long") { it.long }
+
         val (long, zigZagULong) = value
 
         assertEquals(zigZagULong, long.zigZagEncode())
@@ -71,6 +78,8 @@ class LittleEndianBase128Test {
     @Test
     fun should_ZigZag_decode_correctly() = parameterizeTest {
         val value by parameter(zigZagTestValues)
+            .reportedAs(this, "long") { it.zigZagULong }
+
         val (long, zigZagULong) = value
 
         assertEquals(long, zigZagULong.zigZagDecode())

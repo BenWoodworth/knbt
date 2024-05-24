@@ -1,8 +1,7 @@
 package net.benwoodworth.knbt.test
 
-import com.benwoodworth.parameterize.ExperimentalParameterizeApi
-import com.benwoodworth.parameterize.ParameterizeScope
-import com.benwoodworth.parameterize.parameterize
+import com.benwoodworth.parameterize.*
+import kotlin.reflect.KProperty
 
 inline fun parameterizeTest(
     recordFailures: Long = 10,
@@ -31,3 +30,75 @@ inline fun <T> ParameterizeScope.Parameter<T>.filter(
     crossinline predicate: (argument: T) -> Boolean
 ): ParameterizeScope.Parameter<T> =
     ParameterizeScope.Parameter(arguments.filter { predicate(it) })
+
+
+// The mapped parameters could be done more seamlessly with context parameters, with the `provideDelegate` and
+// `getValue` operators taking the ParameterizeScope from the calling context instead of explicitly passing the scope
+// and holding onto it. Maybe refactor later once context parameters are available in Kotlin.
+
+/**
+ * Returns a parameter that is reported with the given [name] and [argument] when listed in a [ParameterizeFailedError].
+ */
+inline fun <T> ParameterizeScope.Parameter<T>.reportedAs(
+    parameterizeScope: ParameterizeScope,
+    name: String,
+    crossinline argument: (T) -> Any?
+): MappedParameter<T> =
+    MappedParameter(
+        parameterizeScope,
+        name,
+        arguments.map { actualArgument ->
+            MappedParameterArgument(actualArgument, argument(actualArgument))
+        }
+    )
+
+
+class MappedParameterArgument<out T>(
+    val argument: T,
+    private val mappedArgument: Any?
+) {
+    override fun toString(): String = mappedArgument.toString()
+}
+
+private class MappedKProperty<T>(
+    val property: KProperty<T>,
+    override val name: String
+) : KProperty<T> by property {
+    override fun equals(other: Any?): Boolean =
+        other is MappedKProperty<*> && property == other.property && name == other.name
+
+    override fun hashCode(): Int = property.hashCode() * 31 + name.hashCode()
+}
+
+class MappedParameter<out T>(
+    private val parameterizeScope: ParameterizeScope,
+    private val name: String?,
+    private val arguments: Sequence<MappedParameterArgument<T>>
+) {
+    operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): MappedParameterDelegate<T> {
+        val mappedProperty = if (name == null) {
+            property
+        } else {
+            MappedKProperty(property, name)
+        }
+
+        return with(parameterizeScope) {
+            MappedParameterDelegate(
+                parameterizeScope,
+                parameter(arguments).provideDelegate(thisRef, mappedProperty)
+            )
+        }
+    }
+}
+
+class MappedParameterDelegate<out T>(
+    private val parameterizeScope: ParameterizeScope,
+    private val parameterDelegate: ParameterizeScope.ParameterDelegate<MappedParameterArgument<T>>
+) {
+    override fun toString(): String = parameterDelegate.toString()
+
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
+        with(parameterizeScope) {
+            parameterDelegate.getValue(thisRef, property).argument
+        }
+}
