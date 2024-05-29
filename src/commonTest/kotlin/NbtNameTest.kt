@@ -7,9 +7,9 @@ import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NbtNamedTest {
+class NbtNameTest {
     @Serializable
-    @NbtNamed("root-name")
+    @NbtName("root-name")
     private data class TestNbtClass(
         val string: String,
         val int: Int,

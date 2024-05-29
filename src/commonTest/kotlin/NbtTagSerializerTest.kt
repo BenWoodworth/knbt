@@ -10,7 +10,7 @@ class NbtTagSerializerTest {
     @Test
     fun should_serialize_NbtTag_class_property() = parameterizeTest {
         @Serializable
-        @NbtNamed("")
+        @NbtName("")
         data class NbtTagContainer(
             val nbtTag: NbtTag
         )

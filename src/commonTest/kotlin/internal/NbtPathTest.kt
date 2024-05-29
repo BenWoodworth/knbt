@@ -38,7 +38,7 @@ class NbtPathTest {
     @Ignore // Wasn't working before refactor
     fun decoding_missing_compound_entry() = parameterizeTest {
         @Serializable
-        @NbtNamed("root")
+        @NbtName("root")
         class MyClass(val entry: Int)
 
         val nbt by parameterOfDecoderVerifyingNbt()
@@ -55,7 +55,7 @@ class NbtPathTest {
     @Ignore // Fix during encoder/decoder refactor: https://github.com/BenWoodworth/knbt/issues/30
     fun decoding_incorrect_compound_entry() = parameterizeTest {
         @Serializable
-        @NbtNamed("root")
+        @NbtName("root")
         class MyClass(val entry: Int)
 
         val nbt by parameterOfDecoderVerifyingNbt()
@@ -74,7 +74,7 @@ class NbtPathTest {
     @Ignore // Fix during encoder/decoder refactor: https://github.com/BenWoodworth/knbt/issues/30
     fun decoding_incorrect_list_type() = parameterizeTest {
         @Serializable
-        @NbtNamed("root")
+        @NbtName("root")
         class MyClass(val entry: List<Int>)
 
         val nbt by parameterOfDecoderVerifyingNbt()

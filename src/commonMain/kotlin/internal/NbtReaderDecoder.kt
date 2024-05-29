@@ -52,7 +52,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     }
 
     private fun beginNamedTagIfNamed(descriptor: SerialDescriptor) {
-        val name = descriptor.nbtNamed ?: return
+        val name = descriptor.nbtName ?: return
 
         expectTagType(TAG_Compound)
         reader.beginCompound()
@@ -65,7 +65,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     }
 
     protected fun endNamedTagIfNamed(descriptor: SerialDescriptor) {
-        val name = descriptor.nbtNamed ?: return
+        val name = descriptor.nbtName ?: return
 
         val entry = reader.beginCompoundEntry()
         if (entry.type != TAG_End) {
