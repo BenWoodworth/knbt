@@ -3,7 +3,7 @@ package net.benwoodworth.knbt.internal
 import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
-import net.benwoodworth.knbt.NbtNamed
+import net.benwoodworth.knbt.NbtName
 import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.buildNbtCompound
 import net.benwoodworth.knbt.put
@@ -15,7 +15,7 @@ import kotlin.test.assertFailsWith
 
 class NbtReaderDecoderTest {
     @Serializable
-    @NbtNamed("unknown-keys")
+    @NbtName("unknown-keys")
     private data class UnknownKeys(
         val int: Int,
         val string: String,

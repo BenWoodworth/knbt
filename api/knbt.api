@@ -785,11 +785,11 @@ public abstract class net/benwoodworth/knbt/NbtLongArrayDeprecations : net/benwo
 	public final fun toLongArray ()[J
 }
 
-public abstract interface annotation class net/benwoodworth/knbt/NbtNamed : java/lang/annotation/Annotation {
+public abstract interface annotation class net/benwoodworth/knbt/NbtName : java/lang/annotation/Annotation {
 	public abstract fun name ()Ljava/lang/String;
 }
 
-public synthetic class net/benwoodworth/knbt/NbtNamed$Impl : net/benwoodworth/knbt/NbtNamed {
+public synthetic class net/benwoodworth/knbt/NbtName$Impl : net/benwoodworth/knbt/NbtName {
 	public fun <init> (Ljava/lang/String;)V
 	public final synthetic fun name ()Ljava/lang/String;
 }

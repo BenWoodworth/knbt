@@ -72,11 +72,11 @@ data = snbt.decodeFromString(string)
 
 ### Serializing Classes
 
-Serializable classes will have their `@SerialName` used for the root tag's name.
+Serializable classes will have their `@NbtName` used for the root tag's name.
 
 ```kotlin
 @Serializable
-@SerialName("root")
+@NbtName("root")
 class Example(val string: String, val int: Int)
 
 // Serializes to: {root : {string : "Hello, world!", int : 42}}

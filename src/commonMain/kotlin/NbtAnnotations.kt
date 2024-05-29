@@ -55,7 +55,7 @@ public annotation class NbtArray
  * Example:
  * ```
  * @Serializable
- * @NbtNamed("name")
+ * @NbtName("name")
  * class MyClass(
  *     val entry1: String,
  *     entry2: Int
@@ -75,4 +75,4 @@ public annotation class NbtArray
 @SerialInfo
 @Target(AnnotationTarget.CLASS)
 @OptIn(ExperimentalSerializationApi::class)
-public annotation class NbtNamed(val name: String)
+public annotation class NbtName(val name: String)

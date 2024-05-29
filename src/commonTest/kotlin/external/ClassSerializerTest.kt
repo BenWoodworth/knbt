@@ -1,7 +1,7 @@
 package net.benwoodworth.knbt.external
 
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.NbtNamed
+import net.benwoodworth.knbt.NbtName
 import net.benwoodworth.knbt.buildNbtCompound
 import net.benwoodworth.knbt.put
 import net.benwoodworth.knbt.putNbtCompound
@@ -15,7 +15,7 @@ class ClassSerializerTest {
     @Test
     fun serializing_a_class_should_nest_into_a_compound_with_the_class_serial_name_as_the_key() = parameterizeTest {
         @Serializable
-        @NbtNamed("RootKey")
+        @NbtName("RootKey")
         data class MyClass(val property: String)
 
         val nbt by parameterOfVerifyingNbt()
@@ -65,7 +65,7 @@ class ClassSerializerTest {
     @Test
     fun should_serialize_class_with_one_property_correctly() = parameterizeTest {
         @Serializable
-        @NbtNamed("OneProperty")
+        @NbtName("OneProperty")
         data class OneProperty(val property: Int)
 
         val nbt by parameterOfVerifyingNbt()
@@ -85,7 +85,7 @@ class ClassSerializerTest {
     @Test
     fun should_serialize_class_with_two_properties_correctly() = parameterizeTest {
         @Serializable
-        @NbtNamed("TwoProperties")
+        @NbtName("TwoProperties")
         data class TwoProperties(val entry1: String, val entry2: Long)
 
         val nbt by parameterOfVerifyingNbt()

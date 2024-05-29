@@ -99,7 +99,7 @@ internal class NbtWriterEncoder(
     }
 
     private fun beginNamedTagIfNamed(descriptor: SerialDescriptor) {
-        val name = descriptor.nbtNamed ?: return
+        val name = descriptor.nbtName ?: return
 
         beginEncodingValue(TAG_Compound)
         writer.beginCompound()
@@ -109,7 +109,7 @@ internal class NbtWriterEncoder(
     }
 
     private fun endNamedTagIfNamed(descriptor: SerialDescriptor) {
-        if (descriptor.nbtNamed == null) return
+        if (descriptor.nbtName == null) return
 
         structureTypeStack.removeLast()
         writer.endCompound()

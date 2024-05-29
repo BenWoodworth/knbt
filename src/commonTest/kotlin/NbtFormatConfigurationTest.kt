@@ -11,7 +11,7 @@ import kotlin.test.assertFailsWith
 
 class NbtFormatConfigurationTest {
     @Serializable
-    @NbtNamed("")
+    @NbtName("")
     private data class TestData(
         val a: Int,
         val b: Int,

@@ -53,7 +53,7 @@ val bigTestExtendedTag
     }
 
 @Serializable
-@NbtNamed("Level")
+@NbtName("Level")
 data class BigTestExtendedNbt(
     val longTest: Long,
 

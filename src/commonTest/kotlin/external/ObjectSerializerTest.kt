@@ -1,7 +1,7 @@
 package net.benwoodworth.knbt.external
 
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.NbtNamed
+import net.benwoodworth.knbt.NbtName
 import net.benwoodworth.knbt.buildNbtCompound
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 
 class ObjectSerializerTest {
     @Serializable
-    @NbtNamed("RootKey")
+    @NbtName("RootKey")
     private object MyObject {
         var property: String = ""
             private set
