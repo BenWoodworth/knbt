@@ -49,6 +49,45 @@ public open class NbtFormat internal constructor(
 
         return decoder.decodeSerializableValue(deserializer)
     }
+
+    /**
+     * Serializes the given [value] into an equivalent named [NbtTag] using the given [serializer].
+     *
+     * @throws [SerializationException] if the given value cannot be serialized to NBT
+     */
+    public fun <T> encodeToNamedNbtTag(serializer: SerializationStrategy<T>, value: T): NbtNamed<NbtTag> {
+        val tag = encodeToNbtTag(serializer, value)
+
+        val name = (tag as? NbtCompound)
+            ?.content?.keys?.singleOrNull()
+            ?: throw NbtEncodingException( // TODO Encoder should handle this
+                EmptyNbtContext,
+                "A named NbtTag only supports ${NbtTagType.TAG_Compound} with one entry"
+            )
+
+        return NbtNamed(name, tag)
+    }
+
+    /**
+     * Deserializes the given [namedTag] into a value of type [T] using the given [deserializer].
+     *
+     * @throws [SerializationException] if the given NBT tag is not a valid NBT input for the type [T]
+     * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T]
+     */
+    public fun <T> decodeFromNamedNbtTag(deserializer: DeserializationStrategy<T>, namedTag: NbtNamed<NbtTag>): T {
+        val unnamedTag = (namedTag.value as? NbtCompound)
+            ?.content?.values?.singleOrNull()
+            ?: throw NbtDecodingException( // TODO Decoder should handle this
+                EmptyNbtContext,
+                "A named NbtTag only supports ${NbtTagType.TAG_Compound} with one entry"
+            )
+
+        val renamedTag = buildNbtCompound {
+            put(namedTag.name, unnamedTag)
+        }
+
+        return decodeFromNbtTag(deserializer, renamedTag)
+    }
 }
 
 /**
@@ -113,3 +152,21 @@ public inline fun <reified T> NbtFormat.encodeToNbtTag(value: T): NbtTag =
  */
 public inline fun <reified T> NbtFormat.decodeFromNbtTag(tag: NbtTag): T =
     decodeFromNbtTag(serializersModule.serializer(), tag)
+
+/**
+ * Serializes the given [value] into an equivalent named [NbtTag] using a serializer retrieved from the reified type
+ * parameter.
+ *
+ * @throws [SerializationException] if the given value cannot be serialized to NBT
+ */
+public inline fun <reified T> NbtFormat.encodeToNamedNbtTag(value: T): NbtNamed<NbtTag> =
+    encodeToNamedNbtTag(serializersModule.serializer(), value)
+
+/**
+ * Deserializes the given [namedTag] into a value of type [T] using a serializer retrieved from the reified type parameter.
+ *
+ * @throws [SerializationException] if the given NBT tag is not a valid NBT input for the type [T]
+ * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T]
+ */
+public inline fun <reified T> NbtFormat.decodeFromNamedNbtTag(namedTag: NbtNamed<NbtTag>): T =
+    decodeFromNamedNbtTag(serializersModule.serializer(), namedTag)
