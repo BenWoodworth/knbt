@@ -1,5 +1,4 @@
 @file:Suppress(
-    "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE",
     "UselessCallOnNotNull",
     "ConvertArgumentToSet",
 )
@@ -79,7 +78,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.getValue(key)"),
         DeprecationLevel.ERROR
     )
-    public fun getValue(key: String) =
+    public fun getValue(key: String): NbtTag =
         content.getValue(key)
 
     @Deprecated(
@@ -87,7 +86,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.map(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> map(transform: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R> map(transform: (Map.Entry<String, NbtTag>) -> R): List<R> =
         content.map(transform)
 
     @Deprecated(
@@ -95,7 +94,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.count(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun count(predicate: (Map.Entry<String, NbtTag>) -> Boolean) =
+    public fun count(predicate: (Map.Entry<String, NbtTag>) -> Boolean): Int =
         content.count(predicate)
 
     @Deprecated(
@@ -103,7 +102,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.filter(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun filter(predicate: (Map.Entry<String, NbtTag>) -> Boolean) =
+    public fun filter(predicate: (Map.Entry<String, NbtTag>) -> Boolean): Map<String, NbtTag> =
         content.filter(predicate)
 
     @Deprecated(
@@ -111,7 +110,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.filterKeys(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun filterKeys(predicate: (String) -> Boolean) =
+    public fun filterKeys(predicate: (String) -> Boolean): Map<String, NbtTag> =
         content.filterKeys(predicate)
 
     @Deprecated(
@@ -119,7 +118,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.filterValues(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun filterValues(predicate: (NbtTag) -> Boolean) =
+    public fun filterValues(predicate: (NbtTag) -> Boolean): Map<String, NbtTag> =
         content.filterValues(predicate)
 
     @Deprecated(
@@ -127,7 +126,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.firstNotNullOfOrNull(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> firstNotNullOfOrNull(transform: (Map.Entry<String, NbtTag>) -> R?) =
+    public fun <R> firstNotNullOfOrNull(transform: (Map.Entry<String, NbtTag>) -> R?): R? =
         content.firstNotNullOfOrNull(transform)
 
     @Deprecated(
@@ -135,7 +134,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.getValue(thisRef, property)"),
         DeprecationLevel.ERROR
     )
-    public operator fun getValue(thisRef: Any?, property: KProperty<*>) =
+    public operator fun getValue(thisRef: Any?, property: KProperty<*>): NbtTag =
         content.getValue(thisRef, property)
 
     @Deprecated(
@@ -143,7 +142,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.all(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun all(predicate: (Map.Entry<String, NbtTag>) -> Boolean) =
+    public fun all(predicate: (Map.Entry<String, NbtTag>) -> Boolean): Boolean =
         content.all(predicate)
 
     @Deprecated(
@@ -151,7 +150,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.any()"),
         DeprecationLevel.ERROR
     )
-    public fun any() =
+    public fun any(): Boolean =
         content.any()
 
     @Deprecated(
@@ -159,7 +158,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.any(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun any(predicate: (Map.Entry<String, NbtTag>) -> Boolean) =
+    public fun any(predicate: (Map.Entry<String, NbtTag>) -> Boolean): Boolean =
         content.any(predicate)
 
     @Deprecated(
@@ -167,7 +166,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.asIterable()"),
         DeprecationLevel.ERROR
     )
-    public fun asIterable() =
+    public fun asIterable(): Iterable<Map.Entry<String, NbtTag>> =
         content.asIterable()
 
     @Deprecated(
@@ -175,7 +174,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.asSequence()"),
         DeprecationLevel.ERROR
     )
-    public fun asSequence() =
+    public fun asSequence(): Sequence<Map.Entry<String, NbtTag>> =
         content.asSequence()
 
     @Deprecated(
@@ -183,7 +182,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.containsKey(key)"),
         DeprecationLevel.ERROR
     )
-    public fun containsKey(key: String) =
+    public fun containsKey(key: String): Boolean =
         content.containsKey(key)
 
     @Deprecated(
@@ -191,7 +190,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.containsValue(value)"),
         DeprecationLevel.ERROR
     )
-    public fun containsValue(value: NbtTag) =
+    public fun containsValue(value: NbtTag): Boolean =
         content.containsValue(value)
 
     @Deprecated(
@@ -199,7 +198,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.count()"),
         DeprecationLevel.ERROR
     )
-    public fun count() =
+    public fun count(): Int =
         content.count()
 
     @Deprecated(
@@ -207,7 +206,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.filterNot(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun filterNot(predicate: (Map.Entry<String, NbtTag>) -> Boolean) =
+    public fun filterNot(predicate: (Map.Entry<String, NbtTag>) -> Boolean): Map<String, NbtTag> =
         content.filterNot(predicate)
 
     @Deprecated(
@@ -218,7 +217,7 @@ public sealed class NbtCompoundDeprecations {
     public fun filterNotTo(
         destination: MutableMap<in String, in NbtTag>,
         predicate: (Map.Entry<String, NbtTag>) -> Boolean
-    ) =
+    ): MutableMap<in String, in NbtTag> =
         content.filterNotTo(destination, predicate)
 
     @Deprecated(
@@ -229,7 +228,7 @@ public sealed class NbtCompoundDeprecations {
     public fun filterTo(
         destination: MutableMap<in String, in NbtTag>,
         predicate: (Map.Entry<String, NbtTag>) -> Boolean
-    ) =
+    ): MutableMap<in String, in NbtTag> =
         content.filterTo(destination, predicate)
 
     @Deprecated(
@@ -237,7 +236,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.firstNotNullOf(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Any> firstNotNullOf(transform: (Map.Entry<String, NbtTag>) -> R?) =
+    public fun <R : Any> firstNotNullOf(transform: (Map.Entry<String, NbtTag>) -> R?): R =
         content.firstNotNullOf(transform)
 
     @Deprecated(
@@ -245,7 +244,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.flatMap(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> flatMap(transform: (Map.Entry<String, NbtTag>) -> Iterable<R>) =
+    public fun <R> flatMap(transform: (Map.Entry<String, NbtTag>) -> Iterable<R>): List<R> =
         content.flatMap(transform)
 
     @Deprecated(
@@ -254,7 +253,7 @@ public sealed class NbtCompoundDeprecations {
         DeprecationLevel.ERROR
     )
     @JvmName("flatMapSequence")
-    public fun <R> flatMap(transform: (Map.Entry<String, NbtTag>) -> Sequence<R>) =
+    public fun <R> flatMap(transform: (Map.Entry<String, NbtTag>) -> Sequence<R>): List<R> =
         content.flatMap(transform)
 
     @Deprecated(
@@ -265,7 +264,7 @@ public sealed class NbtCompoundDeprecations {
     public fun <R, C : MutableList<R>> flatMapTo(
         destination: C,
         transform: (Map.Entry<String, NbtTag>) -> Iterable<R>
-    ) =
+    ): C =
         content.flatMapTo(destination, transform)
 
     @Deprecated(
@@ -277,7 +276,7 @@ public sealed class NbtCompoundDeprecations {
     public fun <R, C : MutableList<R>> flatMapTo(
         destination: C,
         transform: (Map.Entry<String, NbtTag>) -> Sequence<R>
-    ) =
+    ): C =
         content.flatMapTo(destination, transform)
 
     @Deprecated(
@@ -285,7 +284,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.forEach(action)"),
         DeprecationLevel.ERROR
     )
-    public fun forEach(action: (Map.Entry<String, NbtTag>) -> Unit) =
+    public fun forEach(action: (Map.Entry<String, NbtTag>) -> Unit): Unit =
         content.forEach(action)
 
     @Deprecated(
@@ -293,7 +292,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.getOrElse(key, defaultValue)"),
         DeprecationLevel.ERROR
     )
-    public fun getOrElse(key: String, defaultValue: () -> NbtTag) =
+    public fun getOrElse(key: String, defaultValue: () -> NbtTag): NbtTag =
         content.getOrElse(key, defaultValue)
 
     @Deprecated(
@@ -301,7 +300,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.isNotEmpty()"),
         DeprecationLevel.ERROR
     )
-    public fun isNotEmpty() =
+    public fun isNotEmpty(): Boolean =
         content.isNotEmpty()
 
     @Deprecated(
@@ -309,7 +308,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.isNullOrEmpty()"),
         DeprecationLevel.ERROR
     )
-    public fun isNullOrEmpty() =
+    public fun isNullOrEmpty(): Boolean =
         content.isNullOrEmpty()
 
     @Deprecated(
@@ -317,7 +316,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.iterator()"),
         DeprecationLevel.ERROR
     )
-    public operator fun iterator() =
+    public operator fun iterator(): Iterator<Map.Entry<String, NbtTag>> =
         content.iterator()
 
     @Deprecated(
@@ -325,7 +324,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.mapKeys(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> mapKeys(transform: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R> mapKeys(transform: (Map.Entry<String, NbtTag>) -> R): Map<R, NbtTag> =
         content.mapKeys(transform)
 
     @Deprecated(
@@ -336,7 +335,7 @@ public sealed class NbtCompoundDeprecations {
     public fun <R> mapKeysTo(
         destination: MutableMap<R, NbtTag>,
         transform: (Map.Entry<String, NbtTag>) -> R
-    ) =
+    ): MutableMap<R, NbtTag> =
         content.mapKeysTo(destination, transform)
 
     @Deprecated(
@@ -344,7 +343,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.mapNotNull(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Any> mapNotNull(transform: (Map.Entry<String, NbtTag>) -> R?) =
+    public fun <R : Any> mapNotNull(transform: (Map.Entry<String, NbtTag>) -> R?): List<R> =
         content.mapNotNull(transform)
 
     @Deprecated(
@@ -355,7 +354,7 @@ public sealed class NbtCompoundDeprecations {
     public fun <R : Any, C : MutableCollection<in R>> mapNotNullTo(
         destination: C,
         transform: (Map.Entry<String, NbtTag>) -> R?
-    ) =
+    ): C =
         content.mapNotNullTo(destination, transform)
 
     @Deprecated(
@@ -363,7 +362,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.mapTo(destination, transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R, C : MutableCollection<in R>> mapTo(destination: C, transform: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R, C : MutableCollection<in R>> mapTo(destination: C, transform: (Map.Entry<String, NbtTag>) -> R): C =
         content.mapTo(destination, transform)
 
     @Deprecated(
@@ -371,7 +370,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.mapValues(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> mapValues(transform: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R> mapValues(transform: (Map.Entry<String, NbtTag>) -> R): Map<String, R> =
         content.mapValues(transform)
 
     @Deprecated(
@@ -382,7 +381,7 @@ public sealed class NbtCompoundDeprecations {
     public fun <R, M : MutableMap<in String, in R>> mapValuesTo(
         destination: M,
         transform: (Map.Entry<String, NbtTag>) -> R
-    ) =
+    ): M =
         content.mapValuesTo(destination, transform)
 
     @Deprecated(
@@ -390,7 +389,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxBy(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> maxBy(selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R : Comparable<R>> maxBy(selector: (Map.Entry<String, NbtTag>) -> R): Map.Entry<String, NbtTag> =
         content.maxBy(selector)
 
     @Deprecated(
@@ -398,7 +397,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxByOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> maxByOrNull(selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R : Comparable<R>> maxByOrNull(selector: (Map.Entry<String, NbtTag>) -> R): Map.Entry<String, NbtTag>? =
         content.maxByOrNull(selector)
 
     @Deprecated(
@@ -406,7 +405,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> maxOf(selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R : Comparable<R>> maxOf(selector: (Map.Entry<String, NbtTag>) -> R): R =
         content.maxOf(selector)
 
     @Deprecated(
@@ -414,7 +413,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun maxOf(selector: (Map.Entry<String, NbtTag>) -> Float) =
+    public fun maxOf(selector: (Map.Entry<String, NbtTag>) -> Float): Float =
         content.maxOf(selector)
 
     @Deprecated(
@@ -422,7 +421,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun maxOf(selector: (Map.Entry<String, NbtTag>) -> Double) =
+    public fun maxOf(selector: (Map.Entry<String, NbtTag>) -> Double): Double =
         content.maxOf(selector)
 
     @Deprecated(
@@ -430,7 +429,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> maxOfOrNull(selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R : Comparable<R>> maxOfOrNull(selector: (Map.Entry<String, NbtTag>) -> R): R? =
         content.maxOfOrNull(selector)
 
     @Deprecated(
@@ -438,7 +437,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun maxOfOrNull(selector: (Map.Entry<String, NbtTag>) -> Float) =
+    public fun maxOfOrNull(selector: (Map.Entry<String, NbtTag>) -> Float): Float? =
         content.maxOfOrNull(selector)
 
     @Deprecated(
@@ -446,7 +445,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun maxOfOrNull(selector: (Map.Entry<String, NbtTag>) -> Double) =
+    public fun maxOfOrNull(selector: (Map.Entry<String, NbtTag>) -> Double): Double? =
         content.maxOfOrNull(selector)
 
     @Deprecated(
@@ -454,7 +453,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxOfWith(comparator, selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> maxOfWith(comparator: Comparator<in R>, selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R> maxOfWith(comparator: Comparator<in R>, selector: (Map.Entry<String, NbtTag>) -> R): R =
         content.maxOfWith(comparator, selector)
 
     @Deprecated(
@@ -462,7 +461,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxOfWithOrNull(comparator, selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> maxOfWithOrNull(comparator: Comparator<in R>, selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R> maxOfWithOrNull(comparator: Comparator<in R>, selector: (Map.Entry<String, NbtTag>) -> R): R? =
         content.maxOfWithOrNull(comparator, selector)
 
     @Deprecated(
@@ -470,7 +469,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxWith(comparator)"),
         DeprecationLevel.ERROR
     )
-    public fun maxWith(comparator: Comparator<in Map.Entry<String, NbtTag>>) =
+    public fun maxWith(comparator: Comparator<in Map.Entry<String, NbtTag>>): Map.Entry<String, NbtTag> =
         content.maxWith(comparator)
 
     @Deprecated(
@@ -478,7 +477,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.maxWithOrNull(comparator)"),
         DeprecationLevel.ERROR
     )
-    public fun maxWithOrNull(comparator: Comparator<in Map.Entry<String, NbtTag>>) =
+    public fun maxWithOrNull(comparator: Comparator<in Map.Entry<String, NbtTag>>): Map.Entry<String, NbtTag>? =
         content.maxWithOrNull(comparator)
 
     @Deprecated(
@@ -486,7 +485,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minBy(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> minBy(selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R : Comparable<R>> minBy(selector: (Map.Entry<String, NbtTag>) -> R): Map.Entry<String, NbtTag> =
         content.minBy(selector)
 
     @Deprecated(
@@ -494,7 +493,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minByOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> minByOrNull(selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R : Comparable<R>> minByOrNull(selector: (Map.Entry<String, NbtTag>) -> R): Map.Entry<String, NbtTag>? =
         content.minByOrNull(selector)
 
     @Deprecated(
@@ -502,7 +501,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> minOf(selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R : Comparable<R>> minOf(selector: (Map.Entry<String, NbtTag>) -> R): R =
         content.minOf(selector)
 
     @Deprecated(
@@ -510,7 +509,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun minOf(selector: (Map.Entry<String, NbtTag>) -> Float) =
+    public fun minOf(selector: (Map.Entry<String, NbtTag>) -> Float): Float =
         content.minOf(selector)
 
     @Deprecated(
@@ -518,7 +517,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun minOf(selector: (Map.Entry<String, NbtTag>) -> Double) =
+    public fun minOf(selector: (Map.Entry<String, NbtTag>) -> Double): Double =
         content.minOf(selector)
 
     @Deprecated(
@@ -526,7 +525,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> minOfOrNull(selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R : Comparable<R>> minOfOrNull(selector: (Map.Entry<String, NbtTag>) -> R): R? =
         content.minOfOrNull(selector)
 
     @Deprecated(
@@ -534,7 +533,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun minOfOrNull(selector: (Map.Entry<String, NbtTag>) -> Float) =
+    public fun minOfOrNull(selector: (Map.Entry<String, NbtTag>) -> Float): Float? =
         content.minOfOrNull(selector)
 
     @Deprecated(
@@ -542,7 +541,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun minOfOrNull(selector: (Map.Entry<String, NbtTag>) -> Double) =
+    public fun minOfOrNull(selector: (Map.Entry<String, NbtTag>) -> Double): Double? =
         content.minOfOrNull(selector)
 
     @Deprecated(
@@ -550,7 +549,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minOfWith(comparator, selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> minOfWith(comparator: Comparator<in R>, selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R> minOfWith(comparator: Comparator<in R>, selector: (Map.Entry<String, NbtTag>) -> R): R =
         content.minOfWith(comparator, selector)
 
     @Deprecated(
@@ -558,7 +557,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minOfWithOrNull(comparator, selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> minOfWithOrNull(comparator: Comparator<in R>, selector: (Map.Entry<String, NbtTag>) -> R) =
+    public fun <R> minOfWithOrNull(comparator: Comparator<in R>, selector: (Map.Entry<String, NbtTag>) -> R): R? =
         content.minOfWithOrNull(comparator, selector)
 
     @Deprecated(
@@ -566,7 +565,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minWith(comparator, NbtTag>>)"),
         DeprecationLevel.ERROR
     )
-    public fun minWith(comparator: Comparator<in Map.Entry<String, NbtTag>>) =
+    public fun minWith(comparator: Comparator<in Map.Entry<String, NbtTag>>): Map.Entry<String, NbtTag> =
         content.minWith(comparator)
 
     @Deprecated(
@@ -574,7 +573,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minWithOrNull(comparator, NbtTag>>)"),
         DeprecationLevel.ERROR
     )
-    public fun minWithOrNull(comparator: Comparator<in Map.Entry<String, NbtTag>>) =
+    public fun minWithOrNull(comparator: Comparator<in Map.Entry<String, NbtTag>>): Map.Entry<String, NbtTag>? =
         content.minWithOrNull(comparator)
 
     @Deprecated(
@@ -582,7 +581,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minus(key)"),
         DeprecationLevel.ERROR
     )
-    public operator fun minus(key: String) =
+    public operator fun minus(key: String): Map<String, NbtTag> =
         content.minus(key)
 
     @Deprecated(
@@ -590,7 +589,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minus(keys)"),
         DeprecationLevel.ERROR
     )
-    public operator fun minus(keys: Iterable<String>) =
+    public operator fun minus(keys: Iterable<String>): Map<String, NbtTag> =
         content.minus(keys)
 
     @Deprecated(
@@ -598,7 +597,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minus(keys)"),
         DeprecationLevel.ERROR
     )
-    public operator fun minus(keys: Sequence<String>) =
+    public operator fun minus(keys: Sequence<String>): Map<String, NbtTag> =
         content.minus(keys)
 
     @Deprecated(
@@ -606,7 +605,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.minus(keys)"),
         DeprecationLevel.ERROR
     )
-    public operator fun minus(keys: Array<out String>) =
+    public operator fun minus(keys: Array<out String>): Map<String, NbtTag> =
         content.minus(keys)
 
     @Deprecated(
@@ -614,7 +613,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.none()"),
         DeprecationLevel.ERROR
     )
-    public fun none() =
+    public fun none(): Boolean =
         content.none()
 
     @Deprecated(
@@ -622,7 +621,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.none(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun none(predicate: (Map.Entry<String, NbtTag>) -> Boolean) =
+    public fun none(predicate: (Map.Entry<String, NbtTag>) -> Boolean): Boolean =
         content.none(predicate)
 
     @Deprecated(
@@ -630,7 +629,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.orEmpty()"),
         DeprecationLevel.ERROR
     )
-    public fun orEmpty() =
+    public fun orEmpty(): Map<String, NbtTag> =
         content.orEmpty()
 
     @Deprecated(
@@ -638,7 +637,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.plus(pair)"),
         DeprecationLevel.ERROR
     )
-    public operator fun plus(pair: Pair<String, NbtTag>) =
+    public operator fun plus(pair: Pair<String, NbtTag>): Map<String, NbtTag> =
         content.plus(pair)
 
     @Deprecated(
@@ -646,7 +645,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.plus(map)"),
         DeprecationLevel.ERROR
     )
-    public operator fun plus(map: Map<out String, NbtTag>) =
+    public operator fun plus(map: Map<out String, NbtTag>): Map<String, NbtTag> =
         content.plus(map)
 
     @Deprecated(
@@ -654,7 +653,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.plus(pairs)"),
         DeprecationLevel.ERROR
     )
-    public operator fun plus(pairs: Iterable<Pair<String, NbtTag>>) =
+    public operator fun plus(pairs: Iterable<Pair<String, NbtTag>>): Map<String, NbtTag> =
         content.plus(pairs)
 
     @Deprecated(
@@ -662,7 +661,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.plus(pairs)"),
         DeprecationLevel.ERROR
     )
-    public operator fun plus(pairs: Sequence<Pair<String, NbtTag>>) =
+    public operator fun plus(pairs: Sequence<Pair<String, NbtTag>>): Map<String, NbtTag> =
         content.plus(pairs)
 
     @Deprecated(
@@ -670,7 +669,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.plus(pairs)"),
         DeprecationLevel.ERROR
     )
-    public operator fun plus(pairs: Array<out Pair<String, NbtTag>>) =
+    public operator fun plus(pairs: Array<out Pair<String, NbtTag>>): Map<String, NbtTag> =
         content.plus(pairs)
 
     @Deprecated(
@@ -678,7 +677,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.toList()"),
         DeprecationLevel.ERROR
     )
-    public fun toList() =
+    public fun toList(): List<Pair<String, NbtTag>> =
         content.toList()
 
     @Deprecated(
@@ -686,7 +685,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.toMap()"),
         DeprecationLevel.ERROR
     )
-    public fun toMap() =
+    public fun toMap(): Map<String, NbtTag> =
         content.toMap()
 
     @Deprecated(
@@ -694,7 +693,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.toMap(destination)"),
         DeprecationLevel.ERROR
     )
-    public fun toMap(destination: MutableMap<in String, in NbtTag>) =
+    public fun toMap(destination: MutableMap<in String, in NbtTag>): MutableMap<in String, in NbtTag> =
         content.toMap(destination)
 
     @Deprecated(
@@ -702,7 +701,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.toMutableMap()"),
         DeprecationLevel.ERROR
     )
-    public fun toMutableMap() =
+    public fun toMutableMap(): MutableMap<String, NbtTag> =
         content.toMutableMap()
 
     @Deprecated(
@@ -710,7 +709,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.content.withDefault(defaultValue)"),
         DeprecationLevel.ERROR
     )
-    public fun withDefault(defaultValue: (String) -> NbtTag) =
+    public fun withDefault(defaultValue: (String) -> NbtTag): Map<String, NbtTag> =
         content.withDefault(defaultValue)
 
     @Deprecated(
@@ -718,7 +717,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.takeUnless { it.content.isEmpty() } ?: defaultValue()"),
         DeprecationLevel.ERROR
     )
-    public fun ifEmpty(defaultValue: () -> NbtCompound) =
+    public fun ifEmpty(defaultValue: () -> NbtCompound): NbtCompound =
         (takeIf { it.content.isNotEmpty() } ?: defaultValue()) as NbtCompound
 
     @Deprecated(
@@ -726,7 +725,7 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.also { it.content.onEach(action) }"),
         DeprecationLevel.ERROR
     )
-    public fun onEach(action: (Map.Entry<String, NbtTag>) -> Unit) =
+    public fun onEach(action: (Map.Entry<String, NbtTag>) -> Unit): NbtCompound =
         (also { it.content.onEach(action) }) as NbtCompound
 
     @Deprecated(
@@ -734,6 +733,6 @@ public sealed class NbtCompoundDeprecations {
         ReplaceWith("this.also { it.content.onEachIndexed(action) }"),
         DeprecationLevel.ERROR
     )
-    public fun onEachIndexed(action: (Int, Map.Entry<String, NbtTag>) -> Unit) =
+    public fun onEachIndexed(action: (Int, Map.Entry<String, NbtTag>) -> Unit): NbtCompound =
         (also { it.content.onEachIndexed(action) }) as NbtCompound
 }
