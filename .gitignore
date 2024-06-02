@@ -2,7 +2,6 @@
 
 # IntelliJ files
 **/.idea/*
-!/.idea/vcs.xml
 out/
 *.iml
 
