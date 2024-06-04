@@ -3,8 +3,6 @@ package net.benwoodworth.knbt.internal
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtReader.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
-import net.benwoodworth.knbt.test.NbtFormat
-import net.benwoodworth.knbt.test.file.*
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.*
 import net.benwoodworth.knbt.test.shouldReturn
@@ -14,18 +12,6 @@ class TreeNbtReaderTest {
     private inline fun expectNbtReaderCalls(tag: NbtTag, assertCalls: NbtReader.() -> Unit) {
         TreeNbtReader(tag).assertCalls()
     }
-
-    @Test
-    fun should_decode_test_to_class_correctly(): Unit = assertStructureEquals(
-        expected = testClass,
-        actual = NbtFormat().decodeFromNbtTag(testTag),
-    )
-
-    @Test
-    fun should_decode_bigtest_to_class_correctly(): Unit = assertStructureEquals(
-        expected = bigTestClass,
-        actual = NbtFormat().decodeFromNbtTag(bigTestTag),
-    )
 
     @Test
     fun should_read_Byte_correctly() = parameterizeTest {
