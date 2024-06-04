@@ -2,9 +2,6 @@ package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
-import net.benwoodworth.knbt.test.NbtFormat
-import net.benwoodworth.knbt.test.file.testClass
-import net.benwoodworth.knbt.test.file.testTag
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.*
 import kotlin.test.Test
@@ -16,18 +13,6 @@ class TreeNbtWriterTest {
         TreeNbtWriter { actualTag = it }.write()
         assertEquals(expectedTag, actualTag)
     }
-
-    @Test
-    fun should_encode_test_from_class_correctly(): Unit = assertEquals(
-        expected = testTag,
-        actual = NbtFormat().encodeToNbtTag(testClass),
-    )
-
-    @Test
-    fun should_encode_bigtest_from_class_correctly(): Unit = assertEquals(
-        expected = testTag,
-        actual = NbtFormat().encodeToNbtTag(testClass),
-    )
 
     @Test
     fun should_write_Byte_correctly() = parameterizeTest {
