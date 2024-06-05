@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.serialization
+package net.benwoodworth.knbt.external
 
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtNamed
@@ -11,7 +11,7 @@ import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ClassSerializationTest {
+class ClassSerializerTest {
     @Test
     fun serializing_a_class_should_nest_into_a_compound_with_the_class_serial_name_as_the_key() = parameterizeTest {
         @Serializable

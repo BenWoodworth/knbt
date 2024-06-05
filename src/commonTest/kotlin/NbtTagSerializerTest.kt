@@ -1,16 +1,12 @@
-package net.benwoodworth.knbt.serialization
+package net.benwoodworth.knbt
 
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.NbtNamed
-import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.buildNbtCompound
-import net.benwoodworth.knbt.put
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NbtTagElementSerializationTest {
+class NbtTagSerializerTest {
     @Test
     fun should_serialize_NbtTag_class_property() = parameterizeTest {
         @Serializable

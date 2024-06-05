@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.serialization
+package net.benwoodworth.knbt.external
 
 import kotlinx.serialization.builtins.*
 import net.benwoodworth.knbt.*
@@ -8,7 +8,7 @@ import net.benwoodworth.knbt.test.serializers.SurrogateSerializer
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
-class ListSerializationTest {
+class ListSerializerTest {
     @Test
     fun should_serialize_List_to_NbtList() = parameterizeTest {
         val nbt by parameterOfVerifyingNbt()

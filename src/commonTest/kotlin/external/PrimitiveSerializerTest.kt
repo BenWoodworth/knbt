@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.serialization
+package net.benwoodworth.knbt.external
 
 import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.builtins.serializer
@@ -11,7 +11,7 @@ import net.benwoodworth.knbt.toBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class PrimitiveSerializationTest {
+class PrimitiveSerializerTest {
     @Test
     fun should_serialize_Byte_correctly() = parameterizeTest {
         val nbt by parameterOfVerifyingNbt()

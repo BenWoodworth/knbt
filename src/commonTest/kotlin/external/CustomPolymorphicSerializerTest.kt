@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.serialization
+package net.benwoodworth.knbt.external
 
 import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.*
@@ -16,7 +16,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
-class CustomPolymorphicSerializationTest {
+class CustomPolymorphicSerializerTest {
     @Serializable(OpenSerializer::class)
     private abstract class Open {
         abstract val a: String

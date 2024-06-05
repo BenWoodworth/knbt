@@ -4,7 +4,7 @@
  * Copyright 2017-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package net.benwoodworth.knbt.serialization
+package net.benwoodworth.knbt
 
 import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.SerialName
@@ -12,7 +12,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.serializer
-import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
 import net.benwoodworth.knbt.test.parameters.parameterOfEncoderVerifyingNbt
@@ -20,7 +19,7 @@ import net.benwoodworth.knbt.test.reportedAs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class JsonTransformingSerializationTest {
+class NbtTransformingSerializerTest {
     @Serializable
     private data class StringData(val data: String)
 

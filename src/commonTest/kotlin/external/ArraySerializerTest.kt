@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.serialization
+package net.benwoodworth.knbt.external
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.*
@@ -10,7 +10,7 @@ import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
-class ArraySerializationTest {
+class ArraySerializerTest {
     @Test
     fun should_serialize_ByteArray_correctly() = parameterizeTest {
         val nbt by parameterOfVerifyingNbt()

@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.serialization
+package net.benwoodworth.knbt.external
 
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtNamed
@@ -8,7 +8,7 @@ import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ObjectSerializationTest {
+class ObjectSerializerTest {
     @Serializable
     @NbtNamed("RootKey")
     private object MyObject {
