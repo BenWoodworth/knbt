@@ -4,7 +4,7 @@
  * Copyright 2017-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package net.benwoodworth.knbt.serialization
+package net.benwoodworth.knbt
 
 import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterOf
@@ -12,10 +12,6 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
-import net.benwoodworth.knbt.NbtContentPolymorphicSerializer
-import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.StringifiedNbt
-import net.benwoodworth.knbt.nbtCompound
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
 import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
@@ -23,7 +19,7 @@ import net.benwoodworth.knbt.test.reportedAs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NbtContentPolymorphicSerializationTest {
+class NbtContentPolymorphicSerializerTest {
     @Serializable
     private sealed class Choices {
         @Serializable

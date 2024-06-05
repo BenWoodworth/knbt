@@ -1,16 +1,18 @@
-package net.benwoodworth.knbt
+package net.benwoodworth.knbt.external
 
 import com.benwoodworth.parameterize.ParameterizeScope
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
+import net.benwoodworth.knbt.buildNbtCompound
+import net.benwoodworth.knbt.put
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class UnsupportedPolymorphicBuiltinSerializationTest {
+class PolymorphicSerializerTest {
     private inline fun <reified T> expectedInformativeMessage(): String {
         val serialName = serializer<T>().descriptor.serialName
 

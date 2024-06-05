@@ -1,4 +1,4 @@
-package net.benwoodworth.knbt.serialization
+package net.benwoodworth.knbt.external
 
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -9,7 +9,7 @@ import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class MapSerializationTest {
+class MapSerializerTest {
     @Test
     fun should_serialize_compound_with_no_entries_to_Map_correctly() = parameterizeTest {
         val nbt by parameterOfVerifyingNbt()

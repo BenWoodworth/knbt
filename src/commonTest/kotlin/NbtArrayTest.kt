@@ -1,17 +1,16 @@
-package net.benwoodworth.knbt.serialization
+package net.benwoodworth.knbt
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.serializer
-import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import net.benwoodworth.knbt.test.serializers.ListSerializerWithAnnotations
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NbtArraySerializationTest {
+class NbtArrayTest {
     private inline fun <reified T> listAsNbtArraySerializer(): KSerializer<List<T>> =
         ListSerializerWithAnnotations(serializer(), listOf(NbtArray()))
 
