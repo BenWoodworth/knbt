@@ -8,7 +8,6 @@ import kotlinx.serialization.SerializationStrategy
 import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.NbtFormatBuilder
 import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.StringifiedNbt
 import net.benwoodworth.knbt.internal.NbtReaderDecoder
 import net.benwoodworth.knbt.internal.NbtWriterEncoder
 import net.benwoodworth.knbt.test.verify.VerifyingNbtReader
@@ -54,9 +53,7 @@ internal sealed class VerifyingNbt(
     private val name: String,
     builderAction: NbtFormatBuilder.() -> Unit
 ) {
-    protected val nbt: NbtFormat = StringifiedNbt {
-        builderAction()
-    }
+    protected val nbt = NbtFormat { builderAction() }
 
     override fun toString(): String = name
 

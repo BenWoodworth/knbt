@@ -13,16 +13,19 @@ import kotlin.native.concurrent.ThreadLocal
 
 public open class StringifiedNbt internal constructor(
     override val configuration: StringifiedNbtConfiguration,
-    override val serializersModule: SerializersModule,
-) : NbtFormat(), StringFormat {
+    serializersModule: SerializersModule,
+) : NbtFormat(
+    configuration,
+    serializersModule,
+), StringFormat {
     /**
      * The default instance of [StringifiedNbt] with default configuration.
      */
     @ThreadLocal
     public companion object Default : StringifiedNbt(
         configuration = StringifiedNbtConfiguration(
-            encodeDefaults = false,
-            ignoreUnknownKeys = false,
+            encodeDefaults = NbtFormat.configuration.encodeDefaults,
+            ignoreUnknownKeys = NbtFormat.configuration.ignoreUnknownKeys,
             prettyPrint = false,
             prettyPrintIndent = "    ",
         ),
@@ -67,16 +70,12 @@ public fun StringifiedNbt(
  * Builder of the [StringifiedNbt] instance provided by `StringifiedNbt { ... }` factory function.
  */
 @NbtDslMarker
-public class StringifiedNbtBuilder internal constructor(stringifiedNbt: StringifiedNbt) : NbtFormatBuilder {
-    override var encodeDefaults: Boolean = stringifiedNbt.configuration.encodeDefaults
-
-    override var ignoreUnknownKeys: Boolean = stringifiedNbt.configuration.ignoreUnknownKeys
-
+public class StringifiedNbtBuilder internal constructor(nbt: StringifiedNbt) : NbtFormatBuilder(nbt) {
     /**
      * Specifies whether resulting Stringified NBT should be pretty-printed.
      *  `false` by default.
      */
-    public var prettyPrint: Boolean = stringifiedNbt.configuration.prettyPrint
+    public var prettyPrint: Boolean = nbt.configuration.prettyPrint
 
     /**
      * Specifies indent string to use with [prettyPrint] mode
@@ -85,15 +84,10 @@ public class StringifiedNbtBuilder internal constructor(stringifiedNbt: Stringif
      * it is not clear whether this option has compelling use-cases.
      */
     @ExperimentalNbtApi
-    public var prettyPrintIndent: String = stringifiedNbt.configuration.prettyPrintIndent
-
-    /**
-     * Module with contextual and polymorphic serializers to be used in the resulting [StringifiedNbt] instance.
-     */
-    override var serializersModule: SerializersModule = stringifiedNbt.serializersModule
+    public var prettyPrintIndent: String = nbt.configuration.prettyPrintIndent
 
     @OptIn(ExperimentalNbtApi::class)
-    internal fun build(): StringifiedNbt {
+    override fun build(): StringifiedNbt {
         if (!prettyPrint) {
             require(prettyPrintIndent == StringifiedNbt.configuration.prettyPrintIndent) {
                 "Indent should not be specified when default printing mode is used"

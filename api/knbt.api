@@ -18,7 +18,6 @@ public class net/benwoodworth/knbt/Nbt : net/benwoodworth/knbt/NbtFormat, kotlin
 	public fun encodeToSink (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;Lokio/Sink;)V
 	public fun getConfiguration ()Lnet/benwoodworth/knbt/NbtConfiguration;
 	public synthetic fun getConfiguration ()Lnet/benwoodworth/knbt/NbtFormatConfiguration;
-	public fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
 }
 
 public abstract interface annotation class net/benwoodworth/knbt/NbtArray : java/lang/annotation/Annotation {
@@ -29,17 +28,12 @@ public synthetic class net/benwoodworth/knbt/NbtArray$Impl : net/benwoodworth/kn
 }
 
 public final class net/benwoodworth/knbt/NbtBuilder : net/benwoodworth/knbt/NbtFormatBuilder {
+	public synthetic fun build$knbt ()Lnet/benwoodworth/knbt/NbtFormat;
 	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
 	public final fun getCompressionLevel ()Ljava/lang/Integer;
-	public fun getEncodeDefaults ()Z
-	public fun getIgnoreUnknownKeys ()Z
-	public fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
 	public final fun getVariant ()Lnet/benwoodworth/knbt/NbtVariant;
 	public final fun setCompression (Lnet/benwoodworth/knbt/NbtCompression;)V
 	public final fun setCompressionLevel (Ljava/lang/Integer;)V
-	public fun setEncodeDefaults (Z)V
-	public fun setIgnoreUnknownKeys (Z)V
-	public fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
 	public final fun setVariant (Lnet/benwoodworth/knbt/NbtVariant;)V
 }
 
@@ -245,8 +239,6 @@ public final class net/benwoodworth/knbt/NbtCompressionKt {
 public final class net/benwoodworth/knbt/NbtConfiguration : net/benwoodworth/knbt/NbtFormatConfiguration {
 	public final fun getCompression ()Lnet/benwoodworth/knbt/NbtCompression;
 	public final fun getCompressionLevel ()Ljava/lang/Integer;
-	public fun getEncodeDefaults ()Z
-	public fun getIgnoreUnknownKeys ()Z
 	public final fun getVariant ()Lnet/benwoodworth/knbt/NbtVariant;
 	public fun toString ()Ljava/lang/String;
 }
@@ -417,24 +409,35 @@ public final class net/benwoodworth/knbt/NbtFloat$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public abstract class net/benwoodworth/knbt/NbtFormat : kotlinx/serialization/SerialFormat {
+public class net/benwoodworth/knbt/NbtFormat : kotlinx/serialization/SerialFormat {
+	public static final field Default Lnet/benwoodworth/knbt/NbtFormat$Default;
 	public final fun decodeFromNbtTag (Lkotlinx/serialization/DeserializationStrategy;Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Object;
 	public final fun encodeToNbtTag (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Lnet/benwoodworth/knbt/NbtTag;
-	public abstract fun getConfiguration ()Lnet/benwoodworth/knbt/NbtFormatConfiguration;
+	public fun getConfiguration ()Lnet/benwoodworth/knbt/NbtFormatConfiguration;
+	public final fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
 }
 
-public abstract interface class net/benwoodworth/knbt/NbtFormatBuilder {
-	public abstract fun getEncodeDefaults ()Z
-	public abstract fun getIgnoreUnknownKeys ()Z
-	public abstract fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
-	public abstract fun setEncodeDefaults (Z)V
-	public abstract fun setIgnoreUnknownKeys (Z)V
-	public abstract fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
+public final class net/benwoodworth/knbt/NbtFormat$Default : net/benwoodworth/knbt/NbtFormat {
 }
 
-public abstract interface class net/benwoodworth/knbt/NbtFormatConfiguration {
-	public abstract fun getEncodeDefaults ()Z
-	public abstract fun getIgnoreUnknownKeys ()Z
+public class net/benwoodworth/knbt/NbtFormatBuilder {
+	public final fun getEncodeDefaults ()Z
+	public final fun getIgnoreUnknownKeys ()Z
+	public final fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
+	public final fun setEncodeDefaults (Z)V
+	public final fun setIgnoreUnknownKeys (Z)V
+	public final fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
+}
+
+public class net/benwoodworth/knbt/NbtFormatConfiguration {
+	public final fun getEncodeDefaults ()Z
+	public final fun getIgnoreUnknownKeys ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/benwoodworth/knbt/NbtFormatKt {
+	public static final fun NbtFormat (Lnet/benwoodworth/knbt/NbtFormat;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/NbtFormat;
+	public static synthetic fun NbtFormat$default (Lnet/benwoodworth/knbt/NbtFormat;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtFormat;
 }
 
 public final class net/benwoodworth/knbt/NbtInt : net/benwoodworth/knbt/NbtTag {
@@ -967,28 +970,20 @@ public class net/benwoodworth/knbt/StringifiedNbt : net/benwoodworth/knbt/NbtFor
 	public fun encodeToString (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Ljava/lang/String;
 	public synthetic fun getConfiguration ()Lnet/benwoodworth/knbt/NbtFormatConfiguration;
 	public fun getConfiguration ()Lnet/benwoodworth/knbt/StringifiedNbtConfiguration;
-	public fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
 }
 
 public final class net/benwoodworth/knbt/StringifiedNbt$Default : net/benwoodworth/knbt/StringifiedNbt {
 }
 
 public final class net/benwoodworth/knbt/StringifiedNbtBuilder : net/benwoodworth/knbt/NbtFormatBuilder {
-	public fun getEncodeDefaults ()Z
-	public fun getIgnoreUnknownKeys ()Z
+	public synthetic fun build$knbt ()Lnet/benwoodworth/knbt/NbtFormat;
 	public final fun getPrettyPrint ()Z
 	public final fun getPrettyPrintIndent ()Ljava/lang/String;
-	public fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
-	public fun setEncodeDefaults (Z)V
-	public fun setIgnoreUnknownKeys (Z)V
 	public final fun setPrettyPrint (Z)V
 	public final fun setPrettyPrintIndent (Ljava/lang/String;)V
-	public fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
 }
 
 public final class net/benwoodworth/knbt/StringifiedNbtConfiguration : net/benwoodworth/knbt/NbtFormatConfiguration {
-	public fun getEncodeDefaults ()Z
-	public fun getIgnoreUnknownKeys ()Z
 	public final fun getPrettyPrint ()Z
 	public final fun getPrettyPrintIndent ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
