@@ -9,7 +9,7 @@ import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.okio.encodeToBufferedSink
 import okio.Buffer
 
-public sealed class Nbt(
+public open class Nbt internal constructor(
     override val configuration: NbtConfiguration,
     override val serializersModule: SerializersModule,
 ) : NbtFormat(), BinaryFormat, @Suppress("DEPRECATION") NbtDeprecations {
@@ -98,7 +98,7 @@ public class NbtBuilder internal constructor(nbt: Nbt) : NbtFormatBuilder {
             }
         }
 
-        return NbtImpl(
+        return Nbt(
             configuration = NbtConfiguration(
                 variant = variant,
                 compression = compression,
@@ -110,8 +110,3 @@ public class NbtBuilder internal constructor(nbt: Nbt) : NbtFormatBuilder {
         )
     }
 }
-
-private class NbtImpl(
-    configuration: NbtConfiguration,
-    serializersModule: SerializersModule,
-) : Nbt(configuration, serializersModule)

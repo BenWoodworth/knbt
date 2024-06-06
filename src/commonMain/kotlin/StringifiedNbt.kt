@@ -11,7 +11,7 @@ import net.benwoodworth.knbt.internal.StringifiedNbtReader
 import net.benwoodworth.knbt.internal.StringifiedNbtWriter
 import kotlin.native.concurrent.ThreadLocal
 
-public sealed class StringifiedNbt(
+public open class StringifiedNbt internal constructor(
     override val configuration: StringifiedNbtConfiguration,
     override val serializersModule: SerializersModule,
 ) : NbtFormat(), StringFormat {
@@ -106,7 +106,7 @@ public class StringifiedNbtBuilder internal constructor(stringifiedNbt: Stringif
             }
         }
 
-        return StringifiedNbtImpl(
+        return StringifiedNbt(
             configuration = StringifiedNbtConfiguration(
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
@@ -117,8 +117,3 @@ public class StringifiedNbtBuilder internal constructor(stringifiedNbt: Stringif
         )
     }
 }
-
-private class StringifiedNbtImpl(
-    configuration: StringifiedNbtConfiguration,
-    serializersModule: SerializersModule,
-) : StringifiedNbt(configuration, serializersModule)
