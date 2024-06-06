@@ -4,7 +4,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 
-public abstract class NbtFormat internal constructor(): SerialFormat {
+public abstract class NbtFormat internal constructor() : SerialFormat {
     public abstract val configuration: NbtFormatConfiguration
 
     /**
