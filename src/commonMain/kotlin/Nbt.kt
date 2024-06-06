@@ -12,7 +12,7 @@ import okio.Buffer
 public sealed class Nbt(
     override val configuration: NbtConfiguration,
     override val serializersModule: SerializersModule,
-) : NbtFormat, BinaryFormat, @Suppress("DEPRECATION") NbtDeprecations {
+) : NbtFormat(), BinaryFormat, @Suppress("DEPRECATION") NbtDeprecations {
     @OptIn(OkioApi::class)
     override fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
         Buffer().apply { encodeToBufferedSink(serializer, value, this) }.readByteArray()
