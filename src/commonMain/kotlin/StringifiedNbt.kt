@@ -14,7 +14,7 @@ import kotlin.native.concurrent.ThreadLocal
 public sealed class StringifiedNbt(
     override val configuration: StringifiedNbtConfiguration,
     override val serializersModule: SerializersModule,
-) : NbtFormat, StringFormat {
+) : NbtFormat(), StringFormat {
     /**
      * The default instance of [StringifiedNbt] with default configuration.
      */

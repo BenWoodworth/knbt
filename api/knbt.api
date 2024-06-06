@@ -9,14 +9,12 @@ public final class net/benwoodworth/knbt/JvmStreamsKt {
 public abstract interface annotation class net/benwoodworth/knbt/MIGRATION Acknowledge that NbtCompound now has a stricter get : java/lang/annotation/Annotation {
 }
 
-public abstract class net/benwoodworth/knbt/Nbt : kotlinx/serialization/BinaryFormat, net/benwoodworth/knbt/NbtDeprecations, net/benwoodworth/knbt/NbtFormat {
+public abstract class net/benwoodworth/knbt/Nbt : net/benwoodworth/knbt/NbtFormat, kotlinx/serialization/BinaryFormat, net/benwoodworth/knbt/NbtDeprecations {
 	public synthetic fun <init> (Lnet/benwoodworth/knbt/NbtConfiguration;Lkotlinx/serialization/modules/SerializersModule;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun decodeFromByteArray (Lkotlinx/serialization/DeserializationStrategy;[B)Ljava/lang/Object;
-	public fun decodeFromNbtTag (Lkotlinx/serialization/DeserializationStrategy;Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Object;
 	public fun decodeFromSource (Lkotlinx/serialization/DeserializationStrategy;Lokio/BufferedSource;)Ljava/lang/Object;
 	public fun decodeFromSource (Lkotlinx/serialization/DeserializationStrategy;Lokio/Source;)Ljava/lang/Object;
 	public fun encodeToByteArray (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)[B
-	public fun encodeToNbtTag (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Lnet/benwoodworth/knbt/NbtTag;
 	public fun encodeToSink (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;Lokio/BufferedSink;)V
 	public fun encodeToSink (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;Lokio/Sink;)V
 	public fun getConfiguration ()Lnet/benwoodworth/knbt/NbtConfiguration;
@@ -420,15 +418,10 @@ public final class net/benwoodworth/knbt/NbtFloat$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public abstract interface class net/benwoodworth/knbt/NbtFormat : kotlinx/serialization/SerialFormat {
-	public abstract fun decodeFromNbtTag (Lkotlinx/serialization/DeserializationStrategy;Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Object;
-	public abstract fun encodeToNbtTag (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Lnet/benwoodworth/knbt/NbtTag;
+public abstract class net/benwoodworth/knbt/NbtFormat : kotlinx/serialization/SerialFormat {
+	public final fun decodeFromNbtTag (Lkotlinx/serialization/DeserializationStrategy;Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Object;
+	public final fun encodeToNbtTag (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Lnet/benwoodworth/knbt/NbtTag;
 	public abstract fun getConfiguration ()Lnet/benwoodworth/knbt/NbtFormatConfiguration;
-}
-
-public final class net/benwoodworth/knbt/NbtFormat$DefaultImpls {
-	public static fun decodeFromNbtTag (Lnet/benwoodworth/knbt/NbtFormat;Lkotlinx/serialization/DeserializationStrategy;Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Object;
-	public static fun encodeToNbtTag (Lnet/benwoodworth/knbt/NbtFormat;Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Lnet/benwoodworth/knbt/NbtTag;
 }
 
 public abstract interface class net/benwoodworth/knbt/NbtFormatBuilder {
@@ -969,12 +962,10 @@ public final class net/benwoodworth/knbt/NbtVariant$JavaNetwork : net/benwoodwor
 public abstract interface annotation class net/benwoodworth/knbt/OkioApi : java/lang/annotation/Annotation {
 }
 
-public abstract class net/benwoodworth/knbt/StringifiedNbt : kotlinx/serialization/StringFormat, net/benwoodworth/knbt/NbtFormat {
+public abstract class net/benwoodworth/knbt/StringifiedNbt : net/benwoodworth/knbt/NbtFormat, kotlinx/serialization/StringFormat {
 	public static final field Default Lnet/benwoodworth/knbt/StringifiedNbt$Default;
 	public synthetic fun <init> (Lnet/benwoodworth/knbt/StringifiedNbtConfiguration;Lkotlinx/serialization/modules/SerializersModule;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun decodeFromNbtTag (Lkotlinx/serialization/DeserializationStrategy;Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Object;
 	public fun decodeFromString (Lkotlinx/serialization/DeserializationStrategy;Ljava/lang/String;)Ljava/lang/Object;
-	public fun encodeToNbtTag (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Lnet/benwoodworth/knbt/NbtTag;
 	public fun encodeToString (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Ljava/lang/String;
 	public synthetic fun getConfiguration ()Lnet/benwoodworth/knbt/NbtFormatConfiguration;
 	public fun getConfiguration ()Lnet/benwoodworth/knbt/StringifiedNbtConfiguration;

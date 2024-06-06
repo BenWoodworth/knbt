@@ -4,8 +4,8 @@ import kotlinx.serialization.*
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 
-public sealed interface NbtFormat : SerialFormat {
-    public val configuration: NbtFormatConfiguration
+public abstract class NbtFormat internal constructor() : SerialFormat {
+    public abstract val configuration: NbtFormatConfiguration
 
     /**
      * Serializes the given [value] into an equivalent [NbtTag] using the given [serializer].
