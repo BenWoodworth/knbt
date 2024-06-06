@@ -6,15 +6,19 @@ import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 
 public open class NbtFormat internal constructor(
+    internal val name: String,
     public open val configuration: NbtFormatConfiguration,
-    final override val serializersModule: SerializersModule
+    final override val serializersModule: SerializersModule,
+    internal val capabilities: NbtCapabilities
 ) : SerialFormat {
     public companion object Default : NbtFormat(
+        "NbtTag",
         configuration = NbtFormatConfiguration(
             encodeDefaults = false,
             ignoreUnknownKeys = false,
         ),
         serializersModule = EmptySerializersModule(),
+        capabilities = NbtCapabilities(namedRoot = true)
     )
 
     /**
@@ -72,11 +76,13 @@ public open class NbtFormatBuilder internal constructor(nbt: NbtFormat) {
 
     internal open fun build(): NbtFormat {
         return NbtFormat(
+            NbtFormat.name,
             configuration = NbtFormatConfiguration(
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
             ),
             serializersModule = serializersModule,
+            capabilities = NbtFormat.capabilities,
         )
     }
 }

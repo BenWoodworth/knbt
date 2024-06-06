@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.internal.NbtTagType.TAG_Compound
 import net.benwoodworth.knbt.internal.NbtTagType.TAG_End
 import okio.BufferedSink
 import okio.Closeable
@@ -98,10 +97,8 @@ internal abstract class BinaryNbtWriter : NbtWriter, Closeable {
 
 internal abstract class NamedBinaryNbtWriter : BinaryNbtWriter() {
     private var compoundNesting = 0
-    private var wroteRootEntry = false
 
     override fun beginRootTag(type: NbtTagType) {
-        if (type != TAG_Compound) throw NbtEncodingException("The binary NBT format only supports $TAG_Compound with one entry")
     }
 
     final override fun beginCompound() {
@@ -109,18 +106,7 @@ internal abstract class NamedBinaryNbtWriter : BinaryNbtWriter() {
         compoundNesting++
     }
 
-    final override fun beginCompoundEntry(type: NbtTagType, name: String) {
-        if (compoundNesting == 1) {
-            if (wroteRootEntry) throw NbtEncodingException("The binary NBT format only supports $TAG_Compound with one entry")
-            wroteRootEntry = true
-        }
-
-        super.beginCompoundEntry(type, name)
-    }
-
     final override fun endCompound() {
-        if (compoundNesting == 1 && !wroteRootEntry) throw NbtEncodingException("The binary NBT format only supports $TAG_Compound with one entry")
-
         compoundNesting--
         if (compoundNesting > 0) {
             sink.writeNbtTagType(TAG_End)
