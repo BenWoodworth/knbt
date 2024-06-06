@@ -3,7 +3,6 @@ package net.benwoodworth.knbt
 import kotlinx.serialization.BinaryFormat
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.okio.encodeToBufferedSink
@@ -11,8 +10,11 @@ import okio.Buffer
 
 public open class Nbt internal constructor(
     override val configuration: NbtConfiguration,
-    override val serializersModule: SerializersModule,
-) : NbtFormat(), BinaryFormat, @Suppress("DEPRECATION") NbtDeprecations {
+    serializersModule: SerializersModule,
+) : NbtFormat(
+    configuration,
+    serializersModule
+), BinaryFormat, @Suppress("DEPRECATION") NbtDeprecations {
     @OptIn(OkioApi::class)
     override fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
         Buffer().apply { encodeToBufferedSink(serializer, value, this) }.readByteArray()
@@ -27,10 +29,10 @@ private object DefaultNbt : Nbt(
         variant = NbtVariant.Java, // Will be ignored by NbtBuilder
         compression = NbtCompression.None, // Will be ignored by NbtBuilder
         compressionLevel = null,
-        encodeDefaults = false,
-        ignoreUnknownKeys = false,
+        encodeDefaults = NbtFormat.configuration.encodeDefaults,
+        ignoreUnknownKeys = NbtFormat.configuration.ignoreUnknownKeys,
     ),
-    serializersModule = EmptySerializersModule(),
+    serializersModule = NbtFormat.serializersModule,
 )
 
 /**
@@ -49,7 +51,7 @@ public fun Nbt(from: Nbt = DefaultNbt, builderAction: NbtBuilder.() -> Unit): Nb
  * Builder of the [Nbt] instance provided by `Nbt { ... }` factory function.
  */
 @NbtDslMarker
-public class NbtBuilder internal constructor(nbt: Nbt) : NbtFormatBuilder {
+public class NbtBuilder internal constructor(nbt: Nbt) : NbtFormatBuilder(nbt) {
     /**
      * The variant of NBT binary format to use. Required.
      */
@@ -77,16 +79,7 @@ public class NbtBuilder internal constructor(nbt: Nbt) : NbtFormatBuilder {
             field = value
         }
 
-    override var encodeDefaults: Boolean = nbt.configuration.encodeDefaults
-
-    override var ignoreUnknownKeys: Boolean = nbt.configuration.ignoreUnknownKeys
-
-    /**
-     * Module with contextual and polymorphic serializers to be used in the resulting [Nbt] instance.
-     */
-    override var serializersModule: SerializersModule = nbt.serializersModule
-
-    internal fun build(): Nbt {
+    override fun build(): Nbt {
         val variant = variant
         val compression = compression
 

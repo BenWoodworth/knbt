@@ -1,11 +1,21 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.*
+import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 
-public abstract class NbtFormat internal constructor() : SerialFormat {
-    public abstract val configuration: NbtFormatConfiguration
+public open class NbtFormat internal constructor(
+    public open val configuration: NbtFormatConfiguration,
+    final override val serializersModule: SerializersModule
+) : SerialFormat {
+    public companion object Default : NbtFormat(
+        configuration = NbtFormatConfiguration(
+            encodeDefaults = false,
+            ignoreUnknownKeys = false,
+        ),
+        serializersModule = EmptySerializersModule(),
+    )
 
     /**
      * Serializes the given [value] into an equivalent [NbtTag] using the given [serializer].
@@ -28,24 +38,47 @@ public abstract class NbtFormat internal constructor() : SerialFormat {
         decodeFromNbtReader(TreeNbtReader(tag), deserializer)
 }
 
-public sealed interface NbtFormatBuilder {
+/**
+ * Creates an instance of [NbtFormat] configured from the optionally given [NbtFormat instance][from]
+ * and adjusted with [builderAction].
+ */
+public fun NbtFormat(
+    from: NbtFormat = NbtFormat.Default,
+    builderAction: NbtFormatBuilder.() -> Unit,
+): NbtFormat {
+    val builder = NbtFormatBuilder(from)
+    builder.builderAction()
+    return builder.build()
+}
+
+public open class NbtFormatBuilder internal constructor(nbt: NbtFormat) {
     /**
      * Specifies whether default values of Kotlin properties should be encoded.
      * `false` by default.
      */
-    public var encodeDefaults: Boolean
+    public var encodeDefaults: Boolean = nbt.configuration.encodeDefaults
 
     /**
      * Specifies whether encounters of unknown properties in the input NBT
      * should be ignored instead of throwing [SerializationException].
      * `false` by default.
      */
-    public var ignoreUnknownKeys: Boolean
+    public var ignoreUnknownKeys: Boolean = nbt.configuration.ignoreUnknownKeys
 
     /**
      * Module with contextual and polymorphic serializers to be used in the resulting [NbtFormat] instance.
      */
-    public var serializersModule: SerializersModule
+    public var serializersModule: SerializersModule = nbt.serializersModule
+
+    internal open fun build(): NbtFormat {
+        return NbtFormat(
+            configuration = NbtFormatConfiguration(
+                encodeDefaults = encodeDefaults,
+                ignoreUnknownKeys = ignoreUnknownKeys,
+            ),
+            serializersModule = serializersModule,
+        )
+    }
 }
 
 /**
