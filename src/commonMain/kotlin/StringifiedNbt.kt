@@ -5,18 +5,21 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.StringFormat
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
-import net.benwoodworth.knbt.internal.CharSource
-import net.benwoodworth.knbt.internal.NbtDecodingException
-import net.benwoodworth.knbt.internal.StringifiedNbtReader
-import net.benwoodworth.knbt.internal.StringifiedNbtWriter
+import net.benwoodworth.knbt.internal.*
 import kotlin.native.concurrent.ThreadLocal
+
+private val stringifiedNbtCapabilities = NbtCapabilities(
+    namedRoot = false,
+)
 
 public open class StringifiedNbt internal constructor(
     override val configuration: StringifiedNbtConfiguration,
     serializersModule: SerializersModule,
 ) : NbtFormat(
+    "SNBT",
     configuration,
     serializersModule,
+    stringifiedNbtCapabilities
 ), StringFormat {
     /**
      * The default instance of [StringifiedNbt] with default configuration.

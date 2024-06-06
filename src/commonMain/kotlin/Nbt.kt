@@ -13,8 +13,10 @@ public open class Nbt internal constructor(
     override val configuration: NbtConfiguration,
     serializersModule: SerializersModule,
 ) : NbtFormat(
+    configuration.variant.toString(),
     configuration,
-    serializersModule
+    serializersModule,
+    configuration.variant.capabilities
 ), BinaryFormat, @Suppress("DEPRECATION") NbtDeprecations {
     @OptIn(OkioApi::class)
     override fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =

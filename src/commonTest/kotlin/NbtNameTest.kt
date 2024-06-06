@@ -1,11 +1,18 @@
 package net.benwoodworth.knbt
 
+import com.benwoodworth.parameterize.parameter
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
+import net.benwoodworth.knbt.internal.NbtDecodingException
+import net.benwoodworth.knbt.internal.nbtName
+import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
 import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class NbtNameTest {
     @Serializable
@@ -71,6 +78,61 @@ class NbtNameTest {
             testDecodedValue = { value, decodedValue ->
                 assertEquals(value, decodedValue, "decodedValue")
             }
+        )
+    }
+
+
+    private data class SerializableValueWithNbtName<T>(
+        val value: T,
+        val serializer: KSerializer<T>,
+    )
+
+    private val valuesWithStaticNbtNames = buildList {
+        @Serializable
+        @NbtName("Name")
+        class Value {
+            override fun toString(): String = "Value"
+            override fun equals(other: Any?): Boolean = other is Value
+            override fun hashCode(): Int = this::class.hashCode()
+        }
+
+        add(SerializableValueWithNbtName(Value(), Value.serializer()))
+
+
+        @Serializable
+        @NbtName("DifferentName")
+        class DifferentValue {
+            override fun toString(): String = "DifferentValue"
+            override fun equals(other: Any?): Boolean = other is DifferentValue
+            override fun hashCode(): Int = this::class.hashCode()
+        }
+
+        add(SerializableValueWithNbtName(DifferentValue(), DifferentValue.serializer()))
+    }.let {
+        @Suppress("UNCHECKED_CAST")
+        it as List<SerializableValueWithNbtName<Any?>> // KT-68606: Remove cast
+    }
+
+    @Test
+    fun decoding_value_with_static_NBT_name_should_fail_with_different_name() = parameterizeTest {
+        val nbt by parameterOfDecoderVerifyingNbt(includeNamedRootNbt = true)
+        assume(nbt.capabilities.namedRoot)
+
+        val value by parameter(valuesWithStaticNbtNames)
+        val name = value.serializer.descriptor.nbtName!!
+
+        val differentlyNamedNbtTag = buildNbtCompound("different_than_$name") {
+            // No elements, since the decoder should fail before reaching this point anyway
+        }
+
+        val failure = assertFailsWith<NbtDecodingException> {
+            nbt.verifyDecoder(value.serializer, differentlyNamedNbtTag)
+        }
+
+        assertEquals(
+            "Expected tag named '$name', but got '${differentlyNamedNbtTag.content.keys.single()}'",
+            failure.message,
+            "failure message"
         )
     }
 }

@@ -18,7 +18,7 @@ import net.benwoodworth.knbt.internal.NbtTagType.*
 @OptIn(ExperimentalSerializationApi::class)
 internal class NbtWriterEncoder(
     override val nbt: NbtFormat,
-    private val writer: NbtWriter,
+    writer: NbtWriter,
 ) : AbstractNbtEncoder() {
     override val serializersModule: SerializersModule
         get() = nbt.serializersModule
@@ -31,6 +31,10 @@ internal class NbtWriterEncoder(
     private var elementListKind: NbtListKind? = null
     private val listTypeStack = ArrayDeque<NbtTagType>() // TAG_End when uninitialized
     private var listSize: Int = 0
+
+    private val writer: NbtWriter =
+        if (nbt.capabilities.namedRoot) RootNameVerifyingNbtWriter(writer)
+        else writer
 
     override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
         when (descriptor.kind as StructureKind) {
@@ -342,6 +346,44 @@ internal class NbtWriterEncoder(
                 )
 
             else -> super.encodeSerializableValue(serializer, value)
+        }
+    }
+
+    private inner class RootNameVerifyingNbtWriter(
+        private val writer: NbtWriter
+    ) : NbtWriter by writer {
+        private var compoundNesting = 0
+        private var wroteRootEntry = false
+
+        private inline fun verify(value: Boolean) {
+            if (!value) throw NbtEncodingException("The ${nbt.name} format only supports $TAG_Compound with one entry")
+        }
+
+        override fun beginRootTag(type: NbtTagType) {
+            verify(type == TAG_Compound)
+
+            writer.beginRootTag(type)
+        }
+
+        override fun beginCompound() {
+            writer.beginCompound()
+            compoundNesting++
+        }
+
+        override fun beginCompoundEntry(type: NbtTagType, name: String) {
+            if (compoundNesting == 1) {
+                verify(!wroteRootEntry)
+                wroteRootEntry = true
+            }
+
+            writer.beginCompoundEntry(type, name)
+        }
+
+        override fun endCompound() {
+            verify(compoundNesting != 1 || wroteRootEntry)
+            compoundNesting--
+
+            writer.endCompound()
         }
     }
 }

@@ -5,10 +5,15 @@ import okio.BufferedSink
 import okio.BufferedSource
 
 public abstract class NbtVariant private constructor() {
+    internal abstract val capabilities: NbtCapabilities
+
     internal abstract fun getNbtReader(source: BufferedSource): BinaryNbtReader
     internal abstract fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter
 
     public data object Java : NbtVariant() {
+        override val capabilities: NbtCapabilities =
+            NbtCapabilities(namedRoot = true)
+
         override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
             JavaNbtReader(source)
 
@@ -45,14 +50,19 @@ public abstract class NbtVariant private constructor() {
         override fun toString(): String = "JavaNetwork(protocolVersion = $protocolVersion)"
 
 
+        override val capabilities: NbtCapabilities
+            get() = protocolVersionVariant.capabilities
+
         override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
             protocolVersionVariant.getNbtReader(source)
 
         override fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter =
             protocolVersionVariant.getNbtWriter(sink)
 
-
         private object EmptyNamedRoot : NbtVariant() {
+            override val capabilities: NbtCapabilities =
+                NbtCapabilities(namedRoot = false)
+
             override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
                 JavaNetworkNbtReader.EmptyNamedRoot(source)
 
@@ -61,6 +71,9 @@ public abstract class NbtVariant private constructor() {
         }
 
         private object UnnamedRoot : NbtVariant() {
+            override val capabilities: NbtCapabilities =
+                NbtCapabilities(namedRoot = false)
+
             override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
                 JavaNetworkNbtReader.UnnamedRoot(source)
 
@@ -70,6 +83,9 @@ public abstract class NbtVariant private constructor() {
     }
 
     public data object Bedrock : NbtVariant() {
+        override val capabilities: NbtCapabilities =
+            NbtCapabilities(namedRoot = true)
+
         override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
             BedrockNbtReader(source)
 
@@ -78,6 +94,9 @@ public abstract class NbtVariant private constructor() {
     }
 
     public data object BedrockNetwork : NbtVariant() {
+        override val capabilities: NbtCapabilities =
+            NbtCapabilities(namedRoot = false)
+
         override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
             BedrockNetworkNbtReader(source)
 

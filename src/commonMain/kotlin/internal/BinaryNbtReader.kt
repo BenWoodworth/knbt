@@ -187,8 +187,6 @@ internal abstract class NamedBinaryNbtReader : BinaryNbtReader() {
     }
 
     final override fun endCompound() {
-        if (compoundNesting == 1 && !readRootEntry) throw NbtDecodingException("The binary NBT format only supports $TAG_Compound with one entry")
-
         super.endCompound()
         compoundNesting--
     }
