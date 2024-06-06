@@ -9,7 +9,7 @@ public class StringifiedNbtConfiguration internal constructor(
 ) : NbtFormatConfiguration {
     @OptIn(ExperimentalNbtApi::class)
     override fun toString(): String =
-        "NbtConfiguration(" +
+        "StringifiedNbtConfiguration(" +
                 "encodeDefaults=$encodeDefaults" +
                 ", ignoreUnknownKeys=$ignoreUnknownKeys" +
                 ", prettyPrint=$prettyPrint" +
