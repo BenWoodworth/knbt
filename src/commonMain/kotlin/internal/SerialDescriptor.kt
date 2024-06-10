@@ -4,6 +4,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
+import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.NbtArray
 import net.benwoodworth.knbt.NbtName
 
@@ -58,3 +59,8 @@ internal val SerialDescriptor.nbtName: String?
         .firstOrNull { it is NbtName }
         ?.let { it as NbtName }
         ?.name
+
+
+@OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
+internal val SerialDescriptor.nbtNameIsDynamic: Boolean
+    get() = annotations.any { it is NbtName.Dynamic }
