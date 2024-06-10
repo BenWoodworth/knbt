@@ -784,6 +784,13 @@ public abstract interface annotation class net/benwoodworth/knbt/NbtName : java/
 	public abstract fun name ()Ljava/lang/String;
 }
 
+public abstract interface annotation class net/benwoodworth/knbt/NbtName$Dynamic : java/lang/annotation/Annotation {
+}
+
+public synthetic class net/benwoodworth/knbt/NbtName$Dynamic$Impl : net/benwoodworth/knbt/NbtName$Dynamic {
+	public fun <init> ()V
+}
+
 public synthetic class net/benwoodworth/knbt/NbtName$Impl : net/benwoodworth/knbt/NbtName {
 	public fun <init> (Ljava/lang/String;)V
 	public final synthetic fun name ()Ljava/lang/String;
