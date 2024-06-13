@@ -18,6 +18,7 @@ import net.benwoodworth.knbt.internal.NbtTagType.*
 @OptIn(ExperimentalSerializationApi::class)
 internal class NbtWriterEncoder(
     override val nbt: NbtFormat,
+    private val context: SerializationNbtContext,
     writer: NbtWriter,
 ) : AbstractNbtEncoder() {
     override val serializersModule: SerializersModule
@@ -52,7 +53,7 @@ internal class NbtWriterEncoder(
         }
 
         if (descriptor.getElementDescriptor(index).kind == StructureKind.LIST) {
-            elementListKind = descriptor.getElementNbtListKind(index)
+            elementListKind = descriptor.getElementNbtListKind(context, index)
         }
 
         return true
@@ -65,7 +66,7 @@ internal class NbtWriterEncoder(
             }
 
             TAG_Compound -> {
-                if (encodingMapKey) throw NbtEncodingException("Only String tag names are supported")
+                if (encodingMapKey) throw NbtEncodingException(context, "Only String tag names are supported")
                 writer.beginCompoundEntry(type, elementName)
             }
 
@@ -80,21 +81,27 @@ internal class NbtWriterEncoder(
                     writer.beginListEntry()
                 }
 
-                else -> throw NbtEncodingException("Cannot encode $type within a $TAG_List of $listType")
+                else -> throw NbtEncodingException(context, "Cannot encode $type within a $TAG_List of $listType")
             }
 
             TAG_Byte_Array -> {
-                if (type != TAG_Byte) throw NbtEncodingException("Cannot encode $type within a $TAG_Byte_Array")
+                if (type != TAG_Byte) {
+                    throw NbtEncodingException(context, "Cannot encode $type within a $TAG_Byte_Array")
+                }
                 writer.beginByteArrayEntry()
             }
 
             TAG_Int_Array -> {
-                if (type != TAG_Int) throw NbtEncodingException("Cannot encode $type within a $TAG_Int_Array")
+                if (type != TAG_Int) {
+                    throw NbtEncodingException(context, "Cannot encode $type within a $TAG_Int_Array")
+                }
                 writer.beginIntArrayEntry()
             }
 
             TAG_Long_Array -> {
-                if (type != TAG_Long) throw NbtEncodingException("Cannot encode $type within a $TAG_Long_Array")
+                if (type != TAG_Long) {
+                    throw NbtEncodingException(context, "Cannot encode $type within a $TAG_Long_Array")
+                }
                 writer.beginLongArrayEntry()
             }
 
@@ -131,7 +138,7 @@ internal class NbtWriterEncoder(
 
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder =
         if (descriptor.kind == StructureKind.LIST) {
-            when (elementListKind ?: descriptor.nbtListKind) {
+            when (elementListKind ?: descriptor.getNbtListKind(context)) {
                 NbtListKind.List -> beginList(collectionSize)
                 NbtListKind.ByteArray -> beginByteArray(collectionSize)
                 NbtListKind.IntArray -> beginIntArray(collectionSize)
@@ -288,7 +295,12 @@ internal class NbtWriterEncoder(
                 writer.beginList(listType, list.size)
                 list.content.forEach { entry ->
                     writer.beginListEntry()
-                    if (entry.type != listType) throw NbtEncodingException("Cannot encode ${entry.type} within a $TAG_List of $listType")
+
+                    if (entry.type != listType) {
+                        val message = "Cannot encode ${entry.type} within a $TAG_List of $listType"
+                        throw NbtEncodingException(context, message)
+                    }
+
                     writeTag(entry)
                 }
                 writer.endList()
@@ -356,7 +368,10 @@ internal class NbtWriterEncoder(
         private var wroteRootEntry = false
 
         private inline fun verify(value: Boolean) {
-            if (!value) throw NbtEncodingException("The ${nbt.name} format only supports $TAG_Compound with one entry")
+            if (!value) {
+                val message = "The ${nbt.name} format only supports $TAG_Compound with one entry"
+                throw NbtEncodingException(context, message)
+            }
         }
 
         override fun beginRootTag(type: NbtTagType) {

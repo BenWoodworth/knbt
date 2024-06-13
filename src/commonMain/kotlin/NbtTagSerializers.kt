@@ -8,8 +8,6 @@ import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import net.benwoodworth.knbt.internal.NbtDecodingException
-import net.benwoodworth.knbt.internal.NbtEncodingException
 
 internal object NbtTagSerializer : KSerializer<NbtTag> {
     override val descriptor: SerialDescriptor =
@@ -195,12 +193,12 @@ internal object NbtLongArraySerializer : KSerializer<NbtLongArray> {
 }
 
 internal fun Encoder.asNbtEncoder(): NbtEncoder =
-    this as? NbtEncoder ?: throw NbtEncodingException(
+    this as? NbtEncoder ?: throw IllegalArgumentException(
         "This serializer can be used only with NBT format. Expected Encoder to be NbtEncoder, got ${this::class}"
     )
 
 internal fun Decoder.asNbtDecoder(): NbtDecoder =
-    this as? NbtDecoder ?: throw NbtDecodingException(
+    this as? NbtDecoder ?: throw IllegalArgumentException(
         "This serializer can be used only with NBT format. Expected Decoder to be NbtDecoder, got ${this::class}"
     )
 

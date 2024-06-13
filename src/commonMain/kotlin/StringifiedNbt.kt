@@ -37,17 +37,24 @@ public open class StringifiedNbt internal constructor(
 
     override fun <T> encodeToString(serializer: SerializationStrategy<T>, value: T): String =
         buildString {
-            encodeToNbtWriter(StringifiedNbtWriter(this@StringifiedNbt, this), serializer, value)
+            val context = SerializationNbtContext()
+            val writer = StringifiedNbtWriter(this@StringifiedNbt, this)
+            val encoder = NbtWriterEncoder(this@StringifiedNbt, context, writer)
+
+            encoder.encodeSerializableValue(serializer, value)
         }
 
     override fun <T> decodeFromString(deserializer: DeserializationStrategy<T>, string: String): T {
+        val context = SerializationNbtContext()
         val source = CharSource(string)
-        val decoded = decodeFromNbtReader(StringifiedNbtReader(source), deserializer)
+        val reader = StringifiedNbtReader(context, source)
+        val decoder = NbtReaderDecoder(this, context, reader)
+        val decoded = decoder.decodeSerializableValue(deserializer)
 
         var char = source.read()
         while (char != CharSource.ReadResult.EOF) {
             if (!char.toChar().isWhitespace()) {
-                throw NbtDecodingException("Expected only whitespace after value, but got '$char'")
+                throw NbtDecodingException(context, "Expected only whitespace after value, but got '$char'")
             }
             char = source.read()
         }

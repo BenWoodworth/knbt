@@ -6,7 +6,7 @@ import okio.BufferedSource
 /**
  * @throws NbtDecodingException if the value is longer than [maxBytes].
  */
-internal fun BufferedSource.readLEB128(maxBytes: Int): ULong {
+internal fun BufferedSource.readLEB128(context: NbtContext, maxBytes: Int): ULong {
     require(maxBytes in 1..10) { "maxBytes must be in 1..10, but is $maxBytes" }
 
     var readCount = 0
@@ -18,7 +18,7 @@ internal fun BufferedSource.readLEB128(maxBytes: Int): ULong {
         result = result or (value shl (7 * readCount))
 
         if (++readCount > maxBytes) {
-            throw NbtDecodingException("LEB128 value is too big. Byte length should be in 1..$maxBytes.")
+            throw NbtDecodingException(context, "LEB128 value is too big. Byte length should be in 1..$maxBytes.")
         }
     } while (byte and 0b10000000 != 0)
 

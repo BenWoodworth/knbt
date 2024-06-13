@@ -1,5 +1,6 @@
 package net.benwoodworth.knbt
 
+import net.benwoodworth.knbt.internal.EmptyNbtContext
 import java.io.EOFException
 import java.io.InputStream
 
@@ -18,5 +19,5 @@ public fun NbtCompression.Companion.detect(stream: InputStream): NbtCompression 
     if (firstByte == -1) throw EOFException()
     stream.reset()
 
-    return detect(firstByte.toByte())
+    return detect(EmptyNbtContext, firstByte.toByte())
 }

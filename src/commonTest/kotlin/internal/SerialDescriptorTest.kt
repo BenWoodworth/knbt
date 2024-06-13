@@ -63,9 +63,9 @@ class SerialDescriptorTest {
         val nbtListKind = if (asElement) {
             buildClassSerialDescriptor("Parent") {
                 element("element", testCase.descriptor)
-            }.getElementNbtListKind(0)
+            }.getElementNbtListKind(EmptyNbtContext, 0)
         } else {
-            testCase.descriptor.nbtListKind
+            testCase.descriptor.getNbtListKind(EmptyNbtContext)
         }
 
         assertEquals(testCase.expectedKind, nbtListKind)
@@ -83,7 +83,7 @@ class SerialDescriptorTest {
             element("element", testCase.descriptor, listOf(NbtArray()))
         }
 
-        assertEquals(testCase.expectedKind, descriptor.getElementNbtListKind(0))
+        assertEquals(testCase.expectedKind, descriptor.getElementNbtListKind(EmptyNbtContext, 0))
     }
 
     @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
@@ -95,7 +95,7 @@ class SerialDescriptorTest {
     @Test
     fun getting_kind_for_NbtArray_descriptor_should_throw_SerializationException_if_it_has_zero_elements() {
         assertFailsWith<NbtException> {
-            nbtArrayDescriptorWithZeroElements.nbtListKind
+            nbtArrayDescriptorWithZeroElements.getNbtListKind(EmptyNbtContext)
         }
     }
 
@@ -106,7 +106,7 @@ class SerialDescriptorTest {
         }
 
         assertFailsWith<NbtException> {
-            descriptor.getElementNbtListKind(0)
+            descriptor.getElementNbtListKind(EmptyNbtContext, 0)
         }
     }
 }

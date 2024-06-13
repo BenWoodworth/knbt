@@ -11,7 +11,8 @@ internal enum class NbtListKind { List, ByteArray, IntArray, LongArray }
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalUnsignedTypes::class)
 private fun SerialDescriptor.getNbtListKind(
-    additionalAnnotations: List<Annotation> = emptyList()
+    context: NbtContext,
+    additionalAnnotations: List<Annotation>
 ): NbtListKind {
     when (this) {
         ByteArraySerializer().descriptor -> return NbtListKind.ByteArray
@@ -26,26 +27,28 @@ private fun SerialDescriptor.getNbtListKind(
     val hasNbtArrayAnnotation = annotations.any { it is NbtArray } || additionalAnnotations.any { it is NbtArray }
     if (!hasNbtArrayAnnotation) return NbtListKind.List
 
-    if (elementsCount == 0) throw NbtException(
-        "$serialName has @NbtArray and zero elements, but one is required for determining array type"
-    )
+    if (elementsCount == 0) {
+        val message = "$serialName has @NbtArray and zero elements, but one is required for determining array type"
+        throw NbtException(context, message)
+    }
 
     return when (val elementKind = getElementDescriptor(0).kind) {
         PrimitiveKind.BYTE -> NbtListKind.ByteArray
         PrimitiveKind.INT -> NbtListKind.IntArray
         PrimitiveKind.LONG -> NbtListKind.LongArray
 
-        else -> throw NbtException(
-            "$serialName has @NbtArray with element kind $elementKind, but BYTE, INT, or LONG is required"
-        )
+        else -> {
+            val message = "$serialName has @NbtArray with element kind $elementKind, but BYTE, INT, or LONG is required"
+            throw NbtException(context, message)
+        }
     }
 }
 
-internal val SerialDescriptor.nbtListKind: NbtListKind
-    get() = getNbtListKind()
+internal fun SerialDescriptor.getNbtListKind(context: NbtContext): NbtListKind =
+    getNbtListKind(context, emptyList())
 
-internal fun SerialDescriptor.getElementNbtListKind(index: Int): NbtListKind =
-    getElementDescriptor(index).getNbtListKind(getElementAnnotations(index))
+internal fun SerialDescriptor.getElementNbtListKind(context: NbtContext, index: Int): NbtListKind =
+    getElementDescriptor(index).getNbtListKind(context, getElementAnnotations(index))
 
 
 internal val SerialDescriptor.nbtName: String?

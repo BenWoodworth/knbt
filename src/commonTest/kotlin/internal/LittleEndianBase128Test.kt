@@ -47,7 +47,7 @@ class LittleEndianBase128Test {
 
         val actualULong = Buffer()
             .apply { write(bytes.toByteArray()) }
-            .readLEB128(10)
+            .readLEB128(EmptyNbtContext, 10)
 
         assertEquals(ulong, actualULong)
     }

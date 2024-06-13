@@ -29,7 +29,7 @@ public abstract class NbtCompression private constructor() {
 /**
  * @throws NbtDecodingException when unable to detect NbtCompression.
  */
-internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression =
+internal fun NbtCompression.Companion.detect(context: NbtContext, firstByte: Byte): NbtCompression =
     when (firstByte) {
         // NBT Tag type IDs
         in 0..12 -> NbtCompression.None
@@ -40,9 +40,10 @@ internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression =
         // Zlib headers: 0x7801, 0x789C, and 0x78DA
         0x78.toByte() -> NbtCompression.Zlib
 
-        else -> throw NbtDecodingException(
-            "Unable to detect NbtCompression. Unexpected first byte: 0x${firstByte.toHex()}"
-        )
+        else -> {
+            val message = "Unable to detect NbtCompression. Unexpected first byte: 0x${firstByte.toHex()}"
+            throw NbtDecodingException(context, message)
+        }
     }
 
 /**
@@ -51,4 +52,4 @@ internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression =
  * @throws NbtDecodingException when unable to detect NbtCompression.
  */
 public fun NbtCompression.Companion.detect(byteArray: ByteArray): NbtCompression =
-    detect(byteArray[0])
+    detect(EmptyNbtContext, byteArray[0])
