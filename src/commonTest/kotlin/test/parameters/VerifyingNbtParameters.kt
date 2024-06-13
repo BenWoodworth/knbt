@@ -8,11 +8,10 @@ import kotlinx.serialization.SerializationStrategy
 import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.NbtFormatBuilder
 import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.internal.NbtCapabilities
-import net.benwoodworth.knbt.internal.NbtReaderDecoder
-import net.benwoodworth.knbt.internal.NbtWriterEncoder
+import net.benwoodworth.knbt.internal.*
 import net.benwoodworth.knbt.test.verify.VerifyingNbtReader
 import net.benwoodworth.knbt.test.verify.VerifyingNbtWriter
+import kotlin.test.fail
 
 internal fun ParameterizeScope.parameterOfVerifyingNbt(
     includeNamedRootNbt: Boolean = false, // TODO Temporary, since most tests won't support naming until it's redesigned
@@ -115,10 +114,16 @@ internal class EncoderVerifyingNbt(
     }
 
     fun <T> verifyEncoder(serializer: SerializationStrategy<T>, value: T, encodedTag: NbtTag) {
-        val writer = createWriter(encodedTag)
-        NbtWriterEncoder(nbt, writer).encodeSerializableValue(serializer, value)
+        try {
+            val context = SerializationNbtContext()
+            val writer = createWriter(encodedTag)
+            val encoder = NbtWriterEncoder(nbt, context, writer)
 
-        writer.assertComplete()
+            encoder.encodeSerializableValue(serializer, value)
+            writer.assertComplete()
+        } catch (e: NbtDecodingException) {
+            fail("Encoding should not result in an NbtDecodingException", e)
+        }
     }
 }
 
@@ -149,12 +154,17 @@ internal class DecoderVerifyingNbt(
         encodedTag: NbtTag,
         testDecodedValue: (decodedValue: T) -> Unit = {}
     ) {
-        val reader = createReader(encodedTag)
-        val decoder = NbtReaderDecoder(nbt, reader)
-        val decodedValue = decoder.decodeSerializableValue(deserializer)
+        try {
+            val context = SerializationNbtContext()
+            val reader = createReader(encodedTag)
+            val decoder = NbtReaderDecoder(nbt, context, reader)
+            val decodedValue = decoder.decodeSerializableValue(deserializer)
 
-        reader.assertComplete()
+            reader.assertComplete()
 
-        testDecodedValue(decodedValue)
+            testDecodedValue(decodedValue)
+        } catch (e: NbtEncodingException) {
+            fail("Decoding should not result in an NbtEncodingException", e)
+        }
     }
 }

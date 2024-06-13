@@ -2,15 +2,13 @@ package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import okio.BufferedSource
-import okio.Closeable
 
-internal abstract class BinaryNbtReader : NbtReader, Closeable {
+internal abstract class BinaryNbtReader : NbtReader {
+    protected abstract val context: NbtContext
     protected abstract val source: BufferedSource
 
     private val tagTypeStack = ArrayDeque<NbtTagType>()
     private val elementsRemainingStack = ArrayDeque<Int>()
-
-    override fun close(): Unit = source.close()
 
     private fun <T> ArrayDeque<T>.replaceLast(element: T): T = set(lastIndex, element)
 
@@ -18,13 +16,13 @@ internal abstract class BinaryNbtReader : NbtReader, Closeable {
         val tagId = readByte()
 
         return tagId.toNbtTagTypeOrNull()
-            ?: throw NbtDecodingException("Unknown NBT tag type ID: 0x${tagId.toHex()}")
+            ?: throw NbtDecodingException(context, "Unknown NBT tag type ID: 0x${tagId.toHex()}")
     }
 
     private fun checkTagType(expected: NbtTagType) {
         val actual = tagTypeStack.lastOrNull()
         if (expected != actual && actual != null) {
-            throw NbtEncodingException("Expected $expected, but got $actual")
+            throw NbtDecodingException(context, "Expected $expected, but got $actual")
         }
     }
 
@@ -193,6 +191,7 @@ internal abstract class NamedBinaryNbtReader : BinaryNbtReader() {
 }
 
 internal class JavaNbtReader(
+    override val context: NbtContext,
     override val source: BufferedSource
 ) : NamedBinaryNbtReader() {
     override fun BufferedSource.readNbtShort(): Short =
@@ -238,6 +237,7 @@ internal abstract class JavaNetworkNbtReader : BinaryNbtReader() {
     }
 
     class EmptyNamedRoot(
+        override val context: NbtContext,
         override val source: BufferedSource
     ) : JavaNetworkNbtReader() {
         private fun BufferedSource.discardTagName() {
@@ -254,6 +254,7 @@ internal abstract class JavaNetworkNbtReader : BinaryNbtReader() {
     }
 
     class UnnamedRoot(
+        override val context: NbtContext,
         override val source: BufferedSource
     ) : JavaNetworkNbtReader() {
         override fun beginRootTag(): NbtReader.RootTagInfo =
@@ -262,6 +263,7 @@ internal abstract class JavaNetworkNbtReader : BinaryNbtReader() {
 }
 
 internal class BedrockNbtReader(
+    override val context: NbtContext,
     override val source: BufferedSource
 ) : NamedBinaryNbtReader() {
     override fun BufferedSource.readNbtShort(): Short =
@@ -286,25 +288,26 @@ internal class BedrockNbtReader(
 }
 
 internal class BedrockNetworkNbtReader(
+    override val context: NbtContext,
     override val source: BufferedSource
 ) : NamedBinaryNbtReader() {
     override fun BufferedSource.readNbtShort(): Short =
         readShortLe()
 
     override fun BufferedSource.readNbtInt(): Int =
-        readLEB128(5).zigZagDecode().toInt()
+        readLEB128(context, 5).zigZagDecode().toInt()
 
     override fun BufferedSource.readNbtLong(): Long =
-        readLEB128(10).zigZagDecode()
+        readLEB128(context, 10).zigZagDecode()
 
     override fun BufferedSource.readNbtFloat(): Float =
-        Float.fromBits(readLEB128(5).zigZagDecode().toInt())
+        Float.fromBits(readLEB128(context, 5).zigZagDecode().toInt())
 
     override fun BufferedSource.readNbtDouble(): Double =
-        Double.fromBits(readLEB128(10).zigZagDecode())
+        Double.fromBits(readLEB128(context, 10).zigZagDecode())
 
     override fun BufferedSource.readNbtString(): String {
-        val byteCount = readLEB128(5).toLong()
+        val byteCount = readLEB128(context, 5).toLong()
         return readUtf8(byteCount)
     }
 }

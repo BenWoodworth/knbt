@@ -9,8 +9,8 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import net.benwoodworth.knbt.internal.EmptyNbtContext
 import net.benwoodworth.knbt.internal.NbtDecodingException
-import net.benwoodworth.knbt.internal.NbtEncodingException
 import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.okio.encodeToBufferedSink
 import okio.*
@@ -175,7 +175,7 @@ public inline fun <reified T> Nbt.decodeFromSource(source: BufferedSource): T =
 )
 @Suppress("UNUSED_PARAMETER") // The `deprecated` parameter lowers the overload precedence so the relocated function takes priority when replaced
 public fun NbtCompression.Companion.detect(source: BufferedSource, deprecated: Nothing? = null): NbtCompression =
-    detect(source.peek().readByte())
+    detect(EmptyNbtContext, source.peek().readByte())
 
 
 @Deprecated("For organizing deprecations")
@@ -322,7 +322,7 @@ public sealed interface NbtEncoderDeprecations : Encoder, CompositeEncoder {
     DeprecationLevel.ERROR
 )
 public fun Encoder.asNbtEncoder(deprecated: Nothing? = null): NbtEncoder =
-    this as? NbtEncoder ?: throw NbtEncodingException(
+    this as? NbtEncoder ?: throw IllegalArgumentException(
         "This serializer can be used only with NBT format. Expected Encoder to be NbtEncoder, got ${this::class}"
     )
 
@@ -478,7 +478,7 @@ public sealed interface NbtDecoderDeprecations : Decoder, CompositeDecoder {
     DeprecationLevel.ERROR
 )
 public fun Decoder.asNbtDecoder(deprecated: Nothing? = null): NbtDecoder =
-    this as? NbtDecoder ?: throw NbtDecodingException(
+    this as? NbtDecoder ?: throw IllegalArgumentException(
         "This serializer can be used only with NBT format. Expected Decoder to be NbtDecoder, got ${this::class}"
     )
 

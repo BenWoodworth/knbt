@@ -28,7 +28,11 @@ public open class NbtFormat internal constructor(
      */
     public fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag {
         lateinit var result: NbtTag
-        encodeToNbtWriter(TreeNbtWriter { result = it }, serializer, value)
+        val context = SerializationNbtContext()
+        val writer = TreeNbtWriter { result = it }
+        val encoder = NbtWriterEncoder(this, context, writer)
+
+        encoder.encodeSerializableValue(serializer, value)
         return result
     }
 
@@ -38,8 +42,13 @@ public open class NbtFormat internal constructor(
      * @throws [SerializationException] if the given NBT tag is not a valid NBT input for the type [T]
      * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T]
      */
-    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
-        decodeFromNbtReader(TreeNbtReader(tag), deserializer)
+    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T {
+        val context = SerializationNbtContext()
+        val reader = TreeNbtReader(tag)
+        val decoder = NbtReaderDecoder(this, context, reader)
+
+        return decoder.decodeSerializableValue(deserializer)
+    }
 }
 
 /**
@@ -104,13 +113,3 @@ public inline fun <reified T> NbtFormat.encodeToNbtTag(value: T): NbtTag =
  */
 public inline fun <reified T> NbtFormat.decodeFromNbtTag(tag: NbtTag): T =
     decodeFromNbtTag(serializersModule.serializer(), tag)
-
-internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: SerializationStrategy<T>, value: T): Unit =
-    tryOrRethrowWithNbtPath {
-        NbtWriterEncoder(this, writer).encodeSerializableValue(serializer, value)
-    }
-
-internal fun <T> NbtFormat.decodeFromNbtReader(reader: NbtReader, deserializer: DeserializationStrategy<T>): T =
-    tryOrRethrowWithNbtPath {
-        NbtReaderDecoder(this, reader).decodeSerializableValue(deserializer)
-    }
