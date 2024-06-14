@@ -29,20 +29,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
 
     protected var elementListKind: NbtListKind? = null
 
-    protected abstract fun getPathNode(): NbtPath.Node
-
-    fun getPath(): NbtPath {
-        val path = mutableListOf<NbtPath.Node>()
-
-        var decoder: BaseNbtDecoder? = this
-        while (decoder != null) {
-            path.add(decoder.getPathNode())
-            decoder = decoder.parent
-        }
-
-        return NbtPath(path.asReversed())
-    }
-
     private fun expectTagType(expected: NbtTagType) {
         val actual = entryType
         if (expected != actual) {
@@ -284,9 +270,6 @@ internal class NbtReaderDecoder(
     override val entryType: NbtTagType
         get() = rootTagInfo.type
 
-    override fun getPathNode(): NbtPath.Node =
-        NbtPath.RootNode(entryType)
-
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int = 0
 
     @ExperimentalSerializationApi
@@ -297,9 +280,6 @@ internal class NbtReaderDecoder(
 
 private abstract class CompoundNbtDecoder : BaseNbtDecoder() {
     protected abstract val compoundEntryInfo: NbtReader.CompoundEntryInfo
-
-    override fun getPathNode(): NbtPath.Node =
-        NbtPath.NameNode(compoundEntryInfo.name, entryType)
 
     override fun endStructure(descriptor: SerialDescriptor) {
         reader.endCompound()
@@ -422,9 +402,6 @@ private abstract class ListLikeNbtDecoder : BaseNbtDecoder() {
     protected abstract val elementCount: Int
 
     private var index: Int = 0
-
-    override fun getPathNode(): NbtPath.Node =
-        NbtPath.IndexNode(index, entryType)
 
     protected abstract fun beginEntry(): Boolean
 
