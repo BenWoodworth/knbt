@@ -242,4 +242,25 @@ class NbtNameTest {
             buildNbtCompound("different_encoded_name") {}
         )
     }
+
+    @Test
+    fun should_encode_dynamic_name_as_the_static_name_by_default_when_no_names_are_actually_encoded() =
+        parameterizeTest {
+
+        }
+
+    @Test
+    fun should_encode_dynamic_name_when_encoded() = parameterizeTest {
+
+    }
+
+    @Test
+    fun should_encode_first_dynamic_name_when_multiple_are_encoded() = parameterizeTest {
+
+    }
+
+    @Test
+    fun serializing_names_dynamically_should_require_the_serializer_to_be_marked_as_dynamic() {
+
+    }
 }
