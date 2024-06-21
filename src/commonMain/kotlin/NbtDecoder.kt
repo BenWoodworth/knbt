@@ -83,6 +83,16 @@ public sealed interface NbtDecoder : Decoder, CompositeDecoder, NbtDecoderDeprec
      * ```
      */
     public fun decodeNbtTag(): NbtTag
+
+    /**
+     * Returns the name of the current value, or null if it's unnamed (root of an unnamed [NbtFormat], entry in an NBT list/array).
+     *
+     * Must be called before decoding value
+     *
+     * requires [NbtName.Dynamic]
+     */
+    @ExperimentalNbtApi
+    public fun decodeNbtName(): String?
 }
 
 @ExperimentalSerializationApi
