@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalNbtApi::class)
+
 package net.benwoodworth.knbt
 
 import com.benwoodworth.parameterize.ParameterizeScope
@@ -6,8 +8,12 @@ import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.SerialKind
+import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.descriptors.buildSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.internal.NbtDecodingException
@@ -15,7 +21,7 @@ import net.benwoodworth.knbt.internal.NbtException
 import net.benwoodworth.knbt.internal.nbtName
 import net.benwoodworth.knbt.test.filter
 import net.benwoodworth.knbt.test.parameterizeTest
-import net.benwoodworth.knbt.test.parameters.SerializableTypeEdgeCase
+import net.benwoodworth.knbt.test.parameters.*
 import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
 import net.benwoodworth.knbt.test.parameters.parameterOfSerializableTypeEdgeCases
 import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
@@ -226,7 +232,6 @@ class NbtNameTest {
         @Serializable
         @NbtName.Dynamic
         @NbtName("static_name")
-        @OptIn(ExperimentalNbtApi::class)
         class MyClass
 
         nbt.verifyDecoder(
@@ -241,7 +246,7 @@ class NbtNameTest {
                 "'${serializer.serialName}' delegates to '${delegate.serialName}' without it."
     }
 
-    @OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
+    @OptIn(ExperimentalSerializationApi::class)
     private class DelegatingSerializer(
         val serializableType: SerializableTypeEdgeCase,
         val isDynamic: Boolean,
@@ -348,10 +353,31 @@ class NbtNameTest {
     }
 
     @Test
-    fun should_encode_dynamic_name_as_the_static_name_by_default_when_no_names_are_actually_encoded() =
-        parameterizeTest {
+    fun should_encode_dynamic_name_as_the_static_name_when_no_names_are_actually_encoded() = parameterizeTest {
+        val nbt by parameterOfEncoderVerifyingNbt(includeNamedRootNbt = true)
+            .filter { it.capabilities.namedRoot }
 
+        val serializableType by parameterOfSerializableTypeEdgeCases()
+        val staticName by parameterOf("name", "different_name")
+
+        class DynamicDefaultingToStaticSerializer : SerializationStrategy<Unit> {
+            override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
+                @ExperimentalSerializationApi
+                override val annotations = listOf(NbtName(staticName), NbtName.Dynamic())
+            }
+
+            override fun serialize(encoder: Encoder, value: Unit) {
+                //encoder.asNbtEncoder().encodeNbtName(...) // Name is not encoded
+                serializableType.encodeValue(encoder, descriptor)
+            }
         }
+
+        val expectedTag = buildNbtCompound {
+            put(staticName, serializableType.valueTag)
+        }
+
+        nbt.verifyEncoder(DynamicDefaultingToStaticSerializer(), Unit, expectedTag)
+    }
 
     @Test
     fun should_encode_dynamic_name_when_encoded() = parameterizeTest {
