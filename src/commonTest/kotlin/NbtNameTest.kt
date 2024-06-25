@@ -99,11 +99,11 @@ class NbtNameTest {
         )
     }
 
+    @Serializable
+    private data class OuterClass<T>(val value: T) // KT-69388: Ideally should be declared inside the test that uses it
+
     @Test
     fun should_serialize_nested_under_name_when_within_a_class() = parameterizeTest {
-        @Serializable
-        data class OuterClass<T>(val value: T)
-
         val nbt by parameterOfVerifyingNbt()
         val serializableType by parameterOfSerializableTypeEdgeCases()
         val nbtName by parameterOf("name", "different_name")
