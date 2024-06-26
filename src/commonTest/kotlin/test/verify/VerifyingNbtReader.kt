@@ -73,8 +73,8 @@ internal class VerifyingNbtReader(
         val state = stateHistory.last()
         check(state is State.InListOrArray)
         check(state.tag is NbtList<*>)
+        check(!knownSizes) { "beginListEntry() should not be called unless the list's size is unknown" }
         check(!state.ended)
-        check(!knownSizes)
 
         val entry = state.tag.getOrNull(state.index)
         return if (entry != null) {
@@ -115,8 +115,8 @@ internal class VerifyingNbtReader(
         val state = stateHistory.last()
         check(state is State.InListOrArray)
         check(state.tag is NbtByteArray)
+        check(!knownSizes) { "Should not be called unless the array's size is unknown" }
         check(!state.ended)
-        check(!knownSizes)
 
         val entry = state.tag.getOrNull(state.index)
         return if (entry != null) {
@@ -157,8 +157,8 @@ internal class VerifyingNbtReader(
         val state = stateHistory.last()
         check(state is State.InListOrArray)
         check(state.tag is NbtIntArray)
+        check(!knownSizes) { "Should not be called unless the array's size is unknown" }
         check(!state.ended)
-        check(!knownSizes)
 
         val entry = state.tag.getOrNull(state.index)
         return if (entry != null) {
@@ -199,8 +199,8 @@ internal class VerifyingNbtReader(
         val state = stateHistory.last()
         check(state is State.InListOrArray)
         check(state.tag is NbtLongArray)
+        check(!knownSizes) { "Should not be called unless the array's size is unknown" }
         check(!state.ended)
-        check(!knownSizes)
 
         val entry = state.tag.getOrNull(state.index)
         return if (entry != null) {
