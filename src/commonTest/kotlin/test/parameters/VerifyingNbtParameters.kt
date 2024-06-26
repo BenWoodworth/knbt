@@ -5,12 +5,18 @@ import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.NbtFormatBuilder
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.internal.*
+import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.verify.VerifyingNbtReader
 import net.benwoodworth.knbt.test.verify.VerifyingNbtWriter
+import kotlin.test.Test
 import kotlin.test.fail
 
 internal fun ParameterizeScope.parameterOfVerifyingNbt(
