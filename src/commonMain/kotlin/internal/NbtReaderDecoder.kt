@@ -404,8 +404,14 @@ private abstract class ListLikeNbtDecoder : BaseNbtDecoder() {
 
     final override fun decodeCollectionSize(descriptor: SerialDescriptor): Int = elementCount
 
-    final override fun decodeElementIndex(descriptor: SerialDescriptor): Int =
-        if (beginEntry()) index++ else CompositeDecoder.DECODE_DONE
+    final override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
+        val done = when {
+            elementCount == NbtReader.UNKNOWN_SIZE -> beginEntry()
+            else -> elementCount == index
+        }
+
+        return if (!done) index++ else CompositeDecoder.DECODE_DONE
+    }
 
     @ExperimentalSerializationApi
     final override fun decodeSequentially(): Boolean = elementCount >= 0
