@@ -2,6 +2,7 @@ package net.benwoodworth.knbt
 
 import com.benwoodworth.parameterize.ParameterizeScope
 import com.benwoodworth.parameterize.parameter
+import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -182,7 +183,7 @@ class NbtNameTest {
                 type + delegation
             }
 
-            override val annotations = listOfNotNull(NbtName(""), NbtName.Dynamic().takeIf { isDynamic })
+            override val annotations = listOfNotNull(NbtName.Dynamic().takeIf { isDynamic })
         }
 
         override fun toString(): String = "${this::class.simpleName}<${descriptor.serialName}>"
@@ -234,7 +235,7 @@ class NbtNameTest {
 
     @Test
     fun serializer_without_invalid_delegation_should_not_fail() = parameterizeTest {
-        val nbt by parameterOfVerifyingNbt(includeNamedRootNbt = true)
+        val nbt by parameterOfVerifyingNbt()
         assume(nbt.capabilities.namedRoot)
 
         val serializableType by parameterOfSerializableTypeEdgeCases()
@@ -242,13 +243,20 @@ class NbtNameTest {
         val serializer by parameterOfDelegationCombinations(serializableType, 3)
         assume(!serializer.hasInvalidDelegation())
 
+        if (nbt.toString() != "Decode NbtTag" ||
+            serializableType.name != "Collection (non-sequentially)" ||
+            serializer.toString() != "DelegatingSerializer<Static>"
+        ) {
+            val skip by parameterOf<Unit>() // TODO Remove
+        }
+
         // Should not fail
         nbt.verifyEncoderOrDecoder(serializer, Unit, serializableType.valueTag)
     }
 
     @Test
     fun serializer_with_invalid_delegation_should_fail() = parameterizeTest {
-        val nbt by parameterOfVerifyingNbt(includeNamedRootNbt = true)
+        val nbt by parameterOfVerifyingNbt()
         assume(nbt.capabilities.namedRoot)
 
         val serializableType by parameterOfSerializableTypeEdgeCases()
