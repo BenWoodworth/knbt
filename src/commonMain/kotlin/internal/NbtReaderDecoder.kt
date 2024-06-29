@@ -406,7 +406,7 @@ private abstract class ListLikeNbtDecoder : BaseNbtDecoder() {
 
     final override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
         val done = when {
-            elementCount == NbtReader.UNKNOWN_SIZE -> beginEntry()
+            elementCount == NbtReader.UNKNOWN_SIZE -> !beginEntry()
             else -> elementCount == index
         }
 

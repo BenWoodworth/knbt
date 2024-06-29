@@ -8,7 +8,7 @@ import kotlin.test.Test
 
 class ParameterOfVerifyingNbtTest {
     @Test
-    fun verifying_nby_should_pass_for_any_serializable_type() = parameterizeTest {
+    fun verifying_nbt_should_pass_for_any_serializable_type() = parameterizeTest {
         val nbt by parameterOfVerifyingNbt()
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
