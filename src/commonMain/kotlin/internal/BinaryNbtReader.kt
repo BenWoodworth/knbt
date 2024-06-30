@@ -52,16 +52,6 @@ internal abstract class BinaryNbtReader : NbtReader {
         elementsRemainingStack += size
     }
 
-    private fun beginCollectionEntry(): Boolean {
-        val remaining = elementsRemainingStack.last()
-        return if (remaining > 0) {
-            elementsRemainingStack.replaceLast(remaining - 1)
-            true
-        } else {
-            false
-        }
-    }
-
     private fun endCollection() {
         tagTypeStack.removeLast()
         elementsRemainingStack.removeLast()
@@ -77,7 +67,8 @@ internal abstract class BinaryNbtReader : NbtReader {
         return NbtReader.ListInfo(type, size)
     }
 
-    final override fun beginListEntry(): Boolean = beginCollectionEntry()
+    final override fun beginListEntry(): Boolean =
+        error("Should not be called unless size is unknown")
 
     final override fun endList(): Unit = endCollection()
 
@@ -90,7 +81,8 @@ internal abstract class BinaryNbtReader : NbtReader {
         return NbtReader.ArrayInfo(size)
     }
 
-    final override fun beginByteArrayEntry(): Boolean = beginCollectionEntry()
+    final override fun beginByteArrayEntry(): Boolean =
+        error("Should not be called unless size is unknown")
 
     final override fun endByteArray(): Unit = endCollection()
 
@@ -103,7 +95,8 @@ internal abstract class BinaryNbtReader : NbtReader {
         return NbtReader.ArrayInfo(size)
     }
 
-    final override fun beginIntArrayEntry(): Boolean = beginCollectionEntry()
+    final override fun beginIntArrayEntry(): Boolean =
+        error("Should not be called unless size is unknown")
 
     final override fun endIntArray(): Unit = endCollection()
 
@@ -116,7 +109,8 @@ internal abstract class BinaryNbtReader : NbtReader {
         return NbtReader.ArrayInfo(size)
     }
 
-    final override fun beginLongArrayEntry(): Boolean = beginCollectionEntry()
+    final override fun beginLongArrayEntry(): Boolean =
+        error("Should not be called unless size is unknown")
 
     final override fun endLongArray(): Unit = endCollection()
 
