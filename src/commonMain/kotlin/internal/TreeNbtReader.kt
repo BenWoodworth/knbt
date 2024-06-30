@@ -155,7 +155,8 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
                 .also { next = if (iterator.hasNext()) iterator.next() else null }
         }
 
-        override fun beginListEntry(): Boolean = next != null
+        override fun beginListEntry(): Boolean =
+            error("Should not be called unless size is unknown")
 
         override fun endList() {
             reader = parent
@@ -203,7 +204,8 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         private val array = tag
         private var index = 0
 
-        override fun beginByteArrayEntry(): Boolean = index <= array.content.lastIndex
+        override fun beginByteArrayEntry(): Boolean =
+            error("Should not be called unless size is unknown")
 
         override fun endByteArray() {
             reader = parent
@@ -217,7 +219,8 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         private val array = tag
         private var index = 0
 
-        override fun beginIntArrayEntry(): Boolean = index <= array.content.lastIndex
+        override fun beginIntArrayEntry(): Boolean =
+            error("Should not be called unless size is unknown")
 
         override fun endIntArray() {
             reader = parent
@@ -231,7 +234,8 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         private val array = tag
         private var index = 0
 
-        override fun beginLongArrayEntry(): Boolean = index <= array.content.lastIndex
+        override fun beginLongArrayEntry(): Boolean =
+            error("Should not be called unless size is unknown")
 
         override fun endLongArray() {
             reader = parent
