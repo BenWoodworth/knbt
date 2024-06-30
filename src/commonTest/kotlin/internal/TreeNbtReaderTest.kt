@@ -81,10 +81,8 @@ class TreeNbtReaderTest {
             beginRootTag() shouldReturn RootTagInfo(TAG_Byte_Array)
             beginByteArray() shouldReturn ArrayInfo(value.size)
             repeat(value.size) { index ->
-                beginByteArrayEntry() shouldReturn true
                 readByte() shouldReturn value[index]
             }
-            beginByteArrayEntry() shouldReturn false
             endByteArray()
         }
     }
@@ -97,10 +95,8 @@ class TreeNbtReaderTest {
             beginRootTag() shouldReturn RootTagInfo(TAG_Int_Array)
             beginIntArray() shouldReturn ArrayInfo(value.size)
             repeat(value.size) { index ->
-                beginIntArrayEntry() shouldReturn true
                 readInt() shouldReturn value[index]
             }
-            beginIntArrayEntry() shouldReturn false
             endIntArray()
         }
     }
@@ -113,10 +109,8 @@ class TreeNbtReaderTest {
             beginRootTag() shouldReturn RootTagInfo(TAG_Long_Array)
             beginLongArray() shouldReturn ArrayInfo(value.size)
             repeat(value.size) { index ->
-                beginLongArrayEntry() shouldReturn true
                 readLong() shouldReturn value[index]
             }
-            beginLongArrayEntry() shouldReturn false
             endLongArray()
         }
     }
@@ -150,7 +144,6 @@ class TreeNbtReaderTest {
         expectNbtReaderCalls(NbtList(emptyList())) {
             beginRootTag() shouldReturn RootTagInfo(TAG_List)
             beginList() shouldReturn ListInfo(TAG_End, 0)
-            beginListEntry() shouldReturn false
             endList()
         }
     }
@@ -160,9 +153,7 @@ class TreeNbtReaderTest {
         expectNbtReaderCalls(NbtList(listOf("entry").map { NbtString(it) })) {
             beginRootTag() shouldReturn RootTagInfo(TAG_List)
             beginList() shouldReturn ListInfo(TAG_String, 1)
-            beginListEntry() shouldReturn true
             readString() shouldReturn "entry"
-            beginListEntry() shouldReturn false
             endList()
         }
     }
@@ -184,28 +175,18 @@ class TreeNbtReaderTest {
             beginRootTag() shouldReturn RootTagInfo(TAG_List)
             beginList() shouldReturn ListInfo(TAG_List, 3)
 
-            beginListEntry() shouldReturn true
             beginList() shouldReturn ListInfo(TAG_String, 2)
-            beginListEntry() shouldReturn true
             readString() shouldReturn "hello"
-            beginListEntry() shouldReturn true
             readString() shouldReturn "world"
-            beginListEntry() shouldReturn false
             endList()
 
-            beginListEntry() shouldReturn true
             beginList() shouldReturn ListInfo(TAG_End, 0)
-            beginListEntry() shouldReturn false
             endList()
 
-            beginListEntry() shouldReturn true
             beginList() shouldReturn ListInfo(TAG_Int, 1)
-            beginListEntry() shouldReturn true
             readInt() shouldReturn 42
-            beginListEntry() shouldReturn false
             endList()
 
-            beginListEntry() shouldReturn false
             endList()
         }
     }
