@@ -1,45 +1,55 @@
 package net.benwoodworth.knbt
 
-import kotlinx.serialization.*
-import kotlinx.serialization.modules.EmptySerializersModule
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.StringFormat
 import kotlinx.serialization.modules.SerializersModule
-import net.benwoodworth.knbt.internal.CharSource
-import net.benwoodworth.knbt.internal.NbtDecodingException
-import net.benwoodworth.knbt.internal.StringifiedNbtReader
-import net.benwoodworth.knbt.internal.StringifiedNbtWriter
+import net.benwoodworth.knbt.internal.*
 import kotlin.native.concurrent.ThreadLocal
 
-public sealed class StringifiedNbt constructor(
+public open class StringifiedNbt internal constructor(
     override val configuration: StringifiedNbtConfiguration,
-    override val serializersModule: SerializersModule,
-) : NbtFormat, StringFormat {
+    serializersModule: SerializersModule,
+) : NbtFormat(
+    "SNBT",
+    configuration,
+    serializersModule,
+    NbtCapabilities(namedRoot = false)
+), StringFormat {
     /**
      * The default instance of [StringifiedNbt] with default configuration.
      */
     @ThreadLocal
     public companion object Default : StringifiedNbt(
         configuration = StringifiedNbtConfiguration(
-            encodeDefaults = false,
-            ignoreUnknownKeys = false,
+            encodeDefaults = NbtFormat.configuration.encodeDefaults,
+            ignoreUnknownKeys = NbtFormat.configuration.ignoreUnknownKeys,
             prettyPrint = false,
             prettyPrintIndent = "    ",
         ),
-        serializersModule = EmptySerializersModule(),
+        serializersModule = NbtFormat.serializersModule,
     )
 
     override fun <T> encodeToString(serializer: SerializationStrategy<T>, value: T): String =
         buildString {
-            encodeToNbtWriter(StringifiedNbtWriter(this@StringifiedNbt, this), serializer, value)
+            val context = SerializationNbtContext()
+            val writer = StringifiedNbtWriter(this@StringifiedNbt, this)
+            val encoder = NbtWriterEncoder(this@StringifiedNbt, context, writer)
+
+            encoder.encodeSerializableValue(serializer, value)
         }
 
     override fun <T> decodeFromString(deserializer: DeserializationStrategy<T>, string: String): T {
         val source = CharSource(string)
-        val decoded = decodeFromNbtReader(StringifiedNbtReader(source), deserializer)
+        val context = SerializationNbtContext()
+        val reader = StringifiedNbtReader(context, source)
+        val decoder = NbtReaderDecoder(this, context, reader)
+        val decoded = decoder.decodeSerializableValue(deserializer)
 
         var char = source.read()
         while (char != CharSource.ReadResult.EOF) {
             if (!char.toChar().isWhitespace()) {
-                throw NbtDecodingException("Expected only whitespace after value, but got '$char'")
+                throw NbtDecodingException(context, "Expected only whitespace after value, but got '$char'")
             }
             char = source.read()
         }
@@ -65,25 +75,12 @@ public fun StringifiedNbt(
  * Builder of the [StringifiedNbt] instance provided by `StringifiedNbt { ... }` factory function.
  */
 @NbtDslMarker
-public class StringifiedNbtBuilder internal constructor(stringifiedNbt: StringifiedNbt) {
-    /**
-     * Specifies whether default values of Kotlin properties should be encoded.
-     * `false` by default.
-     */
-    public var encodeDefaults: Boolean = stringifiedNbt.configuration.encodeDefaults
-
-    /**
-     * Specifies whether encounters of unknown properties in the input NBT
-     * should be ignored instead of throwing [SerializationException].
-     * `false` by default.
-     */
-    public var ignoreUnknownKeys: Boolean = stringifiedNbt.configuration.ignoreUnknownKeys
-
+public class StringifiedNbtBuilder internal constructor(nbt: StringifiedNbt) : NbtFormatBuilder(nbt) {
     /**
      * Specifies whether resulting Stringified NBT should be pretty-printed.
      *  `false` by default.
      */
-    public var prettyPrint: Boolean = stringifiedNbt.configuration.prettyPrint
+    public var prettyPrint: Boolean = nbt.configuration.prettyPrint
 
     /**
      * Specifies indent string to use with [prettyPrint] mode
@@ -92,15 +89,10 @@ public class StringifiedNbtBuilder internal constructor(stringifiedNbt: Stringif
      * it is not clear whether this option has compelling use-cases.
      */
     @ExperimentalNbtApi
-    public var prettyPrintIndent: String = stringifiedNbt.configuration.prettyPrintIndent
-
-    /**
-     * Module with contextual and polymorphic serializers to be used in the resulting [StringifiedNbt] instance.
-     */
-    public var serializersModule: SerializersModule = stringifiedNbt.serializersModule
+    public var prettyPrintIndent: String = nbt.configuration.prettyPrintIndent
 
     @OptIn(ExperimentalNbtApi::class)
-    internal fun build(): StringifiedNbt {
+    override fun build(): StringifiedNbt {
         if (!prettyPrint) {
             require(prettyPrintIndent == StringifiedNbt.configuration.prettyPrintIndent) {
                 "Indent should not be specified when default printing mode is used"
@@ -113,7 +105,7 @@ public class StringifiedNbtBuilder internal constructor(stringifiedNbt: Stringif
             }
         }
 
-        return StringifiedNbtImpl(
+        return StringifiedNbt(
             configuration = StringifiedNbtConfiguration(
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
@@ -124,8 +116,3 @@ public class StringifiedNbtBuilder internal constructor(stringifiedNbt: Stringif
         )
     }
 }
-
-private class StringifiedNbtImpl(
-    configuration: StringifiedNbtConfiguration,
-    serializersModule: SerializersModule,
-) : StringifiedNbt(configuration, serializersModule)

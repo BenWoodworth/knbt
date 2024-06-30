@@ -5,7 +5,6 @@ import net.benwoodworth.knbt.Nbt
 import net.benwoodworth.knbt.NbtCompression
 import net.benwoodworth.knbt.NbtVariant
 import net.benwoodworth.knbt.test.asSource
-import net.benwoodworth.knbt.test.data.*
 import okio.Source
 
 class NbtTestFile<T>(

@@ -1,33 +1,42 @@
 package net.benwoodworth.knbt.internal
 
-import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.internal.NbtTagType.*
-import net.benwoodworth.knbt.test.NbtFormat
+import com.benwoodworth.parameterize.parameter
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.buildNbtCompound
+import net.benwoodworth.knbt.internal.NbtTagType.TAG_Compound
+import net.benwoodworth.knbt.put
+import net.benwoodworth.knbt.test.filter
+import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.parameterOfEncoderVerifyingNbt
+import net.benwoodworth.knbt.test.parameters.parameterOfNbtTagTypeEdgeCases
 import kotlin.test.Test
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
-import kotlin.test.assertIs
+import kotlin.test.assertFailsWith
 
 class NbtWriterEncoderTest {
     @Test
-    fun encoding_a_class_should_nest_into_a_compound_with_the_class_serial_name_as_the_key() {
-        @Serializable
-        @NbtNamed("RootKey")
-        data class MyClass(val property: String)
+    fun named_root_formats_should_throw_when_encoding_a_tag_that_is_not_a_compound_with_one_entry() = parameterizeTest {
+        val nbt by parameterOfEncoderVerifyingNbt(includeNamedRootNbt = true)
+            .filter { it.capabilities.namedRoot }
 
-        val myClass = MyClass("value")
+        val tag by parameter {
+            sequence {
+                yieldAll(
+                    this@parameterizeTest.parameterOfNbtTagTypeEdgeCases().arguments
+                        .filter { it !is NbtCompound }
+                )
 
-        lateinit var encodedTag: NbtTag
-        val encoder = NbtWriterEncoder(
-            NbtFormat(),
-            TreeNbtWriter { encodedTag = it }
-        )
+                yield(buildNbtCompound { /* no entries */ })
 
-        encoder.encodeSerializableValue(MyClass.serializer(), myClass)
+                yield(buildNbtCompound { put("1", 1); put("2", 2) })
+            }
+        }
 
-        val actualTag = encodedTag
-        assertIs<NbtCompound>(actualTag)
-        assertEquals(actualTag.content.keys, setOf("RootKey"), "Tag name")
+        val failure = assertFailsWith<NbtEncodingException> {
+            nbt.verifyEncoder(NbtTag.serializer(), tag, tag)
+        }
+
+        assertEquals("The ${nbt.name} format only supports $TAG_Compound with one entry", failure.message)
     }
 }

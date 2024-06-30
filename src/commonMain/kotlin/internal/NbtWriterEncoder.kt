@@ -18,10 +18,13 @@ import net.benwoodworth.knbt.internal.NbtTagType.*
 @OptIn(ExperimentalSerializationApi::class)
 internal class NbtWriterEncoder(
     override val nbt: NbtFormat,
-    private val writer: NbtWriter,
+    private val context: SerializationNbtContext,
+    writer: NbtWriter,
 ) : AbstractNbtEncoder() {
     override val serializersModule: SerializersModule
         get() = nbt.serializersModule
+
+    private var currentDescriptor: SerialDescriptor? = null
 
     private lateinit var elementName: String
     private var encodingMapKey: Boolean = false
@@ -31,6 +34,10 @@ internal class NbtWriterEncoder(
     private var elementListKind: NbtListKind? = null
     private val listTypeStack = ArrayDeque<NbtTagType>() // TAG_End when uninitialized
     private var listSize: Int = 0
+
+    private val writer: NbtWriter =
+        if (nbt.capabilities.namedRoot) RootNameVerifyingNbtWriter(writer)
+        else writer
 
     override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
         when (descriptor.kind as StructureKind) {
@@ -48,50 +55,68 @@ internal class NbtWriterEncoder(
         }
 
         if (descriptor.getElementDescriptor(index).kind == StructureKind.LIST) {
-            elementListKind = descriptor.getElementNbtListKind(index)
+            elementListKind = descriptor.getElementNbtListKind(context, index)
         }
 
         return true
     }
 
     private fun beginEncodingValue(type: NbtTagType) {
+        context.onBeginValue()
+
+        currentDescriptor = null
+
         when (val structureType = structureTypeStack.lastOrNull()) {
             null -> {
                 writer.beginRootTag(type)
             }
+
             TAG_Compound -> {
-                if (encodingMapKey) throw NbtEncodingException("Only String tag names are supported")
+                if (encodingMapKey) throw NbtEncodingException(context, "Only String tag names are supported")
                 writer.beginCompoundEntry(type, elementName)
             }
+
             TAG_List -> when (val listType = listTypeStack.last()) {
                 TAG_End -> {
                     listTypeStack[listTypeStack.lastIndex] = type
                     writer.beginList(type, listSize)
                     writer.beginListEntry()
                 }
+
                 type -> {
                     writer.beginListEntry()
                 }
-                else -> throw NbtEncodingException("Cannot encode $type within a $TAG_List of $listType")
+
+                else -> throw NbtEncodingException(context, "Cannot encode $type within a $TAG_List of $listType")
             }
+
             TAG_Byte_Array -> {
-                if (type != TAG_Byte) throw NbtEncodingException("Cannot encode $type within a $TAG_Byte_Array")
+                if (type != TAG_Byte) {
+                    throw NbtEncodingException(context, "Cannot encode $type within a $TAG_Byte_Array")
+                }
                 writer.beginByteArrayEntry()
             }
+
             TAG_Int_Array -> {
-                if (type != TAG_Int) throw NbtEncodingException("Cannot encode $type within a $TAG_Int_Array")
+                if (type != TAG_Int) {
+                    throw NbtEncodingException(context, "Cannot encode $type within a $TAG_Int_Array")
+                }
                 writer.beginIntArrayEntry()
             }
+
             TAG_Long_Array -> {
-                if (type != TAG_Long) throw NbtEncodingException("Cannot encode $type within a $TAG_Long_Array")
+                if (type != TAG_Long) {
+                    throw NbtEncodingException(context, "Cannot encode $type within a $TAG_Long_Array")
+                }
                 writer.beginLongArrayEntry()
             }
+
             else -> error("Unhandled structure type: $structureType")
         }
     }
 
     private fun beginNamedTagIfNamed(descriptor: SerialDescriptor) {
-        val name = descriptor.nbtNamed ?: return
+        val name = descriptor.nbtName ?: return
 
         beginEncodingValue(TAG_Compound)
         writer.beginCompound()
@@ -101,7 +126,7 @@ internal class NbtWriterEncoder(
     }
 
     private fun endNamedTagIfNamed(descriptor: SerialDescriptor) {
-        if (descriptor.nbtNamed == null) return
+        if (descriptor.nbtName == null) return
 
         structureTypeStack.removeLast()
         writer.endCompound()
@@ -119,7 +144,7 @@ internal class NbtWriterEncoder(
 
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder =
         if (descriptor.kind == StructureKind.LIST) {
-            when (elementListKind ?: descriptor.nbtListKind) {
+            when (elementListKind ?: descriptor.getNbtListKind(context)) {
                 NbtListKind.List -> beginList(collectionSize)
                 NbtListKind.ByteArray -> beginByteArray(collectionSize)
                 NbtListKind.IntArray -> beginIntArray(collectionSize)
@@ -172,10 +197,12 @@ internal class NbtWriterEncoder(
                 writer.endCompound()
                 endNamedTagIfNamed(descriptor)
             }
+
             TAG_List -> {
                 if (listTypeStack.removeLast() == TAG_End) writer.beginList(TAG_End, listSize)
                 writer.endList()
             }
+
             TAG_Byte_Array -> writer.endByteArray()
             TAG_Int_Array -> writer.endIntArray()
             TAG_Long_Array -> writer.endLongArray()
@@ -267,17 +294,24 @@ internal class NbtWriterEncoder(
                 }
                 writer.endCompound()
             }
+
             TAG_List -> {
                 val list = (value as NbtList<*>)
                 val listType = list.elementType
                 writer.beginList(listType, list.size)
                 list.content.forEach { entry ->
                     writer.beginListEntry()
-                    if (entry.type != listType) throw NbtEncodingException("Cannot encode ${entry.type} within a $TAG_List of $listType")
+
+                    if (entry.type != listType) {
+                        val message = "Cannot encode ${entry.type} within a $TAG_List of $listType"
+                        throw NbtEncodingException(context, message)
+                    }
+
                     writeTag(entry)
                 }
                 writer.endList()
             }
+
             TAG_Byte_Array -> {
                 val array = (value as NbtByteArray)
                 writer.beginByteArray(array.size)
@@ -287,6 +321,7 @@ internal class NbtWriterEncoder(
                 }
                 writer.endByteArray()
             }
+
             TAG_Int_Array -> {
                 val array = (value as NbtIntArray)
                 writer.beginIntArray(array.size)
@@ -296,6 +331,7 @@ internal class NbtWriterEncoder(
                 }
                 writer.endIntArray()
             }
+
             TAG_Long_Array -> {
                 val array = (value as NbtLongArray)
                 writer.beginLongArray(array.size)
@@ -313,6 +349,8 @@ internal class NbtWriterEncoder(
 
     @OptIn(InternalSerializationApi::class)
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
+        context.onBeginSerializableValue(serializer.descriptor)
+
         fun isArraySerializer(arraySerializer: SerializationStrategy<*>, arrayKind: NbtListKind): Boolean =
             (elementListKind == null || elementListKind == arrayKind) && serializer == arraySerializer
 
@@ -328,6 +366,47 @@ internal class NbtWriterEncoder(
                 )
 
             else -> super.encodeSerializableValue(serializer, value)
+        }
+    }
+
+    private inner class RootNameVerifyingNbtWriter(
+        private val writer: NbtWriter
+    ) : NbtWriter by writer {
+        private var compoundNesting = 0
+        private var wroteRootEntry = false
+
+        private inline fun verify(value: Boolean) {
+            if (!value) {
+                val message = "The ${nbt.name} format only supports $TAG_Compound with one entry"
+                throw NbtEncodingException(context, message)
+            }
+        }
+
+        override fun beginRootTag(type: NbtTagType) {
+            verify(type == TAG_Compound)
+
+            writer.beginRootTag(type)
+        }
+
+        override fun beginCompound() {
+            writer.beginCompound()
+            compoundNesting++
+        }
+
+        override fun beginCompoundEntry(type: NbtTagType, name: String) {
+            if (compoundNesting == 1) {
+                verify(!wroteRootEntry)
+                wroteRootEntry = true
+            }
+
+            writer.beginCompoundEntry(type, name)
+        }
+
+        override fun endCompound() {
+            verify(compoundNesting != 1 || wroteRootEntry)
+            compoundNesting--
+
+            writer.endCompound()
         }
     }
 }

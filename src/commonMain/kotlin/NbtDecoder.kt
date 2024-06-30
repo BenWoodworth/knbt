@@ -4,7 +4,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.AbstractDecoder
-import kotlinx.serialization.encoding.AbstractEncoder
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 
@@ -84,6 +83,16 @@ public sealed interface NbtDecoder : Decoder, CompositeDecoder, NbtDecoderDeprec
      * ```
      */
     public fun decodeNbtTag(): NbtTag
+
+    /**
+     * Returns the name of the current value, or null if it's unnamed (root of an unnamed [NbtFormat], entry in an NBT list/array).
+     *
+     * Must be called before decoding value
+     *
+     * requires [NbtName.Dynamic]
+     */
+    @ExperimentalNbtApi
+    public fun decodeNbtName(): String?
 }
 
 @ExperimentalSerializationApi

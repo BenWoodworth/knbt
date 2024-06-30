@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.AbstractEncoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
@@ -79,6 +80,27 @@ public sealed interface NbtEncoder : Encoder, CompositeEncoder, NbtEncoderDeprec
      * ```
      */
     public fun encodeNbtTag(tag: NbtTag)
+
+    /**
+     * Encodes the name of the
+     *
+     * must be called before value is encoded
+     *
+     * first call for the serializable value, so name before delegating is used
+     * if not called then outermost [NbtName].
+     *
+     * requires [NbtName.Dynamic]
+     *
+     * takes priority over static [NbtName] annotation
+     *
+     * applies to root
+     *
+     * ignored for unnamed values (formats with unnamed root, list/array entries
+     * ignored when name is set by parent (i.e. [SerialDescriptor.getElementName] takes precedence)
+     *
+     */
+    @ExperimentalNbtApi
+    public fun encodeNbtName(name: String)
 }
 
 @ExperimentalSerializationApi

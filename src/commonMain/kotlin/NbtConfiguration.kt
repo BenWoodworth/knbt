@@ -4,9 +4,12 @@ public class NbtConfiguration internal constructor(
     public val variant: NbtVariant,
     public val compression: NbtCompression,
     public val compressionLevel: Int?,
-    override val encodeDefaults: Boolean,
-    override val ignoreUnknownKeys: Boolean,
-) : NbtFormatConfiguration {
+    encodeDefaults: Boolean,
+    ignoreUnknownKeys: Boolean,
+) : NbtFormatConfiguration(
+    encodeDefaults,
+    ignoreUnknownKeys,
+) {
     override fun toString(): String =
         "NbtConfiguration(" +
                 "variant=$variant" +

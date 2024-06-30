@@ -40,6 +40,8 @@ internal interface NbtReader {
 
     /**
      * If true, then followed by reading a value of the same type.
+     *
+     * Should not be called unless the list's [size][ListInfo.size] is unknown.
      */
     fun beginListEntry(): Boolean
 
@@ -52,6 +54,8 @@ internal interface NbtReader {
 
     /**
      * If true, then followed by a call to [readByte].
+     *
+     * Should not be called unless the array's [size][ArrayInfo.size] is unknown.
      */
     fun beginByteArrayEntry(): Boolean
 
@@ -64,6 +68,8 @@ internal interface NbtReader {
 
     /**
      * If true, then followed by a call to [readInt].
+     *
+     * Should not be called unless the array's [size][ArrayInfo.size] is unknown.
      */
     fun beginIntArrayEntry(): Boolean
 
@@ -76,6 +82,8 @@ internal interface NbtReader {
 
     /**
      * If true, then followed by a call to [readLong].
+     *
+     * Should not be called unless the array's [size][ArrayInfo.size] is unknown.
      */
     fun beginLongArrayEntry(): Boolean
 
@@ -107,11 +115,17 @@ internal interface NbtReader {
         }
     }
 
+    /**
+     * @property size The list size, or [UNKNOWN_SIZE] if unknown.
+     */
     data class ListInfo(
         val type: NbtTagType,
         val size: Int,
     )
 
+    /**
+     * @property size The array size, or [UNKNOWN_SIZE] if unknown.
+     */
     @JvmInline
     value class ArrayInfo(
         val size: Int,
@@ -212,6 +226,7 @@ internal fun NbtReader.discardTag(type: NbtTagType) {
             discardTagEntries(info.size, { beginByteArrayEntry() }, { readByte() })
             endByteArray()
         }
+
         TAG_String -> readString()
         TAG_List -> discardListTag()
         TAG_Compound -> {
@@ -223,11 +238,13 @@ internal fun NbtReader.discardTag(type: NbtTagType) {
             }
             endCompound()
         }
+
         TAG_Int_Array -> {
             val info = beginIntArray()
             discardTagEntries(info.size, { beginIntArrayEntry() }, { readInt() })
             endIntArray()
         }
+
         TAG_Long_Array -> {
             val info = beginLongArray()
             discardTagEntries(info.size, { beginLongArrayEntry() }, { readLong() })

@@ -5,17 +5,20 @@ import okio.BufferedSink
 import okio.BufferedSource
 
 public abstract class NbtVariant private constructor() {
-    internal abstract fun getNbtReader(source: BufferedSource): BinaryNbtReader
-    internal abstract fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter
+    internal abstract val capabilities: NbtCapabilities
 
-    public object Java : NbtVariant() {
-        override fun toString(): String = "Java"
+    internal abstract fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader
+    internal abstract fun getNbtWriter(context: NbtContext, sink: BufferedSink): BinaryNbtWriter
 
-        override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
-            JavaNbtReader(source)
+    public data object Java : NbtVariant() {
+        override val capabilities: NbtCapabilities =
+            NbtCapabilities(namedRoot = true)
 
-        override fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter =
-            JavaNbtWriter(sink)
+        override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
+            JavaNbtReader(context, source)
+
+        override fun getNbtWriter(context: NbtContext, sink: BufferedSink): BinaryNbtWriter =
+            JavaNbtWriter(context, sink)
     }
 
     /**
@@ -47,47 +50,57 @@ public abstract class NbtVariant private constructor() {
         override fun toString(): String = "JavaNetwork(protocolVersion = $protocolVersion)"
 
 
-        override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
-            protocolVersionVariant.getNbtReader(source)
+        override val capabilities: NbtCapabilities
+            get() = protocolVersionVariant.capabilities
 
-        override fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter =
-            protocolVersionVariant.getNbtWriter(sink)
+        override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
+            protocolVersionVariant.getNbtReader(context, source)
 
+        override fun getNbtWriter(context: NbtContext, sink: BufferedSink): BinaryNbtWriter =
+            protocolVersionVariant.getNbtWriter(context, sink)
 
         private object EmptyNamedRoot : NbtVariant() {
-            override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
-                JavaNetworkNbtReader.EmptyNamedRoot(source)
+            override val capabilities: NbtCapabilities =
+                NbtCapabilities(namedRoot = false)
 
-            override fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter =
-                JavaNetworkNbtWriter.EmptyNamedRoot(sink)
+            override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
+                JavaNetworkNbtReader.EmptyNamedRoot(context, source)
+
+            override fun getNbtWriter(context: NbtContext, sink: BufferedSink): BinaryNbtWriter =
+                JavaNetworkNbtWriter.EmptyNamedRoot(context, sink)
         }
 
         private object UnnamedRoot : NbtVariant() {
-            override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
-                JavaNetworkNbtReader.UnnamedRoot(source)
+            override val capabilities: NbtCapabilities =
+                NbtCapabilities(namedRoot = false)
 
-            override fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter =
-                JavaNetworkNbtWriter.UnnamedRoot(sink)
+            override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
+                JavaNetworkNbtReader.UnnamedRoot(context, source)
+
+            override fun getNbtWriter(context: NbtContext, sink: BufferedSink): BinaryNbtWriter =
+                JavaNetworkNbtWriter.UnnamedRoot(context, sink)
         }
     }
 
-    public object Bedrock : NbtVariant() {
-        override fun toString(): String = "Bedrock"
+    public data object Bedrock : NbtVariant() {
+        override val capabilities: NbtCapabilities =
+            NbtCapabilities(namedRoot = true)
 
-        override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
-            BedrockNbtReader(source)
+        override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
+            BedrockNbtReader(context, source)
 
-        override fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter =
-            BedrockNbtWriter(sink)
+        override fun getNbtWriter(context: NbtContext, sink: BufferedSink): BinaryNbtWriter =
+            BedrockNbtWriter(context, sink)
     }
 
-    public object BedrockNetwork : NbtVariant() {
-        override fun toString(): String = "BedrockNetwork"
+    public data object BedrockNetwork : NbtVariant() {
+        override val capabilities: NbtCapabilities =
+            NbtCapabilities(namedRoot = false)
 
-        override fun getNbtReader(source: BufferedSource): BinaryNbtReader =
-            BedrockNetworkNbtReader(source)
+        override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
+            BedrockNetworkNbtReader(context, source)
 
-        override fun getNbtWriter(sink: BufferedSink): BinaryNbtWriter =
-            BedrockNetworkNbtWriter(sink)
+        override fun getNbtWriter(context: NbtContext, sink: BufferedSink): BinaryNbtWriter =
+            BedrockNetworkNbtWriter(context, sink)
     }
 }
