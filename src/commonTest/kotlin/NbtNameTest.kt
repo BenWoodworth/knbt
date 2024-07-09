@@ -274,17 +274,32 @@ class NbtNameTest {
     }
 
     @Test
-    fun should_encode_dynamic_name_when_encoded() = parameterizeTest {
-
-    }
-
-    @Test
-    fun should_encode_first_dynamic_name_when_multiple_are_encoded() = parameterizeTest {
-
-    }
-
-    @Test
     fun serializing_names_dynamically_should_require_the_serializer_to_be_marked_as_dynamic() {
+
+    }
+
+    @Test
+    fun serializing_dynamic_name_should_fail_after_starting_to_serialize_the_value() = parameterizeTest {
+
+    }
+
+    @Test
+    fun dynamic_name_should_be_encoded() = parameterizeTest {
+
+    }
+
+    @Test
+    fun dynamic_name_should_be_the_first_name_encoded_if_another_is_encoded_later() = parameterizeTest {
+
+    }
+
+    @Test
+    fun dynamic_name_should_be_the_first_name_encoded_if_another_is_encoded_later_from_a_delegate() = parameterizeTest {
+
+    }
+
+    @Test
+    fun dynamic_name_encoded_from_delegate_should_be_encoded_if_it_is_the_first() = parameterizeTest {
 
     }
 }
