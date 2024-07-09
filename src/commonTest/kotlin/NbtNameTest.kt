@@ -302,4 +302,34 @@ class NbtNameTest {
     fun dynamic_name_encoded_from_delegate_should_be_encoded_if_it_is_the_first() = parameterizeTest {
 
     }
+
+    @Test
+    fun dynamic_name_decoded_from_named_root_should_be_correct() = parameterizeTest {
+
+    }
+
+    @Test
+    fun dynamic_name_decoded_from_named_root_should_be_correct_when_decoded_from_delegate() = parameterizeTest {
+
+    }
+
+    @Test
+    fun dynamic_name_decoded_from_unnamed_root_should_be_null() = parameterizeTest {
+
+    }
+
+    @Test
+    fun dynamic_name_decoded_from_compound_should_be_correct() = parameterizeTest {
+
+    }
+
+    @Test
+    fun dynamic_name_decoded_from_compound_should_be_correct_when_decoded_from_delegate() = parameterizeTest {
+
+    }
+
+    @Test
+    fun dynamic_name_decoded_from_collection_should_be_null() = parameterizeTest {
+
+    }
 }
