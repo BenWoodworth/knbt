@@ -24,14 +24,14 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     protected abstract val context: SerializationNbtContext
     protected abstract val reader: NbtReader
     protected abstract val parent: BaseNbtDecoder?
-    protected abstract val entryType: NbtTagType
+    protected abstract val decodedTagType: NbtTagType
 
-    protected var elementListKind: NbtListKind? = null
+    protected var serializerListKind: NbtListKind? = null
 
     private var decodedNbtNameInfo: NbtReader.CompoundEntryInfo? = null
 
     private fun decodeNbtTagTypeMarker(): NbtTagType =
-        decodedNbtNameInfo?.type ?: entryType
+        decodedNbtNameInfo?.type ?: decodedTagType
 
     private fun beginDecodingValue(type: NbtTagType) {
         val actualType = decodeNbtTagTypeMarker()
@@ -146,7 +146,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     //region Structure begin*() functions
     final override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder =
         when (descriptor.kind) {
-            StructureKind.LIST -> when (elementListKind ?: descriptor.getNbtListKind(context)) {
+            StructureKind.LIST -> when (serializerListKind ?: descriptor.getNbtListKind(context)) {
                 NbtListKind.List -> beginList()
                 NbtListKind.ByteArray -> beginByteArray()
                 NbtListKind.IntArray -> beginIntArray()
@@ -246,7 +246,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         deserializer: DeserializationStrategy<T>,
         previousValue: T?
     ): T {
-        elementListKind = descriptor
+        serializerListKind = descriptor
             .takeIf { it.getElementDescriptor(index).kind == StructureKind.LIST }
             ?.getElementNbtListKind(context, index)
             ?: descriptor.getElementDescriptor(index).getNbtListKind(context)
@@ -264,7 +264,7 @@ internal class NbtReaderDecoder(
 
     private val rootTagInfo = reader.beginRootTag()
 
-    override val entryType: NbtTagType
+    override val decodedTagType: NbtTagType
         get() = rootTagInfo.type
 
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int = 0
@@ -294,7 +294,7 @@ private class ClassNbtDecoder(
 ) : CompoundNbtDecoder() {
     override lateinit var compoundEntryInfo: NbtReader.CompoundEntryInfo
 
-    override val entryType: NbtTagType
+    override val decodedTagType: NbtTagType
         get() = compoundEntryInfo.type
 
     init {
@@ -348,7 +348,7 @@ private class ClassNbtDecoder(
         }
 
         if (index >= 0 && descriptor.getElementDescriptor(index).kind == StructureKind.LIST) {
-            elementListKind = descriptor.getElementNbtListKind(context, index)
+            serializerListKind = descriptor.getElementNbtListKind(context, index)
         }
 
         return index
@@ -367,7 +367,7 @@ private class MapNbtDecoder(
 
     override lateinit var compoundEntryInfo: NbtReader.CompoundEntryInfo
 
-    override val entryType: NbtTagType
+    override val decodedTagType: NbtTagType
         get() = if (decodeMapKey) TAG_String else compoundEntryInfo.type
 
     init {
@@ -430,7 +430,7 @@ private class ListNbtDecoder(
     override val elementCount: Int
         get() = listInfo.size
 
-    override val entryType: NbtTagType
+    override val decodedTagType: NbtTagType
         get() = listInfo.type
 
     override fun beginEntry(): Boolean = reader.beginListEntry()
@@ -453,7 +453,7 @@ private class ByteArrayNbtDecoder(
     override val elementCount: Int
         get() = arrayInfo.size
 
-    override val entryType: NbtTagType
+    override val decodedTagType: NbtTagType
         get() = TAG_Byte
 
     override fun beginEntry(): Boolean = reader.beginByteArrayEntry()
@@ -476,7 +476,7 @@ private class IntArrayNbtDecoder(
     override val elementCount: Int
         get() = arrayInfo.size
 
-    override val entryType: NbtTagType
+    override val decodedTagType: NbtTagType
         get() = TAG_Int
 
     override fun beginEntry(): Boolean = reader.beginIntArrayEntry()
@@ -499,7 +499,7 @@ private class LongArrayNbtDecoder(
     override val elementCount: Int
         get() = arrayInfo.size
 
-    override val entryType: NbtTagType
+    override val decodedTagType: NbtTagType
         get() = TAG_Long
 
     override fun beginEntry(): Boolean = reader.beginLongArrayEntry()

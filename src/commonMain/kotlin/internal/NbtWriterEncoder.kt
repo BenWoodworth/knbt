@@ -28,7 +28,7 @@ internal class NbtWriterEncoder(
 
     private val structureTypeStack = ArrayDeque<NbtTagType>()
 
-    private var elementListKind: NbtListKind? = null
+    private var serializerListKind: NbtListKind? = null
     private val listTypeStack = ArrayDeque<NbtTagType>() // TAG_End when uninitialized
     private var listSize: Int = 0
 
@@ -56,7 +56,7 @@ internal class NbtWriterEncoder(
         }
 
         if (descriptor.getElementDescriptor(index).kind == StructureKind.LIST) {
-            elementListKind = descriptor.getElementNbtListKind(context, index)
+            serializerListKind = descriptor.getElementNbtListKind(context, index)
         }
 
         return true
@@ -156,7 +156,7 @@ internal class NbtWriterEncoder(
 
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder =
         if (descriptor.kind == StructureKind.LIST) {
-            when (elementListKind ?: descriptor.getNbtListKind(context)) {
+            when (serializerListKind ?: descriptor.getNbtListKind(context)) {
                 NbtListKind.List -> beginList(collectionSize)
                 NbtListKind.ByteArray -> beginByteArray(collectionSize)
                 NbtListKind.IntArray -> beginIntArray(collectionSize)
