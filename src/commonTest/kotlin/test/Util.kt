@@ -3,6 +3,7 @@ package net.benwoodworth.knbt.test
 import okio.Buffer
 import okio.Source
 import okio.Timeout
+import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -85,3 +86,8 @@ fun Float.fix(): Float =
  */
 fun Double.fix(): Double =
     Double.fromBits(this.toRawBits())
+
+/**
+ * Returns [KClass.qualifiedName] on platforms that support it, or [default] on those that don't.
+ */
+expect fun KClass<*>.qualifiedNameOrDefault(default: String?): String?
