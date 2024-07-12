@@ -17,10 +17,7 @@ import net.benwoodworth.knbt.internal.NbtDecodingException
 import net.benwoodworth.knbt.internal.nbtName
 import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.parameterizeTest
-import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
-import net.benwoodworth.knbt.test.parameters.parameterOfEncoderVerifyingNbt
-import net.benwoodworth.knbt.test.parameters.parameterOfSerializableTypeEdgeCases
-import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
+import net.benwoodworth.knbt.test.parameters.*
 import net.benwoodworth.knbt.test.qualifiedNameOrDefault
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -273,36 +270,44 @@ class NbtNameTest {
         nbt.verifyEncoder(DynamicDefaultingToStaticSerializer(), Unit, expectedTag)
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun dynamicNameSerializationRequirementMessage(serializer: SerialDescriptor): String {
+        return "$dynamicAnnotation is required when dynamically serializing NBT names, but " +
+                "'${serializer.serialName}' does so without it."
+    }
+
+    private class DynamicNameWithoutDynamicAnnotationSerializer(
+        private val serializableType: SerializableTypeEdgeCase
+    ) : KSerializer<Unit> {
+        override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
+            @ExperimentalSerializationApi
+            override val annotations = listOf(NbtName("name")) // Not dynamic
+        }
+
+        override fun serialize(encoder: Encoder, value: Unit) {
+            encoder.asNbtEncoder().encodeNbtName("dynamic_name")
+            serializableType.encodeValue(encoder, descriptor)
+        }
+
+        override fun deserialize(decoder: Decoder) {
+            decoder.asNbtDecoder().decodeNbtName()
+            serializableType.decodeValue(decoder, descriptor)
+        }
+    }
+
     @Test
     fun serializing_names_dynamically_should_require_the_serializer_to_be_marked_as_dynamic() = parameterizeTest {
         val nbt by parameterOfVerifyingNbt(includeNamedRootNbt = true)
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
-        class BadSerializer : KSerializer<Unit> {
-            override fun toString() = "Serialize name without $dynamicAnnotation"
-
-            override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
-                @ExperimentalSerializationApi
-                override val annotations = listOf(NbtName("name")) // Not dynamic
-            }
-
-            override fun serialize(encoder: Encoder, value: Unit) {
-                encoder.asNbtEncoder().encodeNbtName("dynamic_name")
-                serializableType.encodeValue(encoder, descriptor)
-            }
-
-            override fun deserialize(decoder: Decoder) {
-                decoder.asNbtDecoder().decodeNbtName()
-                serializableType.decodeValue(decoder, descriptor)
-            }
-        }
+        val serializer = DynamicNameWithoutDynamicAnnotationSerializer(serializableType)
 
         val failure = assertFailsWith<IllegalArgumentException> {
-            nbt.verifyEncoderOrDecoder(BadSerializer(), Unit, serializableType.valueTag)
+            nbt.verifyEncoderOrDecoder(serializer, Unit, serializableType.valueTag)
         }
 
-        val expectedMessage = "@NbtName.Dynamic is required when dynamically serializing NBT names" +
-                "'${serializer.serialName}' delegates to '${delegate.serialName}' without it."
+        val expectedMessage = "$dynamicAnnotation is required when dynamically serializing NBT names, " +
+                "but '${serializer.serialName}' dynamically serializes a name without it."
 
         assertEquals(, failure.message)
     }
