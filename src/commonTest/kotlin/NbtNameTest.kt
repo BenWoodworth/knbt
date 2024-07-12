@@ -19,11 +19,22 @@ import net.benwoodworth.knbt.test.parameters.SerializableTypeEdgeCase
 import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
 import net.benwoodworth.knbt.test.parameters.parameterOfSerializableTypeEdgeCases
 import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
+import net.benwoodworth.knbt.test.qualifiedNameOrDefault
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class NbtNameTest {
+    /**
+     * Returns "@[NbtName.Dynamic]", which is how the annotation should be shown in error messages.
+     */
+    @OptIn(ExperimentalNbtApi::class)
+    private val dynamicAnnotation = NbtName.Dynamic::class
+        .qualifiedNameOrDefault("net.benwoodworth.knbt.NbtName.Dynamic")!!
+        .let { Regex(""".*?\.(?<nestedClassName>[A-Z].*)""").matchEntire(it)!! } // From first capitalized part
+        .groups["nestedClassName"]!!.value
+        .let { nestedClassName -> "@$nestedClassName" }
+
     @Serializable
     @NbtName("root-name")
     private data class TestNbtClass(
@@ -165,7 +176,7 @@ class NbtNameTest {
 
     @OptIn(ExperimentalSerializationApi::class)
     private fun dynamicDelegationRequirementMessage(serializer: SerialDescriptor, delegate: SerialDescriptor): String {
-        return "@NbtName.Dynamic is required when delegating to a dynamically named serializer, but " +
+        return "$dynamicAnnotation is required when delegating to a dynamically named serializer, but " +
                 "'${serializer.serialName}' delegates to '${delegate.serialName}' without it."
     }
 
