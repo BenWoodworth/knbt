@@ -274,12 +274,39 @@ class NbtNameTest {
     }
 
     @Test
-    fun serializing_names_dynamically_should_require_the_serializer_to_be_marked_as_dynamic() {
+    fun serializing_names_dynamically_should_require_the_serializer_to_be_marked_as_dynamic() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt(includeNamedRootNbt = true)
+        val serializableType by parameterOfSerializableTypeEdgeCases()
 
+        class BadSerializer : KSerializer<Unit> {
+            override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
+                @ExperimentalSerializationApi
+                override val annotations = listOf(NbtName("name")) // Not dynamic
+            }
+
+            override fun serialize(encoder: Encoder, value: Unit) {
+                encoder.asNbtEncoder().encodeNbtName("dynamic_name")
+                serializableType.encodeValue(encoder, descriptor)
+            }
+
+            override fun deserialize(decoder: Decoder) {
+                decoder.asNbtDecoder().decodeNbtName()
+                serializableType.decodeValue(decoder, descriptor)
+            }
+        }
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            nbt.verifyEncoderOrDecoder(BadSerializer(), Unit, serializableType.valueTag)
+        }
+
+        val expectedMessage = "@NbtName.Dynamic is required when dynamically serializing NBT names" +
+                "'${serializer.serialName}' delegates to '${delegate.serialName}' without it."
+
+        assertEquals(, failure.message)
     }
 
     @Test
-    fun serializing_dynamic_name_should_fail_after_starting_to_serialize_the_value() = parameterizeTest {
+    fun serializing_dynamic_name_should_fail_if_the_value_already_started_to_be_serialized() = parameterizeTest {
 
     }
 
