@@ -279,6 +279,8 @@ class NbtNameTest {
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
         class BadSerializer : KSerializer<Unit> {
+            override fun toString() = "Serialize name without $dynamicAnnotation"
+
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
                 @ExperimentalSerializationApi
                 override val annotations = listOf(NbtName("name")) // Not dynamic
