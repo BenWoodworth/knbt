@@ -297,6 +297,12 @@ internal class NbtWriterEncoder(
     override fun encodeChar(value: Char): Unit =
         encodeString(value.toString())
 
+    @ExperimentalNbtApi
+    override fun encodeNbtName(name: String) {
+        context.checkDynamicallySerializingNbtName()
+        // TODO Encode name
+    }
+
     override fun encodeNbtTag(tag: NbtTag) {
         beginEncodingValue(tag.type)
         writer.writeNbtTag(context, tag)

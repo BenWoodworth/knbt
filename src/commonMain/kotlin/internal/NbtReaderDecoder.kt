@@ -11,6 +11,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.AbstractNbtDecoder
+import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.NbtTag
@@ -190,6 +191,12 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         return LongArrayNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
     }
     //endregion
+
+    @ExperimentalNbtApi
+    override fun decodeNbtName(): String? {
+        context.checkDynamicallySerializingNbtName()
+        return null // TODO Implement
+    }
 
     final override fun decodeNbtTag(): NbtTag {
         val tagType = decodeNbtTagTypeMarker()

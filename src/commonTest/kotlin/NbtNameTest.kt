@@ -272,8 +272,8 @@ class NbtNameTest {
 
     @OptIn(ExperimentalSerializationApi::class)
     private fun dynamicNameSerializationRequirementMessage(serializer: SerialDescriptor): String {
-        return "$dynamicAnnotation is required when dynamically serializing NBT names, but " +
-                "'${serializer.serialName}' does so without it."
+        return "$dynamicAnnotation is required when dynamically serializing NBT names, " +
+                "but '${serializer.serialName}' does so without it."
     }
 
     private class DynamicNameWithoutDynamicAnnotationSerializer(
@@ -296,7 +296,7 @@ class NbtNameTest {
     }
 
     @Test
-    fun serializing_names_dynamically_should_require_the_serializer_to_be_marked_as_dynamic() = parameterizeTest {
+    fun serializing_dynamic_name_should_require_marking_dynamic() = parameterizeTest {
         val nbt by parameterOfVerifyingNbt(includeNamedRootNbt = true)
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
@@ -306,10 +306,35 @@ class NbtNameTest {
             nbt.verifyEncoderOrDecoder(serializer, Unit, serializableType.valueTag)
         }
 
-        val expectedMessage = "$dynamicAnnotation is required when dynamically serializing NBT names, " +
-                "but '${serializer.serialName}' dynamically serializes a name without it."
+        assertEquals(dynamicNameSerializationRequirementMessage(serializer.descriptor), failure.message)
+    }
 
-        assertEquals(, failure.message)
+    @Test
+    fun serializing_dynamic_name_should_require_marking_dynamic_even_if_delegating_from_dynamic() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt(includeNamedRootNbt = true)
+        val serializableType by parameterOfSerializableTypeEdgeCases()
+
+        val delegate = DynamicNameWithoutDynamicAnnotationSerializer(serializableType)
+
+        val serializer = object : KSerializer<Unit> {
+            @OptIn(ExperimentalSerializationApi::class)
+            override val descriptor = object : SerialDescriptor by delegate.descriptor {
+                override val serialName = "DelegatingTo<${delegate.descriptor.serialName}>"
+                override val annotations = delegate.descriptor.annotations + NbtName.Dynamic()
+            }
+
+            override fun serialize(encoder: Encoder, value: Unit) =
+                encoder.encodeSerializableValue(delegate, value)
+
+            override fun deserialize(decoder: Decoder) =
+                decoder.decodeSerializableValue(delegate)
+        }
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            nbt.verifyEncoderOrDecoder(serializer, Unit, serializableType.valueTag)
+        }
+
+        assertEquals(dynamicNameSerializationRequirementMessage(delegate.descriptor), failure.message)
     }
 
     @Test
