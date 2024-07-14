@@ -148,12 +148,27 @@ internal class NbtWriterEncoder(
             beginStructure(descriptor)
         }
 
+    override fun endStructure(descriptor: SerialDescriptor): Unit =
+        when (val structureType = structureTypeStack.removeLast()) {
+            TAG_Compound -> endCompound(descriptor)
+            TAG_List -> endList()
+            TAG_Byte_Array -> endByteArray()
+            TAG_Int_Array -> endIntArray()
+            TAG_Long_Array -> endLongArray()
+            else -> error("Unhandled structure type: $structureType")
+        }
+
     private fun beginCompound(descriptor: SerialDescriptor): CompositeEncoder {
         beginNamedTagIfNamed(descriptor)
         beginEncodingValue(TAG_Compound)
         writer.beginCompound()
         structureTypeStack += TAG_Compound
         return this
+    }
+
+    private fun endCompound(descriptor: SerialDescriptor) {
+        writer.endCompound()
+        endNamedTagIfNamed(descriptor)
     }
 
     private fun beginList(size: Int): CompositeEncoder {
@@ -164,11 +179,20 @@ internal class NbtWriterEncoder(
         return this
     }
 
+    private fun endList() {
+        if (listTypeStack.removeLast() == TAG_End) writer.beginList(TAG_End, listSize)
+        writer.endList()
+    }
+
     private fun beginByteArray(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_Byte_Array)
         writer.beginByteArray(size)
         structureTypeStack += TAG_Byte_Array
         return this
+    }
+
+    private fun endByteArray() {
+        writer.endByteArray()
     }
 
     private fun beginIntArray(size: Int): CompositeEncoder {
@@ -178,6 +202,10 @@ internal class NbtWriterEncoder(
         return this
     }
 
+    private fun endIntArray() {
+        writer.endIntArray()
+    }
+
     private fun beginLongArray(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_Long_Array)
         writer.beginLongArray(size)
@@ -185,23 +213,8 @@ internal class NbtWriterEncoder(
         return this
     }
 
-    override fun endStructure(descriptor: SerialDescriptor) {
-        when (val structureType = structureTypeStack.removeLast()) {
-            TAG_Compound -> {
-                writer.endCompound()
-                endNamedTagIfNamed(descriptor)
-            }
-
-            TAG_List -> {
-                if (listTypeStack.removeLast() == TAG_End) writer.beginList(TAG_End, listSize)
-                writer.endList()
-            }
-
-            TAG_Byte_Array -> writer.endByteArray()
-            TAG_Int_Array -> writer.endIntArray()
-            TAG_Long_Array -> writer.endLongArray()
-            else -> error("Unhandled structure type: $structureType")
-        }
+    private fun endLongArray() {
+        writer.endLongArray()
     }
 
     override fun shouldEncodeElementDefault(descriptor: SerialDescriptor, index: Int): Boolean =
