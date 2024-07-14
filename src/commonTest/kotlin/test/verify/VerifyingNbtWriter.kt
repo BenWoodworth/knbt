@@ -55,7 +55,7 @@ internal class VerifyingNbtWriter(
         check(state is State.AwaitingValue)
         check(state.tag is NbtList<*>)
         check(state.tag.elementType == type)
-        check(size >= 0)
+        check(size == state.tag.size)
 
         stateHistory += State.InListOrArray(state.tag, 0, state.nextState)
     }
@@ -80,7 +80,7 @@ internal class VerifyingNbtWriter(
         val state = stateHistory.last()
         check(state is State.AwaitingValue)
         check(state.tag is NbtByteArray)
-        check(size >= 0)
+        check(size == state.tag.size)
 
         stateHistory += State.InListOrArray(state.tag, 0, state.nextState)
     }
@@ -105,7 +105,7 @@ internal class VerifyingNbtWriter(
         val state = stateHistory.last()
         check(state is State.AwaitingValue)
         check(state.tag is NbtIntArray)
-        check(size >= 0)
+        check(size == state.tag.size)
 
         stateHistory += State.InListOrArray(state.tag, 0, state.nextState)
     }
@@ -130,7 +130,7 @@ internal class VerifyingNbtWriter(
         val state = stateHistory.last()
         check(state is State.AwaitingValue)
         check(state.tag is NbtLongArray)
-        check(size >= 0)
+        check(size == state.tag.size)
 
         stateHistory += State.InListOrArray(state.tag, 0, state.nextState)
     }
