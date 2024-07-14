@@ -5,7 +5,6 @@ import com.benwoodworth.parameterize.ParameterizeScope
 import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterize
 import kotlin.contracts.contract
-import kotlin.experimental.ExperimentalTypeInference
 import kotlin.reflect.KProperty
 
 inline fun parameterizeTest(
@@ -28,13 +27,6 @@ inline fun parameterizeTest(
     // If all iterations have a parameter with 0 arguments, then no iterations will actually (fully) execute.
     // This sanity check prevents bad tests from silently passing if they accidentally run like that.
     check(hasTestCases) { "Bad parameterized test: All test cases skipped" }
-}
-
-@OptIn(ExperimentalTypeInference::class)
-inline fun <T> ParameterizeScope.parameterOfSequence(
-    @BuilderInference crossinline block: suspend SequenceScope<T>.() -> Unit
-): ParameterizeScope.Parameter<T> = parameter {
-    sequence { block() }
 }
 
 /**

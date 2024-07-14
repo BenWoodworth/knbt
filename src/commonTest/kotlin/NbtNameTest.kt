@@ -82,8 +82,11 @@ class NbtNameTest {
     @Test
     fun type_with_NBT_name_should_serialize_nested_under_its_name() = parameterizeTest {
         val nbt by parameterOfVerifyingNbt()
+            .let { parameterOf(it.arguments.first()) } // TODO Remove
         val serializableType by parameterOfSerializableTypeEdgeCases()
+            .let { parameterOf(it.arguments.first()) } // TODO Remove
         val nbtName by parameterOf("name", "different_name")
+            .let { parameterOf(it.arguments.first()) } // TODO Remove
 
         val valueSerializer = object : KSerializer<Unit> {
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
