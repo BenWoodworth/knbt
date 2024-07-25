@@ -12,7 +12,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
-
 internal class VerifyingNbtWriter(
     private val tag: NbtTag,
 ) : NbtWriter {
@@ -26,7 +25,7 @@ internal class VerifyingNbtWriter(
 
     override fun beginRootTag(type: NbtTagType): Unit = transitionState(::beginRootTag) {
         assertStateIs<State.InRoot>(state)
-        assertEquals(tag.type, type, "Incorrect root tag type was written")
+        assertWrittenRootTypeEquals(tag.type, type)
 
         State.AwaitingValue(tag, State.Complete)
     }
@@ -42,6 +41,7 @@ internal class VerifyingNbtWriter(
         assertStateIs<State.InCompound>(state)
 
         val entry = state.entries.getOrNull(state.index)
+        assertCompoundHasNextEntry(entry)
         assertWrittenCompoundEntryInfoEquals(entry, type to name)
 
         State.AwaitingValue(entry.value, state.copy(index = state.index + 1))
@@ -59,7 +59,7 @@ internal class VerifyingNbtWriter(
     override fun beginList(type: NbtTagType, size: Int): Unit = transitionState(::beginList) {
         assertStateIs<State.AwaitingValue>(state)
         assertWrittenTagTypeEquals(state.tag, NbtList::class)
-        assertEquals(state.tag.elementType, type, "Incorrect list element type was written")
+        assertWrittenElementTypeEquals(state.tag.elementType, type)
         assertWrittenSizeEquals(state.tag.size, size)
 
         State.InListOrArray(state.tag, 0, state.nextState)
@@ -253,32 +253,13 @@ internal class VerifyingNbtWriter(
 
             val message = messagePrefix +
                     "Should only be called in state ${TExpected::class.simpleName}, " +
-                    "but current state is ${state::class.simpleName}"
+                    "but current state is ${state::class.simpleName}."
 
             assertIs<TExpected>(state, message)
         }
 
-        fun assertWrittenCompoundEntryInfoEquals(
-            expected: Map.Entry<String, NbtTag>?,
-            actual: Pair<NbtTagType, String>
-        ) {
-            contract { returns() implies (expected != null) }
-
-            val expectedNullMessage = messagePrefix +
-                    "Expected compound to be ended, but began new compound entry: <${expected?.toEntryInfo()}>"
-
-            val wrongInfoMessage = messagePrefix + "Incorrect compound entry info was written"
-
-            assertTrue(expected != null, expectedNullMessage)
-            assertEquals(expected.toEntryInfo(), actual.toEntryInfo(), wrongInfoMessage)
-        }
-
-        fun assertNextCompoundEntryIsNull(expected: Map.Entry<String, NbtTag>?) {
-            val message = messagePrefix +
-                    "Expected to begin new compound entry, but compound was ended. " +
-                    "Expected: <${expected?.toEntryInfo()}>"
-
-            assertTrue(expected == null, message)
+        fun assertWrittenRootTypeEquals(expected: NbtTagType, actual: NbtTagType) {
+            assertEquals(expected, actual, messagePrefix + "Incorrect root type was written")
         }
 
         inline fun <reified T : NbtTag> assertWrittenTagTypeEquals(expected: NbtTag, actual: KClass<T>) {
@@ -287,12 +268,42 @@ internal class VerifyingNbtWriter(
             assertEquals(expected.type, actual.toNbtTagType(), messagePrefix + "Incorrect type was written")
         }
 
+        fun assertCompoundHasNextEntry(expected: Map.Entry<String, NbtTag>?) {
+            contract { returns() implies (expected != null) }
+
+            val message = messagePrefix +
+                    "Expected compound to be ended, but began new compound entry: <${expected?.toEntryInfo()}>."
+
+            assertTrue(expected != null, message)
+        }
+
+        fun assertWrittenCompoundEntryInfoEquals(
+            expected: Map.Entry<String, NbtTag>,
+            actual: Pair<NbtTagType, String>
+        ) {
+            val message = messagePrefix + "Incorrect compound entry info was written"
+
+            assertEquals(expected.toEntryInfo(), actual.toEntryInfo(), message)
+        }
+
+        fun assertNextCompoundEntryIsNull(expected: Map.Entry<String, NbtTag>?) {
+            val message = messagePrefix +
+                    "Expected to begin new compound entry, but compound was ended. " +
+                    "Expected: <${expected?.toEntryInfo()}>."
+
+            assertTrue(expected == null, message)
+        }
+
         fun assertWrittenTagEquals(expected: NbtTag, actual: NbtTag) {
             assertEquals(expected, actual, messagePrefix + "Incorrect tag was written")
         }
 
-        inline fun assertWrittenSizeEquals(expected: Int, actual: Int) {
-            assertEquals(expected, actual, "Incorrect size was written")
+        fun assertWrittenElementTypeEquals(expected: NbtTagType, actual: NbtTagType) {
+            assertEquals(expected, actual, messagePrefix + "Incorrect element type was written")
+        }
+
+        fun assertWrittenSizeEquals(expected: Int, actual: Int) {
+            assertEquals(expected, actual, messagePrefix + "Incorrect size was written")
         }
     }
 }
