@@ -26,7 +26,7 @@ internal class VerifyingNbtWriter(
 
     override fun beginRootTag(type: NbtTagType): Unit = transitionState(::beginRootTag) {
         assertStateIs<State.InRoot>(state)
-        check(type == tag.type)
+        assertEquals(tag.type, type, "Incorrect root tag type was written")
 
         State.AwaitingValue(tag, State.Complete)
     }
@@ -59,8 +59,8 @@ internal class VerifyingNbtWriter(
     override fun beginList(type: NbtTagType, size: Int): Unit = transitionState(::beginList) {
         assertStateIs<State.AwaitingValue>(state)
         assertWrittenTagTypeEquals(state.tag, NbtList::class)
-        check(state.tag.elementType == type)
-        check(size == state.tag.size)
+        assertEquals(state.tag.elementType, type, "Incorrect list element type was written")
+        assertWrittenSizeEquals(state.tag.size, size)
 
         State.InListOrArray(state.tag, 0, state.nextState)
     }
@@ -82,7 +82,7 @@ internal class VerifyingNbtWriter(
     override fun beginByteArray(size: Int): Unit = transitionState(::beginByteArray) {
         assertStateIs<State.AwaitingValue>(state)
         assertWrittenTagTypeEquals(state.tag, NbtByteArray::class)
-        check(size == state.tag.size)
+        assertWrittenSizeEquals(size, state.tag.size)
 
         State.InListOrArray(state.tag, 0, state.nextState)
     }
@@ -104,7 +104,7 @@ internal class VerifyingNbtWriter(
     override fun beginIntArray(size: Int): Unit = transitionState(::beginIntArray) {
         assertStateIs<State.AwaitingValue>(state)
         assertWrittenTagTypeEquals(state.tag, NbtIntArray::class)
-        check(size == state.tag.size)
+        assertWrittenSizeEquals(size, state.tag.size)
 
         State.InListOrArray(state.tag, 0, state.nextState)
     }
@@ -126,7 +126,7 @@ internal class VerifyingNbtWriter(
     override fun beginLongArray(size: Int): Unit = transitionState(::beginLongArray) {
         assertStateIs<State.AwaitingValue>(state)
         assertWrittenTagTypeEquals(state.tag, NbtLongArray::class)
-        check(size == state.tag.size)
+        assertWrittenSizeEquals(size, state.tag.size)
 
         State.InListOrArray(state.tag, 0, state.nextState)
     }
@@ -289,6 +289,10 @@ internal class VerifyingNbtWriter(
 
         fun assertWrittenTagEquals(expected: NbtTag, actual: NbtTag) {
             assertEquals(expected, actual, messagePrefix + "Incorrect tag was written")
+        }
+
+        inline fun assertWrittenSizeEquals(expected: Int, actual: Int) {
+            assertEquals(expected, actual, "Incorrect size was written")
         }
     }
 }
