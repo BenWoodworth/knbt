@@ -42,7 +42,8 @@ internal class VerifyingNbtWriter(
 
         val entry = state.entries.getOrNull(state.index)
         assertCompoundHasNextEntry(entry)
-        assertWrittenCompoundEntryInfoEquals(entry, type to name)
+        assertWrittenCompoundEntryNameEquals(entry.key, name)
+        assertWrittenCompoundEntryTypeEquals(entry.value.type, type)
 
         State.AwaitingValue(entry.value, state.copy(index = state.index + 1))
     }
@@ -237,15 +238,8 @@ internal class VerifyingNbtWriter(
     ) {
         private val messagePrefix = "${function.name}(): "
 
-        private data class CompoundEntryInfo(val type: NbtTagType, val name: String) {
-            override fun toString() = "$type(${name.toNbtString(forceQuote = true)})"
-        }
-
-        private fun Map.Entry<String, NbtTag>.toEntryInfo() =
-            this.let { (name, tag) -> CompoundEntryInfo(tag.type, name) }
-
-        private fun Pair<NbtTagType, String>.toEntryInfo() =
-            this.let { (type, name) -> CompoundEntryInfo(type, name) }
+        private fun Map.Entry<String, NbtTag>.toTagInfo() =
+            this.let { (name, tag) -> "${tag.type}(${name.toNbtString(forceQuote = true)})" }
 
 
         inline fun <reified TExpected : State> assertStateIs(state: State) {
@@ -268,34 +262,29 @@ internal class VerifyingNbtWriter(
             assertEquals(expected.type, actual.toNbtTagType(), messagePrefix + "Incorrect type was written")
         }
 
-        fun assertCompoundHasNextEntry(expected: Map.Entry<String, NbtTag>?) {
-            contract { returns() implies (expected != null) }
+        fun assertCompoundHasNextEntry(nextEntryOrNull: Map.Entry<String, NbtTag>?) {
+            contract { returns() implies (nextEntryOrNull != null) }
 
             val message = messagePrefix +
-                    "Expected compound to be ended, but began new compound entry: <${expected?.toEntryInfo()}>."
+                    "Expected compound to be ended, but began new compound entry: <${nextEntryOrNull?.toTagInfo()}>."
 
-            assertTrue(expected != null, message)
+            assertTrue(nextEntryOrNull != null, message)
         }
 
-        fun assertWrittenCompoundEntryInfoEquals(
-            expected: Map.Entry<String, NbtTag>,
-            actual: Pair<NbtTagType, String>
-        ) {
-            val message = messagePrefix + "Incorrect compound entry info was written"
+        fun assertWrittenCompoundEntryNameEquals(expected: String, actual: String) {
+            assertEquals(expected, actual, messagePrefix + "Incorrect compound entry name was written")
+        }
 
-            assertEquals(expected.toEntryInfo(), actual.toEntryInfo(), message)
+        fun assertWrittenCompoundEntryTypeEquals(expected: NbtTagType, actual: NbtTagType) {
+            assertEquals(expected, actual, messagePrefix + "Incorrect compound entry type was written")
         }
 
         fun assertNextCompoundEntryIsNull(expected: Map.Entry<String, NbtTag>?) {
             val message = messagePrefix +
                     "Expected to begin new compound entry, but compound was ended. " +
-                    "Expected: <${expected?.toEntryInfo()}>."
+                    "Expected: <${expected?.toTagInfo()}>."
 
             assertTrue(expected == null, message)
-        }
-
-        fun assertWrittenTagEquals(expected: NbtTag, actual: NbtTag) {
-            assertEquals(expected, actual, messagePrefix + "Incorrect tag was written")
         }
 
         fun assertWrittenElementTypeEquals(expected: NbtTagType, actual: NbtTagType) {
@@ -304,6 +293,10 @@ internal class VerifyingNbtWriter(
 
         fun assertWrittenSizeEquals(expected: Int, actual: Int) {
             assertEquals(expected, actual, messagePrefix + "Incorrect size was written")
+        }
+
+        fun assertWrittenTagEquals(expected: NbtTag, actual: NbtTag) {
+            assertEquals(expected, actual, messagePrefix + "Incorrect tag was written")
         }
     }
 }
