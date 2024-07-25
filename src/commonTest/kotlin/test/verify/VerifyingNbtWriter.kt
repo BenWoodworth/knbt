@@ -3,8 +3,14 @@ package net.benwoodworth.knbt.test.verify
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType
 import net.benwoodworth.knbt.internal.NbtWriter
+import net.benwoodworth.knbt.internal.toNbtString
+import net.benwoodworth.knbt.internal.toNbtTagType
 import kotlin.contracts.contract
+import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 
 internal class VerifyingNbtWriter(
@@ -12,206 +18,181 @@ internal class VerifyingNbtWriter(
 ) : NbtWriter {
     private val stateHistory = mutableListOf<State>(State.InRoot)
 
-    fun assertComplete(): Unit =
-        verifyAndGetNextState(::assertComplete) {
-            val state = stateHistory.last()
-            checkStateType<State.Complete>(state)
+    fun assertComplete(): Unit = transitionState(::assertComplete) {
+        assertStateIs<State.Complete>(state)
 
-            state
-        }
+        state
+    }
 
-    override fun beginRootTag(type: NbtTagType): Unit =
-        verifyAndGetNextState(::beginRootTag) {
-            checkStateType<State.InRoot>(state)
-            check(type == tag.type)
+    override fun beginRootTag(type: NbtTagType): Unit = transitionState(::beginRootTag) {
+        assertStateIs<State.InRoot>(state)
+        check(type == tag.type)
 
-            State.AwaitingValue(tag, State.Complete)
-        }
+        State.AwaitingValue(tag, State.Complete)
+    }
 
-    override fun beginCompound(): Unit =
-        verifyAndGetNextState(::beginCompound) {
-            checkStateType<State.AwaitingValue>(state)
-            checkWrittenType<NbtCompound>(state.tag)
+    override fun beginCompound(): Unit = transitionState(::beginCompound) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtCompound::class)
 
-            State.InCompound(state.tag, state.tag.content.entries.toList(), 0, state.nextState)
-        }
+        State.InCompound(state.tag, state.tag.content.entries.toList(), 0, state.nextState)
+    }
 
-    override fun beginCompoundEntry(type: NbtTagType, name: String): Unit =
-        verifyAndGetNextState(::beginCompoundEntry) {
-            checkStateType<State.InCompound>(state)
+    override fun beginCompoundEntry(type: NbtTagType, name: String): Unit = transitionState(::beginCompoundEntry) {
+        assertStateIs<State.InCompound>(state)
 
-            val entry = state.entries.getOrNull(state.index)
-            check(entry != null)
-            check(type == entry.value.type)
-            check(name == entry.key)
+        val entry = state.entries.getOrNull(state.index)
+        assertWrittenCompoundEntryInfoEquals(entry, type to name)
 
-            State.AwaitingValue(entry.value, state.copy(index = state.index + 1))
-        }
+        State.AwaitingValue(entry.value, state.copy(index = state.index + 1))
+    }
 
-    override fun endCompound(): Unit =
-        verifyAndGetNextState(::endCompound) {
-            checkStateType<State.InCompound>(state)
-            check(state.index == state.entries.lastIndex + 1)
+    override fun endCompound(): Unit = transitionState(::endCompound) {
+        assertStateIs<State.InCompound>(state)
 
-            state.nextState
-        }
+        val entry = state.entries.getOrNull(state.index)
+        assertNextCompoundEntryIsNull(entry)
 
-    override fun beginList(type: NbtTagType, size: Int): Unit =
-        verifyAndGetNextState(::beginList) {
-            checkStateType<State.AwaitingValue>(state)
-            check(state.tag is NbtList<*>)
-            check(state.tag.elementType == type)
-            check(size == state.tag.size)
+        state.nextState
+    }
 
-            State.InListOrArray(state.tag, 0, state.nextState)
-        }
+    override fun beginList(type: NbtTagType, size: Int): Unit = transitionState(::beginList) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtList::class)
+        check(state.tag.elementType == type)
+        check(size == state.tag.size)
 
-    override fun beginListEntry(): Unit =
-        verifyAndGetNextState(::beginListEntry) {
-            checkStateType<State.InListOrArray>(state)
-            check(state.tag is NbtList<*>)
+        State.InListOrArray(state.tag, 0, state.nextState)
+    }
 
-            State.AwaitingValue(state.tag[state.index], state.copy(index = state.index + 1))
-        }
+    override fun beginListEntry(): Unit = transitionState(::beginListEntry) {
+        assertStateIs<State.InListOrArray>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtList::class)
 
-    override fun endList(): Unit =
-        verifyAndGetNextState(::endList) {
-            checkStateType<State.InListOrArray>(state)
-            check(state.tag is NbtList<*>)
+        State.AwaitingValue(state.tag[state.index], state.copy(index = state.index + 1))
+    }
 
-            state.nextState
-        }
+    override fun endList(): Unit = transitionState(::endList) {
+        assertStateIs<State.InListOrArray>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtList::class)
 
-    override fun beginByteArray(size: Int): Unit =
-        verifyAndGetNextState(::beginByteArray) {
-            checkStateType<State.AwaitingValue>(state)
-            checkWrittenType<NbtByteArray>(state.tag)
-            check(size == state.tag.size)
+        state.nextState
+    }
 
-            State.InListOrArray(state.tag, 0, state.nextState)
-        }
+    override fun beginByteArray(size: Int): Unit = transitionState(::beginByteArray) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtByteArray::class)
+        check(size == state.tag.size)
 
-    override fun beginByteArrayEntry(): Unit =
-        verifyAndGetNextState(::beginByteArrayEntry) {
-            checkStateType<State.InListOrArray>(state)
-            checkWrittenType<NbtByteArray>(state.tag)
+        State.InListOrArray(state.tag, 0, state.nextState)
+    }
 
-            State.AwaitingValue(NbtByte(state.tag[state.index]), state.copy(index = state.index + 1))
-        }
+    override fun beginByteArrayEntry(): Unit = transitionState(::beginByteArrayEntry) {
+        assertStateIs<State.InListOrArray>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtByteArray::class)
 
-    override fun endByteArray(): Unit =
-        verifyAndGetNextState(::endByteArray) {
-            checkStateType<State.InListOrArray>(state)
-            checkWrittenType<NbtByteArray>(state.tag)
+        State.AwaitingValue(NbtByte(state.tag[state.index]), state.copy(index = state.index + 1))
+    }
 
-            state.nextState
-        }
+    override fun endByteArray(): Unit = transitionState(::endByteArray) {
+        assertStateIs<State.InListOrArray>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtByteArray::class)
 
-    override fun beginIntArray(size: Int): Unit =
-        verifyAndGetNextState(::beginIntArray) {
-            checkStateType<State.AwaitingValue>(state)
-            checkWrittenType<NbtIntArray>(state.tag)
-            check(size == state.tag.size)
+        state.nextState
+    }
 
-            State.InListOrArray(state.tag, 0, state.nextState)
-        }
+    override fun beginIntArray(size: Int): Unit = transitionState(::beginIntArray) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtIntArray::class)
+        check(size == state.tag.size)
 
-    override fun beginIntArrayEntry(): Unit =
-        verifyAndGetNextState(::beginIntArrayEntry) {
-            checkStateType<State.InListOrArray>(state)
-            checkWrittenType<NbtIntArray>(state.tag)
+        State.InListOrArray(state.tag, 0, state.nextState)
+    }
 
-            State.AwaitingValue(NbtInt(state.tag[state.index]), state.copy(index = state.index + 1))
-        }
+    override fun beginIntArrayEntry(): Unit = transitionState(::beginIntArrayEntry) {
+        assertStateIs<State.InListOrArray>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtIntArray::class)
 
-    override fun endIntArray(): Unit =
-        verifyAndGetNextState(::endIntArray) {
-            checkStateType<State.InListOrArray>(state)
-            checkWrittenType<NbtIntArray>(state.tag)
+        State.AwaitingValue(NbtInt(state.tag[state.index]), state.copy(index = state.index + 1))
+    }
 
-            state.nextState
-        }
+    override fun endIntArray(): Unit = transitionState(::endIntArray) {
+        assertStateIs<State.InListOrArray>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtIntArray::class)
 
-    override fun beginLongArray(size: Int): Unit =
-        verifyAndGetNextState(::beginLongArray) {
-            checkStateType<State.AwaitingValue>(state)
-            checkWrittenType<NbtLongArray>(state.tag)
-            check(size == state.tag.size)
+        state.nextState
+    }
 
-            State.InListOrArray(state.tag, 0, state.nextState)
-        }
+    override fun beginLongArray(size: Int): Unit = transitionState(::beginLongArray) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtLongArray::class)
+        check(size == state.tag.size)
 
-    override fun beginLongArrayEntry(): Unit =
-        verifyAndGetNextState(::beginLongArrayEntry) {
-            checkStateType<State.InListOrArray>(state)
-            checkWrittenType<NbtLongArray>(state.tag)
+        State.InListOrArray(state.tag, 0, state.nextState)
+    }
 
-            State.AwaitingValue(NbtLong(state.tag[state.index]), state.copy(index = state.index + 1))
-        }
+    override fun beginLongArrayEntry(): Unit = transitionState(::beginLongArrayEntry) {
+        assertStateIs<State.InListOrArray>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtLongArray::class)
 
-    override fun endLongArray(): Unit =
-        verifyAndGetNextState(::endLongArray) {
-            checkStateType<State.InListOrArray>(state)
-            checkWrittenType<NbtLongArray>(state.tag)
+        State.AwaitingValue(NbtLong(state.tag[state.index]), state.copy(index = state.index + 1))
+    }
 
-            state.nextState
-        }
+    override fun endLongArray(): Unit = transitionState(::endLongArray) {
+        assertStateIs<State.InListOrArray>(state)
+        assertWrittenTagTypeEquals(state.tag, NbtLongArray::class)
 
-    override fun writeByte(value: Byte): Unit =
-        verifyAndGetNextState(::writeByte) {
-            checkStateType<State.AwaitingValue>(state)
-            checkWrittenValue(state.tag, NbtByte(value))
+        state.nextState
+    }
 
-            state.nextState
-        }
+    override fun writeByte(value: Byte): Unit = transitionState(::writeByte) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagEquals(state.tag, NbtByte(value))
 
-    override fun writeShort(value: Short): Unit =
-        verifyAndGetNextState(::writeShort) {
-            checkStateType<State.AwaitingValue>(state)
-            checkWrittenValue(state.tag, NbtShort(value))
+        state.nextState
+    }
 
-            state.nextState
-        }
+    override fun writeShort(value: Short): Unit = transitionState(::writeShort) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagEquals(state.tag, NbtShort(value))
 
-    override fun writeInt(value: Int): Unit =
-        verifyAndGetNextState(::writeInt) {
-            checkStateType<State.AwaitingValue>(state)
-            checkWrittenValue(state.tag, NbtInt(value))
+        state.nextState
+    }
 
-            state.nextState
-        }
+    override fun writeInt(value: Int): Unit = transitionState(::writeInt) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagEquals(state.tag, NbtInt(value))
 
-    override fun writeLong(value: Long): Unit =
-        verifyAndGetNextState(::writeLong) {
-            checkStateType<State.AwaitingValue>(state)
-            checkWrittenValue(state.tag, NbtLong(value))
+        state.nextState
+    }
 
-            state.nextState
-        }
+    override fun writeLong(value: Long): Unit = transitionState(::writeLong) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagEquals(state.tag, NbtLong(value))
 
-    override fun writeFloat(value: Float): Unit =
-        verifyAndGetNextState(::writeFloat) {
-            checkStateType<State.AwaitingValue>(state)
-            checkWrittenValue(state.tag, NbtFloat(value))
+        state.nextState
+    }
 
-            state.nextState
-        }
+    override fun writeFloat(value: Float): Unit = transitionState(::writeFloat) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagEquals(state.tag, NbtFloat(value))
 
-    override fun writeDouble(value: Double): Unit =
-        verifyAndGetNextState(::writeDouble) {
-            checkStateType<State.AwaitingValue>(state)
-            checkWrittenValue(state.tag, NbtDouble(value))
+        state.nextState
+    }
 
-            state.nextState
-        }
+    override fun writeDouble(value: Double): Unit = transitionState(::writeDouble) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagEquals(state.tag, NbtDouble(value))
 
-    override fun writeString(value: String): Unit =
-        verifyAndGetNextState(::writeString) {
-            checkStateType<State.AwaitingValue>(state)
-            checkWrittenValue(state.tag, NbtString(value))
+        state.nextState
+    }
 
-            state.nextState
-        }
+    override fun writeString(value: String): Unit = transitionState(::writeString) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertWrittenTagEquals(state.tag, NbtString(value))
+
+        state.nextState
+    }
 
     private sealed interface State {
         data object Complete : State
@@ -237,50 +218,77 @@ internal class VerifyingNbtWriter(
         ) : State
     }
 
-    private fun verifyAndGetNextState(
+    // KT-49904: May be possible to simplify in the future with decorators
+    private fun transitionState(
         function: KFunction<*>,
-        block: VerifyScope.() -> State
+        transition: VerifyScope.() -> State
     ) {
-//        contract { // TODO Needed?
-//            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-//        }
-
         val currentState = stateHistory.last()
-        val nextState = VerifyScope(function, currentState).block()
-        stateHistory += nextState
+        val nextState = VerifyScope(function, currentState).transition()
+
+        if (nextState != currentState) {
+            stateHistory += nextState
+        }
     }
 
     private class VerifyScope(
         function: KFunction<*>,
         val state: State
     ) {
-        private val checkMessagePrefix = "${function.name}(): "
+        private val messagePrefix = "${function.name}(): "
 
-        inline fun <reified TExpected : State> checkStateType(state: State) {
+        private data class CompoundEntryInfo(val type: NbtTagType, val name: String) {
+            override fun toString() = "$type(${name.toNbtString(forceQuote = true)})"
+        }
+
+        private fun Map.Entry<String, NbtTag>.toEntryInfo() =
+            this.let { (name, tag) -> CompoundEntryInfo(tag.type, name) }
+
+        private fun Pair<NbtTagType, String>.toEntryInfo() =
+            this.let { (type, name) -> CompoundEntryInfo(type, name) }
+
+
+        inline fun <reified TExpected : State> assertStateIs(state: State) {
             contract { returns() implies (state is TExpected) }
 
-            check(state is TExpected) {
-                "$checkMessagePrefix Should only be called in state ${TExpected::class.simpleName}, " +
-                        "but current state is ${state::class.simpleName}"
-            }
+            val message = messagePrefix +
+                    "Should only be called in state ${TExpected::class.simpleName}, " +
+                    "but current state is ${state::class.simpleName}"
+
+            assertIs<TExpected>(state, message)
         }
 
-        inline fun <reified TWritten : NbtTag> checkWrittenType(stateTag: NbtTag) {
-            contract { returns() implies (stateTag is TWritten) }
+        fun assertWrittenCompoundEntryInfoEquals(
+            expected: Map.Entry<String, NbtTag>?,
+            actual: Pair<NbtTagType, String>
+        ) {
+            contract { returns() implies (expected != null) }
 
-            check(stateTag is TWritten) {
-                "$checkMessagePrefix Expected ${stateTag::class.simpleName} to be written, " +
-                        "but was ${TWritten::class.simpleName}"
-            }
+            val expectedNullMessage = messagePrefix +
+                    "Expected compound to be ended, but began new compound entry: <${expected?.toEntryInfo()}>"
+
+            val wrongInfoMessage = messagePrefix + "Incorrect compound entry info was written"
+
+            assertTrue(expected != null, expectedNullMessage)
+            assertEquals(expected.toEntryInfo(), actual.toEntryInfo(), wrongInfoMessage)
         }
 
-        inline fun <reified TWritten : NbtTag> checkWrittenValue(expected: NbtTag, actual: TWritten) {
-//            contract { returns() implies (expected is TWritten) } // TODO Needed?
+        fun assertNextCompoundEntryIsNull(expected: Map.Entry<String, NbtTag>?) {
+            val message = messagePrefix +
+                    "Expected to begin new compound entry, but compound was ended. " +
+                    "Expected: <${expected?.toEntryInfo()}>"
 
-//            checkWrittenType<TWritten>(expected)
-            check(actual == expected) {
-                "$checkMessagePrefix Expected $expected to be written, but was $actual"
-            }
+            assertTrue(expected == null, message)
+        }
+
+        inline fun <reified T : NbtTag> assertWrittenTagTypeEquals(expected: NbtTag, actual: KClass<T>) {
+            contract { returns() implies (expected is T) }
+
+            assertEquals(expected.type, actual.toNbtTagType(), messagePrefix + "Incorrect type was written")
+        }
+
+        fun assertWrittenTagEquals(expected: NbtTag, actual: NbtTag) {
+            assertEquals(expected, actual, messagePrefix + "Incorrect tag was written")
         }
     }
 }
