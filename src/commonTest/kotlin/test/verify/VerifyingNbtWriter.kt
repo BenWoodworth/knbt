@@ -9,7 +9,6 @@ import kotlin.contracts.contract
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.test.assertEquals
-import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 internal class VerifyingNbtWriter(
@@ -251,7 +250,7 @@ internal class VerifyingNbtWriter(
                     "Should only be called in state ${TExpected::class.simpleName}, " +
                     "but current state is ${state::class.simpleName}."
 
-            assertIs<TExpected>(state, message)
+            assertTrue(TExpected::class == state::class, message)
         }
 
         fun assertWrittenRootTypeEquals(expected: NbtTagType, actual: NbtTagType) {
