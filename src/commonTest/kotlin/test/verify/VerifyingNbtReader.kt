@@ -2,13 +2,12 @@ package net.benwoodworth.knbt.test.verify
 
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtReader
-import net.benwoodworth.knbt.internal.NbtTagType
-import net.benwoodworth.knbt.internal.toNbtString
 import net.benwoodworth.knbt.internal.toNbtTagType
 import kotlin.contracts.contract
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class VerifyingNbtReader(
@@ -31,14 +30,14 @@ internal class VerifyingNbtReader(
 
     override fun beginCompound(): Unit = transitionState(::beginCompound) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtCompound)
+        assertReadTagTypeEquals(state.tag, NbtCompound::class)
 
         Unit to State.InCompound(state.tag, state.tag.content.entries.toList(), 0, false, state.nextState)
     }
 
     override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo = transitionState(::beginCompoundEntry) {
         assertStateIs<State.InCompound>(state)
-        check(!state.ended)
+        assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.entries.getOrNull(state.index)
         if (entry != null) {
@@ -52,14 +51,14 @@ internal class VerifyingNbtReader(
 
     override fun endCompound(): Unit = transitionState(::endCompound) {
         assertStateIs<State.InCompound>(state)
-        check(state.ended)
+        assertEndingWithNoMoreEntries(state.ended)
 
         Unit to state.nextState
     }
 
     override fun beginList(): NbtReader.ListInfo = transitionState(::beginList) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtList<*>)
+        assertReadTagTypeEquals(state.tag, NbtList::class)
 
         if (knownSizes) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
@@ -75,9 +74,9 @@ internal class VerifyingNbtReader(
 
     override fun beginListEntry(): Boolean = transitionState(::beginListEntry) {
         assertStateIs<State.InListOrArray>(state)
-        check(state.tag is NbtList<*>)
-        check(!knownSizes) { "beginListEntry() should not be called unless the list's size is unknown" }
-        check(!state.ended)
+        assertReadTagTypeEquals(state.tag, NbtList::class)
+        assertBeginningEntryWithUnknownSizes(knownSizes)
+        assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)
         if (entry != null) {
@@ -91,15 +90,15 @@ internal class VerifyingNbtReader(
 
     override fun endList(): Unit = transitionState(::endList) {
         assertStateIs<State.InListOrArray>(state)
-        check(state.tag is NbtList<*>)
-        check(state.ended)
+        assertReadTagTypeEquals(state.tag, NbtList::class)
+        assertEndingWithNoMoreEntries(state.ended)
 
         Unit to state.nextState
     }
 
     override fun beginByteArray(): NbtReader.ArrayInfo = transitionState(::beginByteArray) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtByteArray)
+        assertReadTagTypeEquals(state.tag, NbtByteArray::class)
 
         if (knownSizes) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
@@ -115,9 +114,9 @@ internal class VerifyingNbtReader(
 
     override fun beginByteArrayEntry(): Boolean = transitionState(::beginByteArrayEntry) {
         assertStateIs<State.InListOrArray>(state)
-        check(state.tag is NbtByteArray)
-        check(!knownSizes) { "Should not be called unless the array's size is unknown" }
-        check(!state.ended)
+        assertReadTagTypeEquals(state.tag, NbtByteArray::class)
+        assertBeginningEntryWithUnknownSizes(knownSizes)
+        assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)
         if (entry != null) {
@@ -131,15 +130,15 @@ internal class VerifyingNbtReader(
 
     override fun endByteArray(): Unit = transitionState(::endByteArray) {
         assertStateIs<State.InListOrArray>(state)
-        check(state.tag is NbtByteArray)
-        check(state.ended)
+        assertReadTagTypeEquals(state.tag, NbtByteArray::class)
+        assertEndingWithNoMoreEntries(state.ended)
 
         Unit to state.nextState
     }
 
     override fun beginIntArray(): NbtReader.ArrayInfo = transitionState(::beginIntArray) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtIntArray)
+        assertReadTagTypeEquals(state.tag, NbtIntArray::class)
 
         if (knownSizes) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
@@ -155,9 +154,9 @@ internal class VerifyingNbtReader(
 
     override fun beginIntArrayEntry(): Boolean = transitionState(::beginIntArrayEntry) {
         assertStateIs<State.InListOrArray>(state)
-        check(state.tag is NbtIntArray)
-        check(!knownSizes) { "Should not be called unless the array's size is unknown" }
-        check(!state.ended)
+        assertReadTagTypeEquals(state.tag, NbtIntArray::class)
+        assertBeginningEntryWithUnknownSizes(knownSizes)
+        assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)
         if (entry != null) {
@@ -169,15 +168,15 @@ internal class VerifyingNbtReader(
 
     override fun endIntArray(): Unit = transitionState(::endIntArray) {
         assertStateIs<State.InListOrArray>(state)
-        check(state.tag is NbtIntArray)
-        check(state.ended)
+        assertReadTagTypeEquals(state.tag, NbtIntArray::class)
+        assertEndingWithNoMoreEntries(state.ended)
 
         Unit to state.nextState
     }
 
     override fun beginLongArray(): NbtReader.ArrayInfo = transitionState(::beginLongArray) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtLongArray)
+        assertReadTagTypeEquals(state.tag, NbtLongArray::class)
 
         if (knownSizes) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
@@ -193,9 +192,9 @@ internal class VerifyingNbtReader(
 
     override fun beginLongArrayEntry(): Boolean = transitionState(::beginLongArrayEntry) {
         assertStateIs<State.InListOrArray>(state)
-        check(state.tag is NbtLongArray)
-        check(!knownSizes) { "Should not be called unless the array's size is unknown" }
-        check(!state.ended)
+        assertReadTagTypeEquals(state.tag, NbtLongArray::class)
+        assertBeginningEntryWithUnknownSizes(knownSizes)
+        assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)
         if (entry != null) {
@@ -207,57 +206,57 @@ internal class VerifyingNbtReader(
 
     override fun endLongArray(): Unit = transitionState(::endLongArray) {
         assertStateIs<State.InListOrArray>(state)
-        check(state.tag is NbtLongArray)
-        check(state.ended)
+        assertReadTagTypeEquals(state.tag, NbtLongArray::class)
+        assertEndingWithNoMoreEntries(state.ended)
 
         Unit to state.nextState
     }
 
     override fun readByte(): Byte = transitionState(::readByte) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtByte)
+        assertReadTagTypeEquals(state.tag, NbtByte::class)
 
         state.tag.value to state.nextState
     }
 
     override fun readShort(): Short = transitionState(::readShort) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtShort)
+        assertReadTagTypeEquals(state.tag, NbtShort::class)
 
         state.tag.value to state.nextState
     }
 
     override fun readInt(): Int = transitionState(::readInt) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtInt)
+        assertReadTagTypeEquals(state.tag, NbtInt::class)
 
         state.tag.value to state.nextState
     }
 
     override fun readLong(): Long = transitionState(::readLong) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtLong)
+        assertReadTagTypeEquals(state.tag, NbtLong::class)
 
         state.tag.value to state.nextState
     }
 
     override fun readFloat(): Float = transitionState(::readFloat) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtFloat)
+        assertReadTagTypeEquals(state.tag, NbtFloat::class)
 
         state.tag.value to state.nextState
     }
 
     override fun readDouble(): Double = transitionState(::readDouble) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtDouble)
+        assertReadTagTypeEquals(state.tag, NbtDouble::class)
 
         state.tag.value to state.nextState
     }
 
     override fun readString(): String = transitionState(::readString) {
         assertStateIs<State.AwaitingValue>(state)
-        check(state.tag is NbtString)
+        assertReadTagTypeEquals(state.tag, NbtString::class)
 
         state.tag.value to state.nextState
     }
@@ -318,10 +317,6 @@ internal class VerifyingNbtReader(
     ) {
         private val messagePrefix = "${function.name}(): "
 
-        private fun Map.Entry<String, NbtTag>.toTagInfoString() =
-            this.let { (name, tag) -> "${tag.type}(${name.toNbtString(forceQuote = true)})" }
-
-
         inline fun <reified TExpected : State> assertStateIs(state: State) {
             contract { returns() implies (state is TExpected) }
 
@@ -332,52 +327,22 @@ internal class VerifyingNbtReader(
             assertTrue(TExpected::class == state::class, message)
         }
 
-        fun assertWrittenRootTypeEquals(expected: NbtTagType, actual: NbtTagType) {
-            assertEquals(expected, actual, messagePrefix + "Incorrect root type was written")
+        fun assertBeginningEntryWithUnknownSizes(knownSizes: Boolean) {
+            assertFalse(knownSizes, messagePrefix + "Should not explicitly begin entries unless the size is unknown.")
         }
 
-        inline fun <reified T : NbtTag> assertWrittenTagTypeEquals(expected: NbtTag, actual: KClass<T>) {
+        fun assertBeginningEntryWithAnotherEntryToRead(ended: Boolean) {
+            assertFalse(ended, messagePrefix + "Should not begin entry when there are no more to read.")
+        }
+
+        fun assertEndingWithNoMoreEntries(ended: Boolean) {
+            assertTrue(ended, messagePrefix + "Should not be ended when there are more entries to read.")
+        }
+
+        inline fun <reified T : NbtTag> assertReadTagTypeEquals(expected: NbtTag, actual: KClass<T>) {
             contract { returns() implies (expected is T) }
 
-            assertEquals(expected.type, actual.toNbtTagType(), messagePrefix + "Incorrect type was written")
-        }
-
-        fun assertCompoundShouldBeginEntry(nextEntry: Map.Entry<String, NbtTag>?) {
-            contract { returns() implies (nextEntry != null) }
-
-            val message = messagePrefix +
-                    "Should have ended the compound, but began a new compound entry instead: " +
-                    "<${nextEntry?.toTagInfoString()}>."
-
-            assertTrue(nextEntry != null, message)
-        }
-
-        fun assertWrittenCompoundEntryNameEquals(expected: String, actual: String) {
-            assertEquals(expected, actual, messagePrefix + "Incorrect compound entry name was written")
-        }
-
-        fun assertWrittenCompoundEntryTypeEquals(expected: NbtTagType, actual: NbtTagType) {
-            assertEquals(expected, actual, messagePrefix + "Incorrect compound entry type was written")
-        }
-
-        fun assertCompoundShouldBeEnded(nextEntry: Map.Entry<String, NbtTag>?) {
-            val message = messagePrefix +
-                    "Should have began a new compound entry, but the compound was ended instead. " +
-                    "Expected: <${nextEntry?.toTagInfoString()}>."
-
-            assertTrue(nextEntry == null, message)
-        }
-
-        fun assertWrittenElementTypeEquals(expected: NbtTagType, actual: NbtTagType) {
-            assertEquals(expected, actual, messagePrefix + "Incorrect element type was written")
-        }
-
-        fun assertWrittenSizeEquals(expected: Int, actual: Int) {
-            assertEquals(expected, actual, messagePrefix + "Incorrect size was written")
-        }
-
-        fun assertWrittenTagEquals(expected: NbtTag, actual: NbtTag) {
-            assertEquals(expected, actual, messagePrefix + "Incorrect tag was written")
+            assertEquals(expected.type, actual.toNbtTagType(), messagePrefix + "Incorrect type was read")
         }
     }
 }
