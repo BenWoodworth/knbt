@@ -12,7 +12,9 @@ import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
-import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.AbstractNbtEncoder
+import net.benwoodworth.knbt.NbtFormat
+import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.internal.NbtTagType.*
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -284,74 +286,8 @@ internal class NbtWriterEncoder(
     }
 
     override fun encodeNbtTag(tag: NbtTag) {
-        fun writeTag(value: NbtTag): Unit = when (value.type) {
-            TAG_End -> error("Unexpected $TAG_End")
-            TAG_Byte -> writer.writeByte((value as NbtByte).value)
-            TAG_Double -> writer.writeDouble((value as NbtDouble).value)
-            TAG_Float -> writer.writeFloat((value as NbtFloat).value)
-            TAG_Int -> writer.writeInt((value as NbtInt).value)
-            TAG_Long -> writer.writeLong((value as NbtLong).value)
-            TAG_Short -> writer.writeShort((value as NbtShort).value)
-            TAG_String -> writer.writeString((value as NbtString).value)
-            TAG_Compound -> {
-                writer.beginCompound()
-                (value as NbtCompound).content.forEach { (key, value) ->
-                    writer.beginCompoundEntry(value.type, key)
-                    writeTag(value)
-                }
-                writer.endCompound()
-            }
-
-            TAG_List -> {
-                val list = (value as NbtList<*>)
-                val listType = list.elementType
-                writer.beginList(listType, list.size)
-                list.content.forEach { entry ->
-                    writer.beginListEntry()
-
-                    if (entry.type != listType) {
-                        val message = "Cannot encode ${entry.type} within a $TAG_List of $listType"
-                        throw NbtEncodingException(context, message)
-                    }
-
-                    writeTag(entry)
-                }
-                writer.endList()
-            }
-
-            TAG_Byte_Array -> {
-                val array = (value as NbtByteArray)
-                writer.beginByteArray(array.size)
-                array.content.forEach { entry ->
-                    writer.beginByteArrayEntry()
-                    writer.writeByte(entry)
-                }
-                writer.endByteArray()
-            }
-
-            TAG_Int_Array -> {
-                val array = (value as NbtIntArray)
-                writer.beginIntArray(array.size)
-                array.content.forEach { entry ->
-                    writer.beginIntArrayEntry()
-                    writer.writeInt(entry)
-                }
-                writer.endIntArray()
-            }
-
-            TAG_Long_Array -> {
-                val array = (value as NbtLongArray)
-                writer.beginLongArray(array.size)
-                array.content.forEach { entry ->
-                    writer.beginLongArrayEntry()
-                    writer.writeLong(entry)
-                }
-                writer.endLongArray()
-            }
-        }
-
         beginEncodingValue(tag.type)
-        writeTag(tag)
+        writer.writeNbtTag(context, tag)
     }
 
     @OptIn(InternalSerializationApi::class)

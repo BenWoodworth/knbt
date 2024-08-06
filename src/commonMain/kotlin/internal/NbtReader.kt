@@ -1,5 +1,6 @@
 package net.benwoodworth.knbt.internal
 
+import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtTagType.*
 import kotlin.jvm.JvmInline
 
@@ -188,6 +189,57 @@ internal fun NbtReader.readLongArray(): LongArray = readArray(
     endArray = { endLongArray() },
     toEntryArray = { toLongArray() },
 )
+
+@OptIn(UnsafeNbtApi::class)
+private fun NbtReader.readNbtList(): NbtList<NbtTag> {
+    val info = beginList()
+
+    val content = if (info.size == NbtReader.UNKNOWN_SIZE) {
+        buildList {
+            while (beginListEntry()) {
+                add(readNbtTag(info.type) ?: error("NbtList entry is null"))
+            }
+        }
+    } else {
+        List(info.size) {
+            readNbtTag(info.type) ?: error("NbtList entry is null")
+        }
+    }
+
+    endList()
+    return NbtList(content)
+}
+
+private fun NbtReader.readNbtCompound(): NbtCompound {
+    beginCompound()
+
+    val content = buildMap {
+        while (true) {
+            val entryInfo = beginCompoundEntry()
+            if (entryInfo.type == TAG_End) break
+            put(entryInfo.name, readNbtTag(entryInfo.type) ?: error("NbtCompound entry is null"))
+        }
+    }
+
+    endCompound()
+    return NbtCompound(content)
+}
+
+internal fun NbtReader.readNbtTag(type: NbtTagType): NbtTag? = when (type) {
+    TAG_End -> null
+    TAG_Byte -> NbtByte(readByte())
+    TAG_Short -> NbtShort(readShort())
+    TAG_Int -> NbtInt(readInt())
+    TAG_Long -> NbtLong(readLong())
+    TAG_Float -> NbtFloat(readFloat())
+    TAG_Double -> NbtDouble(readDouble())
+    TAG_Byte_Array -> NbtByteArray(readByteArray().asList())
+    TAG_String -> NbtString(readString())
+    TAG_List -> readNbtList()
+    TAG_Compound -> readNbtCompound()
+    TAG_Int_Array -> NbtIntArray(readIntArray().asList())
+    TAG_Long_Array -> NbtLongArray(readLongArray().asList())
+}
 
 private inline fun NbtReader.discardTagEntries(
     size: Int,

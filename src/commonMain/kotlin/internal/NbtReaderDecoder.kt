@@ -14,7 +14,10 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
-import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.AbstractNbtDecoder
+import net.benwoodworth.knbt.NbtFormat
+import net.benwoodworth.knbt.NbtString
+import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.internal.NbtTagType.*
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -180,20 +183,9 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     }
     //endregion
 
-    final override fun decodeNbtTag(): NbtTag = when (entryType) {
-        TAG_End -> throw NbtDecodingException(context, "Expected a value, but was Nothing")
-        TAG_Byte -> NbtByte(decodeByte())
-        TAG_Short -> NbtShort(decodeShort())
-        TAG_Int -> NbtInt(decodeInt())
-        TAG_Long -> NbtLong(decodeLong())
-        TAG_Float -> NbtFloat(decodeFloat())
-        TAG_Double -> NbtDouble(decodeDouble())
-        TAG_Byte_Array -> NbtByteArray(decodeByteArray().asList())
-        TAG_String -> NbtString(decodeString())
-        TAG_List -> decodeSerializableValue(NbtList.serializer(NbtTag.serializer()))
-        TAG_Compound -> decodeSerializableValue(NbtCompound.serializer())
-        TAG_Int_Array -> NbtIntArray(decodeIntArray().asList())
-        TAG_Long_Array -> NbtLongArray(decodeLongArray().asList())
+    final override fun decodeNbtTag(): NbtTag {
+        return reader.readNbtTag(entryType)
+            ?: throw NbtDecodingException(context, "Expected a value, but was Nothing")
     }
 
     //region Unsupported types
