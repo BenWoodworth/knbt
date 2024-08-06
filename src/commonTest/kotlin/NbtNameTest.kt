@@ -84,9 +84,9 @@ class NbtNameTest {
         recordFailures = 1000 // TODO Remove
     ) {
         val nbt by parameterOfVerifyingNbt()
-            .let { parameterOf(it.arguments.first()) } // TODO Remove
-        val serializableType by parameterOfSerializableTypeEdgeCases()
 //            .let { parameterOf(it.arguments.first()) } // TODO Remove
+        val serializableType by parameterOfSerializableTypeEdgeCases()
+//            .let { parameterOf(it.arguments.first { it.toString() == "Boolean" }) } // TODO Remove
         val nbtName by parameterOf("name", "different_name")
             .let { parameterOf(it.arguments.first()) } // TODO Remove
 

@@ -247,36 +247,43 @@ internal class NbtWriterEncoder(
     override fun encodeByte(value: Byte) {
         beginEncodingValue(TAG_Byte)
         writer.writeByte(value)
+        endEncodingValue()
     }
 
     override fun encodeBoolean(value: Boolean) {
         beginEncodingValue(TAG_Byte)
         writer.writeByte(if (value) 1 else 0)
+        endEncodingValue()
     }
 
     override fun encodeShort(value: Short) {
         beginEncodingValue(TAG_Short)
         writer.writeShort(value)
+        endEncodingValue()
     }
 
     override fun encodeInt(value: Int) {
         beginEncodingValue(TAG_Int)
         writer.writeInt(value)
+        endEncodingValue()
     }
 
     override fun encodeLong(value: Long) {
         beginEncodingValue(TAG_Long)
         writer.writeLong(value)
+        endEncodingValue()
     }
 
     override fun encodeFloat(value: Float) {
         beginEncodingValue(TAG_Float)
         writer.writeFloat(value)
+        endEncodingValue()
     }
 
     override fun encodeDouble(value: Double) {
         beginEncodingValue(TAG_Double)
         writer.writeDouble(value)
+        endEncodingValue()
     }
 
     override fun encodeString(value: String) {
@@ -286,6 +293,7 @@ internal class NbtWriterEncoder(
         } else {
             beginEncodingValue(TAG_String)
             writer.writeString(value)
+            endEncodingValue()
         }
     }
 
