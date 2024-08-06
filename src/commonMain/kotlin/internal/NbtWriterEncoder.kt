@@ -295,10 +295,15 @@ internal class NbtWriterEncoder(
     override fun encodeNbtTag(tag: NbtTag) {
         beginEncodingValue(tag.type)
         writer.writeNbtTag(context, tag)
+        endEncodingValue()
     }
 
     @OptIn(InternalSerializationApi::class)
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
+        if (nbtNameToWrite == null) {
+            nbtNameToWrite = serializer.descriptor.nbtName
+        }
+
         return when {
             serializer is AbstractPolymorphicSerializer<*> ->
                 throw UnsupportedOperationException(
