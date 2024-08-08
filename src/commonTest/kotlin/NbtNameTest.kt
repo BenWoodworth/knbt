@@ -175,6 +175,33 @@ class NbtNameTest {
         )
     }
 
+    @Test
+    fun should_serialize_nested_under_name_when_surrogate_for_another_serializer_with_name() = parameterizeTest {
+        val nbt by parameterOfVerifyingNbt()
+        val surrogateType by parameterOfSerializableTypeEdgeCases()
+        val nbtName by parameterOf("name", "different_name")
+
+        val valueSerializer = object : KSerializer<Unit> {
+            override val descriptor = object : SerialDescriptor by surrogateType.baseDescriptor {
+                @ExperimentalSerializationApi
+                override val annotations = listOf(NbtName(nbtName))
+            }
+
+            override fun serialize(encoder: Encoder, value: Unit) =
+                surrogateType.encodeValue(encoder, descriptor)
+
+            override fun deserialize(decoder: Decoder) =
+                surrogateType.decodeValue(decoder, descriptor)
+        }
+
+        nbt.verifyEncoderOrDecoder(
+            valueSerializer,
+            Unit,
+            buildNbtCompound {
+                put(nbtName, testNbtTag)
+            }
+        )
+    }
 
     private data class SerializableValueWithNbtName<T>(
         val value: T,
