@@ -57,6 +57,7 @@ internal val SerialDescriptor.nbtName: String?
         .firstOrNull { it is NbtName }
         ?.let { it as NbtName }
         ?.name
+        ?: "".takeIf { nbtNameIsDynamic }
 
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
