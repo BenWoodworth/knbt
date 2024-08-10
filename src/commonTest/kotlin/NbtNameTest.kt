@@ -164,7 +164,7 @@ class NbtNameTest {
             listOf(Unit),
             buildNbtList {
                 addNbtCompound {
-                    put(nbtName, testNbtTag)
+                    put(nbtName, serializableType.valueTag)
                 }
             }
         )
