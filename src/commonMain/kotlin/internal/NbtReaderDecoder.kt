@@ -170,30 +170,30 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     private fun beginCompound(descriptor: SerialDescriptor): CompositeDecoder {
         beginDecodingValue(TAG_Compound)
         return if (descriptor.kind == StructureKind.MAP) {
-            MapNbtDecoder(nbt, context, reader, this)
+            MapNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
         } else {
-            ClassNbtDecoder(nbt, context, reader, this)
+            ClassNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
         }
     }
 
     private fun beginList(): CompositeDecoder {
         beginDecodingValue(TAG_List)
-        return ListNbtDecoder(nbt, context, reader, this)
+        return ListNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
     }
 
     private fun beginByteArray(): CompositeDecoder {
         beginDecodingValue(TAG_Byte_Array)
-        return ByteArrayNbtDecoder(nbt, context, reader, this)
+        return ByteArrayNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
     }
 
     private fun beginIntArray(): CompositeDecoder {
         beginDecodingValue(TAG_Int_Array)
-        return IntArrayNbtDecoder(nbt, context, reader, this)
+        return IntArrayNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
     }
 
     private fun beginLongArray(): CompositeDecoder {
         beginDecodingValue(TAG_Long_Array)
-        return LongArrayNbtDecoder(nbt, context, reader, this)
+        return LongArrayNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
     }
     //endregion
 
@@ -281,11 +281,11 @@ internal class NbtReaderDecoder(
 
 private abstract class CompoundNbtDecoder : BaseNbtDecoder() {
     protected abstract val compoundEntryInfo: NbtReader.CompoundEntryInfo
-    protected abstract val parentEndEncodingValue: () -> Unit
+    protected abstract val onEndStructure: () -> Unit
 
     override fun endStructure(descriptor: SerialDescriptor) {
         reader.endCompound()
-        parentEndEncodingValue()
+        onEndStructure()
     }
 }
 
@@ -294,6 +294,7 @@ private class ClassNbtDecoder(
     override val context: SerializationNbtContext,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
+    override val onEndStructure: () -> Unit,
 ) : CompoundNbtDecoder() {
     override lateinit var compoundEntryInfo: NbtReader.CompoundEntryInfo
 
@@ -363,6 +364,7 @@ private class MapNbtDecoder(
     override val context: SerializationNbtContext,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
+    override val onEndStructure: () -> Unit,
 ) : CompoundNbtDecoder() {
     private var index = 0
     private var decodeMapKey: Boolean = false
@@ -425,6 +427,7 @@ private class ListNbtDecoder(
     override val context: SerializationNbtContext,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
+    private val onEndStructure: () -> Unit,
 ) : ListLikeNbtDecoder() {
     private val listInfo = reader.beginList()
 
@@ -436,7 +439,10 @@ private class ListNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginListEntry()
 
-    override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endList()
+    override fun endStructure(descriptor: SerialDescriptor) {
+        reader.endList()
+        onEndStructure()
+    }
 }
 
 private class ByteArrayNbtDecoder(
@@ -444,6 +450,7 @@ private class ByteArrayNbtDecoder(
     override val context: SerializationNbtContext,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
+    private val onEndStructure: () -> Unit,
 ) : ListLikeNbtDecoder() {
     private val arrayInfo = reader.beginByteArray()
 
@@ -455,7 +462,10 @@ private class ByteArrayNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginByteArrayEntry()
 
-    override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endByteArray()
+    override fun endStructure(descriptor: SerialDescriptor) {
+        reader.endByteArray()
+        onEndStructure()
+    }
 }
 
 private class IntArrayNbtDecoder(
@@ -463,6 +473,7 @@ private class IntArrayNbtDecoder(
     override val context: SerializationNbtContext,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
+    private val onEndStructure: () -> Unit,
 ) : ListLikeNbtDecoder() {
     private val arrayInfo = reader.beginIntArray()
 
@@ -474,7 +485,10 @@ private class IntArrayNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginIntArrayEntry()
 
-    override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endIntArray()
+    override fun endStructure(descriptor: SerialDescriptor) {
+        reader.endIntArray()
+        onEndStructure()
+    }
 }
 
 private class LongArrayNbtDecoder(
@@ -482,6 +496,7 @@ private class LongArrayNbtDecoder(
     override val context: SerializationNbtContext,
     override val reader: NbtReader,
     override val parent: BaseNbtDecoder,
+    private val onEndStructure: () -> Unit,
 ) : ListLikeNbtDecoder() {
     private val arrayInfo = reader.beginLongArray()
 
@@ -493,5 +508,8 @@ private class LongArrayNbtDecoder(
 
     override fun beginEntry(): Boolean = reader.beginLongArrayEntry()
 
-    override fun endStructure(descriptor: SerialDescriptor): Unit = reader.endLongArray()
+    override fun endStructure(descriptor: SerialDescriptor) {
+        reader.endLongArray()
+        onEndStructure()
+    }
 }
