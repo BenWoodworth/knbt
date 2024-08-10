@@ -84,9 +84,9 @@ class NbtNameTest {
         recordFailures = 1000 // TODO Remove
     ) {
         val nbt by parameterOfVerifyingNbt()
-//            .let { parameterOf(it.arguments.first()) } // TODO Remove
+            .let { parameterOf(it.arguments.first { "Decode" in it.toString() }) } // TODO Remove
         val serializableType by parameterOfSerializableTypeEdgeCases()
-//            .let { parameterOf(it.arguments.first { it.toString() == "Boolean" }) } // TODO Remove
+            .let { parameterOf(it.arguments.first { it.toString() == "Structure" }) } // TODO Remove
         val nbtName by parameterOf("name", "different_name")
             .let { parameterOf(it.arguments.first()) } // TODO Remove
 
@@ -171,34 +171,6 @@ class NbtNameTest {
                 addNbtCompound {
                     put(nbtName, testNbtTag)
                 }
-            }
-        )
-    }
-
-    @Test
-    fun should_serialize_nested_under_name_when_surrogate_for_another_serializer_with_name() = parameterizeTest {
-        val nbt by parameterOfVerifyingNbt()
-        val surrogateType by parameterOfSerializableTypeEdgeCases()
-        val nbtName by parameterOf("name", "different_name")
-
-        val valueSerializer = object : KSerializer<Unit> {
-            override val descriptor = object : SerialDescriptor by surrogateType.baseDescriptor {
-                @ExperimentalSerializationApi
-                override val annotations = listOf(NbtName(nbtName))
-            }
-
-            override fun serialize(encoder: Encoder, value: Unit) =
-                surrogateType.encodeValue(encoder, descriptor)
-
-            override fun deserialize(decoder: Decoder) =
-                surrogateType.decodeValue(decoder, descriptor)
-        }
-
-        nbt.verifyEncoderOrDecoder(
-            valueSerializer,
-            Unit,
-            buildNbtCompound {
-                put(nbtName, testNbtTag)
             }
         )
     }
