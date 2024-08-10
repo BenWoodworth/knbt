@@ -53,7 +53,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         if (decodedNbtNameInfo != null) return // Already decoded
         val name = descriptor.nbtName ?: return
 
-//        beginDecodingValue(TAG_Compound) // TODO Needed? Problematic?
+        beginDecodingValue(TAG_Compound) // TODO Needed? Problematic?
         reader.beginCompound()
 
         val entry = reader.beginCompoundEntry()
