@@ -10,6 +10,7 @@ import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.AbstractNbtEncoder
+import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.internal.NbtTagType.*
