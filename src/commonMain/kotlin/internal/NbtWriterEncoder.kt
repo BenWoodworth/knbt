@@ -3,9 +3,6 @@ package net.benwoodworth.knbt.internal
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.builtins.ByteArraySerializer
-import kotlinx.serialization.builtins.IntArraySerializer
-import kotlinx.serialization.builtins.LongArraySerializer
 import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
@@ -270,21 +267,6 @@ internal class NbtWriterEncoder(
     override fun encodeChar(value: Char): Unit =
         encodeString(value.toString())
 
-    private fun encodeByteArray(value: ByteArray) {
-        beginEncodingValue(TAG_Byte_Array)
-        writer.writeByteArray(value)
-    }
-
-    private fun encodeIntArray(value: IntArray) {
-        beginEncodingValue(TAG_Int_Array)
-        writer.writeIntArray(value)
-    }
-
-    private fun encodeLongArray(value: LongArray) {
-        beginEncodingValue(TAG_Long_Array)
-        writer.writeLongArray(value)
-    }
-
     override fun encodeNbtTag(tag: NbtTag) {
         beginEncodingValue(tag.type)
         writer.writeNbtTag(context, tag)
@@ -292,14 +274,7 @@ internal class NbtWriterEncoder(
 
     @OptIn(InternalSerializationApi::class)
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
-        fun isArraySerializer(arraySerializer: SerializationStrategy<*>, arrayKind: NbtListKind): Boolean =
-            (elementListKind == null || elementListKind == arrayKind) && serializer == arraySerializer
-
         return when {
-            isArraySerializer(ByteArraySerializer(), NbtListKind.ByteArray) -> encodeByteArray(value as ByteArray)
-            isArraySerializer(IntArraySerializer(), NbtListKind.IntArray) -> encodeIntArray(value as IntArray)
-            isArraySerializer(LongArraySerializer(), NbtListKind.LongArray) -> encodeLongArray(value as LongArray)
-
             serializer is AbstractPolymorphicSerializer<*> ->
                 throw UnsupportedOperationException(
                     "Unable to serialize type with serial name '${serializer.descriptor.serialName}'. " +
