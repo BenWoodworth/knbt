@@ -67,6 +67,7 @@ data class BigTestNbt(
 
     val byteTest: Byte,
 
+    @NbtArray
     @SerialName("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))")
     val byteArrayTest: ByteArray,
 

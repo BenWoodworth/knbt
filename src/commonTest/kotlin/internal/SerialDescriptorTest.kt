@@ -45,9 +45,13 @@ class SerialDescriptorTest {
             }
 
         val testCase by parameterOfNbtListKindTestCases(
-            ByteArraySerializer().descriptor to NbtListKind.ByteArray,
-            IntArraySerializer().descriptor to NbtListKind.IntArray,
-            LongArraySerializer().descriptor to NbtListKind.LongArray,
+            ByteArraySerializer().descriptor to NbtListKind.List,
+            IntArraySerializer().descriptor to NbtListKind.List,
+            LongArraySerializer().descriptor to NbtListKind.List,
+
+            ByteArraySerializer().descriptor.withNbtArrayAnnotation() to NbtListKind.ByteArray,
+            IntArraySerializer().descriptor.withNbtArrayAnnotation() to NbtListKind.IntArray,
+            LongArraySerializer().descriptor.withNbtArrayAnnotation() to NbtListKind.LongArray,
 
             serializer<List<Byte>>().descriptor to NbtListKind.List,
             serializer<List<Int>>().descriptor to NbtListKind.List,

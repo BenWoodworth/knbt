@@ -76,14 +76,17 @@ data class BigTestExtendedNbt(
 
     val byteTest: Byte,
 
+    @NbtArray
     @SerialName("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))")
     val byteArrayTest: ByteArray,
 
     val doubleTest: Double,
 
+    @NbtArray
     @SerialName("intArrayTest (the first 1000 values of (n-500)^3*16, starting with n=0 (-2000000000, ...))")
     val intArrayTest: IntArray,
 
+    @NbtArray
     @SerialName("longArrayTest (the first 1000 values of (n-500)^5*16, starting with n=0 (-500000000000000, ...))")
     val longArrayTest: LongArray,
 ) {
