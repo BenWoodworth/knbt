@@ -3,6 +3,7 @@ package net.benwoodworth.knbt.test.parameters
 import com.benwoodworth.parameterize.ParameterizeScope
 import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.NothingSerializer
@@ -22,6 +23,23 @@ data class SerializableTypeEdgeCase(
 ) {
     override fun toString(): String = name
 }
+
+fun SerializableTypeEdgeCase.serializer(descriptor: SerialDescriptor = baseDescriptor): KSerializer<Unit> =
+    object : KSerializer<Unit> {
+        override val descriptor: SerialDescriptor
+            get() = descriptor
+
+        override fun serialize(encoder: Encoder, value: Unit): Unit =
+            encoder.encodeValue(descriptor)
+
+        override fun deserialize(decoder: Decoder): Unit =
+            decoder.decodeValue(descriptor)
+
+        override fun equals(other: Any?): Boolean =
+            other is KSerializer<*> && descriptor == other.descriptor
+
+        override fun hashCode(): Int = descriptor.hashCode()
+    }
 
 /**
  * A serializer for each possible value serialization call in [NbtEncoder] and [NbtDecoder].
