@@ -8,6 +8,11 @@ import kotlinx.serialization.encoding.decodeStructure
 
 data object NotDecoded
 
+//inline fun CompositeDecoder.decodeStructureElements(
+//    descriptor: SerialDescriptor,
+//    decodeElement
+//)
+
 @OptIn(ExperimentalSerializationApi::class)
 inline fun Decoder.decodeStructureAndElements(
     descriptor: SerialDescriptor,
