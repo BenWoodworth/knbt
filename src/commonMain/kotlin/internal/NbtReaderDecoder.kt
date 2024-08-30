@@ -30,8 +30,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     protected var elementListKind: NbtListKind? = null
 
     private fun beginDecodingValue(type: NbtTagType) {
-        context.onBeginValue()
-
         val actualType = entryType
         if (type != actualType) {
             throw NbtDecodingException(context, "Expected $type, but was $actualType")
@@ -225,8 +223,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
 
     @OptIn(InternalSerializationApi::class)
     override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
-        context.onBeginSerializableValue(deserializer.descriptor)
-
         fun isArraySerializer(arraySerializer: SerializationStrategy<*>, arrayKind: NbtListKind): Boolean =
             deserializer == arraySerializer && (elementListKind == null || elementListKind == arrayKind)
 

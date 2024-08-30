@@ -60,8 +60,6 @@ internal class NbtWriterEncoder(
     }
 
     private fun beginEncodingValue(type: NbtTagType) {
-        context.onBeginValue()
-
         when (val structureType = structureTypeStack.lastOrNull()) {
             null -> {
                 writer.beginRootTag(type)
@@ -345,8 +343,6 @@ internal class NbtWriterEncoder(
 
     @OptIn(InternalSerializationApi::class)
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
-        context.onBeginSerializableValue(serializer.descriptor)
-
         fun isArraySerializer(arraySerializer: SerializationStrategy<*>, arrayKind: NbtListKind): Boolean =
             (elementListKind == null || elementListKind == arrayKind) && serializer == arraySerializer
 

@@ -82,8 +82,6 @@ public annotation class NbtName(val name: String) {
      *
      * If the serializer does not encode a dynamic name, then its type's [NbtName] will be encoded by default.
      *
-     * Delegating to [Dynamic] requires to be [Dynamic], e.g. to [NbtNamed]
-     *
      * ***Experimental:*** Dynamic name serialization in a custom serializer is experimental, and its API or behavior
      * may be subject to change in a future release.
      */

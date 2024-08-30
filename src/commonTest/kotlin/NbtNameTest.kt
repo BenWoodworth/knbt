@@ -1,23 +1,14 @@
 package net.benwoodworth.knbt
 
-import com.benwoodworth.parameterize.ParameterizeScope
 import com.benwoodworth.parameterize.parameter
-import com.benwoodworth.parameterize.parameterOf
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.internal.NbtDecodingException
-import net.benwoodworth.knbt.internal.NbtException
 import net.benwoodworth.knbt.internal.nbtName
 import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.parameterizeTest
-import net.benwoodworth.knbt.test.parameters.SerializableTypeEdgeCase
 import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
-import net.benwoodworth.knbt.test.parameters.parameterOfSerializableTypeEdgeCases
 import net.benwoodworth.knbt.test.parameters.parameterOfVerifyingNbt
 import net.benwoodworth.knbt.test.qualifiedNameOrDefault
 import kotlin.test.Test
@@ -172,121 +163,5 @@ class NbtNameTest {
             MyClass.serializer(),
             buildNbtCompound("different_encoded_name") {}
         )
-    }
-
-    @OptIn(ExperimentalSerializationApi::class)
-    private fun dynamicDelegationRequirementMessage(serializer: SerialDescriptor, delegate: SerialDescriptor): String {
-        return "$dynamicAnnotation is required when delegating to a dynamically named serializer, but " +
-                "'${serializer.serialName}' delegates to '${delegate.serialName}' without it."
-    }
-
-    @OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)
-    private class DelegatingSerializer(
-        val serializableType: SerializableTypeEdgeCase,
-        val isDynamic: Boolean,
-        val delegate: DelegatingSerializer? = null
-    ) : KSerializer<Unit> {
-        override val descriptor: SerialDescriptor = object : SerialDescriptor by serializableType.baseDescriptor {
-            override val serialName = run {
-                val type = if (isDynamic) "Dynamic" else "Static"
-                val delegation = if (delegate == null) "" else " -> ${delegate.descriptor.serialName}"
-
-                type + delegation
-            }
-
-            override val annotations = listOfNotNull(NbtName.Dynamic().takeIf { isDynamic })
-        }
-
-        override fun toString(): String = "${this::class.simpleName}<${descriptor.serialName}>"
-
-        override fun serialize(encoder: Encoder, value: Unit) = when (delegate) {
-            null -> serializableType.encodeValue(encoder, descriptor)
-            else -> encoder.encodeSerializableValue(delegate, value)
-        }
-
-        override fun deserialize(decoder: Decoder) = when (delegate) {
-            null -> serializableType.decodeValue(decoder, descriptor)
-            else -> decoder.decodeSerializableValue(delegate)
-        }
-    }
-
-    private fun ParameterizeScope.parameterOfDelegationCombinations(
-        serializableType: SerializableTypeEdgeCase,
-        maxSerializerDelegations: Int
-    ) = parameter {
-        fun serializersThatDelegateTo(delegate: DelegatingSerializer?) = sequence {
-            yield(DelegatingSerializer(serializableType, isDynamic = true, delegate))
-            yield(DelegatingSerializer(serializableType, isDynamic = false, delegate))
-        }
-
-        tailrec fun nestSerializer(
-            delegations: Int,
-            serializer: Sequence<DelegatingSerializer>
-        ): Sequence<DelegatingSerializer> = when {
-            delegations == 0 -> serializer
-            else -> nestSerializer(delegations - 1, serializer.flatMap { serializersThatDelegateTo(it) })
-        }
-
-        sequence {
-            for (delegationCount in 0..maxSerializerDelegations) {
-                yieldAll(nestSerializer(delegationCount, serializersThatDelegateTo(null)))
-            }
-        }
-    }
-
-    /**
-     * Delegating to a [NbtName.Dynamic] serializer requires the delegating serializer to also be [NbtName.Dynamic], and
-     * if not, the delegation is considered invalid.
-     */
-    private val DelegatingSerializer.isDelegateInvalidWithDynamic: Boolean
-        get() = delegate != null && !isDynamic && delegate.isDynamic
-
-    private fun DelegatingSerializer.hasInvalidDelegationWithDynamic(): Boolean =
-        isDelegateInvalidWithDynamic || (delegate != null && delegate.hasInvalidDelegationWithDynamic())
-
-    @Test
-    fun serializer_without_invalid_delegation_should_not_fail() = parameterizeTest {
-        val nbt by parameterOfVerifyingNbt()
-        assume(nbt.capabilities.namedRoot)
-
-        val serializableType by parameterOfSerializableTypeEdgeCases()
-
-        val serializer by parameterOfDelegationCombinations(serializableType, 3)
-        assume(!serializer.hasInvalidDelegationWithDynamic())
-
-        if (nbt.toString() != "Decode NbtTag" ||
-            serializableType.name != "Collection (non-sequentially)" ||
-            serializer.toString() != "DelegatingSerializer<Static>"
-        ) {
-            val skip by parameterOf<Unit>() // TODO Remove
-        }
-
-        // Should not fail
-        nbt.verifyEncoderOrDecoder(serializer, Unit, serializableType.valueTag)
-    }
-
-    @Test
-    fun serializer_with_invalid_delegation_should_fail() = parameterizeTest {
-        val nbt by parameterOfVerifyingNbt()
-        assume(nbt.capabilities.namedRoot)
-
-        val serializableType by parameterOfSerializableTypeEdgeCases()
-
-        val serializer by parameterOfDelegationCombinations(serializableType, 3)
-        assume(serializer.hasInvalidDelegationWithDynamic())
-
-        val failure = assertFailsWith<NbtException> {
-            nbt.verifyEncoderOrDecoder(serializer, Unit, serializableType.valueTag)
-        }
-
-        val expectedMessage = run {
-            tailrec fun DelegatingSerializer.getFirstInvalidDelegation(): DelegatingSerializer =
-                if (isDelegateInvalidWithDynamic) this else delegate!!.getFirstInvalidDelegation()
-
-            serializer.getFirstInvalidDelegation()
-                .let { dynamicDelegationRequirementMessage(it.descriptor, it.delegate!!.descriptor) }
-        }
-
-        assertEquals(expectedMessage, failure.message, "failure.message")
     }
 }
