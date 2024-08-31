@@ -243,7 +243,10 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
                             "The builtin polymorphic serializers are not yet supported."
                 )
 
-            else -> super.decodeSerializableValue(deserializer)
+            else ->
+                context.decorateValueSerialization(deserializer.descriptor) {
+                    deserializer.deserialize(this)
+                }
         }
     }
 

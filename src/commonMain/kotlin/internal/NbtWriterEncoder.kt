@@ -323,7 +323,10 @@ internal class NbtWriterEncoder(
                             "The builtin polymorphic serializers are not yet supported."
                 )
 
-            else -> super.encodeSerializableValue(serializer, value)
+            else ->
+                context.decorateValueSerialization(serializer.descriptor) {
+                    serializer.serialize(this, value)
+                }
         }
     }
 

@@ -273,7 +273,7 @@ class NbtNameTest {
     @OptIn(ExperimentalSerializationApi::class)
     private fun dynamicNameSerializationRequirementMessage(serializer: SerialDescriptor): String {
         return "$dynamicAnnotation is required when dynamically serializing NBT names, " +
-                "but '${serializer.serialName}' does so without it."
+                "but '${serializer.serialName}' did so without it."
     }
 
     private class DynamicNameWithoutDynamicAnnotationSerializer(
@@ -301,9 +301,16 @@ class NbtNameTest {
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
         val serializer = DynamicNameWithoutDynamicAnnotationSerializer(serializableType)
+        val nbtName = requireNotNull(serializer.descriptor.nbtName) { "Serializer nbtName is null" }
 
         val failure = assertFailsWith<IllegalArgumentException> {
-            nbt.verifyEncoderOrDecoder(serializer, Unit, serializableType.valueTag)
+            nbt.verifyEncoderOrDecoder(
+                serializer,
+                Unit,
+                buildNbtCompound {
+                    put(nbtName, serializableType.valueTag)
+                }
+            )
         }
 
         assertEquals(dynamicNameSerializationRequirementMessage(serializer.descriptor), failure.message)
@@ -330,8 +337,16 @@ class NbtNameTest {
                 decoder.decodeSerializableValue(delegate)
         }
 
+        val nbtName = requireNotNull(serializer.descriptor.nbtName) { "Serializer nbtName is null" }
+
         val failure = assertFailsWith<IllegalArgumentException> {
-            nbt.verifyEncoderOrDecoder(serializer, Unit, serializableType.valueTag)
+            nbt.verifyEncoderOrDecoder(
+                serializer,
+                Unit,
+                buildNbtCompound {
+                    put(nbtName, serializableType.valueTag)
+                }
+            )
         }
 
         assertEquals(dynamicNameSerializationRequirementMessage(delegate.descriptor), failure.message)

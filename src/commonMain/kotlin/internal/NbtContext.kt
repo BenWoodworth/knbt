@@ -1,10 +1,13 @@
 package net.benwoodworth.knbt.internal
 
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.descriptors.SerialDescriptor
 import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtEncoder
-import net.benwoodworth.knbt.internal.SerializationNbtContext.DynamicNameChecker.NameType.*
 
 /**
  * The context of the NBT serialization process, providing access to information about its current state.
@@ -31,39 +34,36 @@ internal data object EmptyNbtContext : NbtContext {
  * Should only be used by [NbtEncoder] and [NbtDecoder].
  */
 internal class SerializationNbtContext : NbtContext {
-    private val dynamicNameDelegationChecker = DynamicNameChecker(this)
+    private var currentDescriptor: SerialDescriptor? = null
 
     override fun getPath(): NbtPath? = null // TODO
 
-    fun checkDynamicallySerializingNbtName(): Unit =
-        dynamicNameDelegationChecker.checkDynamicallySerializingNbtName()
+    /**
+     * Decorates calls to [SerializationStrategy.serialize] and [DeserializationStrategy.deserialize] so that a
+     * serializer's [descriptor] can be tracked throughout all its calls during the serialization process.
+     */
+    inline fun <T> decorateValueSerialization(descriptor: SerialDescriptor, block: () -> T): T {
+        val previousDescriptor = currentDescriptor
+        currentDescriptor = descriptor
 
-    @OptIn(ExperimentalSerializationApi::class)
-    private class DynamicNameChecker(private val context: NbtContext) {
-        private var currentSerializer: SerialDescriptor? = null
-        private var currentSerializerNameType: NameType = Uncomputed
+        try {
+            return block()
+        } finally {
+            currentDescriptor = previousDescriptor
+        }
+    }
 
-        private enum class NameType { Static, Dynamic, Uncomputed }
+    fun checkDynamicallySerializingNbtName() {
+        if (currentDescriptor?.nbtNameIsDynamic != true) {
+            @OptIn(ExperimentalSerializationApi::class)
+            val quotedSerialName = currentDescriptor?.serialName
+                ?.let { "'$it'" }
+                ?: "the serialization process"
 
-        fun checkDynamicallySerializingNbtName() {
-            TODO("Tracking needs to be re-implemented. Was implemented in 6020d53b, but removed in 8b137783")
+            val message = "@NbtName.Dynamic is required when dynamically serializing NBT names, " +
+                    "but $quotedSerialName did so without it."
 
-            // TODO check. Can be reached when encoding primitives directly, after encoding value, potentially other ways?
-            val currentSerializer = currentSerializer!!
-
-            val isDynamic = when (currentSerializerNameType) {
-                Static -> false
-                Dynamic -> true
-                Uncomputed -> currentSerializer.nbtNameIsDynamic
-                    .also { isDynamic -> currentSerializerNameType = if (isDynamic) Dynamic else Static }
-            }
-
-            if (!isDynamic) {
-                val message = "@NbtName.Dynamic is required when dynamically serializing NBT names, " +
-                        "but '${currentSerializer.serialName}' does so without it."
-
-                throw NbtException(context, message)
-            }
+            throw NbtException(this, message)
         }
     }
 }
