@@ -81,6 +81,7 @@ public sealed interface NbtEncoder : Encoder, CompositeEncoder, NbtEncoderDeprec
      */
     public fun encodeNbtTag(tag: NbtTag)
 
+    // TODO Description
     /**
      * Encodes the name of the
      *

@@ -20,6 +20,7 @@ import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.*
 import net.benwoodworth.knbt.test.qualifiedNameOrDefault
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -354,8 +355,9 @@ class NbtNameTest {
     }
 
     @Test
+    @Ignore
     fun serializing_dynamic_name_should_fail_if_the_value_already_started_to_be_serialized() = parameterizeTest {
-
+        TODO("Implement after changing named NBT representation away from compound nesting")
     }
 
     @Test
@@ -387,22 +389,114 @@ class NbtNameTest {
 
     @Test
     fun dynamic_name_should_be_the_first_name_encoded_if_another_is_encoded_later() = parameterizeTest {
+        val nbt by parameterOfEncoderVerifyingNbt(includeNamedRootNbt = true)
+        val serializableType by parameterOfSerializableTypeEdgeCases()
 
+        val serializer = object : SerializationStrategy<Unit> {
+            @OptIn(ExperimentalSerializationApi::class)
+            override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
+                override val annotations: List<Annotation> =
+                    serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
+            }
+
+            override fun serialize(encoder: Encoder, value: Unit) {
+                encoder.asNbtEncoder().encodeNbtName("first_dynamic_name")
+                encoder.asNbtEncoder().encodeNbtName("second_dynamic_name")
+                serializableType.encodeValue(encoder, descriptor)
+            }
+        }
+
+        nbt.verifyEncoder(
+            serializer,
+            Unit,
+            buildNbtCompound {
+                put("first_dynamic_name", serializableType.valueTag)
+            }
+        )
     }
 
     @Test
     fun dynamic_name_should_be_the_first_name_encoded_if_another_is_encoded_later_from_a_delegate() = parameterizeTest {
+        val nbt by parameterOfEncoderVerifyingNbt(includeNamedRootNbt = true)
+        val serializableType by parameterOfSerializableTypeEdgeCases()
 
+        val delegate = object : SerializationStrategy<Unit> {
+            @OptIn(ExperimentalSerializationApi::class)
+            override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
+                override val annotations: List<Annotation> =
+                    serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
+            }
+
+            override fun serialize(encoder: Encoder, value: Unit) {
+                encoder.asNbtEncoder().encodeNbtName("second_dynamic_name")
+                serializableType.encodeValue(encoder, descriptor)
+            }
+        }
+
+        val serializer = object : SerializationStrategy<Unit> {
+            @OptIn(ExperimentalSerializationApi::class)
+            override val descriptor = object : SerialDescriptor by delegate.descriptor {
+                override val serialName: String = "DelegatesTo<${delegate.descriptor.serialName}>"
+            }
+
+            override fun serialize(encoder: Encoder, value: Unit) {
+                encoder.asNbtEncoder().encodeNbtName("first_dynamic_name")
+                encoder.encodeSerializableValue(delegate, value)
+            }
+        }
+
+        nbt.verifyEncoder(
+            serializer,
+            Unit,
+            buildNbtCompound {
+                put("first_dynamic_name", serializableType.valueTag)
+            }
+        )
     }
 
     @Test
     fun dynamic_name_encoded_from_delegate_should_be_encoded_if_it_is_the_first() = parameterizeTest {
+        val nbt by parameterOfEncoderVerifyingNbt(includeNamedRootNbt = true)
+        val serializableType by parameterOfSerializableTypeEdgeCases()
 
+        val delegate = object : SerializationStrategy<Unit> {
+            @OptIn(ExperimentalSerializationApi::class)
+            override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
+                override val annotations: List<Annotation> =
+                    serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
+            }
+
+            override fun serialize(encoder: Encoder, value: Unit) {
+                encoder.asNbtEncoder().encodeNbtName("first_dynamic_name")
+                serializableType.encodeValue(encoder, descriptor)
+            }
+        }
+
+        val serializer = object : SerializationStrategy<Unit> {
+            @OptIn(ExperimentalSerializationApi::class)
+            override val descriptor = object : SerialDescriptor by delegate.descriptor {
+                override val serialName: String = "DelegatesTo<${delegate.descriptor.serialName}>"
+            }
+
+            override fun serialize(encoder: Encoder, value: Unit) {
+                encoder.encodeSerializableValue(delegate, value)
+            }
+        }
+
+        nbt.verifyEncoder(
+            serializer,
+            Unit,
+            buildNbtCompound {
+                put("first_dynamic_name", serializableType.valueTag)
+            }
+        )
     }
 
     @Test
     fun dynamic_name_decoded_from_named_root_should_be_correct() = parameterizeTest {
         val nbt by parameterOfDecoderVerifyingNbt(includeNamedRootNbt = true)
+        assume(nbt.capabilities.namedRoot)
+
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
         val serializer = object : DeserializationStrategy<Unit> {
@@ -429,26 +523,64 @@ class NbtNameTest {
 
     @Test
     fun dynamic_name_decoded_from_named_root_should_be_correct_when_decoded_from_delegate() = parameterizeTest {
+        val nbt by parameterOfDecoderVerifyingNbt(includeNamedRootNbt = true)
+        assume(nbt.capabilities.namedRoot)
 
+        val serializableType by parameterOfSerializableTypeEdgeCases()
+
+        val delegate = object : DeserializationStrategy<Unit> {
+            @OptIn(ExperimentalSerializationApi::class)
+            override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
+                override val annotations: List<Annotation> =
+                    serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
+            }
+
+            override fun deserialize(decoder: Decoder) {
+                val decodedName = decoder.asNbtDecoder().decodeNbtName()
+                assertEquals("dynamic_name", decodedName, "decoded name")
+                serializableType.decodeValue(decoder, descriptor)
+            }
+        }
+
+        val serializer = object : DeserializationStrategy<Unit> {
+            override val descriptor = object : SerialDescriptor by delegate.descriptor {
+                @ExperimentalSerializationApi
+                override val serialName: String = "DelegatesTo<${delegate.descriptor.serialName}>"
+            }
+
+            override fun deserialize(decoder: Decoder): Unit =
+                delegate.deserialize(decoder)
+        }
+
+        nbt.verifyDecoder(
+            serializer,
+            buildNbtCompound {
+                put("dynamic_name", serializableType.valueTag)
+            }
+        )
     }
 
     @Test
+    @Ignore
     fun dynamic_name_decoded_from_unnamed_root_should_be_null() = parameterizeTest {
-
+        TODO("Implement after changing named NBT representation away from compound nesting")
     }
 
     @Test
+    @Ignore
     fun dynamic_name_decoded_from_compound_should_be_correct() = parameterizeTest {
-
+        TODO("Implement after changing named NBT representation away from compound nesting")
     }
 
     @Test
+    @Ignore
     fun dynamic_name_decoded_from_compound_should_be_correct_when_decoded_from_delegate() = parameterizeTest {
-
+        TODO("Implement after changing named NBT representation away from compound nesting")
     }
 
     @Test
+    @Ignore
     fun dynamic_name_decoded_from_collection_should_be_null() = parameterizeTest {
-
+        TODO("Implement after changing named NBT representation away from compound nesting")
     }
 }

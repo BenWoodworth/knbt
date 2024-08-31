@@ -84,6 +84,7 @@ public sealed interface NbtDecoder : Decoder, CompositeDecoder, NbtDecoderDeprec
      */
     public fun decodeNbtTag(): NbtTag
 
+    // TODO Description
     /**
      * Returns the name of the current value, or null if it's unnamed (root of an unnamed [NbtFormat], entry in an NBT list/array).
      *
