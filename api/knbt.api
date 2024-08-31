@@ -252,6 +252,7 @@ public abstract class net/benwoodworth/knbt/NbtContentPolymorphicSerializer : ko
 }
 
 public abstract interface class net/benwoodworth/knbt/NbtDecoder : kotlinx/serialization/encoding/CompositeDecoder, kotlinx/serialization/encoding/Decoder, net/benwoodworth/knbt/NbtDecoderDeprecations {
+	public abstract fun decodeNbtName ()Ljava/lang/String;
 	public abstract fun decodeNbtTag ()Lnet/benwoodworth/knbt/NbtTag;
 	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
@@ -338,6 +339,7 @@ public final class net/benwoodworth/knbt/NbtDouble$Companion {
 }
 
 public abstract interface class net/benwoodworth/knbt/NbtEncoder : kotlinx/serialization/encoding/CompositeEncoder, kotlinx/serialization/encoding/Encoder, net/benwoodworth/knbt/NbtEncoderDeprecations {
+	public abstract fun encodeNbtName (Ljava/lang/String;)V
 	public abstract fun encodeNbtTag (Lnet/benwoodworth/knbt/NbtTag;)V
 	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
