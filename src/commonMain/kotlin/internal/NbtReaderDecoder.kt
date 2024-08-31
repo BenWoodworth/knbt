@@ -195,7 +195,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     @ExperimentalNbtApi
     override fun decodeNbtName(): String? {
         context.checkDynamicallySerializingNbtName()
-        return null // TODO Implement
+        return decodedNbtNameInfo?.name
     }
 
     final override fun decodeNbtTag(): NbtTag {

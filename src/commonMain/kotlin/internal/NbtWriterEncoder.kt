@@ -301,7 +301,11 @@ internal class NbtWriterEncoder(
     @ExperimentalNbtApi
     override fun encodeNbtName(name: String) {
         context.checkDynamicallySerializingNbtName()
-        // TODO Encode name
+
+        if (!nbtNameToWriteWasDynamicallyEncoded) {
+            nbtNameToWrite = name
+            nbtNameToWriteWasDynamicallyEncoded = true
+        }
     }
 
     override fun encodeNbtTag(tag: NbtTag) {

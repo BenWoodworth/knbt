@@ -4,6 +4,7 @@ package net.benwoodworth.knbt
 
 import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterOf
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SealedSerializationApi
@@ -359,7 +360,29 @@ class NbtNameTest {
 
     @Test
     fun dynamic_name_should_be_encoded() = parameterizeTest {
+        val nbt by parameterOfEncoderVerifyingNbt(includeNamedRootNbt = true)
+        val serializableType by parameterOfSerializableTypeEdgeCases()
 
+        val serializer = object : SerializationStrategy<Unit> {
+            @OptIn(ExperimentalSerializationApi::class)
+            override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
+                override val annotations: List<Annotation> =
+                    serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
+            }
+
+            override fun serialize(encoder: Encoder, value: Unit) {
+                encoder.asNbtEncoder().encodeNbtName("dynamic_name")
+                serializableType.encodeValue(encoder, descriptor)
+            }
+        }
+
+        nbt.verifyEncoder(
+            serializer,
+            Unit,
+            buildNbtCompound {
+                put("dynamic_name", serializableType.valueTag)
+            }
+        )
     }
 
     @Test
@@ -379,7 +402,29 @@ class NbtNameTest {
 
     @Test
     fun dynamic_name_decoded_from_named_root_should_be_correct() = parameterizeTest {
+        val nbt by parameterOfDecoderVerifyingNbt(includeNamedRootNbt = true)
+        val serializableType by parameterOfSerializableTypeEdgeCases()
 
+        val serializer = object : DeserializationStrategy<Unit> {
+            @OptIn(ExperimentalSerializationApi::class)
+            override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
+                override val annotations: List<Annotation> =
+                    serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
+            }
+
+            override fun deserialize(decoder: Decoder) {
+                val decodedName = decoder.asNbtDecoder().decodeNbtName()
+                assertEquals("dynamic_name", decodedName, "decoded name")
+                serializableType.decodeValue(decoder, descriptor)
+            }
+        }
+
+        nbt.verifyDecoder(
+            serializer,
+            buildNbtCompound {
+                put("dynamic_name", serializableType.valueTag)
+            }
+        )
     }
 
     @Test
