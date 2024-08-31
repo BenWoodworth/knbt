@@ -1,5 +1,12 @@
 package net.benwoodworth.knbt
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SealedSerializationApi
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+
 /** TODO wording
  * The serial representation of a [value], except its [NbtName] is replaced with [name].
  *
@@ -11,6 +18,7 @@ package net.benwoodworth.knbt
  * when encoding (name replaces) // TODO When serializer is implemented
  * when decoding (name captures) // TODO When serializer is implemented
  */
+@Serializable(NbtNamedSerializer::class)
 public class NbtNamed<out T>(
     public val name: String,
     public val value: T
@@ -28,4 +36,53 @@ public class NbtNamed<out T>(
 
     override fun toString(): String =
         "NbtNamed(name=$name, value=$value)"
+}
+
+private class NbtNamedSerializer<T>(
+    private val valueSerializer: KSerializer<T>,
+) : KSerializer<NbtNamed<T>> {
+    override val descriptor = NbtNamedSerialDescriptor(valueSerializer.descriptor)
+
+    @OptIn(ExperimentalNbtApi::class)
+    override fun serialize(encoder: Encoder, value: NbtNamed<T>) {
+        encoder.asNbtEncoder().encodeNbtName(value.name)
+        encoder.encodeSerializableValue(valueSerializer, value.value)
+    }
+
+    @OptIn(ExperimentalNbtApi::class)
+    override fun deserialize(decoder: Decoder): NbtNamed<T> {
+        val name = decoder.asNbtDecoder().decodeNbtName()
+        val value = decoder.decodeSerializableValue(valueSerializer)
+
+        return NbtNamed(name, value)
+    }
+}
+
+@OptIn(SealedSerializationApi::class, ExperimentalNbtApi::class)
+private class NbtNamedSerialDescriptor(
+    private val valueSerialDescriptor: SerialDescriptor
+) : SerialDescriptor by valueSerialDescriptor {
+    override val serialName: String = "net.benwoodworth.knbt.NbtNamed<${valueSerialDescriptor.serialName}>"
+    private val hashCode = valueSerialDescriptor.hashCode() * 31 + serialName.hashCode()
+
+    override val annotations: List<Annotation> =
+        buildList(valueSerialDescriptor.annotations.size + 1) {
+            // First, since serialization will immediately check the list for it
+            add(NbtName.Dynamic())
+
+            // Copy over all except Dynamic, since it's already marked
+            valueSerialDescriptor.annotations
+                .forEach { if (it !is NbtName.Dynamic) add(it) }
+        }
+
+    override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other !is NbtNamedSerialDescriptor -> false
+        valueSerialDescriptor != other.valueSerialDescriptor -> false
+        else -> true
+    }
+
+    override fun hashCode(): Int = hashCode
+
+    override fun toString(): String = serialName
 }

@@ -799,12 +799,17 @@ public synthetic class net/benwoodworth/knbt/NbtName$Impl : net/benwoodworth/knb
 }
 
 public final class net/benwoodworth/knbt/NbtNamed {
+	public static final field Companion Lnet/benwoodworth/knbt/NbtNamed$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/Object;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getName ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/benwoodworth/knbt/NbtNamed$Companion {
+	public final fun serializer (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;
 }
 
 public final class net/benwoodworth/knbt/NbtShort : net/benwoodworth/knbt/NbtTag {
