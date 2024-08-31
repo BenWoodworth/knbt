@@ -4,12 +4,7 @@ package net.benwoodworth.knbt
 
 import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterOf
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SealedSerializationApi
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -254,8 +249,8 @@ class NbtNameTest {
         val staticName by parameterOf("name", "different_name")
 
         class DynamicDefaultingToStaticSerializer : SerializationStrategy<Unit> {
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
-                @ExperimentalSerializationApi
                 override val annotations = listOf(NbtName(staticName), NbtName.Dynamic())
             }
 
@@ -281,8 +276,8 @@ class NbtNameTest {
     private class DynamicNameWithoutDynamicAnnotationSerializer(
         private val serializableType: SerializableTypeEdgeCase
     ) : KSerializer<Unit> {
+        @OptIn(SealedSerializationApi::class)
         override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
-            @ExperimentalSerializationApi
             override val annotations = listOf(NbtName("name")) // Not dynamic
         }
 
@@ -326,7 +321,7 @@ class NbtNameTest {
         val delegate = DynamicNameWithoutDynamicAnnotationSerializer(serializableType)
 
         val serializer = object : KSerializer<Unit> {
-            @OptIn(ExperimentalSerializationApi::class)
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by delegate.descriptor {
                 override val serialName = "DelegatingTo<${delegate.descriptor.serialName}>"
                 override val annotations = delegate.descriptor.annotations + NbtName.Dynamic()
@@ -366,7 +361,7 @@ class NbtNameTest {
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
         val serializer = object : SerializationStrategy<Unit> {
-            @OptIn(ExperimentalSerializationApi::class)
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
                 override val annotations: List<Annotation> =
                     serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
@@ -393,7 +388,7 @@ class NbtNameTest {
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
         val serializer = object : SerializationStrategy<Unit> {
-            @OptIn(ExperimentalSerializationApi::class)
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
                 override val annotations: List<Annotation> =
                     serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
@@ -421,7 +416,7 @@ class NbtNameTest {
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
         val delegate = object : SerializationStrategy<Unit> {
-            @OptIn(ExperimentalSerializationApi::class)
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
                 override val annotations: List<Annotation> =
                     serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
@@ -434,7 +429,7 @@ class NbtNameTest {
         }
 
         val serializer = object : SerializationStrategy<Unit> {
-            @OptIn(ExperimentalSerializationApi::class)
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by delegate.descriptor {
                 override val serialName: String = "DelegatesTo<${delegate.descriptor.serialName}>"
             }
@@ -460,7 +455,7 @@ class NbtNameTest {
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
         val delegate = object : SerializationStrategy<Unit> {
-            @OptIn(ExperimentalSerializationApi::class)
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
                 override val annotations: List<Annotation> =
                     serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
@@ -473,7 +468,7 @@ class NbtNameTest {
         }
 
         val serializer = object : SerializationStrategy<Unit> {
-            @OptIn(ExperimentalSerializationApi::class)
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by delegate.descriptor {
                 override val serialName: String = "DelegatesTo<${delegate.descriptor.serialName}>"
             }
@@ -500,7 +495,7 @@ class NbtNameTest {
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
         val serializer = object : DeserializationStrategy<Unit> {
-            @OptIn(ExperimentalSerializationApi::class)
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
                 override val annotations: List<Annotation> =
                     serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
@@ -529,7 +524,7 @@ class NbtNameTest {
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
         val delegate = object : DeserializationStrategy<Unit> {
-            @OptIn(ExperimentalSerializationApi::class)
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
                 override val annotations: List<Annotation> =
                     serializableType.baseDescriptor.annotations + NbtName("static_name") + NbtName.Dynamic()
@@ -543,8 +538,8 @@ class NbtNameTest {
         }
 
         val serializer = object : DeserializationStrategy<Unit> {
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by delegate.descriptor {
-                @ExperimentalSerializationApi
                 override val serialName: String = "DelegatesTo<${delegate.descriptor.serialName}>"
             }
 
@@ -562,12 +557,6 @@ class NbtNameTest {
 
     @Test
     @Ignore
-    fun dynamic_name_decoded_from_unnamed_root_should_be_null() = parameterizeTest {
-        TODO("Implement after changing named NBT representation away from compound nesting")
-    }
-
-    @Test
-    @Ignore
     fun dynamic_name_decoded_from_compound_should_be_correct() = parameterizeTest {
         TODO("Implement after changing named NBT representation away from compound nesting")
     }
@@ -580,7 +569,7 @@ class NbtNameTest {
 
     @Test
     @Ignore
-    fun dynamic_name_decoded_from_collection_should_be_null() = parameterizeTest {
+    fun dynamic_name_serialized_for_unnamed_value_should_throw() = parameterizeTest {
         TODO("Implement after changing named NBT representation away from compound nesting")
     }
 }

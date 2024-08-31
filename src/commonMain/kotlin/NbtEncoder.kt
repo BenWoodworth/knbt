@@ -1,10 +1,12 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.AbstractEncoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
+import net.benwoodworth.knbt.internal.NbtException
 
 /**
  * Encoder used by [Nbt] during serialization.
@@ -99,6 +101,11 @@ public sealed interface NbtEncoder : Encoder, CompositeEncoder, NbtEncoderDeprec
      * ignored for unnamed values (formats with unnamed root, list/array entries
      * ignored when name is set by parent (i.e. [SerialDescriptor.getElementName] takes precedence)
      *
+     * @throws NbtException if the current value is unnamed, such as in a list/array or at the root of an unnamed NBT
+     * variant.
+     *
+     * @throws IllegalArgumentException if the serializer's [descriptor][KSerializer.descriptor] is not marked with
+     * [@NbtName.Dynamic][NbtName.Dynamic].
      */
     @ExperimentalNbtApi
     public fun encodeNbtName(name: String)

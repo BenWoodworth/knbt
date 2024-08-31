@@ -193,9 +193,11 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     //endregion
 
     @ExperimentalNbtApi
-    override fun decodeNbtName(): String? {
+    override fun decodeNbtName(): String {
         context.checkDynamicallySerializingNbtName()
-        return decodedNbtNameInfo?.name
+
+        // Must be non-null, since @NbtName.Dynamic is required, and that means the value implicitly has @NbtName
+        return decodedNbtNameInfo!!.name
     }
 
     final override fun decodeNbtTag(): NbtTag {

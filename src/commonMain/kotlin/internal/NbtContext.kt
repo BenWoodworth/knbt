@@ -3,8 +3,6 @@ package net.benwoodworth.knbt.internal
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.descriptors.SerialDescriptor
 import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtEncoder
