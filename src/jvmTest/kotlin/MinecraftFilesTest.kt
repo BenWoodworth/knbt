@@ -14,7 +14,7 @@ class MinecraftFilesTest {
             val fileBytes = stream.use { it.readBytes() }
 
             stream.use {
-                val decoded = nbt.decodeFromByteArray<NbtTag>(fileBytes)
+                val decoded = nbt.decodeFromByteArray<NbtNamed<NbtTag>>(fileBytes)
                 val encodedBytes = nbt.encodeToByteArray(decoded)
                 return fileBytes.contentEquals(encodedBytes)
             }

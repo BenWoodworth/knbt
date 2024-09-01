@@ -108,9 +108,7 @@ class NbtVariantJavaNetworkTest {
         val nbtTag by parameterOfNbtTagSubtypeEdgeCases()
 
         val javaBytes = javaNbt
-            .encodeToByteArray(
-                buildNbtCompound { put("", nbtTag) }
-            )
+            .encodeToByteArray(NbtNamed("", nbtTag))
 
         val actualBytes = javaNetworkNbt(variant)
             .encodeToByteArray(nbtTag)
@@ -164,9 +162,7 @@ class NbtVariantJavaNetworkTest {
         val nbtTag by parameterOfNbtTagSubtypeEdgeCases()
 
         val javaBytes = javaNbt
-            .encodeToByteArray(
-                buildNbtCompound { put("", nbtTag) }
-            )
+            .encodeToByteArray(NbtNamed("", nbtTag))
 
         val tagTypeByte = javaBytes.take(1)
         val tagValueBytes = javaBytes.drop(3)

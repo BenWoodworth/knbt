@@ -46,7 +46,7 @@ class BinaryNbtReaderTest {
         val nbtFile by parameter(nbtFiles)
 
         TestSource(nbtFile.asSource()).use { source ->
-            nbtFile.nbt.decodeFromBufferedSource<NbtTag>(source.buffer())
+            nbtFile.nbt.decodeFromBufferedSource<NbtNamed<NbtTag>>(source.buffer())
             assertFalse(source.readPastEnd)
         }
     }
@@ -56,7 +56,7 @@ class BinaryNbtReaderTest {
         val nbtFile by parameter(nbtFiles)
 
         TestSource(nbtFile.asSource()).use { source ->
-            nbtFile.nbt.decodeFromBufferedSource<NbtTag>(source.buffer())
+            nbtFile.nbt.decodeFromBufferedSource<NbtNamed<NbtTag>>(source.buffer())
             assertFalse(source.isClosed)
         }
     }
