@@ -65,7 +65,7 @@ class NbtTransformingSerializerTest {
 
         nbt.verifyDecoder(
             Example.serializer(),
-            StringifiedNbt.decodeFromString(testDataInput),
+            StringifiedNbt.decodeFromString<NbtTag>(testDataInput),
             testDecodedValue = { decodedValue ->
                 assertEquals(goldenVal, decodedValue)
             }
@@ -86,7 +86,7 @@ class NbtTransformingSerializerTest {
         nbt.verifyEncoder(
             DroppingNameSerializer,
             input,
-            StringifiedNbt.decodeFromString(goldenVal)
+            StringifiedNbt.decodeFromString<NbtTag>(goldenVal)
         )
     }
 
@@ -117,7 +117,7 @@ class NbtTransformingSerializerTest {
 
         nbt.verifyDecoder(
             DocExample.serializer(),
-            StringifiedNbt.decodeFromString(input),
+            StringifiedNbt.decodeFromString<NbtTag>(input),
             testDecodedValue = { decodedValue ->
                 assertEquals(correctExample, decodedValue)
             }

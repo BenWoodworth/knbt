@@ -5,9 +5,7 @@ import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationStrategy
-import net.benwoodworth.knbt.NbtFormat
-import net.benwoodworth.knbt.NbtFormatBuilder
-import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.*
 import net.benwoodworth.knbt.test.verify.VerifyingNbtReader
 import net.benwoodworth.knbt.test.verify.VerifyingNbtWriter
@@ -89,6 +87,15 @@ internal sealed class VerifyingNbt(
      * correct calls are made to its [reader][NbtReaderDecoder.reader], then asserts that the decoded value
      * [equals][Any.equals] the original [value].
      */
+    fun <T> verifyEncoderOrDecoder(
+        serializer: KSerializer<T>,
+        value: T,
+        encodedTag: NbtNamed<NbtTag>,
+        testDecodedValue: (value: T, decodedValue: T) -> Unit = { _, _ -> }
+    ) {
+        verifyEncoderOrDecoder(serializer, value, encodedTag.toNbtCompound(), testDecodedValue)
+    }
+
     abstract fun <T> verifyEncoderOrDecoder(
         serializer: KSerializer<T>,
         value: T,
@@ -111,6 +118,10 @@ internal class EncoderVerifyingNbt(
         testDecodedValue: (value: T, decodedValue: T) -> Unit
     ) {
         verifyEncoder(serializer, value, encodedTag)
+    }
+
+    fun <T> verifyEncoder(serializer: SerializationStrategy<T>, value: T, encodedTag: NbtNamed<NbtTag>) {
+        verifyEncoder(serializer, value, encodedTag.toNbtCompound())
     }
 
     fun <T> verifyEncoder(serializer: SerializationStrategy<T>, value: T, encodedTag: NbtTag) {
@@ -147,6 +158,14 @@ internal class DecoderVerifyingNbt(
                 testDecodedValue(value, decodedValue)
             }
         )
+    }
+
+    fun <T> verifyDecoder(
+        deserializer: DeserializationStrategy<T>,
+        encodedTag: NbtNamed<NbtTag>,
+        testDecodedValue: (decodedValue: T) -> Unit = {}
+    ) {
+        verifyDecoder(deserializer, encodedTag.toNbtCompound(), testDecodedValue)
     }
 
     fun <T> verifyDecoder(

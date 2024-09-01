@@ -63,7 +63,7 @@ class NbtContentPolymorphicSerializerTest {
         nbt.verifyEncoderOrDecoder(
             WithChoices.serializer(),
             output,
-            StringifiedNbt.decodeFromString(input),
+            StringifiedNbt.decodeFromString<NbtTag>(input),
             testDecodedValue = { value, decodedValue ->
                 assertEquals(value, decodedValue, "decodedValue")
             }
@@ -104,7 +104,7 @@ class NbtContentPolymorphicSerializerTest {
 
         nbt.verifyDecoder(
             PaymentSerializer,
-            StringifiedNbt.decodeFromString(input),
+            StringifiedNbt.decodeFromString<NbtTag>(input),
             testDecodedValue = { decodedValue ->
                 assertEquals(output, decodedValue)
             }

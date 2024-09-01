@@ -38,6 +38,14 @@ public class NbtNamed<out T>(
         "NbtNamed(name=$name, value=$value)"
 }
 
+/**
+ * Returns the [NbtCompound]-nested [NbtName] representation of [this] [NbtTag].
+ *
+ * This is a stop gap until the [NbtName] representation is changed to using [NbtNamed].
+ */
+internal fun NbtNamed<NbtTag>.toNbtCompound(): NbtCompound =
+    buildNbtCompound { put(name, value) }
+
 private class NbtNamedSerializer<T>(
     private val valueSerializer: KSerializer<T>,
 ) : KSerializer<NbtNamed<T>> {
