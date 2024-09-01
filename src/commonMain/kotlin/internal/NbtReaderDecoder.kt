@@ -22,8 +22,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     override val serializersModule: SerializersModule
         get() = nbt.serializersModule
 
-    private var currentDescriptor: SerialDescriptor? = null
-
     protected abstract val context: SerializationNbtContext
     protected abstract val reader: NbtReader
     protected abstract val parent: BaseNbtDecoder?

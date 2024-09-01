@@ -24,8 +24,6 @@ internal class NbtWriterEncoder(
     override val serializersModule: SerializersModule
         get() = nbt.serializersModule
 
-    private var currentDescriptor: SerialDescriptor? = null
-
     private lateinit var elementName: String
     private var encodingMapKey: Boolean = false
 
@@ -63,8 +61,6 @@ internal class NbtWriterEncoder(
 
     private fun beginEncodingValue(type: NbtTagType) {
         context.onBeginValue()
-
-        currentDescriptor = null
 
         when (val structureType = structureTypeStack.lastOrNull()) {
             null -> {
