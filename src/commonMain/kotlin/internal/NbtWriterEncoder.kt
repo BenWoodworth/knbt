@@ -121,6 +121,7 @@ internal class NbtWriterEncoder(
 
     private fun beginNamedTagIfNamed() {
         val nbtName = nbtNameToWrite
+            .takeIf { context.isSerializingRootValue } // Name is only serialized at root
 
         writtenNbtNameStack.addLast(null)
         nbtNameToWrite = null
@@ -179,6 +180,7 @@ internal class NbtWriterEncoder(
 
     private fun beginCompound(): CompositeEncoder {
         beginEncodingValue(TAG_Compound)
+        context.onBeginStructure()
         writer.beginCompound()
         structureTypeStack += TAG_Compound
         return this
@@ -186,11 +188,13 @@ internal class NbtWriterEncoder(
 
     private fun endCompound() {
         writer.endCompound()
+        context.onEndStructure()
         endEncodingValue()
     }
 
     private fun beginList(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_List)
+        context.onBeginStructure()
         structureTypeStack += TAG_List
         listTypeStack += TAG_End // writer.beginList(TYPE, size) is postponed until the first element is encoded, or the list is ended
         listSize = size
@@ -200,11 +204,13 @@ internal class NbtWriterEncoder(
     private fun endList() {
         if (listTypeStack.removeLast() == TAG_End) writer.beginList(TAG_End, listSize)
         writer.endList()
+        context.onEndStructure()
         endEncodingValue()
     }
 
     private fun beginByteArray(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_Byte_Array)
+        context.onBeginStructure()
         writer.beginByteArray(size)
         structureTypeStack += TAG_Byte_Array
         return this
@@ -212,11 +218,13 @@ internal class NbtWriterEncoder(
 
     private fun endByteArray() {
         writer.endByteArray()
+        context.onEndStructure()
         endEncodingValue()
     }
 
     private fun beginIntArray(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_Int_Array)
+        context.onBeginStructure()
         writer.beginIntArray(size)
         structureTypeStack += TAG_Int_Array
         return this
@@ -224,11 +232,13 @@ internal class NbtWriterEncoder(
 
     private fun endIntArray() {
         writer.endIntArray()
+        context.onEndStructure()
         endEncodingValue()
     }
 
     private fun beginLongArray(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_Long_Array)
+        context.onBeginStructure()
         writer.beginLongArray(size)
         structureTypeStack += TAG_Long_Array
         return this
@@ -236,6 +246,7 @@ internal class NbtWriterEncoder(
 
     private fun endLongArray() {
         writer.endLongArray()
+        context.onEndStructure()
         endEncodingValue()
     }
 

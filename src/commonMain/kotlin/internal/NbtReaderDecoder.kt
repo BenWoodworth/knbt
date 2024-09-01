@@ -51,6 +51,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
      * deserializer needs it.
      */
     private fun beginNamedTagIfNamed(descriptor: SerialDescriptor) {
+        if (!context.isSerializingRootValue) return // Name is only serialized at root
         if (decodedNbtNameInfo != null) return // Already decoded
         val name = descriptor.nbtName ?: return
 
@@ -163,32 +164,55 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         }
 
     private fun beginCompound(descriptor: SerialDescriptor): CompositeDecoder {
+        context.onBeginStructure()
         beginDecodingValue(TAG_Compound)
         return if (descriptor.kind == StructureKind.MAP) {
-            MapNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
+            MapNbtDecoder(nbt, context, reader, this) {
+                endDecodingValue()
+                context.onEndStructure()
+            }
         } else {
-            ClassNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
+            ClassNbtDecoder(nbt, context, reader, this) {
+                endDecodingValue()
+                context.onEndStructure()
+            }
         }
     }
 
     private fun beginList(): CompositeDecoder {
+        context.onBeginStructure()
         beginDecodingValue(TAG_List)
-        return ListNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
+        return ListNbtDecoder(nbt, context, reader, this) {
+            endDecodingValue()
+            context.onEndStructure()
+        }
     }
 
     private fun beginByteArray(): CompositeDecoder {
+        context.onBeginStructure()
         beginDecodingValue(TAG_Byte_Array)
-        return ByteArrayNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
+        return ByteArrayNbtDecoder(nbt, context, reader, this) {
+            endDecodingValue()
+            context.onEndStructure()
+        }
     }
 
     private fun beginIntArray(): CompositeDecoder {
+        context.onBeginStructure()
         beginDecodingValue(TAG_Int_Array)
-        return IntArrayNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
+        return IntArrayNbtDecoder(nbt, context, reader, this) {
+            endDecodingValue()
+            context.onEndStructure()
+        }
     }
 
     private fun beginLongArray(): CompositeDecoder {
+        context.onBeginStructure()
         beginDecodingValue(TAG_Long_Array)
-        return LongArrayNbtDecoder(nbt, context, reader, this, ::endDecodingValue)
+        return LongArrayNbtDecoder(nbt, context, reader, this) {
+            endDecodingValue()
+            context.onEndStructure()
+        }
     }
     //endregion
 
