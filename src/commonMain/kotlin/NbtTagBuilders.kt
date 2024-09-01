@@ -55,10 +55,8 @@ public inline fun <T : NbtTag> buildNbtList(
 public inline fun <T : NbtTag> buildNbtList(
     name: String,
     @BuilderInference builderAction: NbtListBuilder<T>.() -> Unit,
-): NbtCompound =
-    buildNbtCompound {
-        putNbtList(name, builderAction)
-    }
+): NbtNamed<NbtList<T>> =
+    NbtNamed(name, buildNbtList(builderAction))
 
 public fun NbtListBuilder<NbtByte>.add(tag: NbtByte): Boolean = add(tag)
 public fun NbtListBuilder<NbtByteArray>.add(tag: NbtByteArray): Boolean = add(tag)
@@ -143,10 +141,8 @@ public inline fun buildNbtCompound(builderAction: NbtCompoundBuilder.() -> Unit)
 public inline fun buildNbtCompound(
     name: String,
     builderAction: NbtCompoundBuilder.() -> Unit,
-): NbtCompound =
-    buildNbtCompound {
-        putNbtCompound(name, builderAction)
-    }
+): NbtNamed<NbtCompound> =
+    NbtNamed(name, buildNbtCompound(builderAction))
 
 public fun NbtCompoundBuilder.put(key: String, value: Byte): NbtTag? = put(key, NbtByte(value))
 public fun NbtCompoundBuilder.put(key: String, value: Boolean): NbtTag? = put(key, NbtByte.fromBoolean(value))

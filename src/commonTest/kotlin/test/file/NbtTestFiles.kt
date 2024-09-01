@@ -1,9 +1,7 @@
 package net.benwoodworth.knbt.test.file
 
 import kotlinx.serialization.KSerializer
-import net.benwoodworth.knbt.Nbt
-import net.benwoodworth.knbt.NbtCompression
-import net.benwoodworth.knbt.NbtVariant
+import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.test.asSource
 import okio.Source
 
@@ -12,7 +10,7 @@ class NbtTestFile<T>(
     val nbt: Nbt,
     val valueSerializer: KSerializer<T>,
     val value: T,
-    val nbtTag: net.benwoodworth.knbt.NbtTag,
+    val nbtTag: NbtNamed<NbtCompound>,
     contentHex: String,
     val headerLength: Long = 0,
 ) {

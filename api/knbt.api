@@ -876,9 +876,9 @@ public final class net/benwoodworth/knbt/NbtTagBuildersKt {
 	public static final fun addNbtCompound (Lnet/benwoodworth/knbt/NbtListBuilder;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun addNbtList (Lnet/benwoodworth/knbt/NbtListBuilder;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun addNbtList$T (Lnet/benwoodworth/knbt/NbtListBuilder;Lkotlin/jvm/functions/Function1;)Z
-	public static final fun buildNbtCompound (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/NbtCompound;
+	public static final fun buildNbtCompound (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/NbtNamed;
 	public static final fun buildNbtCompound (Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/NbtCompound;
-	public static final fun buildNbtList (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/NbtCompound;
+	public static final fun buildNbtList (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/NbtNamed;
 	public static final fun buildNbtList (Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/NbtList;
 	public static final fun put (Lnet/benwoodworth/knbt/NbtCompoundBuilder;Ljava/lang/String;B)Lnet/benwoodworth/knbt/NbtTag;
 	public static final fun put (Lnet/benwoodworth/knbt/NbtCompoundBuilder;Ljava/lang/String;D)Lnet/benwoodworth/knbt/NbtTag;

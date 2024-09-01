@@ -48,7 +48,7 @@ class BinaryNbtWriterTest {
         )
 
         val tag = try {
-            nbtFile.nbt.decodeFromByteArray<NbtTag>(out)
+            nbtFile.nbt.decodeFromByteArray<NbtNamed<NbtTag>>(out)
         } catch (t: Throwable) {
             throw Exception("Unable to decode compressed value", t)
         }
@@ -75,7 +75,7 @@ class BinaryNbtWriterTest {
         )
 
         val tag = try {
-            nbtFile.nbt.decodeFromByteArray<NbtTag>(out)
+            nbtFile.nbt.decodeFromByteArray<NbtNamed<NbtTag>>(out)
         } catch (t: Throwable) {
             throw Exception("Unable to decode compressed value", t)
         }

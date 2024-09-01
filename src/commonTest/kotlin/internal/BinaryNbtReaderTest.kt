@@ -80,10 +80,10 @@ class BinaryNbtReaderTest {
             compression = fileCompression
         }
 
-        val encoded = encodingNbt.encodeToByteArray<NbtTag>(data)
+        val encoded = encodingNbt.encodeToByteArray(data)
 
         val error = assertFailsWith<NbtDecodingException> {
-            decodingNbt.decodeFromByteArray<NbtTag>(encoded)
+            decodingNbt.decodeFromByteArray<NbtNamed<NbtTag>>(encoded)
         }
 
         val errorMessage = error.message
