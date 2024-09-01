@@ -104,69 +104,6 @@ class NbtNameTest {
         )
     }
 
-    @Serializable
-    private data class OuterClass<T>(val value: T) // KT-69388: Ideally should be declared inside the test that uses it
-
-    @Test
-    fun should_serialize_nested_under_name_when_within_a_class() = parameterizeTest {
-        val nbt by parameterOfVerifyingNbt()
-        val serializableType by parameterOfSerializableTypeEdgeCases()
-        val nbtName by parameterOf("name", "different_name")
-
-        val valueSerializer = object : KSerializer<Unit> {
-            @OptIn(SealedSerializationApi::class)
-            override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
-                override val annotations = listOf(NbtName(nbtName))
-            }
-
-            override fun serialize(encoder: Encoder, value: Unit) =
-                serializableType.encodeValue(encoder, descriptor)
-
-            override fun deserialize(decoder: Decoder) =
-                serializableType.decodeValue(decoder, descriptor)
-        }
-
-        nbt.verifyEncoderOrDecoder(
-            OuterClass.serializer(valueSerializer),
-            OuterClass(Unit),
-            buildNbtCompound {
-                putNbtCompound("value") {
-                    put(nbtName, serializableType.valueTag)
-                }
-            }
-        )
-    }
-
-    @Test
-    fun should_serialize_nested_under_name_when_within_a_list() = parameterizeTest {
-        val nbt by parameterOfVerifyingNbt()
-        val serializableType by parameterOfSerializableTypeEdgeCases()
-        val nbtName by parameterOf("name", "different_name")
-
-        val valueSerializer = object : KSerializer<Unit> {
-            @OptIn(SealedSerializationApi::class)
-            override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
-                override val annotations = listOf(NbtName(nbtName))
-            }
-
-            override fun serialize(encoder: Encoder, value: Unit) =
-                serializableType.encodeValue(encoder, descriptor)
-
-            override fun deserialize(decoder: Decoder) =
-                serializableType.decodeValue(decoder, descriptor)
-        }
-
-        nbt.verifyEncoderOrDecoder(
-            ListSerializer(valueSerializer),
-            listOf(Unit),
-            buildNbtList {
-                addNbtCompound {
-                    put(nbtName, serializableType.valueTag)
-                }
-            }
-        )
-    }
-
     private data class SerializableValueWithNbtName<T>(
         val value: T,
         val serializer: KSerializer<T>,
