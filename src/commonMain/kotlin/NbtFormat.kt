@@ -18,7 +18,7 @@ public open class NbtFormat internal constructor(
             ignoreUnknownKeys = false,
         ),
         serializersModule = EmptySerializersModule(),
-        capabilities = NbtCapabilities(namedRoot = true)
+        capabilities = NbtCapabilities(namedRoot = true, definiteLengthEncoding = true)
     )
 
     /**

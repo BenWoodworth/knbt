@@ -12,7 +12,7 @@ public abstract class NbtVariant private constructor() {
 
     public data object Java : NbtVariant() {
         override val capabilities: NbtCapabilities =
-            NbtCapabilities(namedRoot = true)
+            NbtCapabilities(namedRoot = true, definiteLengthEncoding = true)
 
         override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
             JavaNbtReader(context, source)
@@ -61,7 +61,7 @@ public abstract class NbtVariant private constructor() {
 
         private object EmptyNamedRoot : NbtVariant() {
             override val capabilities: NbtCapabilities =
-                NbtCapabilities(namedRoot = false)
+                NbtCapabilities(namedRoot = false, definiteLengthEncoding = true)
 
             override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
                 JavaNetworkNbtReader.EmptyNamedRoot(context, source)
@@ -72,7 +72,7 @@ public abstract class NbtVariant private constructor() {
 
         private object UnnamedRoot : NbtVariant() {
             override val capabilities: NbtCapabilities =
-                NbtCapabilities(namedRoot = false)
+                NbtCapabilities(namedRoot = false, definiteLengthEncoding = true)
 
             override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
                 JavaNetworkNbtReader.UnnamedRoot(context, source)
@@ -84,7 +84,7 @@ public abstract class NbtVariant private constructor() {
 
     public data object Bedrock : NbtVariant() {
         override val capabilities: NbtCapabilities =
-            NbtCapabilities(namedRoot = true)
+            NbtCapabilities(namedRoot = true, definiteLengthEncoding = true)
 
         override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
             BedrockNbtReader(context, source)
@@ -95,7 +95,7 @@ public abstract class NbtVariant private constructor() {
 
     public data object BedrockNetwork : NbtVariant() {
         override val capabilities: NbtCapabilities =
-            NbtCapabilities(namedRoot = false)
+            NbtCapabilities(namedRoot = false, definiteLengthEncoding = true)
 
         override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
             BedrockNetworkNbtReader(context, source)

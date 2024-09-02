@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt.test.verify
 
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.internal.NbtCapabilities
 import net.benwoodworth.knbt.internal.NbtReader
 import net.benwoodworth.knbt.internal.toNbtTagType
 import kotlin.contracts.contract
@@ -12,7 +13,7 @@ import kotlin.test.assertTrue
 
 internal class VerifyingNbtReader(
     private val tag: NbtTag,
-    private val knownSizes: Boolean = true,
+    private val capabilities: NbtCapabilities,
 ) : NbtReader {
     private val stateHistory = mutableListOf<State>(State.InRoot)
 
@@ -60,7 +61,7 @@ internal class VerifyingNbtReader(
         assertStateIs<State.AwaitingValue>(state)
         assertReadTagTypeEquals(state.tag, NbtList::class)
 
-        if (knownSizes) {
+        if (capabilities.definiteLengthEncoding) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
             val consecutiveAwaitValueStates = state.tag.content.foldRight(endState, State::AwaitingValue)
 
@@ -75,7 +76,7 @@ internal class VerifyingNbtReader(
     override fun beginListEntry(): Boolean = transitionState(::beginListEntry) {
         assertStateIs<State.InListOrArray>(state)
         assertReadTagTypeEquals(state.tag, NbtList::class)
-        assertBeginningEntryWithUnknownSizes(knownSizes)
+        assertBeginningEntryWithUnknownSizes(capabilities.definiteLengthEncoding)
         assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)
@@ -100,7 +101,7 @@ internal class VerifyingNbtReader(
         assertStateIs<State.AwaitingValue>(state)
         assertReadTagTypeEquals(state.tag, NbtByteArray::class)
 
-        if (knownSizes) {
+        if (capabilities.definiteLengthEncoding) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
             val consecutiveAwaitValueStates = state.tag.content.map(::NbtByte).foldRight(endState, State::AwaitingValue)
 
@@ -115,7 +116,7 @@ internal class VerifyingNbtReader(
     override fun beginByteArrayEntry(): Boolean = transitionState(::beginByteArrayEntry) {
         assertStateIs<State.InListOrArray>(state)
         assertReadTagTypeEquals(state.tag, NbtByteArray::class)
-        assertBeginningEntryWithUnknownSizes(knownSizes)
+        assertBeginningEntryWithUnknownSizes(capabilities.definiteLengthEncoding)
         assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)
@@ -140,7 +141,7 @@ internal class VerifyingNbtReader(
         assertStateIs<State.AwaitingValue>(state)
         assertReadTagTypeEquals(state.tag, NbtIntArray::class)
 
-        if (knownSizes) {
+        if (capabilities.definiteLengthEncoding) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
             val consecutiveAwaitValueStates = state.tag.content.map(::NbtInt).foldRight(endState, State::AwaitingValue)
 
@@ -155,7 +156,7 @@ internal class VerifyingNbtReader(
     override fun beginIntArrayEntry(): Boolean = transitionState(::beginIntArrayEntry) {
         assertStateIs<State.InListOrArray>(state)
         assertReadTagTypeEquals(state.tag, NbtIntArray::class)
-        assertBeginningEntryWithUnknownSizes(knownSizes)
+        assertBeginningEntryWithUnknownSizes(capabilities.definiteLengthEncoding)
         assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)
@@ -178,7 +179,7 @@ internal class VerifyingNbtReader(
         assertStateIs<State.AwaitingValue>(state)
         assertReadTagTypeEquals(state.tag, NbtLongArray::class)
 
-        if (knownSizes) {
+        if (capabilities.definiteLengthEncoding) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
             val consecutiveAwaitValueStates = state.tag.content.map(::NbtLong).foldRight(endState, State::AwaitingValue)
 
@@ -193,7 +194,7 @@ internal class VerifyingNbtReader(
     override fun beginLongArrayEntry(): Boolean = transitionState(::beginLongArrayEntry) {
         assertStateIs<State.InListOrArray>(state)
         assertReadTagTypeEquals(state.tag, NbtLongArray::class)
-        assertBeginningEntryWithUnknownSizes(knownSizes)
+        assertBeginningEntryWithUnknownSizes(capabilities.definiteLengthEncoding)
         assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)

@@ -5,7 +5,6 @@ package net.benwoodworth.knbt
 import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.*
-import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder

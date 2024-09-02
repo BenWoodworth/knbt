@@ -10,6 +10,7 @@ import kotlin.native.concurrent.ThreadLocal
 
 private val stringifiedNbtCapabilities = NbtCapabilities(
     namedRoot = false,
+    definiteLengthEncoding = false,
 )
 
 public open class StringifiedNbt internal constructor(

@@ -15,35 +15,35 @@ internal fun ParameterizeScope.parameterOfVerifyingNbt(
     includeNamedRootNbt: Boolean = false, // TODO Temporary, since most tests won't support naming until it's redesigned
     builderAction: NbtFormatBuilder.() -> Unit = {}
 ) = parameter {
+    val baseCapabilities = NbtCapabilities(
+        namedRoot = false,
+        definiteLengthEncoding = false,
+    )
+
     sequenceOf(
         EncoderVerifyingNbt(
             "Encode NbtTag",
-            createWriter = { tag -> VerifyingNbtWriter(tag) },
-            NbtCapabilities(namedRoot = false),
+            baseCapabilities,
             builderAction
         ),
         DecoderVerifyingNbt(
             "Decode NbtTag",
-            createReader = { tag -> VerifyingNbtReader(tag) },
-            NbtCapabilities(namedRoot = false),
+            baseCapabilities,
             builderAction
         ),
         DecoderVerifyingNbt(
             "Decode NbtTag (non-sequentially)",
-            createReader = { tag -> VerifyingNbtReader(tag, knownSizes = false) },
-            NbtCapabilities(namedRoot = false),
+            baseCapabilities.copy(definiteLengthEncoding = true),
             builderAction
         ),
         EncoderVerifyingNbt(
             "Encode Named NbtTag",
-            createWriter = { tag -> VerifyingNbtWriter(tag) },
-            NbtCapabilities(namedRoot = true),
+            baseCapabilities.copy(namedRoot = true),
             builderAction
         ),
         DecoderVerifyingNbt(
             "Decode Named NbtTag",
-            createReader = { tag -> VerifyingNbtReader(tag) },
-            NbtCapabilities(namedRoot = true),
+            baseCapabilities.copy(namedRoot = true),
             builderAction
         ),
     ).filter { nbt ->
@@ -106,7 +106,6 @@ internal sealed class VerifyingNbt(
 
 internal class EncoderVerifyingNbt(
     val name: String,
-    private val createWriter: (tag: NbtTag) -> VerifyingNbtWriter,
     capabilities: NbtCapabilities,
     builderAction: NbtFormatBuilder.() -> Unit
 ) : VerifyingNbt(name, capabilities, builderAction) {
@@ -127,7 +126,7 @@ internal class EncoderVerifyingNbt(
     fun <T> verifyEncoder(serializer: SerializationStrategy<T>, value: T, encodedTag: NbtTag) {
         try {
             val context = SerializationNbtContext()
-            val writer = createWriter(encodedTag)
+            val writer = VerifyingNbtWriter(encodedTag)
             val encoder = NbtWriterEncoder(nbt, context, writer)
 
             encoder.encodeSerializableValue(serializer, value)
@@ -140,7 +139,6 @@ internal class EncoderVerifyingNbt(
 
 internal class DecoderVerifyingNbt(
     val name: String,
-    private val createReader: (tag: NbtTag) -> VerifyingNbtReader,
     capabilities: NbtCapabilities,
     builderAction: NbtFormatBuilder.() -> Unit
 ) : VerifyingNbt(name, capabilities, builderAction) {
@@ -175,7 +173,7 @@ internal class DecoderVerifyingNbt(
     ) {
         try {
             val context = SerializationNbtContext()
-            val reader = createReader(encodedTag)
+            val reader = VerifyingNbtReader(encodedTag, capabilities)
             val decoder = NbtReaderDecoder(nbt, context, reader)
             val decodedValue = decoder.decodeSerializableValue(deserializer)
 
