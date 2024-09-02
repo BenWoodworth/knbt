@@ -36,7 +36,7 @@ internal class VerifyingNbtReader(
         Unit to State.InCompound(state.tag, state.tag.content.entries.toList(), 0, false, state.nextState)
     }
 
-    override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo = transitionState(::beginCompoundEntry) {
+    override fun beginCompoundEntry(): NbtReader.NamedTagInfo = transitionState(::beginCompoundEntry) {
         assertStateIs<State.InCompound>(state)
         assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
@@ -44,9 +44,9 @@ internal class VerifyingNbtReader(
         if (entry != null) {
             val awaitEntryState = State.AwaitingValue(entry.value, state.copy(index = state.index + 1))
 
-            NbtReader.CompoundEntryInfo(entry.value.type, entry.key) to awaitEntryState
+            NbtReader.NamedTagInfo(entry.value.type, entry.key) to awaitEntryState
         } else {
-            NbtReader.CompoundEntryInfo.End to state.copy(ended = true)
+            NbtReader.NamedTagInfo.End to state.copy(ended = true)
         }
     }
 

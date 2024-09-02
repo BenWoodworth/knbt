@@ -30,7 +30,7 @@ internal interface NbtReader {
     /**
      * If `type != TAG_End`, then followed by a call to read a value of the same type.
      */
-    fun beginCompoundEntry(): CompoundEntryInfo
+    fun beginCompoundEntry(): NamedTagInfo
 
     fun endCompound()
 
@@ -107,12 +107,12 @@ internal interface NbtReader {
     @JvmInline
     value class RootTagInfo(val type: NbtTagType)
 
-    data class CompoundEntryInfo(
+    data class NamedTagInfo(
         val type: NbtTagType,
         val name: String,
     ) {
         companion object {
-            val End = CompoundEntryInfo(TAG_End, "")
+            val End = NamedTagInfo(TAG_End, "")
         }
     }
 

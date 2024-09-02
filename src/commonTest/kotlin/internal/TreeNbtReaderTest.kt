@@ -120,7 +120,7 @@ class TreeNbtReaderTest {
         expectNbtReaderCalls(buildNbtCompound {}) {
             beginRootTag() shouldReturn RootTagInfo(TAG_Compound)
             beginCompound()
-            beginCompoundEntry() shouldReturn CompoundEntryInfo.End
+            beginCompoundEntry() shouldReturn NamedTagInfo.End
             endCompound()
         }
     }
@@ -132,9 +132,9 @@ class TreeNbtReaderTest {
         ) {
             beginRootTag() shouldReturn RootTagInfo(TAG_Compound)
             beginCompound()
-            beginCompoundEntry() shouldReturn CompoundEntryInfo(TAG_Int, "entry")
+            beginCompoundEntry() shouldReturn NamedTagInfo(TAG_Int, "entry")
             readInt() shouldReturn 5
-            beginCompoundEntry() shouldReturn CompoundEntryInfo.End
+            beginCompoundEntry() shouldReturn NamedTagInfo.End
             endCompound()
         }
     }

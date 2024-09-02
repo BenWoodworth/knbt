@@ -8,7 +8,7 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
 
     override fun beginRootTag(): RootTagInfo = reader.beginRootTag()
     override fun beginCompound() = reader.beginCompound()
-    override fun beginCompoundEntry(): CompoundEntryInfo = reader.beginCompoundEntry()
+    override fun beginCompoundEntry(): NamedTagInfo = reader.beginCompoundEntry()
     override fun endCompound() = reader.endCompound()
     override fun beginList(): ListInfo = reader.beginList()
     override fun beginListEntry(): Boolean = reader.beginListEntry()
@@ -33,7 +33,7 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
     private sealed interface NbtTagReader {
         fun beginRootTag(): RootTagInfo = error("${this::class} does not support beginRootTag()")
         fun beginCompound(): Unit = error("${this::class} does not support beginCompound()")
-        fun beginCompoundEntry(): CompoundEntryInfo = error("${this::class} does not support beginCompoundEntry()")
+        fun beginCompoundEntry(): NamedTagInfo = error("${this::class} does not support beginCompoundEntry()")
         fun endCompound(): Unit = error("${this::class} does not support endCompound()")
         fun beginList(): ListInfo = error("${this::class} does not support beginList()")
         fun beginListEntry(): Boolean = error("${this::class} does not support beginListEntry()")
@@ -101,8 +101,8 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
                 .also { next = if (iterator.hasNext()) iterator.next() else null }
         }
 
-        override fun beginCompoundEntry(): CompoundEntryInfo =
-            next?.let { (name, tag) -> CompoundEntryInfo(tag.type, name) } ?: CompoundEntryInfo.End
+        override fun beginCompoundEntry(): NamedTagInfo =
+            next?.let { (name, tag) -> NamedTagInfo(tag.type, name) } ?: NamedTagInfo.End
 
         override fun endCompound() {
             reader = parent

@@ -29,7 +29,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
 
     protected var serializerListKind: NbtListKind? = null
 
-    private var decodedNbtNameInfo: NbtReader.CompoundEntryInfo? = null
+    private var decodedNbtNameInfo: NbtReader.NamedTagInfo? = null
 
     private fun decodeNbtTagTypeMarker(): NbtTagType =
         decodedNbtNameInfo?.type ?: decodedTagType
@@ -312,7 +312,7 @@ internal class NbtReaderDecoder(
 }
 
 private abstract class CompoundNbtDecoder : BaseNbtDecoder() {
-    protected abstract val compoundEntryInfo: NbtReader.CompoundEntryInfo
+    protected abstract val compoundEntryInfo: NbtReader.NamedTagInfo
     protected abstract val onEndStructure: () -> Unit
 
     override fun endStructure(descriptor: SerialDescriptor) {
@@ -328,7 +328,7 @@ private class ClassNbtDecoder(
     override val parent: BaseNbtDecoder,
     override val onEndStructure: () -> Unit,
 ) : CompoundNbtDecoder() {
-    override lateinit var compoundEntryInfo: NbtReader.CompoundEntryInfo
+    override lateinit var compoundEntryInfo: NbtReader.NamedTagInfo
 
     override val decodedTagType: NbtTagType
         get() = compoundEntryInfo.type
@@ -337,7 +337,7 @@ private class ClassNbtDecoder(
         reader.beginCompound()
     }
 
-    private fun handleUnknownKey(info: NbtReader.CompoundEntryInfo) {
+    private fun handleUnknownKey(info: NbtReader.NamedTagInfo) {
         fun discardTagAndGetTypeName(): String =
             if (info.type == TAG_List) {
                 try {
@@ -401,7 +401,7 @@ private class MapNbtDecoder(
     private var index = 0
     private var decodeMapKey: Boolean = false
 
-    override lateinit var compoundEntryInfo: NbtReader.CompoundEntryInfo
+    override lateinit var compoundEntryInfo: NbtReader.NamedTagInfo
 
     override val decodedTagType: NbtTagType
         get() = if (decodeMapKey) TAG_String else compoundEntryInfo.type

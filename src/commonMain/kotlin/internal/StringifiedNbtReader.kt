@@ -142,11 +142,11 @@ internal class StringifiedNbtReader(
         firstEntry = true
     }
 
-    override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
+    override fun beginCompoundEntry(): NbtReader.NamedTagInfo {
         source.skipWhitespace()
 
         return if (source.peek().read() == ReadResult('}')) {
-            NbtReader.CompoundEntryInfo.End
+            NbtReader.NamedTagInfo.End
         } else {
             if (firstEntry) {
                 firstEntry = false
@@ -163,7 +163,7 @@ internal class StringifiedNbtReader(
             val type = source.skipWhitespace().peekTagType()
                 ?: throw NbtDecodingException(context, "Expected value but got nothing")
 
-            return NbtReader.CompoundEntryInfo(type, name)
+            return NbtReader.NamedTagInfo(type, name)
         }
     }
 

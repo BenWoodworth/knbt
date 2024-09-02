@@ -33,13 +33,13 @@ internal abstract class BinaryNbtReader : NbtReader {
         tagTypeStack += TAG_End
     }
 
-    override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
+    override fun beginCompoundEntry(): NbtReader.NamedTagInfo {
         val type = source.readNbtTagType()
         return if (type == TAG_End) {
-            NbtReader.CompoundEntryInfo.End
+            NbtReader.NamedTagInfo.End
         } else {
             tagTypeStack.replaceLast(type)
-            NbtReader.CompoundEntryInfo(type, source.readNbtString())
+            NbtReader.NamedTagInfo(type, source.readNbtString())
         }
     }
 
@@ -169,9 +169,9 @@ internal abstract class NamedBinaryNbtReader : BinaryNbtReader() {
         compoundNesting++
     }
 
-    final override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
+    final override fun beginCompoundEntry(): NbtReader.NamedTagInfo {
         if (compoundNesting == 1) {
-            if (readRootEntry) return NbtReader.CompoundEntryInfo.End
+            if (readRootEntry) return NbtReader.NamedTagInfo.End
             readRootEntry = true
         }
 
