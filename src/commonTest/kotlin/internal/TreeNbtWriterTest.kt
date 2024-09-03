@@ -8,10 +8,12 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TreeNbtWriterTest {
+    private val rootName = "root_name"
+
     private inline fun expectNbtWriterCalls(expectedTag: NbtTag, write: NbtWriter.() -> Unit) {
-        var actualTag: NbtTag? = null
+        var actualTag: NbtNamed<NbtTag>? = null
         TreeNbtWriter { actualTag = it }.write()
-        assertEquals(expectedTag, actualTag)
+        assertEquals(NbtNamed(rootName, expectedTag), actualTag)
     }
 
     @Test
@@ -19,7 +21,7 @@ class TreeNbtWriterTest {
         val value by parameterOfBytes()
 
         expectNbtWriterCalls(NbtByte(value)) {
-            beginRootTag(TAG_Byte)
+            beginRootTag(TAG_Byte, rootName)
             writeByte(value)
         }
     }
@@ -29,7 +31,7 @@ class TreeNbtWriterTest {
         val value by parameterOfShorts()
 
         expectNbtWriterCalls(NbtShort(value)) {
-            beginRootTag(TAG_Short)
+            beginRootTag(TAG_Short, rootName)
             writeShort(value)
         }
     }
@@ -39,7 +41,7 @@ class TreeNbtWriterTest {
         val value by parameterOfInts()
 
         expectNbtWriterCalls(NbtInt(value)) {
-            beginRootTag(TAG_Int)
+            beginRootTag(TAG_Int, rootName)
             writeInt(value)
         }
     }
@@ -49,7 +51,7 @@ class TreeNbtWriterTest {
         val value by parameterOfLongs()
 
         expectNbtWriterCalls(NbtLong(value)) {
-            beginRootTag(TAG_Long)
+            beginRootTag(TAG_Long, rootName)
             writeLong(value)
         }
     }
@@ -59,7 +61,7 @@ class TreeNbtWriterTest {
         val value by parameterOfFloats()
 
         expectNbtWriterCalls(NbtFloat(value)) {
-            beginRootTag(TAG_Float)
+            beginRootTag(TAG_Float, rootName)
             writeFloat(value)
         }
     }
@@ -69,7 +71,7 @@ class TreeNbtWriterTest {
         val value by parameterOfDoubles()
 
         expectNbtWriterCalls(NbtDouble(value)) {
-            beginRootTag(TAG_Double)
+            beginRootTag(TAG_Double, rootName)
             writeDouble(value)
         }
     }
@@ -79,7 +81,7 @@ class TreeNbtWriterTest {
         val value by parameterOfByteArrays()
 
         expectNbtWriterCalls(NbtByteArray(value.asList())) {
-            beginRootTag(TAG_Byte_Array)
+            beginRootTag(TAG_Byte_Array, rootName)
             beginByteArray(value.size)
             value.forEach { entry ->
                 beginByteArrayEntry()
@@ -94,7 +96,7 @@ class TreeNbtWriterTest {
         val value by parameterOfIntArrays()
 
         expectNbtWriterCalls(NbtIntArray(value.asList())) {
-            beginRootTag(TAG_Int_Array)
+            beginRootTag(TAG_Int_Array, rootName)
             beginIntArray(value.size)
             value.forEach { entry ->
                 beginIntArrayEntry()
@@ -109,7 +111,7 @@ class TreeNbtWriterTest {
         val value by parameterOfLongArrays()
 
         expectNbtWriterCalls(NbtLongArray(value.asList())) {
-            beginRootTag(TAG_Long_Array)
+            beginRootTag(TAG_Long_Array, rootName)
             beginLongArray(value.size)
             value.forEach { entry ->
                 beginLongArrayEntry()
@@ -122,7 +124,7 @@ class TreeNbtWriterTest {
     @Test
     fun should_write_Compound_with_no_entries_correctly() {
         expectNbtWriterCalls(buildNbtCompound {}) {
-            beginRootTag(TAG_Compound)
+            beginRootTag(TAG_Compound, rootName)
             beginCompound()
             endCompound()
         }
@@ -133,7 +135,7 @@ class TreeNbtWriterTest {
         expectNbtWriterCalls(
             buildNbtCompound { put("entry", 5) }
         ) {
-            beginRootTag(TAG_Compound)
+            beginRootTag(TAG_Compound, rootName)
             beginCompound()
             beginCompoundEntry(TAG_Int, "entry")
             writeInt(5)
@@ -144,7 +146,7 @@ class TreeNbtWriterTest {
     @Test
     fun should_write_List_with_no_entries_correctly() {
         expectNbtWriterCalls(NbtList(emptyList())) {
-            beginRootTag(TAG_List)
+            beginRootTag(TAG_List, rootName)
             beginList(TAG_End, 0)
             endList()
         }
@@ -153,7 +155,7 @@ class TreeNbtWriterTest {
     @Test
     fun should_write_List_with_one_entry_correctly() {
         expectNbtWriterCalls(NbtList(listOf("entry").map { NbtString(it) })) {
-            beginRootTag(TAG_List)
+            beginRootTag(TAG_List, rootName)
             beginList(TAG_String, 1)
             beginListEntry()
             writeString("entry")

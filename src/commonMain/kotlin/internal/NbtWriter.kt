@@ -14,8 +14,10 @@ import net.benwoodworth.knbt.internal.NbtTagType.*
 internal interface NbtWriter {
     /**
      * Followed by a call to write a value of the same type.
+     *
+     * The [name] is ignored for unnamed [NbtFormat]s.
      */
-    fun beginRootTag(type: NbtTagType)
+    fun beginRootTag(type: NbtTagType, name: String)
 
     /**
      * Followed by calls to [beginCompoundEntry], then a call to [endCompound]

@@ -27,13 +27,13 @@ public open class NbtFormat internal constructor(
      * @throws [SerializationException] if the given value cannot be serialized to NBT
      */
     public fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag {
-        lateinit var result: NbtTag
+        lateinit var result: NbtNamed<NbtTag>
         val context = SerializationNbtContext()
         val writer = TreeNbtWriter { result = it }
         val encoder = NbtWriterEncoder(this, context, writer)
 
         encoder.encodeSerializableValue(serializer, value)
-        return result
+        return result.value
     }
 
     /**
@@ -44,7 +44,7 @@ public open class NbtFormat internal constructor(
      */
     public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T {
         val context = SerializationNbtContext()
-        val reader = TreeNbtReader(tag)
+        val reader = TreeNbtReader(NbtNamed(deserializer.descriptor.nbtName ?: "", tag)) // TODO Propagate NbtNamed
         val decoder = NbtReaderDecoder(this, context, reader)
 
         return decoder.decodeSerializableValue(deserializer)

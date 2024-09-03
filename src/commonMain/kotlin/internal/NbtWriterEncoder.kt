@@ -19,7 +19,7 @@ import net.benwoodworth.knbt.internal.NbtTagType.*
 internal class NbtWriterEncoder(
     override val nbt: NbtFormat,
     private val context: SerializationNbtContext,
-    writer: NbtWriter,
+    private val writer: NbtWriter,
 ) : AbstractNbtEncoder() {
     override val serializersModule: SerializersModule
         get() = nbt.serializersModule
@@ -36,10 +36,6 @@ internal class NbtWriterEncoder(
     private var nbtNameToWrite: String? = null
     private var nbtNameToWriteWasDynamicallyEncoded = false
     private val writtenNbtNameStack = ArrayDeque<String?>()
-
-    private val writer: NbtWriter =
-        if (nbt.capabilities.namedRoot) RootNameVerifyingNbtWriter(writer)
-        else writer
 
     override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
         when (descriptor.kind as StructureKind) {
@@ -68,7 +64,13 @@ internal class NbtWriterEncoder(
 
         when (val structureType = structureTypeStack.lastOrNull()) {
             null -> {
-                writer.beginRootTag(type)
+                val name = nbtNameToWrite
+
+                if (name == null && nbt.capabilities.namedRoot) {
+                    throw NbtException(context, "The ${nbt.name} format requires root values to have an NbtName")
+                }
+
+                writer.beginRootTag(type, name ?: "")
             }
 
             TAG_Compound -> {
@@ -128,10 +130,9 @@ internal class NbtWriterEncoder(
         nbtNameToWriteWasDynamicallyEncoded = false
 
         if (nbtName != null) {
-            beginEncodingValue(TAG_Compound)
-            writer.beginCompound()
+//            beginEncodingValue(TAG_Compound)
 
-            structureTypeStack += TAG_Compound
+//            structureTypeStack += TAG_Compound
             elementName = nbtName
             writtenNbtNameStack += nbtName
         }
@@ -141,8 +142,7 @@ internal class NbtWriterEncoder(
         val nbtName = writtenNbtNameStack.removeLast()
 
         if (nbtName != null) {
-            structureTypeStack.removeLast()
-            writer.endCompound()
+//            structureTypeStack.removeLast()
         }
     }
 
@@ -342,47 +342,6 @@ internal class NbtWriterEncoder(
                 context.decorateValueSerialization(serializer.descriptor) {
                     serializer.serialize(this, value)
                 }
-        }
-    }
-
-    private inner class RootNameVerifyingNbtWriter(
-        private val writer: NbtWriter
-    ) : NbtWriter by writer {
-        private var compoundNesting = 0
-        private var wroteRootEntry = false
-
-        private inline fun verify(value: Boolean) {
-            if (!value) {
-                val message = "The ${nbt.name} format only supports $TAG_Compound with one entry"
-                throw NbtEncodingException(context, message)
-            }
-        }
-
-        override fun beginRootTag(type: NbtTagType) {
-            verify(type == TAG_Compound)
-
-            writer.beginRootTag(type)
-        }
-
-        override fun beginCompound() {
-            writer.beginCompound()
-            compoundNesting++
-        }
-
-        override fun beginCompoundEntry(type: NbtTagType, name: String) {
-            if (compoundNesting == 1) {
-                verify(!wroteRootEntry)
-                wroteRootEntry = true
-            }
-
-            writer.beginCompoundEntry(type, name)
-        }
-
-        override fun endCompound() {
-            verify(compoundNesting != 1 || wroteRootEntry)
-            compoundNesting--
-
-            writer.endCompound()
         }
     }
 }

@@ -26,6 +26,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     protected abstract val reader: NbtReader
     protected abstract val parent: BaseNbtDecoder?
     protected abstract val decodedTagType: NbtTagType
+    protected abstract val decodedTagName: String?
 
     protected var serializerListKind: NbtListKind? = null
 
@@ -55,19 +56,19 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         if (decodedNbtNameInfo != null) return // Already decoded
         val name = descriptor.nbtName ?: return
 
-        beginDecodingValue(TAG_Compound) // TODO Needed? Problematic?
-        reader.beginCompound()
+//        beginDecodingValue(TAG_Compound) // TODO Needed? Problematic?
+//        reader.beginCompound()
 
-        val entry = reader.beginCompoundEntry()
-        when {
-            entry.type == TAG_End ->
-                throw NbtDecodingException(context, "Expected tag named '$name', but got none")
+//        val entry = reader.beginCompoundEntry()
+//        when {
+//            entry.type == TAG_End ->
+//                throw NbtDecodingException(context, "Expected tag named '$name', but got none")
+//
+//            entry.name != name && !descriptor.nbtNameIsDynamic ->
+//                throw NbtDecodingException(context, "Expected tag named '$name', but got '${entry.name}'")
+//        }
 
-            entry.name != name && !descriptor.nbtNameIsDynamic ->
-                throw NbtDecodingException(context, "Expected tag named '$name', but got '${entry.name}'")
-        }
-
-        decodedNbtNameInfo = entry
+//        decodedNbtNameInfo = entry
     }
 
     /**
@@ -76,12 +77,12 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     private fun endNamedTagIfNamed() {
         val name = decodedNbtNameInfo?.name ?: return
 
-        val entry = reader.beginCompoundEntry()
-        if (entry.type != TAG_End) {
-            throw NbtDecodingException(context, "Expected tag named '$name', but got additional entry '${entry.name}'")
-        }
+//        val entry = reader.beginCompoundEntry()
+//        if (entry.type != TAG_End) {
+//            throw NbtDecodingException(context, "Expected tag named '$name', but got additional entry '${entry.name}'")
+//        }
 
-        reader.endCompound()
+//        reader.endCompound()
         decodedNbtNameInfo = null
     }
 
@@ -220,8 +221,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     override fun decodeNbtName(): String {
         context.checkDynamicallySerializingNbtName()
 
-        // Must be non-null, since @NbtName.Dynamic is required, and that means the value implicitly has @NbtName
-        return decodedNbtNameInfo!!.name
+        return decodedTagName!! // TODO Can be null
     }
 
     final override fun decodeNbtTag(): NbtTag {
@@ -303,6 +303,9 @@ internal class NbtReaderDecoder(
     override val decodedTagType: NbtTagType
         get() = rootTagInfo.type
 
+    override val decodedTagName: String?
+        get() = rootTagInfo.name.takeIf { nbt.capabilities.namedRoot }
+
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int = 0
 
     @ExperimentalSerializationApi
@@ -332,6 +335,9 @@ private class ClassNbtDecoder(
 
     override val decodedTagType: NbtTagType
         get() = compoundEntryInfo.type
+
+    override val decodedTagName: String?
+        get() = compoundEntryInfo.name
 
     init {
         reader.beginCompound()
@@ -406,6 +412,9 @@ private class MapNbtDecoder(
     override val decodedTagType: NbtTagType
         get() = if (decodeMapKey) TAG_String else compoundEntryInfo.type
 
+    override val decodedTagName: String?
+        get() = compoundEntryInfo.name // TODO For map key AND value?
+
     init {
         reader.beginCompound()
     }
@@ -469,6 +478,9 @@ private class ListNbtDecoder(
     override val decodedTagType: NbtTagType
         get() = listInfo.type
 
+    override val decodedTagName: String?
+        get() = null
+
     override fun beginEntry(): Boolean = reader.beginListEntry()
 
     override fun endStructure(descriptor: SerialDescriptor) {
@@ -491,6 +503,9 @@ private class ByteArrayNbtDecoder(
 
     override val decodedTagType: NbtTagType
         get() = TAG_Byte
+
+    override val decodedTagName: String?
+        get() = null
 
     override fun beginEntry(): Boolean = reader.beginByteArrayEntry()
 
@@ -515,6 +530,9 @@ private class IntArrayNbtDecoder(
     override val decodedTagType: NbtTagType
         get() = TAG_Int
 
+    override val decodedTagName: String?
+        get() = null
+
     override fun beginEntry(): Boolean = reader.beginIntArrayEntry()
 
     override fun endStructure(descriptor: SerialDescriptor) {
@@ -537,6 +555,9 @@ private class LongArrayNbtDecoder(
 
     override val decodedTagType: NbtTagType
         get() = TAG_Long
+
+    override val decodedTagName: String?
+        get() = null
 
     override fun beginEntry(): Boolean = reader.beginLongArrayEntry()
 

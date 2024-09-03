@@ -9,8 +9,10 @@ import net.benwoodworth.knbt.test.shouldReturn
 import kotlin.test.Test
 
 class TreeNbtReaderTest {
+    private val rootName = "root_name"
+
     private inline fun expectNbtReaderCalls(tag: NbtTag, assertCalls: NbtReader.() -> Unit) {
-        TreeNbtReader(tag).assertCalls()
+        TreeNbtReader(NbtNamed("", tag)).assertCalls()
     }
 
     @Test
@@ -18,7 +20,7 @@ class TreeNbtReaderTest {
         val value by parameterOfBytes()
 
         expectNbtReaderCalls(NbtByte(value)) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_Byte)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Byte, rootName)
             readByte() shouldReturn value
         }
     }
@@ -28,7 +30,7 @@ class TreeNbtReaderTest {
         val value by parameterOfShorts()
 
         expectNbtReaderCalls(NbtShort(value)) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_Short)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Short, rootName)
             readShort() shouldReturn value
         }
     }
@@ -38,7 +40,7 @@ class TreeNbtReaderTest {
         val value by parameterOfInts()
 
         expectNbtReaderCalls(NbtInt(value)) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_Int)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Int, rootName)
             readInt() shouldReturn value
         }
     }
@@ -48,7 +50,7 @@ class TreeNbtReaderTest {
         val value by parameterOfLongs()
 
         expectNbtReaderCalls(NbtLong(value)) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_Long)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Long, rootName)
             readLong() shouldReturn value
         }
     }
@@ -58,7 +60,7 @@ class TreeNbtReaderTest {
         val value by parameterOfFloats()
 
         expectNbtReaderCalls(NbtFloat(value)) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_Float)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Float, rootName)
             readFloat() shouldReturn value
         }
     }
@@ -68,7 +70,7 @@ class TreeNbtReaderTest {
         val value by parameterOfDoubles()
 
         expectNbtReaderCalls(NbtDouble(value)) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_Double)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Double, rootName)
             readDouble() shouldReturn value
         }
     }
@@ -78,7 +80,7 @@ class TreeNbtReaderTest {
         val value by parameterOfByteArrays()
 
         expectNbtReaderCalls(NbtByteArray(value.asList())) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_Byte_Array)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Byte_Array, rootName)
             beginByteArray() shouldReturn ArrayInfo(value.size)
             repeat(value.size) { index ->
                 readByte() shouldReturn value[index]
@@ -92,7 +94,7 @@ class TreeNbtReaderTest {
         val value by parameterOfIntArrays()
 
         expectNbtReaderCalls(NbtIntArray(value.asList())) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_Int_Array)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Int_Array, rootName)
             beginIntArray() shouldReturn ArrayInfo(value.size)
             repeat(value.size) { index ->
                 readInt() shouldReturn value[index]
@@ -106,7 +108,7 @@ class TreeNbtReaderTest {
         val value by parameterOfLongArrays()
 
         expectNbtReaderCalls(NbtLongArray(value.asList())) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_Long_Array)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Long_Array, rootName)
             beginLongArray() shouldReturn ArrayInfo(value.size)
             repeat(value.size) { index ->
                 readLong() shouldReturn value[index]
@@ -118,7 +120,7 @@ class TreeNbtReaderTest {
     @Test
     fun should_read_Compound_with_no_entries_correctly() {
         expectNbtReaderCalls(buildNbtCompound {}) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_Compound)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Compound, rootName)
             beginCompound()
             beginCompoundEntry() shouldReturn NamedTagInfo.End
             endCompound()
@@ -130,7 +132,7 @@ class TreeNbtReaderTest {
         expectNbtReaderCalls(
             buildNbtCompound { put("entry", 5) }
         ) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_Compound)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Compound, rootName)
             beginCompound()
             beginCompoundEntry() shouldReturn NamedTagInfo(TAG_Int, "entry")
             readInt() shouldReturn 5
@@ -142,7 +144,7 @@ class TreeNbtReaderTest {
     @Test
     fun should_read_List_with_no_entries_correctly() {
         expectNbtReaderCalls(NbtList(emptyList())) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_List)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_List, rootName)
             beginList() shouldReturn ListInfo(TAG_End, 0)
             endList()
         }
@@ -151,7 +153,7 @@ class TreeNbtReaderTest {
     @Test
     fun should_read_List_with_one_entry_correctly() {
         expectNbtReaderCalls(NbtList(listOf("entry").map { NbtString(it) })) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_List)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_List, rootName)
             beginList() shouldReturn ListInfo(TAG_String, 1)
             readString() shouldReturn "entry"
             endList()
@@ -172,7 +174,7 @@ class TreeNbtReaderTest {
         }
 
         expectNbtReaderCalls(list) {
-            beginRootTag() shouldReturn RootTagInfo(TAG_List)
+            beginRootTag() shouldReturn NamedTagInfo(TAG_List, rootName)
             beginList() shouldReturn ListInfo(TAG_List, 3)
 
             beginList() shouldReturn ListInfo(TAG_String, 2)

@@ -19,8 +19,10 @@ internal interface NbtReader {
 
     /**
      * Followed by a call to read a value of the same type.
+     *
+     * The returned [name][NamedTagInfo.name] should be ignored for unnamed [NbtFormat]s.
      */
-    fun beginRootTag(): RootTagInfo
+    fun beginRootTag(): NamedTagInfo
 
     /**
      * Followed by calls to [beginCompoundEntry], then a call to [endCompound]
@@ -103,9 +105,6 @@ internal interface NbtReader {
     fun readDouble(): Double
 
     fun readString(): String
-
-    @JvmInline
-    value class RootTagInfo(val type: NbtTagType)
 
     data class NamedTagInfo(
         val type: NbtTagType,

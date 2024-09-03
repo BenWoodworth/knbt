@@ -11,7 +11,7 @@ internal abstract class BinaryNbtWriter : NbtWriter {
         writeByte(value.id.toInt())
     }
 
-    abstract override fun beginRootTag(type: NbtTagType)
+    abstract override fun beginRootTag(type: NbtTagType, name: String)
 
     override fun beginCompound(): Unit = Unit
 
@@ -94,21 +94,9 @@ internal abstract class BinaryNbtWriter : NbtWriter {
 }
 
 internal abstract class NamedBinaryNbtWriter : BinaryNbtWriter() {
-    private var compoundNesting = 0
-
-    override fun beginRootTag(type: NbtTagType) {
-    }
-
-    final override fun beginCompound() {
-        super.beginCompound()
-        compoundNesting++
-    }
-
-    final override fun endCompound() {
-        compoundNesting--
-        if (compoundNesting > 0) {
-            sink.writeNbtTagType(TAG_End)
-        }
+    override fun beginRootTag(type: NbtTagType, name: String) {
+        sink.writeNbtTagType(type)
+        sink.writeNbtString(name)
     }
 }
 
@@ -164,7 +152,7 @@ internal abstract class JavaNetworkNbtWriter : BinaryNbtWriter() {
         override val context: NbtContext,
         override val sink: BufferedSink
     ) : JavaNetworkNbtWriter() {
-        override fun beginRootTag(type: NbtTagType) {
+        override fun beginRootTag(type: NbtTagType, name: String) {
             sink.writeNbtTagType(type)
             sink.writeNbtString("")
         }
@@ -174,7 +162,7 @@ internal abstract class JavaNetworkNbtWriter : BinaryNbtWriter() {
         override val context: NbtContext,
         override val sink: BufferedSink
     ) : JavaNetworkNbtWriter() {
-        override fun beginRootTag(type: NbtTagType) {
+        override fun beginRootTag(type: NbtTagType, name: String) {
             sink.writeNbtTagType(type)
         }
     }

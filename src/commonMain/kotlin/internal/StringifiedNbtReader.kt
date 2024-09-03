@@ -131,10 +131,11 @@ internal class StringifiedNbtReader(
             }
         }
 
-    override fun beginRootTag(): NbtReader.RootTagInfo =
-        NbtReader.RootTagInfo(
+    override fun beginRootTag(): NbtReader.NamedTagInfo =
+        NbtReader.NamedTagInfo(
             source.skipWhitespace().peekTagType()
-                ?: throw NbtDecodingException(context, "Expected value, but got nothing")
+                ?: throw NbtDecodingException(context, "Expected value, but got nothing"),
+            ""
         )
 
     override fun beginCompound() {

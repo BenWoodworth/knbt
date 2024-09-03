@@ -26,7 +26,7 @@ internal abstract class BinaryNbtReader : NbtReader {
         }
     }
 
-    abstract override fun beginRootTag(): NbtReader.RootTagInfo
+    abstract override fun beginRootTag(): NbtReader.NamedTagInfo
 
     override fun beginCompound() {
         checkTagType(TAG_Compound)
@@ -158,30 +158,8 @@ internal abstract class BinaryNbtReader : NbtReader {
 }
 
 internal abstract class NamedBinaryNbtReader : BinaryNbtReader() {
-    private var compoundNesting = 0
-    private var readRootEntry = false
-
-    final override fun beginRootTag(): NbtReader.RootTagInfo =
-        NbtReader.RootTagInfo(TAG_Compound)
-
-    final override fun beginCompound() {
-        super.beginCompound()
-        compoundNesting++
-    }
-
-    final override fun beginCompoundEntry(): NbtReader.NamedTagInfo {
-        if (compoundNesting == 1) {
-            if (readRootEntry) return NbtReader.NamedTagInfo.End
-            readRootEntry = true
-        }
-
-        return super.beginCompoundEntry()
-    }
-
-    final override fun endCompound() {
-        super.endCompound()
-        compoundNesting--
-    }
+    final override fun beginRootTag(): NbtReader.NamedTagInfo =
+        NbtReader.NamedTagInfo(source.readNbtTagType(), source.readNbtString())
 }
 
 internal class JavaNbtReader(
@@ -239,11 +217,11 @@ internal abstract class JavaNetworkNbtReader : BinaryNbtReader() {
             skip(nameLength)
         }
 
-        override fun beginRootTag(): NbtReader.RootTagInfo {
+        override fun beginRootTag(): NbtReader.NamedTagInfo {
             val type = source.readNbtTagType()
             source.discardTagName()
 
-            return NbtReader.RootTagInfo(type)
+            return NbtReader.NamedTagInfo(type, "")
         }
     }
 
@@ -251,8 +229,8 @@ internal abstract class JavaNetworkNbtReader : BinaryNbtReader() {
         override val context: NbtContext,
         override val source: BufferedSource
     ) : JavaNetworkNbtReader() {
-        override fun beginRootTag(): NbtReader.RootTagInfo =
-            NbtReader.RootTagInfo(source.readNbtTagType())
+        override fun beginRootTag(): NbtReader.NamedTagInfo =
+            NbtReader.NamedTagInfo(source.readNbtTagType(), "")
     }
 }
 

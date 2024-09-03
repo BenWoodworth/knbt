@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class VerifyingNbtWriter(
-    private val tag: NbtTag,
+    private val tag: NbtNamed<NbtTag>,
 ) : NbtWriter {
     private val stateHistory = mutableListOf<State>(State.InRoot)
 
@@ -22,11 +22,12 @@ internal class VerifyingNbtWriter(
         Unit to state
     }
 
-    override fun beginRootTag(type: NbtTagType): Unit = transitionState(::beginRootTag) {
+    override fun beginRootTag(type: NbtTagType, name: String): Unit = transitionState(::beginRootTag) {
         assertStateIs<State.InRoot>(state)
-        assertWrittenRootTypeEquals(tag.type, type)
+        assertWrittenRootTypeEquals(tag.value.type, type)
+        // TODO Check name (named AND unnamed variants)
 
-        Unit to State.AwaitingValue(tag, State.Complete)
+        Unit to State.AwaitingValue(tag.value, State.Complete)
     }
 
     override fun beginCompound(): Unit = transitionState(::beginCompound) {

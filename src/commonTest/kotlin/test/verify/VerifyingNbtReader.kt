@@ -12,7 +12,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class VerifyingNbtReader(
-    private val tag: NbtTag,
+    private val tag: NbtNamed<NbtTag>,
     private val capabilities: NbtCapabilities,
 ) : NbtReader {
     private val stateHistory = mutableListOf<State>(State.InRoot)
@@ -23,10 +23,10 @@ internal class VerifyingNbtReader(
         Unit to state
     }
 
-    override fun beginRootTag(): NbtReader.RootTagInfo = transitionState(::beginRootTag) {
+    override fun beginRootTag(): NbtReader.NamedTagInfo = transitionState(::beginRootTag) {
         assertStateIs<State.InRoot>(state)
 
-        NbtReader.RootTagInfo(tag.type) to State.AwaitingValue(tag, State.Complete)
+        NbtReader.NamedTagInfo(tag.value.type, tag.name) to State.AwaitingValue(tag.value, State.Complete)
     }
 
     override fun beginCompound(): Unit = transitionState(::beginCompound) {
