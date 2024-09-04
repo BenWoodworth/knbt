@@ -897,18 +897,6 @@ public final class net/benwoodworth/knbt/NbtTagBuildersKt {
 
 public final class net/benwoodworth/knbt/NbtTagKt {
 	public static final fun fromBoolean (Lnet/benwoodworth/knbt/NbtByte$Companion;Z)Lnet/benwoodworth/knbt/NbtByte;
-	public static final fun getBoolean (Lnet/benwoodworth/knbt/NbtTag;)Z
-	public static final fun getBooleanOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Boolean;
-	public static final fun getByte (Lnet/benwoodworth/knbt/NbtTag;)B
-	public static final fun getByteOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Byte;
-	public static final fun getDouble (Lnet/benwoodworth/knbt/NbtTag;)D
-	public static final fun getDoubleOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Double;
-	public static final fun getFloat (Lnet/benwoodworth/knbt/NbtTag;)F
-	public static final fun getFloatOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Float;
-	public static final fun getInt (Lnet/benwoodworth/knbt/NbtTag;)I
-	public static final fun getIntOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Integer;
-	public static final fun getLong (Lnet/benwoodworth/knbt/NbtTag;)J
-	public static final fun getLongOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Long;
 	public static final fun getNbtByte (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtByte;
 	public static final fun getNbtByteArray (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtByteArray;
 	public static final fun getNbtCompound (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtCompound;
@@ -926,10 +914,6 @@ public final class net/benwoodworth/knbt/NbtTagKt {
 	public static final fun getOrNull (Lnet/benwoodworth/knbt/NbtIntArray;I)Ljava/lang/Integer;
 	public static final fun getOrNull (Lnet/benwoodworth/knbt/NbtList;I)Lnet/benwoodworth/knbt/NbtTag;
 	public static final fun getOrNull (Lnet/benwoodworth/knbt/NbtLongArray;I)Ljava/lang/Long;
-	public static final fun getShort (Lnet/benwoodworth/knbt/NbtTag;)S
-	public static final fun getShortOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Short;
-	public static final fun getString (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/String;
-	public static final fun getStringOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/String;
 	public static final fun nbtList (Lnet/benwoodworth/knbt/NbtTag;Lkotlin/reflect/KClass;)Lnet/benwoodworth/knbt/NbtList;
 	public static final fun toBoolean (Lnet/benwoodworth/knbt/NbtByte;)Z
 }
@@ -1019,6 +1003,22 @@ public final class net/benwoodworth/knbt/_DeprecationsKt {
 	public static synthetic fun asNbtEncoder$default (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtEncoder;
 	public static final fun detect (Lnet/benwoodworth/knbt/NbtCompression$Companion;Lokio/BufferedSource;Ljava/lang/Void;)Lnet/benwoodworth/knbt/NbtCompression;
 	public static synthetic fun detect$default (Lnet/benwoodworth/knbt/NbtCompression$Companion;Lokio/BufferedSource;Ljava/lang/Void;ILjava/lang/Object;)Lnet/benwoodworth/knbt/NbtCompression;
+	public static final fun getBoolean (Lnet/benwoodworth/knbt/NbtTag;)Z
+	public static final fun getBooleanOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Boolean;
+	public static final fun getByte (Lnet/benwoodworth/knbt/NbtTag;)B
+	public static final fun getByteOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Byte;
+	public static final fun getDouble (Lnet/benwoodworth/knbt/NbtTag;)D
+	public static final fun getDoubleOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Double;
+	public static final fun getFloat (Lnet/benwoodworth/knbt/NbtTag;)F
+	public static final fun getFloatOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Float;
+	public static final fun getInt (Lnet/benwoodworth/knbt/NbtTag;)I
+	public static final fun getIntOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Integer;
+	public static final fun getLong (Lnet/benwoodworth/knbt/NbtTag;)J
+	public static final fun getLongOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Long;
+	public static final fun getShort (Lnet/benwoodworth/knbt/NbtTag;)S
+	public static final fun getShortOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Short;
+	public static final fun getString (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/String;
+	public static final fun getStringOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/String;
 }
 
 public final class net/benwoodworth/knbt/internal/NbtTagType : java/lang/Enum {

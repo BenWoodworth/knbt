@@ -48,7 +48,7 @@ class NbtTransformingSerializerTest {
 
     private object DroppingNameSerializer : NbtTransformingSerializer<Example>(Example.serializer()) {
         override fun transformSerialize(tag: NbtTag): NbtTag =
-            NbtCompound(tag.nbtCompound.content.filterNot { (k, v) -> k == "name" && v.stringOrNull == "First" })
+            NbtCompound(tag.nbtCompound.content.filterNot { (k, v) -> k == "name" && v == NbtString("First") })
     }
 
     @Test
