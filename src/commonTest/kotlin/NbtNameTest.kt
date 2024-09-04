@@ -4,6 +4,7 @@ import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SealedSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -86,8 +87,8 @@ class NbtNameTest {
         val nbtName by parameterOf("name", "different_name")
 
         val valueSerializer = object : KSerializer<Unit> {
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
-                @ExperimentalSerializationApi
                 override val annotations = listOf(NbtName(nbtName))
             }
 
@@ -117,8 +118,8 @@ class NbtNameTest {
         val nbtName by parameterOf("name", "different_name")
 
         val valueSerializer = object : KSerializer<Unit> {
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
-                @ExperimentalSerializationApi
                 override val annotations = listOf(NbtName(nbtName))
             }
 
@@ -147,8 +148,8 @@ class NbtNameTest {
         val nbtName by parameterOf("name", "different_name")
 
         val valueSerializer = object : KSerializer<Unit> {
+            @OptIn(SealedSerializationApi::class)
             override val descriptor = object : SerialDescriptor by serializableType.baseDescriptor {
-                @ExperimentalSerializationApi
                 override val annotations = listOf(NbtName(nbtName))
             }
 
