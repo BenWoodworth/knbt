@@ -35,7 +35,6 @@ internal class NbtWriterEncoder(
 
     private var nbtNameToWrite: String? = null
     private var nbtNameToWriteWasDynamicallyEncoded = false
-    private val writtenNbtNameStack = ArrayDeque<String?>()
 
     override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
         when (descriptor.kind as StructureKind) {
@@ -60,8 +59,6 @@ internal class NbtWriterEncoder(
     }
 
     private fun beginEncodingValue(type: NbtTagType) {
-        beginNamedTagIfNamed()
-
         when (val structureType = structureTypeStack.lastOrNull()) {
             null -> {
                 val name = nbtNameToWrite
@@ -118,32 +115,6 @@ internal class NbtWriterEncoder(
     }
 
     private fun endEncodingValue() {
-        endNamedTagIfNamed()
-    }
-
-    private fun beginNamedTagIfNamed() {
-        val nbtName = nbtNameToWrite
-            .takeIf { context.isSerializingRootValue } // Name is only serialized at root
-
-        writtenNbtNameStack.addLast(null)
-        nbtNameToWrite = null
-        nbtNameToWriteWasDynamicallyEncoded = false
-
-        if (nbtName != null) {
-//            beginEncodingValue(TAG_Compound)
-
-//            structureTypeStack += TAG_Compound
-            elementName = nbtName
-            writtenNbtNameStack += nbtName
-        }
-    }
-
-    private fun endNamedTagIfNamed() {
-        val nbtName = writtenNbtNameStack.removeLast()
-
-        if (nbtName != null) {
-//            structureTypeStack.removeLast()
-        }
     }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder =
