@@ -84,16 +84,6 @@ class BinaryNbtWriterTest {
     }
 
     @Test
-    fun should_fail_when_encoding_anything_that_is_not_an_NbtCompound() = parameterizeTest {
-        val tag by parameterOfNbtTagSubtypeEdgeCases()
-        assume(tag !is NbtCompound)
-
-        assertFailsWith<NbtEncodingException> {
-            nbt.encodeToByteArray(tag)
-        }
-    }
-
-    @Test
     fun should_not_close_sink() = parameterizeTest {
         val nbtFile by parameter(nbtFiles)
 

@@ -12,7 +12,7 @@ class TreeNbtReaderTest {
     private val rootName = "root_name"
 
     private inline fun expectNbtReaderCalls(tag: NbtTag, assertCalls: NbtReader.() -> Unit) {
-        TreeNbtReader(NbtNamed("", tag)).assertCalls()
+        TreeNbtReader(NbtNamed(rootName, tag)).assertCalls()
     }
 
     @Test
