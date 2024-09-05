@@ -30,13 +30,10 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
 
     protected var serializerListKind: NbtListKind? = null
 
-    private var decodedNbtNameInfo: NbtReader.NamedTagInfo? = null
-
-    private fun decodeNbtTagTypeMarker(): NbtTagType =
-        decodedNbtNameInfo?.type ?: decodedTagType
+    private var verifiedNbtName: Boolean = false
 
     private fun beginDecodingValue(type: NbtTagType) {
-        val actualType = decodeNbtTagTypeMarker()
+        val actualType = decodedTagType
 
         if (type != actualType) {
             throw NbtDecodingException(context, "Expected $type, but was $actualType")
@@ -44,7 +41,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     }
 
     private fun endDecodingValue() {
-        endNamedTagIfNamed()
     }
 
     /**
@@ -52,38 +48,19 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
      * deserializer needs it.
      */
     private fun beginNamedTagIfNamed(descriptor: SerialDescriptor) {
-        if (!context.isSerializingRootValue) return // Name is only serialized at root
-        if (decodedNbtNameInfo != null) return // Already decoded
-        val name = descriptor.nbtName ?: return
+        if (verifiedNbtName) return
+        verifiedNbtName = true
 
-//        beginDecodingValue(TAG_Compound) // TODO Needed? Problematic?
-//        reader.beginCompound()
+        if (!nbt.capabilities.namedRoot || !context.isSerializingRootValue) return // No need to verify
 
-//        val entry = reader.beginCompoundEntry()
-//        when {
-//            entry.type == TAG_End ->
-//                throw NbtDecodingException(context, "Expected tag named '$name', but got none")
-//
-//            entry.name != name && !descriptor.nbtNameIsDynamic ->
-//                throw NbtDecodingException(context, "Expected tag named '$name', but got '${entry.name}'")
-//        }
+        val name = descriptor.nbtName
+        if (name == null) {
+            throw NbtException(context, "The ${nbt.name} format requires root values to have an NbtName")
+        }
 
-//        decodedNbtNameInfo = entry
-    }
-
-    /**
-     * Called after a value finishes decoding, TODO
-     */
-    private fun endNamedTagIfNamed() {
-        val name = decodedNbtNameInfo?.name ?: return
-
-//        val entry = reader.beginCompoundEntry()
-//        if (entry.type != TAG_End) {
-//            throw NbtDecodingException(context, "Expected tag named '$name', but got additional entry '${entry.name}'")
-//        }
-
-//        reader.endCompound()
-        decodedNbtNameInfo = null
+        if (name != decodedTagName && !descriptor.nbtNameIsDynamic) {
+            throw NbtDecodingException(context, "Expected tag named '$name', but got '$decodedTagName'")
+        }
     }
 
     //region Primitive NBT types
@@ -225,7 +202,7 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     }
 
     final override fun decodeNbtTag(): NbtTag {
-        val tagType = decodeNbtTagTypeMarker()
+        val tagType = decodedTagType
 
         beginDecodingValue(tagType)
         return reader.readNbtTag(tagType)
