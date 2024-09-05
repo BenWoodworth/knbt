@@ -44,7 +44,7 @@ public open class NbtFormat internal constructor(
      */
     public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T {
         val context = SerializationNbtContext()
-        val reader = TreeNbtReader(NbtNamed(deserializer.descriptor.nbtName ?: "", tag)) // TODO Propagate NbtNamed
+        val reader = TreeNbtReader(NbtNamed(deserializer.descriptor.nbtName, tag)) // TODO Propagate NbtNamed
         val decoder = NbtReaderDecoder(this, context, reader)
 
         return decoder.decodeSerializableValue(deserializer)

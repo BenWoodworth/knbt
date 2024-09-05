@@ -134,7 +134,7 @@ class NbtNamedSerializerTest {
 
     @Test
     fun should_serialize_NbtNamed_properly() = parameterizeTest {
-        val nbt by parameterOfVerifyingNbt(includeNamedRootNbt = true)
+        val nbt by parameterOfVerifyingNbt()
         assume(nbt.capabilities.namedRoot)
 
         val serializableType by parameterOfSerializableTypeEdgeCases()
@@ -149,7 +149,7 @@ class NbtNamedSerializerTest {
 
     @Test
     fun encoding_nested_NbtNamed_should_use_outermost_name() = parameterizeTest {
-        val nbt by parameterOfEncoderVerifyingNbt(includeNamedRootNbt = true)
+        val nbt by parameterOfEncoderVerifyingNbt()
 
         nbt.verifyEncoder(
             NbtNamed.serializer(NbtNamed.serializer(Int.serializer())),
@@ -160,7 +160,7 @@ class NbtNamedSerializerTest {
 
     @Test
     fun decoding_nested_NbtNamed_should_decode_same_name() = parameterizeTest {
-        val nbt by parameterOfDecoderVerifyingNbt(includeNamedRootNbt = true)
+        val nbt by parameterOfDecoderVerifyingNbt()
         assume(nbt.capabilities.namedRoot)
 
         nbt.verifyDecoder(

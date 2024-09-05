@@ -15,7 +15,6 @@ import net.benwoodworth.knbt.test.verify.VerifyingNbtWriter
 import kotlin.test.fail
 
 internal fun ParameterizeScope.parameterOfVerifyingNbt(
-    includeNamedRootNbt: Boolean = false, // TODO Temporary, since most tests won't support naming until it's redesigned
     builderAction: NbtFormatBuilder.() -> Unit = {}
 ) = parameter {
     val baseCapabilities = NbtCapabilities(
@@ -49,24 +48,20 @@ internal fun ParameterizeScope.parameterOfVerifyingNbt(
             baseCapabilities.copy(namedRoot = true),
             builderAction
         ),
-    ).filter { nbt ->
-        !nbt.capabilities.namedRoot || includeNamedRootNbt
-    }
+    )
 }
 
 internal fun ParameterizeScope.parameterOfEncoderVerifyingNbt(
-    includeNamedRootNbt: Boolean = false, // TODO Temporary, since most tests won't support naming until it's redesigned
     builderAction: NbtFormatBuilder.() -> Unit = {}
 ) = parameter {
-    this@parameterOfEncoderVerifyingNbt.parameterOfVerifyingNbt(includeNamedRootNbt, builderAction)
+    this@parameterOfEncoderVerifyingNbt.parameterOfVerifyingNbt(builderAction)
         .arguments.filterIsInstance<EncoderVerifyingNbt>()
 }
 
 internal fun ParameterizeScope.parameterOfDecoderVerifyingNbt(
-    includeNamedRootNbt: Boolean = false, // TODO Temporary, since most tests won't support naming until it's redesigned
     builderAction: NbtFormatBuilder.() -> Unit = {}
 ) = parameter {
-    this@parameterOfDecoderVerifyingNbt.parameterOfVerifyingNbt(includeNamedRootNbt, builderAction)
+    this@parameterOfDecoderVerifyingNbt.parameterOfVerifyingNbt(builderAction)
         .arguments.filterIsInstance<DecoderVerifyingNbt>()
 }
 

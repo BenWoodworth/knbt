@@ -54,10 +54,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         if (!nbt.capabilities.namedRoot || !context.isSerializingRootValue) return // No need to verify
 
         val name = descriptor.nbtName
-        if (name == null) {
-            throw NbtException(context, "The ${nbt.name} format requires root values to have an NbtName")
-        }
-
         if (name != decodedTagName && !descriptor.nbtNameIsDynamic) {
             throw NbtDecodingException(context, "Expected tag named '$name', but got '$decodedTagName'")
         }

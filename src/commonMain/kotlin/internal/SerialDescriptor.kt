@@ -41,12 +41,11 @@ internal fun SerialDescriptor.getElementNbtListKind(context: NbtContext, index: 
     getElementDescriptor(index).getNbtListKind(context, getElementAnnotations(index))
 
 
-internal val SerialDescriptor.nbtName: String?
+internal val SerialDescriptor.nbtName: String
     get() = annotations
         .firstOrNull { it is NbtName }
         ?.let { it as NbtName }
-        ?.name
-        ?: "".takeIf { nbtNameIsDynamic } // TODO Remove later?
+        ?.name ?: ""
 
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalNbtApi::class)

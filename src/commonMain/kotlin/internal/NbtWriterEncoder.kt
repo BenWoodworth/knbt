@@ -61,13 +61,8 @@ internal class NbtWriterEncoder(
     private fun beginEncodingValue(type: NbtTagType) {
         when (val structureType = structureTypeStack.lastOrNull()) {
             null -> {
-                val name = nbtNameToWrite
-
-                if (name == null && nbt.capabilities.namedRoot) {
-                    throw NbtException(context, "The ${nbt.name} format requires root values to have an NbtName")
-                }
-
-                writer.beginRootTag(type, name ?: "")
+                val name = checkNotNull(nbtNameToWrite) { "${::nbtNameToWrite.name} was not set" }
+                writer.beginRootTag(type, name)
             }
 
             TAG_Compound -> {
