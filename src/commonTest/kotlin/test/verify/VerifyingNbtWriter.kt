@@ -25,7 +25,7 @@ internal class VerifyingNbtWriter(
     override fun beginRootTag(type: NbtTagType, name: String): Unit = transitionState(::beginRootTag) {
         assertStateIs<State.InRoot>(state)
         assertWrittenRootTypeEquals(tag.value.type, type)
-        // TODO Check name (named AND unnamed variants)
+        assertWrittenRootNameEquals(tag.name, name)
 
         Unit to State.AwaitingValue(tag.value, State.Complete)
     }
@@ -256,6 +256,10 @@ internal class VerifyingNbtWriter(
 
         fun assertWrittenRootTypeEquals(expected: NbtTagType, actual: NbtTagType) {
             assertEquals(expected, actual, messagePrefix + "Incorrect root type was written")
+        }
+
+        fun assertWrittenRootNameEquals(expected: String, actual: String) {
+            assertEquals(expected, actual, messagePrefix + "Incorrect root name was written")
         }
 
         inline fun <reified T : NbtTag> assertWrittenTagTypeEquals(expected: NbtTag, actual: KClass<T>) {

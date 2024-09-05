@@ -5,7 +5,10 @@ import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationStrategy
-import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.NbtFormat
+import net.benwoodworth.knbt.NbtFormatBuilder
+import net.benwoodworth.knbt.NbtNamed
+import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.internal.*
 import net.benwoodworth.knbt.test.verify.VerifyingNbtReader
 import net.benwoodworth.knbt.test.verify.VerifyingNbtWriter

@@ -2,13 +2,6 @@ package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtReader.*
-import net.benwoodworth.knbt.nbtByte
-import net.benwoodworth.knbt.nbtDouble
-import net.benwoodworth.knbt.nbtFloat
-import net.benwoodworth.knbt.nbtInt
-import net.benwoodworth.knbt.nbtLong
-import net.benwoodworth.knbt.nbtShort
-import net.benwoodworth.knbt.nbtString
 
 internal class TreeNbtReader(tag: NbtNamed<NbtTag>) : NbtReader {
     private var reader: NbtTagReader = RootNbtTagReader(tag)

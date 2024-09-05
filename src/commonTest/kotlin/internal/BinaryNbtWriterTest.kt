@@ -9,16 +9,13 @@ import net.benwoodworth.knbt.okio.detect
 import net.benwoodworth.knbt.okio.encodeToBufferedSink
 import net.benwoodworth.knbt.test.TestSink
 import net.benwoodworth.knbt.test.asSource
-import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.file.nbtFiles
 import net.benwoodworth.knbt.test.parameterizeTest
-import net.benwoodworth.knbt.test.parameters.parameterOfNbtTagSubtypeEdgeCases
 import okio.blackholeSink
 import okio.buffer
 import okio.use
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 
 @OptIn(OkioApi::class)
