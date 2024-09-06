@@ -64,38 +64,6 @@ public fun NbtFormat(
     return builder.build()
 }
 
-public open class NbtFormatBuilder internal constructor(nbt: NbtFormat) {
-    /**
-     * Specifies whether default values of Kotlin properties should be encoded.
-     * `false` by default.
-     */
-    public var encodeDefaults: Boolean = nbt.configuration.encodeDefaults
-
-    /**
-     * Specifies whether encounters of unknown properties in the input NBT
-     * should be ignored instead of throwing [SerializationException].
-     * `false` by default.
-     */
-    public var ignoreUnknownKeys: Boolean = nbt.configuration.ignoreUnknownKeys
-
-    /**
-     * Module with contextual and polymorphic serializers to be used in the resulting [NbtFormat] instance.
-     */
-    public var serializersModule: SerializersModule = nbt.serializersModule
-
-    internal open fun build(): NbtFormat {
-        return NbtFormat(
-            NbtFormat.name,
-            configuration = NbtFormatConfiguration(
-                encodeDefaults = encodeDefaults,
-                ignoreUnknownKeys = ignoreUnknownKeys,
-            ),
-            serializersModule = serializersModule,
-            capabilities = NbtFormat.capabilities,
-        )
-    }
-}
-
 /**
  * Serializes the given [value] into an equivalent [NbtTag] using a serializer retrieved from the reified type
  * parameter.
