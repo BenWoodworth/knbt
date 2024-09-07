@@ -69,15 +69,15 @@ public abstract class NbtTransformingSerializer<T : Any>(
 
     final override fun serialize(encoder: Encoder, value: T) {
         val output = encoder.asNbtEncoder()
-        var element = output.nbt.encodeToNbtTag(tSerializer, value)
-        element = transformSerialize(element)
-        output.encodeNbtTag(element)
+        var tag = output.nbt.encodeToNbtTag(tSerializer, value)
+        tag = transformSerialize(tag)
+        output.encodeNbtTag(tag)
     }
 
     final override fun deserialize(decoder: Decoder): T {
         val input = decoder.asNbtDecoder()
-        val element = input.decodeNbtTag()
-        return input.nbt.decodeFromNbtTag(tSerializer, transformDeserialize(element))
+        val tag = input.decodeNbtTag()
+        return input.nbt.decodeFromNbtTag(tSerializer, transformDeserialize(tag))
     }
 
     /**
