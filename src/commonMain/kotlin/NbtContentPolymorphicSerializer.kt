@@ -15,6 +15,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.SerializersModuleBuilder
 import kotlinx.serialization.modules.polymorphic
+import net.benwoodworth.knbt.internal.nbtName
 import kotlin.reflect.KClass
 
 /**
@@ -98,7 +99,8 @@ public abstract class NbtContentPolymorphicSerializer<T : Any>(private val baseC
         val tree = input.decodeNbtTag()
 
         val actualSerializer = selectDeserializer(tree) as KSerializer<T>
-        return input.nbt.decodeFromNbtTag(actualSerializer, tree)
+        val tagName = actualSerializer.descriptor.nbtName
+        return input.nbt.decodeFromNbtTag(actualSerializer, NbtNamed(tagName, tree))
     }
 
     /**

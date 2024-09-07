@@ -26,14 +26,14 @@ public open class NbtFormat internal constructor(
      *
      * @throws [SerializationException] if the given value cannot be serialized to NBT
      */
-    public fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag {
+    public fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtNamed<NbtTag> {
         lateinit var result: NbtNamed<NbtTag>
         val context = SerializationNbtContext()
         val writer = TreeNbtWriter { result = it }
         val encoder = NbtWriterEncoder(this, context, writer)
 
         encoder.encodeSerializableValue(serializer, value)
-        return result.value
+        return result
     }
 
     /**
@@ -42,9 +42,9 @@ public open class NbtFormat internal constructor(
      * @throws [SerializationException] if the given NBT tag is not a valid NBT input for the type [T]
      * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T]
      */
-    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T {
+    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtNamed<NbtTag>): T {
         val context = SerializationNbtContext()
-        val reader = TreeNbtReader(NbtNamed(deserializer.descriptor.nbtName, tag)) // TODO Propagate NbtNamed
+        val reader = TreeNbtReader(tag)
         val decoder = NbtReaderDecoder(this, context, reader)
 
         return decoder.decodeSerializableValue(deserializer)
@@ -102,7 +102,7 @@ public open class NbtFormatBuilder internal constructor(nbt: NbtFormat) {
  *
  * @throws [SerializationException] if the given value cannot be serialized to NBT
  */
-public inline fun <reified T> NbtFormat.encodeToNbtTag(value: T): NbtTag =
+public inline fun <reified T> NbtFormat.encodeToNbtTag(value: T): NbtNamed<NbtTag> =
     encodeToNbtTag(serializersModule.serializer(), value)
 
 /**
@@ -111,5 +111,5 @@ public inline fun <reified T> NbtFormat.encodeToNbtTag(value: T): NbtTag =
  * @throws [SerializationException] if the given NBT tag is not a valid NBT input for the type [T]
  * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T]
  */
-public inline fun <reified T> NbtFormat.decodeFromNbtTag(tag: NbtTag): T =
+public inline fun <reified T> NbtFormat.decodeFromNbtTag(tag: NbtNamed<NbtTag>): T =
     decodeFromNbtTag(serializersModule.serializer(), tag)
