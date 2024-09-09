@@ -726,4 +726,4 @@ public val NbtTag.stringOrNull: String? get() = (this as? NbtString)?.value
     ReplaceWith("BinaryNbtFormat", "net.benwoodworth.knbt.BinaryNbtFormat"),
     DeprecationLevel.ERROR
 )
-public typealias Nbt = BinaryNbtFormat
+public typealias NbtXXX = BinaryNbtFormat // TODO Remove

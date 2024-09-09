@@ -42,11 +42,25 @@ public final class net/benwoodworth/knbt/JvmStreamsKt {
 public abstract interface annotation class net/benwoodworth/knbt/MIGRATION Acknowledge that NbtCompound now has a stricter get : java/lang/annotation/Annotation {
 }
 
+public class net/benwoodworth/knbt/Nbt : net/benwoodworth/knbt/NbtFormat {
+	public static final field Default Lnet/benwoodworth/knbt/Nbt$Default;
+}
+
+public final class net/benwoodworth/knbt/Nbt$Default : net/benwoodworth/knbt/Nbt {
+}
+
 public abstract interface annotation class net/benwoodworth/knbt/NbtArray : java/lang/annotation/Annotation {
 }
 
 public synthetic class net/benwoodworth/knbt/NbtArray$Impl : net/benwoodworth/knbt/NbtArray {
 	public fun <init> ()V
+}
+
+public final class net/benwoodworth/knbt/NbtBuilder : net/benwoodworth/knbt/NbtFormatBuilder {
+	public fun <init> ()V
+	public fun <init> (Lnet/benwoodworth/knbt/Nbt;)V
+	public synthetic fun <init> (Lnet/benwoodworth/knbt/Nbt;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun build$knbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
 
 public final class net/benwoodworth/knbt/NbtByte : net/benwoodworth/knbt/NbtByteDeprecations, net/benwoodworth/knbt/NbtTag {
@@ -246,6 +260,10 @@ public final class net/benwoodworth/knbt/NbtCompressionJvmKt {
 
 public final class net/benwoodworth/knbt/NbtCompressionKt {
 	public static final fun detect (Lnet/benwoodworth/knbt/NbtCompression$Companion;[B)Lnet/benwoodworth/knbt/NbtCompression;
+}
+
+public final class net/benwoodworth/knbt/NbtConfiguration : net/benwoodworth/knbt/NbtFormatConfiguration {
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class net/benwoodworth/knbt/NbtContentPolymorphicSerializer : kotlinx/serialization/KSerializer {
@@ -489,6 +507,11 @@ public abstract class net/benwoodworth/knbt/NbtIntArrayDeprecations : net/benwoo
 	public final fun sortedDescending ()Ljava/util/List;
 	public final fun sum ()I
 	public final fun toIntArray ()[I
+}
+
+public final class net/benwoodworth/knbt/NbtKt {
+	public static final fun Nbt (Lnet/benwoodworth/knbt/Nbt;Lkotlin/jvm/functions/Function1;)Lnet/benwoodworth/knbt/Nbt;
+	public static synthetic fun Nbt$default (Lnet/benwoodworth/knbt/Nbt;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lnet/benwoodworth/knbt/Nbt;
 }
 
 public final class net/benwoodworth/knbt/NbtList : net/benwoodworth/knbt/NbtListLikeDeprecations, net/benwoodworth/knbt/NbtTag {
