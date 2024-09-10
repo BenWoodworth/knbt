@@ -14,13 +14,11 @@ private val stringifiedNbtCapabilities = NbtCapabilities(
 
 public open class StringifiedNbt internal constructor(
     override val configuration: StringifiedNbtConfiguration,
-    serializersModule: SerializersModule,
-) : NbtFormat(
-    "SNBT",
-    configuration,
-    serializersModule,
-    stringifiedNbtCapabilities
-), StringFormat {
+    override val serializersModule: SerializersModule,
+) : NbtFormat(), StringFormat {
+    override val name: String get() = "SNBT"
+    override val capabilities: NbtCapabilities get() = stringifiedNbtCapabilities
+
     /**
      * The default instance of [StringifiedNbt] with default configuration.
      */

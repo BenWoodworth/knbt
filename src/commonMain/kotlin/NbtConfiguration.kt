@@ -1,12 +1,9 @@
 package net.benwoodworth.knbt
 
 public class NbtConfiguration internal constructor(
-    encodeDefaults: Boolean,
-    ignoreUnknownKeys: Boolean,
-) : NbtFormatConfiguration(
-    encodeDefaults = encodeDefaults,
-    ignoreUnknownKeys = ignoreUnknownKeys,
-) {
+    override val encodeDefaults: Boolean,
+    override val ignoreUnknownKeys: Boolean,
+) : NbtFormatConfiguration() {
     override fun toString(): String =
         "NbtConfiguration(" +
                 "encodeDefaults=$encodeDefaults" +

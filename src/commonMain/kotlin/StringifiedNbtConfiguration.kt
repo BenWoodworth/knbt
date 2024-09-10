@@ -1,15 +1,12 @@
 package net.benwoodworth.knbt
 
 public class StringifiedNbtConfiguration internal constructor(
-    encodeDefaults: Boolean,
-    ignoreUnknownKeys: Boolean,
+    override val encodeDefaults: Boolean,
+    override val ignoreUnknownKeys: Boolean,
     public val prettyPrint: Boolean,
     @ExperimentalNbtApi
     public val prettyPrintIndent: String,
-) : NbtFormatConfiguration(
-    encodeDefaults,
-    ignoreUnknownKeys,
-) {
+) : NbtFormatConfiguration() {
     @OptIn(ExperimentalNbtApi::class)
     override fun toString(): String =
         "StringifiedNbtConfiguration(" +

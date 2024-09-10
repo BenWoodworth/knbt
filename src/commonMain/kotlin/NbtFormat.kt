@@ -1,24 +1,13 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.*
-import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 
-public open class NbtFormat internal constructor(
-    internal val name: String,
-    public open val configuration: NbtFormatConfiguration,
-    final override val serializersModule: SerializersModule,
-    internal val capabilities: NbtCapabilities
-) : SerialFormat {
-    public companion object Default : NbtFormat(
-        "NbtTag",
-        configuration = NbtFormatConfiguration(
-            encodeDefaults = NbtFormatDefaults.encodeDefaults,
-            ignoreUnknownKeys = NbtFormatDefaults.ignoreUnknownKeys,
-        ),
-        serializersModule = NbtFormatDefaults.serializersModule,
-        capabilities = NbtCapabilities(namedRoot = true, definiteLengthEncoding = true)
-    )
+public abstract class NbtFormat internal constructor() : SerialFormat {
+    internal abstract val name: String
+    internal abstract val capabilities: NbtCapabilities
+
+    public abstract val configuration: NbtFormatConfiguration
 
     /**
      * Serializes the given [value] into an equivalent [NbtTag] using the given [serializer].
@@ -48,19 +37,6 @@ public open class NbtFormat internal constructor(
 
         return decoder.decodeSerializableValue(deserializer)
     }
-}
-
-/**
- * Creates an instance of [NbtFormat] configured from the optionally given [NbtFormat instance][from]
- * and adjusted with [builderAction].
- */
-public fun NbtFormat(
-    from: NbtFormat? = null,
-    builderAction: NbtFormatBuilder.() -> Unit,
-): NbtFormat {
-    val builder = NbtFormatBuilder(from)
-    builder.builderAction()
-    return builder.build()
 }
 
 /**

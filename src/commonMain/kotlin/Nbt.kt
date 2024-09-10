@@ -9,14 +9,12 @@ private val nbtCapabilities = NbtCapabilities(
 )
 
 public open class Nbt internal constructor(
-    configuration: NbtConfiguration,
-    serializersModule: SerializersModule,
-) : NbtFormat(
-    "NbtTag",
-    configuration = configuration,
-    serializersModule = serializersModule,
-    capabilities = nbtCapabilities,
-) {
+    override val configuration: NbtConfiguration,
+    override val serializersModule: SerializersModule,
+) : NbtFormat() {
+    override val name: String get() = "NbtTag"
+    override val capabilities: NbtCapabilities get() = nbtCapabilities
+
     public companion object Default : Nbt(
         configuration = NbtConfiguration(
             encodeDefaults = NbtFormatDefaults.encodeDefaults,

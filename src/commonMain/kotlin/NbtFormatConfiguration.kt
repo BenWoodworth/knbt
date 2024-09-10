@@ -4,15 +4,11 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 
-public open class NbtFormatConfiguration internal constructor(
-    public val encodeDefaults: Boolean,
-    public val ignoreUnknownKeys: Boolean
-) {
-    override fun toString(): String =
-        "NbtFormatConfiguration(" +
-                "encodeDefaults=$encodeDefaults" +
-                ", ignoreUnknownKeys=$ignoreUnknownKeys" +
-                ")"
+public abstract class NbtFormatConfiguration internal constructor() {
+    public abstract val encodeDefaults: Boolean
+    public abstract val ignoreUnknownKeys: Boolean
+
+    abstract override fun toString(): String
 }
 
 @Suppress("ConstPropertyName")
@@ -22,7 +18,7 @@ internal object NbtFormatDefaults {
     val serializersModule: SerializersModule = EmptySerializersModule()
 }
 
-public open class NbtFormatBuilder internal constructor(nbt: NbtFormat?) {
+public abstract class NbtFormatBuilder internal constructor(nbt: NbtFormat?) {
     /**
      * Specifies whether default values of Kotlin properties should be encoded.
      * `false` by default.
@@ -44,15 +40,5 @@ public open class NbtFormatBuilder internal constructor(nbt: NbtFormat?) {
     public var serializersModule: SerializersModule =
         nbt?.serializersModule ?: NbtFormatDefaults.serializersModule
 
-    internal open fun build(): NbtFormat {
-        return NbtFormat(
-            NbtFormat.name,
-            configuration = NbtFormatConfiguration(
-                encodeDefaults = encodeDefaults,
-                ignoreUnknownKeys = ignoreUnknownKeys,
-            ),
-            serializersModule = serializersModule,
-            capabilities = NbtFormat.capabilities,
-        )
-    }
+    internal abstract fun build(): NbtFormat
 }

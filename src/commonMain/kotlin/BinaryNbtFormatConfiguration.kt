@@ -1,22 +1,19 @@
 package net.benwoodworth.knbt
 
 public class BinaryNbtFormatConfiguration internal constructor(
+    override val encodeDefaults: Boolean,
+    override val ignoreUnknownKeys: Boolean,
     public val variant: NbtVariant,
     public val compression: NbtCompression,
     public val compressionLevel: Int?,
-    encodeDefaults: Boolean,
-    ignoreUnknownKeys: Boolean,
-) : NbtFormatConfiguration(
-    encodeDefaults,
-    ignoreUnknownKeys,
-) {
+) : NbtFormatConfiguration() {
     override fun toString(): String =
         "BinaryNbtFormatConfiguration(" +
-                "variant=$variant" +
+                "encodeDefaults=$encodeDefaults" +
+                ", ignoreUnknownKeys=$ignoreUnknownKeys" +
+                ", variant=$variant" +
                 ", compression=$compression" +
                 ", compressionLevel=$compressionLevel" +
-                ", encodeDefaults=$encodeDefaults" +
-                ", ignoreUnknownKeys=$ignoreUnknownKeys" +
                 ")"
 }
 
@@ -68,11 +65,11 @@ public class BinaryNbtFormatBuilder internal constructor(nbt: BinaryNbtFormat?) 
 
         return BinaryNbtFormat(
             configuration = BinaryNbtFormatConfiguration(
+                encodeDefaults = encodeDefaults,
+                ignoreUnknownKeys = ignoreUnknownKeys,
                 variant = variant,
                 compression = compression,
                 compressionLevel = compressionLevel,
-                encodeDefaults = encodeDefaults,
-                ignoreUnknownKeys = ignoreUnknownKeys,
             ),
             serializersModule = serializersModule,
         )

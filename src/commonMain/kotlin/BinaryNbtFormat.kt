@@ -4,19 +4,18 @@ import kotlinx.serialization.BinaryFormat
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.modules.SerializersModule
+import net.benwoodworth.knbt.internal.NbtCapabilities
 import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.okio.encodeToBufferedSink
 import okio.Buffer
 
 public class BinaryNbtFormat internal constructor(
     override val configuration: BinaryNbtFormatConfiguration,
-    serializersModule: SerializersModule,
-) : NbtFormat(
-    configuration.variant.toString(),
-    configuration,
-    serializersModule,
-    configuration.variant.capabilities
-), BinaryFormat, @Suppress("DEPRECATION") NbtDeprecations {
+    override val serializersModule: SerializersModule,
+) : NbtFormat(), BinaryFormat, @Suppress("DEPRECATION") NbtDeprecations {
+    override val name: String get() = configuration.variant.toString()
+    override val capabilities: NbtCapabilities get() = configuration.variant.capabilities
+
     @OptIn(OkioApi::class)
     override fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
         Buffer().apply { encodeToBufferedSink(serializer, value, this) }.readByteArray()
