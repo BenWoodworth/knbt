@@ -31,8 +31,7 @@ class MinecraftFilesTest {
     @Test
     fun encoding_Java_NBT_file_to_NbtTag_and_back_should_be_identical() {
         testFiles(
-            nbt = BinaryNbtFormat {
-                variant = NbtVariant.Java
+            nbt = JavaNbt {
                 compression = NbtCompression.None
             },
             resources = listOf(
@@ -50,8 +49,7 @@ class MinecraftFilesTest {
     @Test
     fun encoding_Bedrock_NBT_file_to_NbtTag_and_back_should_be_identical() {
         testFiles(
-            nbt = BinaryNbtFormat {
-                variant = NbtVariant.Bedrock
+            nbt = BedrockNbt {
                 compression = NbtCompression.None
             },
             resources = listOf(

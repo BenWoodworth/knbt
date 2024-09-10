@@ -26,8 +26,7 @@ private sealed class Person {
     data class Child(override val name: String, override val age: Int, val father: Adult, val mother: Adult) : Person()
 }
 
-private val nbt = BinaryNbtFormat {
-    variant = NbtVariant.Java // Java, Bedrock, BedrockNetwork
+private val nbt = JavaNbt {
     compression = NbtCompression.None // None, Gzip, Zlib
 }
 

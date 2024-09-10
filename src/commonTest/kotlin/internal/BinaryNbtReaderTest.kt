@@ -71,12 +71,11 @@ class BinaryNbtReaderTest {
         val fileCompression by parameterOfNbtCompressions()
         assume(configuredCompression != fileCompression)
 
-        val decodingNbt = BinaryNbtFormat {
-            variant = Java
+        val decodingNbt = JavaNbt {
             compression = configuredCompression
         }
 
-        val encodingNbt = BinaryNbtFormat(decodingNbt) {
+        val encodingNbt = JavaNbt(decodingNbt) {
             compression = fileCompression
         }
 

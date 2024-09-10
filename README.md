@@ -15,7 +15,7 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 
 - Kotlin Multiplatform: JVM, JS, Linux, Windows, macOS, iOS, watchOS
 - Serialize any data to/from NBT or SNBT
-- Support for all NBT variants: Java, Bedrock Files, Bedrock Network
+- Support for all NBT variants: Java, Java Network, Bedrock, Bedrock Network
 - Support for all NBT compressions: gzip, zlib
 - Type-safe `NbtTag` classes, with convenient builder DSLs
 
@@ -28,8 +28,8 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 ```kotlin
 import net.benwoodworth.knbt.*
 
-val nbt = BinaryNbtFormat {
-    variant = NbtVariant. // Java, JavaNetwork, Bedrock, BedrockNetwork
+val nbt = JavaNbt { // Java, JavaNetwork, Bedrock, BedrockNetwork
+    protocolVersion = // >= 0  (For Network)
     compression = NbtCompression. // None, Gzip, Zlib
     //compressionLevel = null // in 0..9
     //encodeDefaults = false
@@ -112,7 +112,7 @@ import net.benwoodworth.knbt.*
 
 val file = Path("file.nbt")
 
-val nbt = BinaryNbtFormat {
+val nbt = JavaNbt {
     TODO()
 }
 

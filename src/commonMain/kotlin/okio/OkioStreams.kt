@@ -30,7 +30,7 @@ public fun <T> BinaryNbtFormat.encodeToBufferedSink(
         .buffer()
 
     compressingSink.use {
-        val writer = configuration.variant.getNbtWriter(context, compressingSink)
+        val writer = variant.getNbtWriter(context, compressingSink)
         val encoder = NbtWriterEncoder(this, context, writer)
 
         encoder.encodeSerializableValue(serializer, value)
@@ -59,7 +59,6 @@ public fun <T> BinaryNbtFormat.decodeFromBufferedSource(
     source: BufferedSource
 ): T {
     val context = SerializationNbtContext()
-    val variant = configuration.variant
     val compression = configuration.compression
 
     val nonClosingSource = NonClosingSource(source).buffer()

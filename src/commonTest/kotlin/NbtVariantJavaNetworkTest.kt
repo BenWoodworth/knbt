@@ -18,16 +18,15 @@ import kotlin.test.*
 
 @OptIn(OkioApi::class)
 class NbtVariantJavaNetworkTest {
-    private fun javaNetworkNbt(protocolVersion: Int) = BinaryNbtFormat {
-        variant = NbtVariant.JavaNetwork(protocolVersion)
+    private fun javaNetworkNbt(protocolVersion: Int) = JavaNetworkNbt {
+        this.protocolVersion = protocolVersion
         compression = NbtCompression.None
     }
 
     private fun javaNetworkNbt(variant: NbtVariant.JavaNetwork) =
         javaNetworkNbt(variant.protocolVersion)
 
-    private val javaNbt = BinaryNbtFormat {
-        variant = NbtVariant.Java
+    private val javaNbt = JavaNbt {
         compression = NbtCompression.None
     }
 

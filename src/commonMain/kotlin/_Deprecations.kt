@@ -721,9 +721,5 @@ public val NbtTag.doubleOrNull: Double? get() = (this as? NbtDouble)?.value
 )
 public val NbtTag.stringOrNull: String? get() = (this as? NbtString)?.value
 
-@Deprecated(
-    "Renamed to BinaryNbtFormat",
-    ReplaceWith("BinaryNbtFormat", "net.benwoodworth.knbt.BinaryNbtFormat"),
-    DeprecationLevel.ERROR
-)
+@Deprecated("Replaced by JavaNbt, JavaNetworkNbt, BedrockNbt, and BedrockNetworkNbt", level = DeprecationLevel.ERROR)
 public typealias NbtXXX = BinaryNbtFormat // TODO Remove

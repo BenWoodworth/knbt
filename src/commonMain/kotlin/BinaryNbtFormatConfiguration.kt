@@ -1,36 +1,16 @@
 package net.benwoodworth.knbt
 
-public class BinaryNbtFormatConfiguration internal constructor(
-    override val encodeDefaults: Boolean,
-    override val ignoreUnknownKeys: Boolean,
-    public val variant: NbtVariant,
-    public val compression: NbtCompression,
-    public val compressionLevel: Int?,
-) : NbtFormatConfiguration() {
-    override fun toString(): String =
-        "BinaryNbtFormatConfiguration(" +
-                "encodeDefaults=$encodeDefaults" +
-                ", ignoreUnknownKeys=$ignoreUnknownKeys" +
-                ", variant=$variant" +
-                ", compression=$compression" +
-                ", compressionLevel=$compressionLevel" +
-                ")"
+public abstract class BinaryNbtFormatConfiguration internal constructor() : NbtFormatConfiguration() {
+    public abstract val compression: NbtCompression
+    public abstract val compressionLevel: Int?
 }
 
 internal object BinaryNbtFormatDefaults {
     val compressionLevel: Int? = null
 }
 
-/**
- * Builder of the [BinaryNbtFormat] instance provided by `BinaryNbtFormat { ... }` factory function.
- */
 @NbtDslMarker
-public class BinaryNbtFormatBuilder internal constructor(nbt: BinaryNbtFormat?) : NbtFormatBuilder(nbt) {
-    /**
-     * The variant of NBT binary format to use. Required.
-     */
-    public var variant: NbtVariant? = nbt?.configuration?.variant
-
+public abstract class BinaryNbtFormatBuilder internal constructor(nbt: BinaryNbtFormat?) : NbtFormatBuilder(nbt) {
     /**
      * The compression method to use when writing NBT binary. Required.
      */
@@ -51,27 +31,6 @@ public class BinaryNbtFormatBuilder internal constructor(nbt: BinaryNbtFormat?) 
             field = value
         }
 
-    override fun build(): BinaryNbtFormat {
-        val variant = variant
-        val compression = compression
-
-        require(variant != null && compression != null) {
-            when {
-                variant == null && compression == null -> "Variant and compression are required but are null"
-                variant == null -> "Variant is required but is null"
-                else -> "Compression is required but is null"
-            }
-        }
-
-        return BinaryNbtFormat(
-            configuration = BinaryNbtFormatConfiguration(
-                encodeDefaults = encodeDefaults,
-                ignoreUnknownKeys = ignoreUnknownKeys,
-                variant = variant,
-                compression = compression,
-                compressionLevel = compressionLevel,
-            ),
-            serializersModule = serializersModule,
-        )
-    }
+    protected fun getConfiguredCompression(): NbtCompression =
+        requireNotNull(compression) { "Compression is required but has not been configured" }
 }
