@@ -7,7 +7,7 @@ import okio.Source
 
 class NbtTestFile<T>(
     val description: String,
-    val nbt: Nbt,
+    val nbt: BinaryNbtFormat,
     val valueSerializer: KSerializer<T>,
     val value: T,
     val nbtTag: NbtNamed<NbtCompound>,
@@ -29,7 +29,7 @@ class NbtTestFile<T>(
 val nbtFiles = listOf(
     NbtTestFile(
         "test.nbt (uncompressed)",
-        Nbt {
+        BinaryNbtFormat {
             variant = NbtVariant.Java
             compression = NbtCompression.None
         },
@@ -40,7 +40,7 @@ val nbtFiles = listOf(
     ),
     NbtTestFile(
         "test.nbt (compressed gzip)",
-        Nbt {
+        BinaryNbtFormat {
             variant = NbtVariant.Java
             compression = NbtCompression.Gzip
         },
@@ -52,7 +52,7 @@ val nbtFiles = listOf(
     ),
     NbtTestFile(
         "test.nbt (compressed zlib)",
-        Nbt {
+        BinaryNbtFormat {
             variant = NbtVariant.Java
             compression = NbtCompression.Zlib
         },
@@ -63,7 +63,7 @@ val nbtFiles = listOf(
     ),
     NbtTestFile(
         "bigtest.nbt (uncompressed)",
-        Nbt {
+        BinaryNbtFormat {
             variant = NbtVariant.Java
             compression = NbtCompression.None
         },
@@ -102,7 +102,7 @@ val nbtFiles = listOf(
     ),
     NbtTestFile(
         "bigtest.nbt (gzip compressed)",
-        Nbt {
+        BinaryNbtFormat {
             variant = NbtVariant.Java
             compression = NbtCompression.Gzip
         },
@@ -122,7 +122,7 @@ val nbtFiles = listOf(
     ),
     NbtTestFile(
         "bigtest.nbt (zlib compressed)",
-        Nbt {
+        BinaryNbtFormat {
             variant = NbtVariant.Java
             compression = NbtCompression.Zlib
         },
@@ -142,7 +142,7 @@ val nbtFiles = listOf(
     ),
     NbtTestFile(
         "bigtest-extended.nbt (gzip compressed)",
-        Nbt {
+        BinaryNbtFormat {
             variant = NbtVariant.Java
             compression = NbtCompression.Gzip
         },

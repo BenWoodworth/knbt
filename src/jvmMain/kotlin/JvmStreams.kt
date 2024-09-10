@@ -15,7 +15,11 @@ import java.io.OutputStream
  * *Note*: It is the caller's responsibility to close the [output].
  */
 @OptIn(OkioApi::class)
-public fun <T> Nbt.encodeToStream(serializer: SerializationStrategy<T>, value: T, output: OutputStream): Unit =
+public fun <T> BinaryNbtFormat.encodeToStream(
+    serializer: SerializationStrategy<T>,
+    value: T,
+    output: OutputStream
+): Unit =
     encodeToBufferedSink(serializer, value, output.sink().buffer())
 
 /**
@@ -23,7 +27,7 @@ public fun <T> Nbt.encodeToStream(serializer: SerializationStrategy<T>, value: T
  *
  * *Note*: It is the caller's responsibility to close the [output].
  */
-public inline fun <reified T> Nbt.encodeToStream(value: T, output: OutputStream): Unit =
+public inline fun <reified T> BinaryNbtFormat.encodeToStream(value: T, output: OutputStream): Unit =
     encodeToStream(serializersModule.serializer(), value, output)
 
 /**
@@ -32,7 +36,7 @@ public inline fun <reified T> Nbt.encodeToStream(value: T, output: OutputStream)
  * *Note*: It is the caller's responsibility to close the [input].
  */
 @OptIn(OkioApi::class)
-public fun <T> Nbt.decodeFromStream(deserializer: DeserializationStrategy<T>, input: InputStream): T {
+public fun <T> BinaryNbtFormat.decodeFromStream(deserializer: DeserializationStrategy<T>, input: InputStream): T {
     val source = input.source()
 
     val restrictedSource = object : Source by source {
@@ -50,5 +54,5 @@ public fun <T> Nbt.decodeFromStream(deserializer: DeserializationStrategy<T>, in
  *
  * *Note*: It is the caller's responsibility to close the [input].
  */
-public inline fun <reified T> Nbt.decodeFromStream(input: InputStream): T =
+public inline fun <reified T> BinaryNbtFormat.decodeFromStream(input: InputStream): T =
     decodeFromStream(serializersModule.serializer(), input)

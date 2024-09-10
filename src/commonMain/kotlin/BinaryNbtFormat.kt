@@ -8,8 +8,8 @@ import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.okio.encodeToBufferedSink
 import okio.Buffer
 
-public class Nbt internal constructor(
-    override val configuration: NbtConfiguration,
+public class BinaryNbtFormat internal constructor(
+    override val configuration: BinaryNbtFormatConfiguration,
     serializersModule: SerializersModule,
 ) : NbtFormat(
     configuration.variant.toString(),
@@ -27,13 +27,16 @@ public class Nbt internal constructor(
 }
 
 /**
- * Creates an instance of [Nbt] configured from the optionally given [Nbt instance][from]
+ * Creates an instance of [BinaryNbtFormat] configured from the optionally given [BinaryNbtFormat instance][from]
  * and adjusted with [builderAction].
  *
- * [variant][NbtBuilder.variant] and [compression][NbtBuilder.compression] are required.
+ * [variant][BinaryNbtFormatBuilder.variant] and [compression][BinaryNbtFormatBuilder.compression] are required.
  */
-public fun Nbt(from: Nbt? = null, builderAction: NbtBuilder.() -> Unit): Nbt {
-    val builder = NbtBuilder(from)
+public fun BinaryNbtFormat(
+    from: BinaryNbtFormat? = null,
+    builderAction: BinaryNbtFormatBuilder.() -> Unit
+): BinaryNbtFormat {
+    val builder = BinaryNbtFormatBuilder(from)
     builder.builderAction()
     return builder.build()
 }

@@ -9,8 +9,8 @@ import kotlinx.serialization.encoding.Encoder
 import net.benwoodworth.knbt.internal.NbtException
 
 /**
- * Encoder used by [Nbt] during serialization.
- * This interface can be used to inject desired behaviour into a serialization process of [Nbt].
+ * Encoder used by [BinaryNbtFormat] during serialization.
+ * This interface can be used to inject desired behaviour into a serialization process of [BinaryNbtFormat].
  *
  * Typical example of the usage:
  * ```
@@ -49,7 +49,7 @@ import net.benwoodworth.knbt.internal.NbtException
 @Suppress("DEPRECATION")
 public sealed interface NbtEncoder : Encoder, CompositeEncoder, NbtEncoderDeprecations {
     /**
-     * An instance of the current [Nbt].
+     * An instance of the current [BinaryNbtFormat].
      */
     public val nbt: NbtFormat
 

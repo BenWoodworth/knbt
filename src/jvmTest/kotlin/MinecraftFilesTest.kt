@@ -6,7 +6,7 @@ import java.io.IOException
 import kotlin.test.Test
 
 class MinecraftFilesTest {
-    private fun testFiles(nbt: Nbt, resources: List<String>) {
+    private fun testFiles(nbt: BinaryNbtFormat, resources: List<String>) {
         fun testFile(resource: String): Boolean {
             val stream = this::class.java.getResourceAsStream(resource)
                 ?: throw IOException("Resource not found: $resource")
@@ -31,7 +31,7 @@ class MinecraftFilesTest {
     @Test
     fun encoding_Java_NBT_file_to_NbtTag_and_back_should_be_identical() {
         testFiles(
-            nbt = Nbt {
+            nbt = BinaryNbtFormat {
                 variant = NbtVariant.Java
                 compression = NbtCompression.None
             },
@@ -50,7 +50,7 @@ class MinecraftFilesTest {
     @Test
     fun encoding_Bedrock_NBT_file_to_NbtTag_and_back_should_be_identical() {
         testFiles(
-            nbt = Nbt {
+            nbt = BinaryNbtFormat {
                 variant = NbtVariant.Bedrock
                 compression = NbtCompression.None
             },

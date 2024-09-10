@@ -18,7 +18,11 @@ import okio.use
  * @throws [okio.IOException] If an I/O error occurs and sink can't be written to.
  */
 @OkioApi
-public fun <T> Nbt.encodeToBufferedSink(serializer: SerializationStrategy<T>, value: T, sink: BufferedSink) {
+public fun <T> BinaryNbtFormat.encodeToBufferedSink(
+    serializer: SerializationStrategy<T>,
+    value: T,
+    sink: BufferedSink
+) {
     val context = SerializationNbtContext()
 
     val compressingSink = configuration.compression
@@ -40,7 +44,7 @@ public fun <T> Nbt.encodeToBufferedSink(serializer: SerializationStrategy<T>, va
  * @throws [okio.IOException] If an I/O error occurs and sink can't be written to.
  */
 @OkioApi
-public inline fun <reified T> Nbt.encodeToBufferedSink(value: T, sink: BufferedSink): Unit =
+public inline fun <reified T> BinaryNbtFormat.encodeToBufferedSink(value: T, sink: BufferedSink): Unit =
     encodeToBufferedSink(serializersModule.serializer(), value, sink)
 
 /**
@@ -50,7 +54,10 @@ public inline fun <reified T> Nbt.encodeToBufferedSink(value: T, sink: BufferedS
  * @throws [okio.IOException] If an I/O error occurs and source can't be read from.
  */
 @OkioApi
-public fun <T> Nbt.decodeFromBufferedSource(deserializer: DeserializationStrategy<T>, source: BufferedSource): T {
+public fun <T> BinaryNbtFormat.decodeFromBufferedSource(
+    deserializer: DeserializationStrategy<T>,
+    source: BufferedSource
+): T {
     val context = SerializationNbtContext()
     val variant = configuration.variant
     val compression = configuration.compression
@@ -85,7 +92,7 @@ public fun <T> Nbt.decodeFromBufferedSource(deserializer: DeserializationStrateg
  * @throws [okio.IOException] If an I/O error occurs and source can't be read from.
  */
 @OkioApi
-public inline fun <reified T> Nbt.decodeFromBufferedSource(source: BufferedSource): T =
+public inline fun <reified T> BinaryNbtFormat.decodeFromBufferedSource(source: BufferedSource): T =
     decodeFromBufferedSource(serializersModule.serializer(), source)
 
 @OkioApi

@@ -21,14 +21,14 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 
 ## Serialization
 
-`Nbt` and `StringifiedNbt` are used to encode/decode `@Serializable` data.
+`NbtFormat`s are used to encode/decode `@Serializable` data.
 
 ### Configuration
 
 ```kotlin
 import net.benwoodworth.knbt.*
 
-val nbt = Nbt {
+val nbt = BinaryNbtFormat {
     variant = NbtVariant. // Java, JavaNetwork, Bedrock, BedrockNetwork
     compression = NbtCompression. // None, Gzip, Zlib
     //compressionLevel = null // in 0..9
@@ -112,7 +112,7 @@ import net.benwoodworth.knbt.*
 
 val file = Path("file.nbt")
 
-val nbt = Nbt {
+val nbt = BinaryNbtFormat {
     TODO()
 }
 

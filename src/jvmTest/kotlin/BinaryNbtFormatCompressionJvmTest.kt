@@ -8,7 +8,7 @@ import java.io.InputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NbtCompressionJvmTest {
+class BinaryNbtFormatCompressionJvmTest {
     private interface StreamTestCase {
         val compression: NbtCompression
         fun inputStream(): InputStream

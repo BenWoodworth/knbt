@@ -9,8 +9,8 @@ import kotlinx.serialization.encoding.Decoder
 import net.benwoodworth.knbt.internal.NbtException
 
 /**
- * Decoder used by [Nbt] during deserialization.
- * This interface can be used to inject desired behaviour into a serialization process of [Nbt].
+ * Decoder used by [BinaryNbtFormat] during deserialization.
+ * This interface can be used to inject desired behaviour into a serialization process of [BinaryNbtFormat].
  *
  * Typical example of the usage:
  * ```

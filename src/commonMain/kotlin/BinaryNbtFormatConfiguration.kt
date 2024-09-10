@@ -1,6 +1,6 @@
 package net.benwoodworth.knbt
 
-public class NbtConfiguration internal constructor(
+public class BinaryNbtFormatConfiguration internal constructor(
     public val variant: NbtVariant,
     public val compression: NbtCompression,
     public val compressionLevel: Int?,
@@ -11,7 +11,7 @@ public class NbtConfiguration internal constructor(
     ignoreUnknownKeys,
 ) {
     override fun toString(): String =
-        "NbtConfiguration(" +
+        "BinaryNbtFormatConfiguration(" +
                 "variant=$variant" +
                 ", compression=$compression" +
                 ", compressionLevel=$compressionLevel" +
@@ -20,15 +20,15 @@ public class NbtConfiguration internal constructor(
                 ")"
 }
 
-internal object NbtDefaults {
+internal object BinaryNbtFormatDefaults {
     val compressionLevel: Int? = null
 }
 
 /**
- * Builder of the [Nbt] instance provided by `Nbt { ... }` factory function.
+ * Builder of the [BinaryNbtFormat] instance provided by `BinaryNbtFormat { ... }` factory function.
  */
 @NbtDslMarker
-public class NbtBuilder internal constructor(nbt: Nbt?) : NbtFormatBuilder(nbt) {
+public class BinaryNbtFormatBuilder internal constructor(nbt: BinaryNbtFormat?) : NbtFormatBuilder(nbt) {
     /**
      * The variant of NBT binary format to use. Required.
      */
@@ -48,13 +48,13 @@ public class NbtBuilder internal constructor(nbt: Nbt?) : NbtFormatBuilder(nbt) 
      * - `9` gives the best compression.
      * - `null` requests a compromise between speed and compression.
      */
-    public var compressionLevel: Int? = nbt?.configuration?.compressionLevel ?: NbtDefaults.compressionLevel
+    public var compressionLevel: Int? = nbt?.configuration?.compressionLevel ?: BinaryNbtFormatDefaults.compressionLevel
         set(value) {
             require(value == null || value in 0..9) { "Compression level must be in 0..9 or null." }
             field = value
         }
 
-    override fun build(): Nbt {
+    override fun build(): BinaryNbtFormat {
         val variant = variant
         val compression = compression
 
@@ -66,8 +66,8 @@ public class NbtBuilder internal constructor(nbt: Nbt?) : NbtFormatBuilder(nbt) 
             }
         }
 
-        return Nbt(
-            configuration = NbtConfiguration(
+        return BinaryNbtFormat(
+            configuration = BinaryNbtFormatConfiguration(
                 variant = variant,
                 compression = compression,
                 compressionLevel = compressionLevel,

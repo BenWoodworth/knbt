@@ -33,7 +33,7 @@ public sealed interface NbtDeprecations {
         DeprecationLevel.ERROR
     )
     public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit =
-        (this as Nbt).encodeToBufferedSink(serializer, value, sink.buffer())
+        (this as BinaryNbtFormat).encodeToBufferedSink(serializer, value, sink.buffer())
 
     /**
      * Serializes and encodes the given [value] to the [sink] using the given [serializer].
@@ -50,7 +50,7 @@ public sealed interface NbtDeprecations {
         DeprecationLevel.ERROR
     )
     public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: BufferedSink): Unit =
-        (this as Nbt).encodeToBufferedSink(serializer, value, sink)
+        (this as BinaryNbtFormat).encodeToBufferedSink(serializer, value, sink)
 
     /**
      * Decodes and deserializes from the given [source] to a value of type [T] using the given [deserializer].
@@ -68,7 +68,7 @@ public sealed interface NbtDeprecations {
         DeprecationLevel.ERROR
     )
     public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T =
-        (this as Nbt).decodeFromBufferedSource(deserializer, source.buffer())
+        (this as BinaryNbtFormat).decodeFromBufferedSource(deserializer, source.buffer())
 
     /**
      * Decodes and deserializes from the given [source] to a value of type [T] using the given [deserializer].
@@ -85,7 +85,7 @@ public sealed interface NbtDeprecations {
         DeprecationLevel.ERROR
     )
     public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: BufferedSource): T =
-        (this as Nbt).decodeFromBufferedSource(deserializer, source)
+        (this as BinaryNbtFormat).decodeFromBufferedSource(deserializer, source)
 }
 
 /**
@@ -103,7 +103,7 @@ public sealed interface NbtDeprecations {
     ),
     DeprecationLevel.ERROR
 )
-public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
+public inline fun <reified T> BinaryNbtFormat.encodeToSink(value: T, sink: Sink): Unit =
     encodeToBufferedSink(value, sink.buffer())
 
 /**
@@ -120,7 +120,7 @@ public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
     ),
     DeprecationLevel.ERROR
 )
-public inline fun <reified T> Nbt.encodeToSink(value: T, sink: BufferedSink): Unit =
+public inline fun <reified T> BinaryNbtFormat.encodeToSink(value: T, sink: BufferedSink): Unit =
     encodeToBufferedSink(value, sink)
 
 /**
@@ -138,7 +138,7 @@ public inline fun <reified T> Nbt.encodeToSink(value: T, sink: BufferedSink): Un
     ),
     DeprecationLevel.ERROR
 )
-public inline fun <reified T> Nbt.decodeFromSource(source: Source): T =
+public inline fun <reified T> BinaryNbtFormat.decodeFromSource(source: Source): T =
     decodeFromBufferedSource(source.buffer())
 
 /**
@@ -155,7 +155,7 @@ public inline fun <reified T> Nbt.decodeFromSource(source: Source): T =
     ),
     DeprecationLevel.ERROR
 )
-public inline fun <reified T> Nbt.decodeFromSource(source: BufferedSource): T =
+public inline fun <reified T> BinaryNbtFormat.decodeFromSource(source: BufferedSource): T =
     decodeFromBufferedSource(source)
 
 
@@ -720,3 +720,10 @@ public val NbtTag.doubleOrNull: Double? get() = (this as? NbtDouble)?.value
     DeprecationLevel.ERROR
 )
 public val NbtTag.stringOrNull: String? get() = (this as? NbtString)?.value
+
+@Deprecated(
+    "Renamed to BinaryNbtFormat",
+    ReplaceWith("BinaryNbtFormat", "net.benwoodworth.knbt.BinaryNbtFormat"),
+    DeprecationLevel.ERROR
+)
+public typealias Nbt = BinaryNbtFormat

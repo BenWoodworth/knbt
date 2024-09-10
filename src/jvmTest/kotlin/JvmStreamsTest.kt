@@ -8,7 +8,7 @@ import kotlin.test.assertContentEquals
 class JvmStreamsTest {
     @Test
     fun should_not_read_more_bytes_than_necessary() {
-        val nbt = Nbt {
+        val nbt = BinaryNbtFormat {
             variant = NbtVariant.JavaNetwork(764)
             compression = NbtCompression.None
         }
