@@ -20,22 +20,24 @@ public class NbtConfiguration internal constructor(
                 ")"
 }
 
+internal object NbtDefaults {
+    val compressionLevel: Int? = null
+}
+
 /**
  * Builder of the [Nbt] instance provided by `Nbt { ... }` factory function.
  */
 @NbtDslMarker
-public class NbtBuilder internal constructor(nbt: Nbt) : NbtFormatBuilder(nbt) {
+public class NbtBuilder internal constructor(nbt: Nbt?) : NbtFormatBuilder(nbt) {
     /**
      * The variant of NBT binary format to use. Required.
      */
-    public var variant: NbtVariant? =
-        if (nbt === DefaultNbt) null else nbt.configuration.variant
+    public var variant: NbtVariant? = nbt?.configuration?.variant
 
     /**
      * The compression method to use when writing NBT binary. Required.
      */
-    public var compression: NbtCompression? =
-        if (nbt === DefaultNbt) null else nbt.configuration.compression
+    public var compression: NbtCompression? = nbt?.configuration?.compression
 
     /**
      * The compression level, in `0..9` or `null`.
@@ -46,7 +48,7 @@ public class NbtBuilder internal constructor(nbt: Nbt) : NbtFormatBuilder(nbt) {
      * - `9` gives the best compression.
      * - `null` requests a compromise between speed and compression.
      */
-    public var compressionLevel: Int? = nbt.configuration.compressionLevel
+    public var compressionLevel: Int? = nbt?.configuration?.compressionLevel ?: NbtDefaults.compressionLevel
         set(value) {
             require(value == null || value in 0..9) { "Compression level must be in 0..9 or null." }
             field = value

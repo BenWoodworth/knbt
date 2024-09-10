@@ -3,7 +3,6 @@ package net.benwoodworth.knbt
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.StringFormat
-import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 import kotlin.native.concurrent.ThreadLocal
@@ -28,12 +27,12 @@ public open class StringifiedNbt internal constructor(
     @ThreadLocal
     public companion object Default : StringifiedNbt(
         configuration = StringifiedNbtConfiguration(
-            encodeDefaults = NbtFormat.configuration.encodeDefaults,
-            ignoreUnknownKeys = NbtFormat.configuration.ignoreUnknownKeys,
-            prettyPrint = false,
-            prettyPrintIndent = "    ",
+            encodeDefaults = NbtFormatDefaults.encodeDefaults,
+            ignoreUnknownKeys = NbtFormatDefaults.ignoreUnknownKeys,
+            prettyPrint = StringifiedNbtDefaults.prettyPrint,
+            prettyPrintIndent = StringifiedNbtDefaults.prettyPrintIndent,
         ),
-        serializersModule = EmptySerializersModule(),
+        serializersModule = NbtFormatDefaults.serializersModule,
     )
 
     override fun <T> encodeToString(serializer: SerializationStrategy<T>, value: T): String =
@@ -69,7 +68,7 @@ public open class StringifiedNbt internal constructor(
  * and adjusted with [builderAction].
  */
 public fun StringifiedNbt(
-    from: StringifiedNbt = StringifiedNbt.Default,
+    from: StringifiedNbt? = null,
     builderAction: StringifiedNbtBuilder.() -> Unit,
 ): StringifiedNbt {
     val builder = StringifiedNbtBuilder(from)

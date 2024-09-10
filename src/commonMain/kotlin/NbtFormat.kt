@@ -1,7 +1,6 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.*
-import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 
@@ -14,10 +13,10 @@ public open class NbtFormat internal constructor(
     public companion object Default : NbtFormat(
         "NbtTag",
         configuration = NbtFormatConfiguration(
-            encodeDefaults = false,
-            ignoreUnknownKeys = false,
+            encodeDefaults = NbtFormatDefaults.encodeDefaults,
+            ignoreUnknownKeys = NbtFormatDefaults.ignoreUnknownKeys,
         ),
-        serializersModule = EmptySerializersModule(),
+        serializersModule = NbtFormatDefaults.serializersModule,
         capabilities = NbtCapabilities(namedRoot = true, definiteLengthEncoding = true)
     )
 
@@ -56,7 +55,7 @@ public open class NbtFormat internal constructor(
  * and adjusted with [builderAction].
  */
 public fun NbtFormat(
-    from: NbtFormat = NbtFormat.Default,
+    from: NbtFormat? = null,
     builderAction: NbtFormatBuilder.() -> Unit,
 ): NbtFormat {
     val builder = NbtFormatBuilder(from)
