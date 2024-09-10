@@ -1,12 +1,27 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.modules.SerializersModule
+import net.benwoodworth.knbt.internal.*
+import okio.BufferedSink
+import okio.BufferedSource
+
+private val bedrockNetworkNbtCapabilities = NbtCapabilities(
+    namedRoot = false,
+    definiteLengthEncoding = true,
+)
 
 public class BedrockNetworkNbt internal constructor(
     override val configuration: BedrockNetworkNbtConfiguration,
     override val serializersModule: SerializersModule,
 ) : BinaryNbtFormat() {
-    override val variant: NbtVariant get() = NbtVariant.BedrockNetwork
+    override val name: String get() = "BedrockNetwork"
+    override val capabilities: NbtCapabilities get() = bedrockNetworkNbtCapabilities
+
+    override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
+        BedrockNbtReader(context, source)
+
+    override fun getNbtWriter(context: NbtContext, sink: BufferedSink): BinaryNbtWriter =
+        BedrockNbtWriter(context, sink)
 }
 
 /**

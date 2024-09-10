@@ -34,26 +34,36 @@ public class JavaNetworkNbtBuilder internal constructor(nbt: JavaNetworkNbt?) : 
      */
     public var protocolVersion: Int? = nbt?.configuration?.protocolVersion
         set(value) {
-            if (value != null) {
-                require(value >= 0) { "Protocol version must be non-negative, but is $value" }
-                require(value != 0x40000000) { "Invalid snapshot protocol version: 0x40000000. Snapshot versions start at 0x40000001" }
-            }
+            if (value != null) getProtocolType(value)
             field = value
         }
 
     private fun getConfiguredProtocolVersion(): Int =
         requireNotNull(protocolVersion) { "Protocol version is required, but has not been configured." }
 
+    private fun getProtocolType(protocolVersion: Int): JavaNetworkNbt.ProtocolType {
+        require(protocolVersion >= 0) { "Protocol version must be non-negative, but is $protocolVersion" }
+        require(protocolVersion != 0x40000000) { "Invalid snapshot protocol version: 0x40000000. Snapshot versions start at 0x40000001" }
+
+        return when (protocolVersion) {
+            in 0..763, in 0x40000001..0x40000089 -> JavaNetworkNbt.ProtocolType.EmptyNamedRoot
+            else -> JavaNetworkNbt.ProtocolType.UnnamedRoot
+        }
+    }
+
     override fun build(): JavaNetworkNbt {
+        val protocolVersion = getConfiguredProtocolVersion()
+
         return JavaNetworkNbt(
             configuration = JavaNetworkNbtConfiguration(
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
                 compression = getConfiguredCompression(),
                 compressionLevel = compressionLevel,
-                protocolVersion = getConfiguredProtocolVersion(),
+                protocolVersion = protocolVersion,
             ),
             serializersModule = serializersModule,
+            protocolType = getProtocolType(protocolVersion),
         )
     }
 }

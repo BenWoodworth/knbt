@@ -1046,36 +1046,24 @@ public abstract class net/benwoodworth/knbt/NbtTransformingSerializer : kotlinx/
 	protected fun transformSerialize (Lnet/benwoodworth/knbt/NbtTag;)Lnet/benwoodworth/knbt/NbtTag;
 }
 
-public abstract class net/benwoodworth/knbt/NbtVariant {
+public final class net/benwoodworth/knbt/NbtVariant {
+	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant;
 }
 
-public final class net/benwoodworth/knbt/NbtVariant$Bedrock : net/benwoodworth/knbt/NbtVariant {
+public final class net/benwoodworth/knbt/NbtVariant$Bedrock {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Bedrock;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
-public final class net/benwoodworth/knbt/NbtVariant$BedrockNetwork : net/benwoodworth/knbt/NbtVariant {
+public final class net/benwoodworth/knbt/NbtVariant$BedrockNetwork {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$BedrockNetwork;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
-public final class net/benwoodworth/knbt/NbtVariant$Java : net/benwoodworth/knbt/NbtVariant {
+public final class net/benwoodworth/knbt/NbtVariant$Java {
 	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$Java;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
-public final class net/benwoodworth/knbt/NbtVariant$JavaNetwork : net/benwoodworth/knbt/NbtVariant {
-	public fun <init> (I)V
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getProtocolVersion ()I
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
+public final class net/benwoodworth/knbt/NbtVariant$JavaNetwork {
+	public static final field INSTANCE Lnet/benwoodworth/knbt/NbtVariant$JavaNetwork;
 }
 
 public abstract interface annotation class net/benwoodworth/knbt/OkioApi : java/lang/annotation/Annotation {

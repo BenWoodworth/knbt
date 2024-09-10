@@ -1,46 +1,56 @@
 package net.benwoodworth.knbt
 
-import com.benwoodworth.parameterize.ParameterizeScope
 import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
+import net.benwoodworth.knbt.JavaNetworkNbt.ProtocolType
+import net.benwoodworth.knbt.JavaNetworkNbt.ProtocolType.*
 import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.test.asSource
 import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.parameterizeTest
-import net.benwoodworth.knbt.test.parameters.isEmptyNamedVersion
-import net.benwoodworth.knbt.test.parameters.isUnnamedVersion
 import net.benwoodworth.knbt.test.parameters.parameterOfNbtTagSubtypeEdgeCases
-import net.benwoodworth.knbt.test.parameters.parameterOfNbtVariantEdgeCases
 import okio.buffer
 import kotlin.test.*
 
 @OptIn(OkioApi::class)
-class NbtVariantJavaNetworkTest {
-    private fun javaNetworkNbt(protocolVersion: Int) = JavaNetworkNbt {
-        this.protocolVersion = protocolVersion
+class JavaNetworkNbtTest {
+    private val baseNbt = JavaNetworkNbt {
+        protocolVersion = 0
         compression = NbtCompression.None
     }
-
-    private fun javaNetworkNbt(variant: NbtVariant.JavaNetwork) =
-        javaNetworkNbt(variant.protocolVersion)
 
     private val javaNbt = JavaNbt {
         compression = NbtCompression.None
     }
 
-    private fun ParameterizeScope.parameterOfJavaNetworkEdgeCases() =
-        parameterOfNbtVariantEdgeCases().arguments
-            .filterIsInstance<NbtVariant.JavaNetwork>()
-            .let { parameter(it) }
+    private data class ProtocolVersionRange(val type: ProtocolType, val versionRange: IntRange)
+
+    private val protocolVersionRages = listOf(
+        ProtocolVersionRange(EmptyNamedRoot, 0..763),
+        ProtocolVersionRange(EmptyNamedRoot, 0x40000001..0x40000089),
+        ProtocolVersionRange(UnnamedRoot, 764..<0x40000000),
+        ProtocolVersionRange(UnnamedRoot, 0x40000090..Int.MAX_VALUE),
+    )
+
+    private val protocolVersionEdgeCases = protocolVersionRages
+        .flatMap { (_, versionRange) ->
+            listOf(versionRange.first, versionRange.last)
+        }
+
+    private val Int.protocolType: ProtocolType
+        get() = protocolVersionRages
+            .firstOrNull { this in it.versionRange }
+            ?.type
+            ?: throw IllegalArgumentException("Bad Java network protocol version: $this")
 
     @Test
     fun negative_protocol_version_should_throw() = parameterizeTest {
         val protocolVersion by parameterOf(-1, Int.MIN_VALUE)
 
         val failure = assertFailsWith<IllegalArgumentException> {
-            NbtVariant.JavaNetwork(protocolVersion)
+            JavaNetworkNbt { this.protocolVersion = protocolVersion }
         }
 
         assertEquals("Protocol version must be non-negative, but is $protocolVersion", failure.message)
@@ -51,7 +61,7 @@ class NbtVariantJavaNetworkTest {
         val baseVersion = 0x40000000
 
         val failure = assertFailsWith<IllegalArgumentException> {
-            NbtVariant.JavaNetwork(baseVersion)
+            JavaNetworkNbt { protocolVersion = baseVersion }
         }
 
         val versionHex = baseVersion.toString(16)
@@ -64,68 +74,35 @@ class NbtVariantJavaNetworkTest {
     }
 
     @Test
-    fun equals_should_be_true_if_type_and_protocol_version_are_the_same() = parameterizeTest {
-        val variant by parameterOfJavaNetworkEdgeCases()
+    fun empty_name_protocol_version_should_write_the_same_as_Java_with_empty_name() = parameterizeTest {
+        val protocolVersion by parameter(protocolVersionEdgeCases)
+        assume(protocolVersion.protocolType == EmptyNamedRoot)
 
-        val other by parameter {
-            this@parameterizeTest.parameterOfNbtVariantEdgeCases().arguments +
-                    NbtVariant.JavaNetwork(variant.protocolVersion) + // Different instance
-                    Any() +
-                    null
-        }
-
-        val expectedEquals = other is NbtVariant.JavaNetwork &&
-                variant.protocolVersion == (other as NbtVariant.JavaNetwork).protocolVersion
-
-        assertEquals(expectedEquals, variant == other)
-    }
-
-    @Test
-    fun hash_code_should_be_the_same_for_equal_variants() = parameterizeTest {
-        val variant by parameterOfJavaNetworkEdgeCases()
-
-        val equalVariant = NbtVariant.JavaNetwork(variant.protocolVersion)
-
-        assertEquals(variant.hashCode(), equalVariant.hashCode())
-    }
-
-    @Test
-    fun string_representation_should_have_protocol_version() = parameterizeTest {
-        val variant by parameterOfJavaNetworkEdgeCases()
-
-        val expected =
-            "${NbtVariant.JavaNetwork::class.simpleName}(${NbtVariant.JavaNetwork::protocolVersion.name} = ${variant.protocolVersion})"
-
-        assertEquals(expected, variant.toString())
-    }
-
-    @Test
-    fun empty_name_variant_should_write_the_same_as_Java_with_empty_name() = parameterizeTest {
-        val variant by parameterOfJavaNetworkEdgeCases()
-        assume(variant.isEmptyNamedVersion)
+        val emptyNamedNbt = JavaNetworkNbt(baseNbt) { this.protocolVersion = protocolVersion }
 
         val nbtTag by parameterOfNbtTagSubtypeEdgeCases()
 
         val javaBytes = javaNbt
             .encodeToByteArray(NbtNamed("", nbtTag))
 
-        val actualBytes = javaNetworkNbt(variant)
-            .encodeToByteArray(nbtTag)
+        val actualBytes = emptyNamedNbt.encodeToByteArray(nbtTag)
 
         assertContentEquals(javaBytes, actualBytes)
     }
 
     @Test
     fun empty_name_variant_should_read_correctly() = parameterizeTest {
-        val variant by parameterOfJavaNetworkEdgeCases()
-        assume(variant.isEmptyNamedVersion)
+        val protocolVersion by parameter(protocolVersionEdgeCases)
+        assume(protocolVersion.protocolType == EmptyNamedRoot)
+
+        val emptyNamedNbt = JavaNetworkNbt(baseNbt) { this.protocolVersion = protocolVersion }
 
         val nbtTag by parameterOfNbtTagSubtypeEdgeCases()
 
-        val bytes = javaNetworkNbt(variant).encodeToByteArray(nbtTag)
+        val bytes = emptyNamedNbt.encodeToByteArray(nbtTag)
 
         val source = bytes.asSource().buffer()
-        val decoded = javaNetworkNbt(variant).decodeFromBufferedSource<NbtTag>(source)
+        val decoded = emptyNamedNbt.decodeFromBufferedSource<NbtTag>(source)
 
         assertTrue(source.exhausted(), "Source was not exhausted")
         assertEquals(nbtTag, decoded)
@@ -133,10 +110,10 @@ class NbtVariantJavaNetworkTest {
 
     @Test
     fun empty_name_variant_should_ignore_non_empty_root_names() = parameterizeTest {
-        val variant by parameterOfJavaNetworkEdgeCases()
-        assume(variant.isEmptyNamedVersion)
+        val protocolVersion by parameter(protocolVersionEdgeCases)
+        assume(protocolVersion.protocolType == EmptyNamedRoot)
 
-        val emptyNamedNbt = javaNetworkNbt(variant)
+        val emptyNamedNbt = JavaNetworkNbt(baseNbt) { this.protocolVersion = protocolVersion }
 
         val nbtTag by parameterOfNbtTagSubtypeEdgeCases()
 
@@ -155,8 +132,10 @@ class NbtVariantJavaNetworkTest {
 
     @Test
     fun unnamed_variant_should_write_the_same_as_Java_with_no_name() = parameterizeTest {
-        val variant by parameterOfJavaNetworkEdgeCases()
-        assume(variant.isUnnamedVersion)
+        val protocolVersion by parameter(protocolVersionEdgeCases)
+        assume(protocolVersion.protocolType == UnnamedRoot)
+
+        val unnamedNamedNbt = JavaNetworkNbt(baseNbt) { this.protocolVersion = protocolVersion }
 
         val nbtTag by parameterOfNbtTagSubtypeEdgeCases()
 
@@ -167,7 +146,7 @@ class NbtVariantJavaNetworkTest {
         val tagValueBytes = javaBytes.drop(3)
         val expectedBytes = (tagTypeByte + tagValueBytes).toByteArray()
 
-        val actualBytes = javaNetworkNbt(variant)
+        val actualBytes = unnamedNamedNbt
             .encodeToByteArray(nbtTag)
 
         assertContentEquals(expectedBytes, actualBytes)
@@ -176,15 +155,17 @@ class NbtVariantJavaNetworkTest {
 
     @Test
     fun unnamed_variant_should_read_correctly() = parameterizeTest {
-        val variant by parameterOfJavaNetworkEdgeCases()
-        assume(variant.isUnnamedVersion)
+        val protocolVersion by parameter(protocolVersionEdgeCases)
+        assume(protocolVersion.protocolType == UnnamedRoot)
+
+        val unnamedNamedNbt = JavaNetworkNbt(baseNbt) { this.protocolVersion = protocolVersion }
 
         val nbtTag by parameterOfNbtTagSubtypeEdgeCases()
 
-        val bytes = javaNetworkNbt(variant).encodeToByteArray(nbtTag)
+        val bytes = unnamedNamedNbt.encodeToByteArray(nbtTag)
 
         val source = bytes.asSource().buffer()
-        val decoded = javaNetworkNbt(variant).decodeFromBufferedSource<NbtTag>(source)
+        val decoded = unnamedNamedNbt.decodeFromBufferedSource<NbtTag>(source)
 
         assertTrue(source.exhausted(), "Source was not exhausted")
         assertEquals(nbtTag, decoded)

@@ -4,7 +4,6 @@ import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.NbtVariant.Java
 import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.test.TestSource
 import net.benwoodworth.knbt.test.assume

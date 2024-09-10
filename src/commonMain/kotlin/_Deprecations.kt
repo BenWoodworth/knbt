@@ -723,3 +723,18 @@ public val NbtTag.stringOrNull: String? get() = (this as? NbtString)?.value
 
 @Deprecated("Replaced by JavaNbt, JavaNetworkNbt, BedrockNbt, and BedrockNetworkNbt", level = DeprecationLevel.ERROR)
 public typealias NbtXXX = BinaryNbtFormat // TODO Remove
+
+@Deprecated("Replaced by JavaNbt, JavaNetworkNbt, BedrockNbt, and BedrockNetworkNbt", level = DeprecationLevel.ERROR)
+public object NbtVariant {
+    @Deprecated("Replaced by JavaNbt", level = DeprecationLevel.ERROR)
+    public object Java
+
+    @Deprecated("Replaced by JavaNetworkNbt", level = DeprecationLevel.ERROR)
+    public object JavaNetwork
+
+    @Deprecated("Replaced by BedrockNbt", level = DeprecationLevel.ERROR)
+    public object Bedrock
+
+    @Deprecated("Replaced by BedrockNetworkNbt", level = DeprecationLevel.ERROR)
+    public object BedrockNetwork
+}
