@@ -11,7 +11,7 @@ public class NbtConfiguration internal constructor(
                 ")"
 }
 
-public class NbtBuilder(nbt: Nbt? = null) : NbtFormatBuilder(nbt) {
+public class NbtBuilder(nbt: NbtFormat? = null) : NbtFormatBuilder(nbt) {
     override fun build(): Nbt {
         return Nbt(
             configuration = NbtConfiguration(

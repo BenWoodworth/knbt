@@ -5,12 +5,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
-import net.benwoodworth.knbt.internal.BinaryNbtReader
-import net.benwoodworth.knbt.internal.BinaryNbtWriter
-import net.benwoodworth.knbt.internal.JavaNbtReader
-import net.benwoodworth.knbt.internal.JavaNbtWriter
-import net.benwoodworth.knbt.internal.NbtCapabilities
-import net.benwoodworth.knbt.internal.NbtContext
+import net.benwoodworth.knbt.internal.*
 import okio.BufferedSink
 import okio.BufferedSource
 

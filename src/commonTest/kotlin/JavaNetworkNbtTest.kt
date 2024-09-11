@@ -5,7 +5,8 @@ import com.benwoodworth.parameterize.parameterOf
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import net.benwoodworth.knbt.JavaNetworkNbt.ProtocolType
-import net.benwoodworth.knbt.JavaNetworkNbt.ProtocolType.*
+import net.benwoodworth.knbt.JavaNetworkNbt.ProtocolType.EmptyNamedRoot
+import net.benwoodworth.knbt.JavaNetworkNbt.ProtocolType.UnnamedRoot
 import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.test.asSource
 import net.benwoodworth.knbt.test.assume

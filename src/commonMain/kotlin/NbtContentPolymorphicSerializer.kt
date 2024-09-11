@@ -98,9 +98,10 @@ public abstract class NbtContentPolymorphicSerializer<T : Any>(private val baseC
         val input = decoder.asNbtDecoder()
         val tree = input.decodeNbtTag()
 
+        val nbt = Nbt(input.nbt)
         val actualSerializer = selectDeserializer(tree) as KSerializer<T>
         val tagName = actualSerializer.descriptor.nbtName
-        return input.nbt.decodeFromNbtTag(actualSerializer, NbtNamed(tagName, tree))
+        return nbt.decodeFromNbtTag(actualSerializer, NbtNamed(tagName, tree))
     }
 
     /**

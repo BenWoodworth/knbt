@@ -13,7 +13,7 @@ private val nbtCapabilities = NbtCapabilities(
 )
 
 public open class Nbt internal constructor(
-    override val configuration: NbtConfiguration,
+    override val configuration: NbtFormatConfiguration,
     override val serializersModule: SerializersModule,
 ) : NbtFormat() {
     override val name: String get() = "NbtTag"
@@ -46,17 +46,23 @@ public open class Nbt internal constructor(
 }
 
 /**
- * Creates an instance of [Nbt] configured from the optionally given [Nbt instance][from]
+ * Creates an instance of [Nbt] configured from the optionally given [NbtFormat instance][from]
  * and adjusted with [builderAction].
  */
 public fun Nbt(
-    from: Nbt? = null,
+    from: NbtFormat? = null,
     builderAction: NbtBuilder.() -> Unit,
 ): Nbt {
     val builder = NbtBuilder(from)
     builder.builderAction()
     return builder.build()
 }
+
+/**
+ * Creates an instance of [Nbt] configured from the given [NbtFormat instance][from].
+ */
+public fun Nbt(from: NbtFormat): Nbt =
+    Nbt(from.configuration, from.serializersModule)
 
 /**
  * Serializes the given [value] into an equivalent named [NbtTag] using a serializer retrieved from the reified type
