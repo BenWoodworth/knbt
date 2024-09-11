@@ -1,8 +1,6 @@
 package net.benwoodworth.knbt
 
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.StringFormat
+import kotlinx.serialization.*
 import kotlinx.serialization.modules.SerializersModule
 import net.benwoodworth.knbt.internal.*
 import kotlin.native.concurrent.ThreadLocal
@@ -59,6 +57,23 @@ public open class StringifiedNbt internal constructor(
 
         return decoded
     }
+
+    /**
+     * Serializes the given [value] into an equivalent [NbtTag] using the given [serializer].
+     *
+     * @throws [SerializationException] if the given value cannot be serialized to SNBT.
+     */
+    public fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag =
+        encodeToNbtTagUnsafe(serializer, value).value
+
+    /**
+     * Deserializes the given [tag] into a value of type [T] using the given [deserializer].
+     *
+     * @throws [SerializationException] if the given NBT tag is not a valid SNBT input for the type [T].
+     * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+     */
+    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
+        decodeFromNbtTagUnsafe(deserializer, NbtNamed("", tag))
 }
 
 /**
@@ -73,3 +88,22 @@ public fun StringifiedNbt(
     builder.builderAction()
     return builder.build()
 }
+
+/**
+ * Serializes the given [value] into an equivalent [NbtTag] using a serializer retrieved from the reified type
+ * parameter.
+ *
+ * @throws [SerializationException] if the given value cannot be serialized to SNBT.
+ */
+public inline fun <reified T> StringifiedNbt.encodeToNbtTag(value: T): NbtTag =
+    encodeToNbtTag(serializersModule.serializer(), value)
+
+/**
+ * Deserializes the given [tag] into a value of type [T] using a serializer retrieved from the reified type
+ * parameter.
+ *
+ * @throws [SerializationException] if the given NBT tag is not a valid SNBT input for the type [T].
+ * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+ */
+public inline fun <reified T> StringifiedNbt.decodeFromNbtTag(tag: NbtTag): T =
+    decodeFromNbtTag(serializersModule.serializer(), tag)
