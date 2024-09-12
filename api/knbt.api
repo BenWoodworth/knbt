@@ -36,6 +36,8 @@ public final class net/benwoodworth/knbt/BedrockNetworkNbt : net/benwoodworth/kn
 
 public final class net/benwoodworth/knbt/BedrockNetworkNbtBuilder : net/benwoodworth/knbt/BinaryNbtFormatBuilder {
 	public synthetic fun build$knbt ()Lnet/benwoodworth/knbt/NbtFormat;
+	public final fun getProtocolVersion ()Ljava/lang/Integer;
+	public final fun setProtocolVersion (Ljava/lang/Integer;)V
 }
 
 public final class net/benwoodworth/knbt/BedrockNetworkNbtConfiguration : net/benwoodworth/knbt/BinaryNbtFormatConfiguration {
@@ -43,6 +45,7 @@ public final class net/benwoodworth/knbt/BedrockNetworkNbtConfiguration : net/be
 	public fun getCompressionLevel ()Ljava/lang/Integer;
 	public fun getEncodeDefaults ()Z
 	public fun getIgnoreUnknownKeys ()Z
+	public final fun getProtocolVersion ()I
 	public fun toString ()Ljava/lang/String;
 }
 

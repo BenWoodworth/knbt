@@ -18,7 +18,7 @@ public class BedrockNetworkNbt internal constructor(
     override val configuration: BedrockNetworkNbtConfiguration,
     override val serializersModule: SerializersModule,
 ) : BinaryNbtFormat() {
-    override val name: String get() = "BedrockNetwork"
+    override val name: String get() = "BedrockNetwork(v${configuration.protocolVersion})"
     override val capabilities: NbtCapabilities get() = bedrockNetworkNbtCapabilities
 
     override fun getNbtReader(context: NbtContext, source: BufferedSource): BinaryNbtReader =
@@ -49,7 +49,8 @@ public class BedrockNetworkNbt internal constructor(
  * Creates an instance of [BedrockNetworkNbt] configured from the optionally given [BedrockNetworkNbt instance][from]
  * and adjusted with [builderAction].
  *
- * [compression][BedrockNbtBuilder.compression] is required.
+ * [protocolVersion][JavaNetworkNbtBuilder.protocolVersion] and [compression][BedrockNetworkNbtBuilder.compression] are
+ * required.
  */
 public fun BedrockNetworkNbt(
     from: BedrockNetworkNbt? = null,
