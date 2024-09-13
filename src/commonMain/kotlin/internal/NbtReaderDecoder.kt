@@ -51,11 +51,15 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
         if (verifiedNbtName) return
         verifiedNbtName = true
 
-        if (!nbt.capabilities.namedRoot || !context.isSerializingRootValue) return // No need to verify
+        if (!nbt.capabilities.namedRoot || nbt.configuration.lenientNbtNames || !context.isSerializingRootValue) {
+            return // No need to verify
+        }
 
-        val name = descriptor.nbtName
-        if (name != decodedTagName && !descriptor.nbtNameIsDynamic) {
-            throw NbtDecodingException(context, "Expected tag named '$name', but got '$decodedTagName'")
+        if (descriptor.nbtName != decodedTagName && !descriptor.nbtNameIsDynamic) {
+            val message = "Encountered root NBT name '$decodedTagName', but expected '${descriptor.nbtName}'.\n" +
+                    "Use 'lenientNbtNames = true' in NBT builder to ignore mismatched names."
+
+            throw NbtDecodingException(context, message)
         }
     }
 
@@ -309,7 +313,7 @@ private class ClassNbtDecoder(
     override val decodedTagType: NbtTagType
         get() = compoundEntryInfo.type
 
-    override val decodedTagName: String?
+    override val decodedTagName: String? // TODO Remove
         get() = compoundEntryInfo.name
 
     init {

@@ -3,6 +3,7 @@ package net.benwoodworth.knbt
 public class StringifiedNbtConfiguration internal constructor(
     override val encodeDefaults: Boolean,
     override val ignoreUnknownKeys: Boolean,
+    override val lenientNbtNames: Boolean,
     public val prettyPrint: Boolean,
     @ExperimentalNbtApi
     public val prettyPrintIndent: String,
@@ -12,6 +13,7 @@ public class StringifiedNbtConfiguration internal constructor(
         "StringifiedNbtConfiguration(" +
                 "encodeDefaults=$encodeDefaults" +
                 ", ignoreUnknownKeys=$ignoreUnknownKeys" +
+                ", lenientNbtNames=$lenientNbtNames" +
                 ", prettyPrint=$prettyPrint" +
                 ", prettyPrintIndent='$prettyPrintIndent'" +
                 ")"
@@ -63,6 +65,7 @@ public class StringifiedNbtBuilder internal constructor(nbt: StringifiedNbt?) : 
             configuration = StringifiedNbtConfiguration(
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
+                lenientNbtNames = lenientNbtNames,
                 prettyPrint = prettyPrint,
                 prettyPrintIndent = prettyPrintIndent,
             ),

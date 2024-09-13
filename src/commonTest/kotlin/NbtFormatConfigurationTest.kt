@@ -3,8 +3,13 @@ package net.benwoodworth.knbt
 import com.benwoodworth.parameterize.parameter
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
+import net.benwoodworth.knbt.internal.NbtDecodingException
+import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
+import net.benwoodworth.knbt.test.parameters.parameterOfSerializableTypeEdgeCases
+import net.benwoodworth.knbt.test.parameters.serializer
+import net.benwoodworth.knbt.test.withNbtName
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -61,5 +66,60 @@ class NbtFormatConfigurationTest {
                 tag
             )
         }
+    }
+
+    @Test
+    fun should_throw_for_mismatched_root_name() = parameterizeTest(recordFailures = 100) {
+        val rootName = "expected_root_name"
+        val encodedRootName = "encoded_root_name"
+
+        val nbt by parameterOfDecoderVerifyingNbt()
+        assume(nbt.capabilities.namedRoot)
+
+        val serializableType by parameterOfSerializableTypeEdgeCases()
+
+        val failure = assertFailsWith<NbtDecodingException> {
+            nbt.verifyDecoder(
+                serializableType.serializer().withNbtName(rootName),
+                NbtNamed(encodedRootName, serializableType.valueTag),
+            )
+        }
+
+        assertEquals(
+            "Encountered root NBT name '$encodedRootName', but expected '$rootName'.\n" +
+                    "Use '${NbtFormatBuilder::lenientNbtNames.name} = true' in NBT builder to ignore mismatched names.",
+            failure.message,
+            "message"
+        )
+    }
+
+    @Test
+    fun should_not_throw_for_mismatched_root_name_in_unnamed_formats() = parameterizeTest {
+        val rootName = "expected_root_name"
+        val encodedRootName = "encoded_root_name"
+
+        val nbt by parameterOfDecoderVerifyingNbt()
+        assume(!nbt.capabilities.namedRoot)
+
+        val serializableType by parameterOfSerializableTypeEdgeCases()
+
+        nbt.verifyDecoder(
+            serializableType.serializer().withNbtName(rootName),
+            NbtNamed(encodedRootName, serializableType.valueTag),
+        )
+    }
+
+    @Test
+    fun should_not_throw_for_mismatched_root_name_with_lenient_nbt_names() = parameterizeTest {
+        val rootName = "expected_root_name"
+        val encodedRootName = "encoded_root_name"
+
+        val nbt by parameterOfDecoderVerifyingNbt { lenientNbtNames = true }
+        val serializableType by parameterOfSerializableTypeEdgeCases()
+
+        nbt.verifyDecoder(
+            serializableType.serializer().withNbtName(rootName),
+            NbtNamed(encodedRootName, serializableType.valueTag),
+        )
     }
 }

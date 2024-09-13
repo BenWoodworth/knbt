@@ -23,6 +23,7 @@ public open class Nbt internal constructor(
         configuration = NbtConfiguration(
             encodeDefaults = NbtFormatDefaults.encodeDefaults,
             ignoreUnknownKeys = NbtFormatDefaults.ignoreUnknownKeys,
+            lenientNbtNames = NbtFormatDefaults.lenientNbtNames,
         ),
         serializersModule = NbtFormatDefaults.serializersModule,
     )

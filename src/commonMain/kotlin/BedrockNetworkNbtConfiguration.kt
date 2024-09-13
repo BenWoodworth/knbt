@@ -3,6 +3,7 @@ package net.benwoodworth.knbt
 public class BedrockNetworkNbtConfiguration internal constructor(
     override val encodeDefaults: Boolean,
     override val ignoreUnknownKeys: Boolean,
+    override val lenientNbtNames: Boolean,
     override val compression: NbtCompression,
     override val compressionLevel: Int?,
     public val protocolVersion: Int,
@@ -11,6 +12,7 @@ public class BedrockNetworkNbtConfiguration internal constructor(
         "BedrockNetworkNbtConfiguration(" +
                 "encodeDefaults=$encodeDefaults" +
                 ", ignoreUnknownKeys=$ignoreUnknownKeys" +
+                ", lenientNbtNames=$lenientNbtNames" +
                 ", compression=$compression" +
                 ", compressionLevel=$compressionLevel" +
                 ", protocolVersion=$protocolVersion" +
@@ -44,6 +46,7 @@ public class BedrockNetworkNbtBuilder internal constructor(nbt: BedrockNetworkNb
             configuration = BedrockNetworkNbtConfiguration(
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
+                lenientNbtNames = lenientNbtNames,
                 compression = getConfiguredCompression(),
                 compressionLevel = compressionLevel,
                 protocolVersion = getConfiguredProtocolVersion(),

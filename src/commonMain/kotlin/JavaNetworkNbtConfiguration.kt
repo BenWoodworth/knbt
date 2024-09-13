@@ -3,6 +3,7 @@ package net.benwoodworth.knbt
 public class JavaNetworkNbtConfiguration internal constructor(
     override val encodeDefaults: Boolean,
     override val ignoreUnknownKeys: Boolean,
+    override val lenientNbtNames: Boolean,
     override val compression: NbtCompression,
     override val compressionLevel: Int?,
     public val protocolVersion: Int,
@@ -11,6 +12,7 @@ public class JavaNetworkNbtConfiguration internal constructor(
         "JavaNetworkNbtConfiguration(" +
                 "encodeDefaults=$encodeDefaults" +
                 ", ignoreUnknownKeys=$ignoreUnknownKeys" +
+                ", lenientNbtNames=$lenientNbtNames" +
                 ", compression=$compression" +
                 ", compressionLevel=$compressionLevel" +
                 ", protocolVersion=$protocolVersion" +
@@ -58,6 +60,7 @@ public class JavaNetworkNbtBuilder internal constructor(nbt: JavaNetworkNbt?) : 
             configuration = JavaNetworkNbtConfiguration(
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
+                lenientNbtNames = lenientNbtNames,
                 compression = getConfiguredCompression(),
                 compressionLevel = compressionLevel,
                 protocolVersion = protocolVersion,

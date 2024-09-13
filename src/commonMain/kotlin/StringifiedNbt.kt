@@ -25,6 +25,7 @@ public open class StringifiedNbt internal constructor(
         configuration = StringifiedNbtConfiguration(
             encodeDefaults = NbtFormatDefaults.encodeDefaults,
             ignoreUnknownKeys = NbtFormatDefaults.ignoreUnknownKeys,
+            lenientNbtNames = NbtFormatDefaults.lenientNbtNames,
             prettyPrint = StringifiedNbtDefaults.prettyPrint,
             prettyPrintIndent = StringifiedNbtDefaults.prettyPrintIndent,
         ),

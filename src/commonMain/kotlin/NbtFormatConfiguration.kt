@@ -7,6 +7,7 @@ import kotlinx.serialization.modules.SerializersModule
 public abstract class NbtFormatConfiguration internal constructor() {
     public abstract val encodeDefaults: Boolean
     public abstract val ignoreUnknownKeys: Boolean
+    public abstract val lenientNbtNames: Boolean
 
     abstract override fun toString(): String
 }
@@ -15,6 +16,7 @@ public abstract class NbtFormatConfiguration internal constructor() {
 internal object NbtFormatDefaults {
     const val encodeDefaults: Boolean = false
     const val ignoreUnknownKeys: Boolean = false
+    const val lenientNbtNames: Boolean = false
     val serializersModule: SerializersModule = EmptySerializersModule()
 }
 
@@ -33,6 +35,14 @@ public abstract class NbtFormatBuilder internal constructor(nbt: NbtFormat?) {
      */
     public var ignoreUnknownKeys: Boolean =
         nbt?.configuration?.ignoreUnknownKeys ?: NbtFormatDefaults.ignoreUnknownKeys
+
+    /**
+     * Specifies whether a root [NbtName] mismatch should be ignored when deserializing named [NbtFormat]s
+     * instead of throwing [SerializationException].
+     * `false` by default.
+     */
+    public var lenientNbtNames: Boolean =
+        nbt?.configuration?.lenientNbtNames ?: NbtFormatDefaults.lenientNbtNames
 
     /**
      * Module with contextual and polymorphic serializers to be used in the resulting [NbtFormat] instance.

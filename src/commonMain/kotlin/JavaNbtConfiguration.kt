@@ -3,6 +3,7 @@ package net.benwoodworth.knbt
 public class JavaNbtConfiguration internal constructor(
     override val encodeDefaults: Boolean,
     override val ignoreUnknownKeys: Boolean,
+    override val lenientNbtNames: Boolean,
     override val compression: NbtCompression,
     override val compressionLevel: Int?,
 ) : BinaryNbtFormatConfiguration() {
@@ -10,6 +11,7 @@ public class JavaNbtConfiguration internal constructor(
         "JavaNbtConfiguration(" +
                 "encodeDefaults=$encodeDefaults" +
                 ", ignoreUnknownKeys=$ignoreUnknownKeys" +
+                ", lenientNbtNames=$lenientNbtNames" +
                 ", compression=$compression" +
                 ", compressionLevel=$compressionLevel" +
                 ")"
@@ -25,6 +27,7 @@ public class JavaNbtBuilder internal constructor(nbt: JavaNbt?) : BinaryNbtForma
             configuration = JavaNbtConfiguration(
                 encodeDefaults = encodeDefaults,
                 ignoreUnknownKeys = ignoreUnknownKeys,
+                lenientNbtNames = lenientNbtNames,
                 compression = getConfiguredCompression(),
                 compressionLevel = compressionLevel,
             ),
