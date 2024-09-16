@@ -47,7 +47,6 @@ fun ParameterizeScope.assume(condition: Boolean) {
     }
 }
 
-
 // The mapped parameters could be done more seamlessly with context parameters, with the `provideDelegate` and
 // `getValue` operators taking the ParameterizeScope from the calling context instead of explicitly passing the scope
 // and holding onto it. Maybe refactor later once context parameters are available in Kotlin.

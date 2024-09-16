@@ -17,6 +17,7 @@ internal fun ParameterizeScope.parameterOfVerifyingNbt(
     val baseCapabilities = NbtCapabilities(
         namedRoot = false,
         definiteLengthEncoding = false,
+        rootTagTypes = NbtTagTypeSet(NbtTagType.entries),
     )
 
     sequenceOf(

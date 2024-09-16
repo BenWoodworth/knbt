@@ -12,6 +12,7 @@ import okio.BufferedSource
 private val javaNetworkNbtCapabilities = NbtCapabilities(
     namedRoot = false,
     definiteLengthEncoding = true,
+    rootTagTypes = NbtTagTypeSet(NbtTagType.entries),
 )
 
 public class JavaNetworkNbt internal constructor(

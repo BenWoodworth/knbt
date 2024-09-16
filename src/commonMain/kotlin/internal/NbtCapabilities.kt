@@ -11,4 +11,6 @@ internal data class NbtCapabilities(
      * For deserialization, this means that [CompositeDecoder.decodeSequentially] can be enabled.
      */
     val definiteLengthEncoding: Boolean,
+
+    val rootTagTypes: NbtTagTypeSet,
 )

@@ -8,6 +8,7 @@ import kotlin.native.concurrent.ThreadLocal
 private val stringifiedNbtCapabilities = NbtCapabilities(
     namedRoot = false,
     definiteLengthEncoding = false,
+    rootTagTypes = NbtTagTypeSet(NbtTagType.entries - NbtTagType.TAG_End),
 )
 
 public open class StringifiedNbt internal constructor(
