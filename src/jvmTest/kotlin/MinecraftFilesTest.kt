@@ -2,11 +2,11 @@ package net.benwoodworth.knbt
 
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
-import kotlin.test.Test
 import java.io.IOException
+import kotlin.test.Test
 
 class MinecraftFilesTest {
-    private fun testFiles(nbt: Nbt, resources: List<String>) {
+    private fun testFiles(nbt: BinaryNbtFormat, resources: List<String>) {
         fun testFile(resource: String): Boolean {
             val stream = this::class.java.getResourceAsStream(resource)
                 ?: throw IOException("Resource not found: $resource")
@@ -14,7 +14,7 @@ class MinecraftFilesTest {
             val fileBytes = stream.use { it.readBytes() }
 
             stream.use {
-                val decoded = nbt.decodeFromByteArray<NbtTag>(fileBytes)
+                val decoded = nbt.decodeFromByteArray<NbtNamed<NbtTag>>(fileBytes)
                 val encodedBytes = nbt.encodeToByteArray(decoded)
                 return fileBytes.contentEquals(encodedBytes)
             }
@@ -31,8 +31,7 @@ class MinecraftFilesTest {
     @Test
     fun encoding_Java_NBT_file_to_NbtTag_and_back_should_be_identical() {
         testFiles(
-            nbt = Nbt {
-                variant = NbtVariant.Java
+            nbt = JavaNbt {
                 compression = NbtCompression.None
             },
             resources = listOf(
@@ -50,8 +49,7 @@ class MinecraftFilesTest {
     @Test
     fun encoding_Bedrock_NBT_file_to_NbtTag_and_back_should_be_identical() {
         testFiles(
-            nbt = Nbt {
-                variant = NbtVariant.Bedrock
+            nbt = BedrockNbt {
                 compression = NbtCompression.None
             },
             resources = listOf(

@@ -1,13 +1,16 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.AbstractEncoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Encoder
+import net.benwoodworth.knbt.internal.NbtException
 
 /**
- * Encoder used by [Nbt] during serialization.
- * This interface can be used to inject desired behaviour into a serialization process of [Nbt].
+ * Encoder used by [BinaryNbtFormat] during serialization.
+ * This interface can be used to inject desired behaviour into a serialization process of [BinaryNbtFormat].
  *
  * Typical example of the usage:
  * ```
@@ -46,7 +49,7 @@ import kotlinx.serialization.encoding.Encoder
 @Suppress("DEPRECATION")
 public sealed interface NbtEncoder : Encoder, CompositeEncoder, NbtEncoderDeprecations {
     /**
-     * An instance of the current [Nbt].
+     * An instance of the current [BinaryNbtFormat].
      */
     public val nbt: NbtFormat
 
@@ -79,6 +82,33 @@ public sealed interface NbtEncoder : Encoder, CompositeEncoder, NbtEncoderDeprec
      * ```
      */
     public fun encodeNbtTag(tag: NbtTag)
+
+    // TODO Description
+    /**
+     * Encodes the name of the
+     *
+     * must be called before value is encoded
+     *
+     * first call for the serializable value, so name before delegating is used
+     * if not called then outermost [NbtName].
+     *
+     * requires [NbtName.Dynamic]
+     *
+     * takes priority over static [NbtName] annotation
+     *
+     * applies to root
+     *
+     * ignored for unnamed values (formats with unnamed root, list/array entries
+     * ignored when name is set by parent (i.e. [SerialDescriptor.getElementName] takes precedence)
+     *
+     * @throws NbtException if the current value is unnamed, such as in a list/array or at the root of an unnamed NBT
+     * variant.
+     *
+     * @throws IllegalArgumentException if the serializer's [descriptor][KSerializer.descriptor] is not marked with
+     * [@NbtName.Dynamic][NbtName.Dynamic].
+     */
+    @ExperimentalNbtApi
+    public fun encodeNbtName(name: String)
 }
 
 @ExperimentalSerializationApi

@@ -104,7 +104,9 @@ public class NbtDouble(public val value: Double) : NbtTag {
 }
 
 @Serializable(NbtByteArraySerializer::class)
-public class NbtByteArray(public val content: List<Byte>) : NbtTag, @Suppress("DEPRECATION") NbtByteArrayDeprecations() {
+public class NbtByteArray(public val content: List<Byte>) : NbtTag,
+    @Suppress("DEPRECATION") NbtByteArrayDeprecations() {
+
     override val type: NbtTagType get() = NbtTagType.TAG_Byte_Array
 
     public val size: Int
@@ -167,7 +169,6 @@ public class NbtList<out T : NbtTag> private constructor(
 
         // Specific constructors, since NbtLists can only contain a single tag type
         @JvmName("invoke\$Nothing")
-        @Suppress("CONFLICTING_UPPER_BOUNDS") // https://youtrack.jetbrains.com/issue/KT-57274
         public operator fun <TNothing : Nothing> invoke(content: List<TNothing>): NbtList<TNothing> =
             NbtList(content)
 
@@ -225,7 +226,9 @@ public fun <T : NbtTag> NbtList<T>.getOrNull(index: Int): T? =
     content.getOrNull(index)
 
 @Serializable(NbtCompoundSerializer::class)
-public class NbtCompound(public val content: Map<String, NbtTag>) : NbtTag, @Suppress("DEPRECATION") NbtCompoundDeprecations() {
+public class NbtCompound(public val content: Map<String, NbtTag>) : NbtTag,
+    @Suppress("DEPRECATION") NbtCompoundDeprecations() {
+
     override val type: NbtTagType get() = NbtTagType.TAG_Compound
 
     /**
@@ -303,7 +306,9 @@ public fun NbtIntArray.getOrNull(index: Int): Int? =
     content.getOrNull(index)
 
 @Serializable(NbtLongArraySerializer::class)
-public class NbtLongArray(public val content: List<Long>) : NbtTag, @Suppress("DEPRECATION") NbtLongArrayDeprecations() {
+public class NbtLongArray(public val content: List<Long>) : NbtTag,
+    @Suppress("DEPRECATION") NbtLongArrayDeprecations() {
+
     override val type: NbtTagType get() = NbtTagType.TAG_Long_Array
 
     public val size: Int
@@ -324,85 +329,85 @@ public class NbtLongArray(public val content: List<Long>) : NbtTag, @Suppress("D
 public fun NbtLongArray.getOrNull(index: Int): Long? =
     content.getOrNull(index)
 
-//region NbtTag casting methods
+//region NbtTag casting properties
 private inline fun <reified T : NbtTag> NbtTag.cast(): T =
     this as? T ?: throw IllegalArgumentException("Element ${this::class.simpleName} is not an ${T::class.simpleName}")
 
 /**
- * Convenience method to get this element as an [NbtByte]
- * @throws IllegalArgumentException if this element is not an [NbtByte]
+ * Convenience property to get this tag as an [NbtByte].
+ * @throws IllegalArgumentException if this tag is not an [NbtByte].
  */
 public val NbtTag.nbtByte: NbtByte get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtShort]
- * @throws IllegalArgumentException if this element is not an [NbtShort]
+ * Convenience property to get this tag as an [NbtShort].
+ * @throws IllegalArgumentException if this tag is not an [NbtShort].
  */
 public val NbtTag.nbtShort: NbtShort get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtInt]
- * @throws IllegalArgumentException if this element is not an [NbtInt]
+ * Convenience property to get this tag as an [NbtInt].
+ * @throws IllegalArgumentException if this tag is not an [NbtInt].
  */
 public val NbtTag.nbtInt: NbtInt get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtLong]
- * @throws IllegalArgumentException if this element is not an [NbtLong]
+ * Convenience property to get this tag as an [NbtLong].
+ * @throws IllegalArgumentException if this tag is not an [NbtLong].
  */
 public val NbtTag.nbtLong: NbtLong get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtFloat]
- * @throws IllegalArgumentException if this element is not an [NbtFloat]
+ * Convenience property to get this tag as an [NbtFloat].
+ * @throws IllegalArgumentException if this tag is not an [NbtFloat].
  */
 public val NbtTag.nbtFloat: NbtFloat get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtDouble]
- * @throws IllegalArgumentException if this element is not an [NbtDouble]
+ * Convenience property to get this tag as an [NbtDouble].
+ * @throws IllegalArgumentException if this tag is not an [NbtDouble].
  */
 public val NbtTag.nbtDouble: NbtDouble get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtByteArray]
- * @throws IllegalArgumentException if this element is not an [NbtByteArray]
+ * Convenience property to get this tag as an [NbtByteArray].
+ * @throws IllegalArgumentException if this tag is not an [NbtByteArray].
  */
 public val NbtTag.nbtByteArray: NbtByteArray get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtString]
- * @throws IllegalArgumentException if this element is not an [NbtString]
+ * Convenience property to get this tag as an [NbtString].
+ * @throws IllegalArgumentException if this tag is not an [NbtString].
  */
 public val NbtTag.nbtString: NbtString get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtList]
- * @throws IllegalArgumentException if this element is not an [NbtList]
+ * Convenience property to get this tag as an [NbtList].
+ * @throws IllegalArgumentException if this tag is not an [NbtList].
  */
 public val NbtTag.nbtList: NbtList<*> get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtCompound]
- * @throws IllegalArgumentException if this element is not an [NbtCompound]
+ * Convenience property to get this tag as an [NbtCompound].
+ * @throws IllegalArgumentException if this tag is not an [NbtCompound].
  */
 public val NbtTag.nbtCompound: NbtCompound get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtIntArray]
- * @throws IllegalArgumentException if this element is not an [NbtIntArray]
+ * Convenience property to get this tag as an [NbtIntArray].
+ * @throws IllegalArgumentException if this tag is not an [NbtIntArray].
  */
 public val NbtTag.nbtIntArray: NbtIntArray get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtLongArray]
- * @throws IllegalArgumentException if this element is not an [NbtLongArray]
+ * Convenience property to get this tag as an [NbtLongArray].
+ * @throws IllegalArgumentException if this tag is not an [NbtLongArray].
  */
 public val NbtTag.nbtLongArray: NbtLongArray get() = cast()
 
 /**
- * Convenience method to get this element as an [NbtList]<[T]>
- * @throws IllegalArgumentException if this element is not an [NbtList]<[T]>
+ * Convenience property to get this tag as an [NbtList]<[T]>.
+ * @throws IllegalArgumentException if this tag is not an [NbtList]<[T]>.
  */
 @ExperimentalNbtApi
 public inline fun <reified T : NbtTag> NbtTag.nbtList(): NbtList<T> = nbtList(T::class)
@@ -413,101 +418,92 @@ internal fun <T : NbtTag> NbtTag.nbtList(type: KClass<T>): NbtList<T> = when {
     this !is NbtList<*> -> {
         throw IllegalArgumentException("Element ${this::class.simpleName} is not an NbtList<${type.simpleName}>")
     }
+
     size > 0 && !type.isInstance(this[0]) -> {
         throw IllegalArgumentException("Element NbtList<${this[0]::class.simpleName}> is not an NbtList<${type.simpleName}>")
     }
+
     else -> this as NbtList<T>
 }
 //endregion
 
-//region NbtTag primitive convenience properties
+//region NbtNamed<NbtTag> casting properties
 /**
- * Returns the value of this tag as [Boolean]
- * @throws IllegalArgumentException if this tag is not an [NbtByte]
+ * Convenience property to get this named tag as an [NbtByte].
+ * @throws IllegalArgumentException if this named tag is not an [NbtByte].
  */
-public val NbtTag.boolean: Boolean get() = nbtByte.toBoolean()
+public val NbtNamed<NbtTag>.nbtByte: NbtByte get() = value.nbtByte
 
 /**
- * Returns the value of this tag as [Byte]
- * @throws IllegalArgumentException if this tag is not an [NbtByte]
+ * Convenience property to get this named tag as an [NbtShort].
+ * @throws IllegalArgumentException if this named tag is not an [NbtShort].
  */
-public val NbtTag.byte: Byte get() = nbtByte.value
+public val NbtNamed<NbtTag>.nbtShort: NbtShort get() = value.nbtShort
 
 /**
- * Returns the value of this tag as [Short]
- * @throws IllegalArgumentException if this tag is not an [NbtShort]
+ * Convenience property to get this named tag as an [NbtInt].
+ * @throws IllegalArgumentException if this named tag is not an [NbtInt].
  */
-public val NbtTag.short: Short get() = nbtShort.value
+public val NbtNamed<NbtTag>.nbtInt: NbtInt get() = value.nbtInt
 
 /**
- * Returns the value of this tag as [Int]
- * @throws IllegalArgumentException if this tag is not an [NbtInt]
+ * Convenience property to get this named tag as an [NbtLong].
+ * @throws IllegalArgumentException if this named tag is not an [NbtLong].
  */
-public val NbtTag.int: Int get() = nbtInt.value
+public val NbtNamed<NbtTag>.nbtLong: NbtLong get() = value.nbtLong
 
 /**
- * Returns the value of this tag as [Long]
- * @throws IllegalArgumentException if this tag is not an [NbtLong]
+ * Convenience property to get this named tag as an [NbtFloat].
+ * @throws IllegalArgumentException if this named tag is not an [NbtFloat].
  */
-public val NbtTag.long: Long get() = nbtLong.value
+public val NbtNamed<NbtTag>.nbtFloat: NbtFloat get() = value.nbtFloat
 
 /**
- * Returns the value of this tag as [Float]
- * @throws IllegalArgumentException if this tag is not an [NbtFloat]
+ * Convenience property to get this named tag as an [NbtDouble].
+ * @throws IllegalArgumentException if this named tag is not an [NbtDouble].
  */
-public val NbtTag.float: Float get() = nbtFloat.value
+public val NbtNamed<NbtTag>.nbtDouble: NbtDouble get() = value.nbtDouble
 
 /**
- * Returns the value of this tag as [Double]
- * @throws IllegalArgumentException if this tag is not an [NbtDouble]
+ * Convenience property to get this named tag as an [NbtByteArray].
+ * @throws IllegalArgumentException if this named tag is not an [NbtByteArray].
  */
-public val NbtTag.double: Double get() = nbtDouble.value
+public val NbtNamed<NbtTag>.nbtByteArray: NbtByteArray get() = value.nbtByteArray
 
 /**
- * Returns the value of this tag as [String]
- * @throws IllegalArgumentException if this tag is not an [NbtString]
+ * Convenience property to get this named tag as an [NbtString].
+ * @throws IllegalArgumentException if this named tag is not an [NbtString].
  */
-public val NbtTag.string: String get() = nbtString.value
-//endregion
-
-//region NbtTag primitiveOrNull convenience properties
-/**
- * Returns the value of this tag as [Boolean], or `null` if this tag is not an [NbtByte]
- */
-public val NbtTag.booleanOrNull: Boolean? get() = (this as? NbtByte)?.toBoolean()
+public val NbtNamed<NbtTag>.nbtString: NbtString get() = value.nbtString
 
 /**
- * Returns the value of this tag as [Byte], or `null` if this tag is not an [NbtByte]
+ * Convenience property to get this named tag as an [NbtList].
+ * @throws IllegalArgumentException if this named tag is not an [NbtList].
  */
-public val NbtTag.byteOrNull: Byte? get() = (this as? NbtByte)?.value
+public val NbtNamed<NbtTag>.nbtList: NbtList<*> get() = value.nbtList
 
 /**
- * Returns the value of this tag as [Short], or `null` if this tag is not an [NbtShort]
+ * Convenience property to get this named tag as an [NbtCompound].
+ * @throws IllegalArgumentException if this named tag is not an [NbtCompound].
  */
-public val NbtTag.shortOrNull: Short? get() = (this as? NbtShort)?.value
+public val NbtNamed<NbtTag>.nbtCompound: NbtCompound get() = value.nbtCompound
 
 /**
- * Returns the value of this tag as [Int], or `null` if this tag is not an [NbtInt]
+ * Convenience property to get this named tag as an [NbtIntArray].
+ * @throws IllegalArgumentException if this named tag is not an [NbtIntArray].
  */
-public val NbtTag.intOrNull: Int? get() = (this as? NbtInt)?.value
+public val NbtNamed<NbtTag>.nbtIntArray: NbtIntArray get() = value.nbtIntArray
 
 /**
- * Returns the value of this tag as [Long], or `null` if this tag is not an [NbtLong]
+ * Convenience property to get this named tag as an [NbtLongArray].
+ * @throws IllegalArgumentException if this named tag is not an [NbtLongArray].
  */
-public val NbtTag.longOrNull: Long? get() = (this as? NbtLong)?.value
+public val NbtNamed<NbtTag>.nbtLongArray: NbtLongArray get() = value.nbtLongArray
 
 /**
- * Returns the value of this tag as [Float], or `null` if this tag is not an [NbtFloat]
+ * Convenience property to get this named tag as an [NbtList]<[T]>.
+ * @throws IllegalArgumentException if this named tag is not an [NbtList]<[T]>.
  */
-public val NbtTag.floatOrNull: Float? get() = (this as? NbtFloat)?.value
-
-/**
- * Returns the value of this tag as [Double], or `null` if this tag is not an [NbtDouble]
- */
-public val NbtTag.doubleOrNull: Double? get() = (this as? NbtDouble)?.value
-
-/**
- * Returns the value of this tag as [String], or `null` if this tag is not an [NbtString]
- */
-public val NbtTag.stringOrNull: String? get() = (this as? NbtString)?.value
+@ExperimentalNbtApi
+public inline fun <reified T : NbtTag> NbtNamed<NbtTag>.nbtList(): NbtList<T> = value.nbtList<T>()
 //endregion

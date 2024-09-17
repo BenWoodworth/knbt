@@ -14,20 +14,19 @@ private sealed class Person {
     abstract val age: Int
 
     @Serializable
-    @NbtNamed("Adult")
+    @NbtName("Adult")
     data class Adult(override val name: String, override val age: Int, val occupancy: String) : Person()
 
 //    @Serializable
-//    @NbtNamed("Teen")
+//    @NbtName("Teen")
 //    data class Teen(override val name: String, override val age: Int, val school: String) : Person()
 
     @Serializable
-    @NbtNamed("Child")
+    @NbtName("Child")
     data class Child(override val name: String, override val age: Int, val father: Adult, val mother: Adult) : Person()
 }
 
-private val nbt = Nbt {
-    variant = NbtVariant.Java // Java, Bedrock, BedrockNetwork
+private val nbt = JavaNbt {
     compression = NbtCompression.None // None, Gzip, Zlib
 }
 
@@ -45,5 +44,3 @@ class SealedClassTest {
         assertEquals(child, childFromNbt)
     }
 }
-
-

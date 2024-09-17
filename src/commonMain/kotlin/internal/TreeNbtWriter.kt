@@ -2,10 +2,10 @@ package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.*
 
-internal class TreeNbtWriter(tagConsumer: (NbtTag) -> Unit) : NbtWriter {
+internal class TreeNbtWriter(tagConsumer: (NbtNamed<NbtTag>) -> Unit) : NbtWriter {
     private var writer: NbtTagWriter = RootNbtTagWriter(tagConsumer)
 
-    override fun beginRootTag(type: NbtTagType): Unit = writer.beginRootTag(type)
+    override fun beginRootTag(type: NbtTagType, name: String): Unit = writer.beginRootTag(type, name)
     override fun beginCompound(): Unit = writer.beginCompound()
     override fun beginCompoundEntry(type: NbtTagType, name: String): Unit = writer.beginCompoundEntry(type, name)
     override fun endCompound(): Unit = writer.endCompound()
@@ -32,7 +32,7 @@ internal class TreeNbtWriter(tagConsumer: (NbtTag) -> Unit) : NbtWriter {
     private sealed interface NbtTagWriter {
         fun consumeTag(tag: NbtTag): Unit = error("${this::class} does not support consumeTag()")
 
-        fun beginRootTag(type: NbtTagType): Unit = error("${this::class} does not support beginRootTag()")
+        fun beginRootTag(type: NbtTagType, name: String): Unit = error("${this::class} does not support beginRootTag()")
         fun beginCompound(): Unit = error("${this::class} does not support beginCompound()")
         fun beginCompoundEntry(type: NbtTagType, name: String): Unit =
             error("${this::class} does not support beginCompoundEntry()")
@@ -59,10 +59,14 @@ internal class TreeNbtWriter(tagConsumer: (NbtTag) -> Unit) : NbtWriter {
         fun writeString(value: String): Unit = error("${this::class} does not support writeString()")
     }
 
-    private inner class RootNbtTagWriter(private val tagConsumer: (NbtTag) -> Unit) : NbtTagWriter {
-        override fun consumeTag(tag: NbtTag): Unit = tagConsumer(tag)
+    private inner class RootNbtTagWriter(private val tagConsumer: (NbtNamed<NbtTag>) -> Unit) : NbtTagWriter {
+        private var rootName: String = ""
 
-        override fun beginRootTag(type: NbtTagType): Unit = Unit
+        override fun consumeTag(tag: NbtTag): Unit = tagConsumer(NbtNamed(rootName, tag))
+
+        override fun beginRootTag(type: NbtTagType, name: String) {
+            rootName = name
+        }
 
         override fun beginCompound() {
             writer = NbtCompoundWriter(this)

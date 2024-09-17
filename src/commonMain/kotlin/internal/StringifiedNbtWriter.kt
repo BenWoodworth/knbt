@@ -55,7 +55,7 @@ internal class StringifiedNbtWriter(
         inArray = false
     }
 
-    override fun beginRootTag(type: NbtTagType): Unit = Unit
+    override fun beginRootTag(type: NbtTagType, name: String): Unit = Unit
 
     override fun beginCompound(): Unit = beginCollection("{", false)
 

@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package net.benwoodworth.knbt.internal.zlib
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ptr
 import platform.zlib.*
 
@@ -30,7 +33,3 @@ internal inline fun z_stream.deflateEnd() {
 
     if (result < 0) throw ZlibException(result, this)
 }
-
-
-
-

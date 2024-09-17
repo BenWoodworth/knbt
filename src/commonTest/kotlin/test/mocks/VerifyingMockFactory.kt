@@ -65,7 +65,7 @@ abstract class VerifyingMockFactory<T : Any, TBuilder : VerifyingMockFactory.Bui
             }
 
             if (assertionError != null) {
-                    val expectedCalls = expectedCallReturns.map { it.call }
+                val expectedCalls = expectedCallReturns.map { it.call }
 
                 assertEquals(
                     expectedCalls.take(actualCalls.size),

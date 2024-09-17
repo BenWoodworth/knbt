@@ -1,8 +1,10 @@
 .DS_Store
 
+# Kotlin
+.kotlin/
+
 # IntelliJ files
 **/.idea/*
-!/.idea/vcs.xml
 out/
 *.iml
 

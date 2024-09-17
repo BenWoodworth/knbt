@@ -1,10 +1,8 @@
 package net.benwoodworth.knbt
 
 import net.benwoodworth.knbt.internal.*
-import okio.BufferedSource
 import okio.Sink
 import okio.Source
-import kotlin.jvm.JvmOverloads
 
 public abstract class NbtCompression private constructor() {
     internal abstract fun decompress(source: Source): Source
@@ -12,32 +10,26 @@ public abstract class NbtCompression private constructor() {
 
     public companion object;
 
-    public object None : NbtCompression() {
+    public data object None : NbtCompression() {
         override fun decompress(source: Source): Source = source
         override fun compress(sink: Sink, level: Int?): Sink = sink
-
-        override fun toString(): String = "None"
     }
 
-    public object Gzip : NbtCompression() {
+    public data object Gzip : NbtCompression() {
         override fun decompress(source: Source): Source = source.asGzipSource()
         override fun compress(sink: Sink, level: Int?): Sink = sink.asGzipSink(level ?: -1)
-
-        override fun toString(): String = "Gzip"
     }
 
-    public object Zlib : NbtCompression() {
+    public data object Zlib : NbtCompression() {
         override fun decompress(source: Source): Source = source.asZlibSource()
         override fun compress(sink: Sink, level: Int?): Sink = sink.asZlibSink(level ?: -1)
-
-        override fun toString(): String = "Zlib"
     }
 }
 
 /**
  * @throws NbtDecodingException when unable to detect NbtCompression.
  */
-internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression =
+internal fun NbtCompression.Companion.detect(context: NbtContext, firstByte: Byte): NbtCompression =
     when (firstByte) {
         // NBT Tag type IDs
         in 0..12 -> NbtCompression.None
@@ -48,9 +40,10 @@ internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression =
         // Zlib headers: 0x7801, 0x789C, and 0x78DA
         0x78.toByte() -> NbtCompression.Zlib
 
-        else -> throw NbtDecodingException(
-            "Unable to detect NbtCompression. Unexpected first byte: 0x${firstByte.toHex()}"
-        )
+        else -> {
+            val message = "Unable to detect NbtCompression. Unexpected first byte: 0x${firstByte.toHex()}"
+            throw NbtDecodingException(context, message)
+        }
     }
 
 /**
@@ -59,4 +52,4 @@ internal fun NbtCompression.Companion.detect(firstByte: Byte): NbtCompression =
  * @throws NbtDecodingException when unable to detect NbtCompression.
  */
 public fun NbtCompression.Companion.detect(byteArray: ByteArray): NbtCompression =
-    detect(byteArray[0])
+    detect(EmptyNbtContext, byteArray[0])
