@@ -79,7 +79,6 @@ public abstract class NbtTransformingSerializer<T : Any>(
         val output = encoder.asNbtEncoder()
         var element: NbtTag? = null
 
-        @OptIn(ExperimentalSerializationApi::class)
         DefaultNbtEncoder(output.nbt, TreeNbtWriter { element = it })
             .encodeSerializableValue(tSerializer, value)
 

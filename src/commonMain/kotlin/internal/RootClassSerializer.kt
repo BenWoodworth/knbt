@@ -7,7 +7,6 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.*
 
-@OptIn(ExperimentalSerializationApi::class)
 private fun rootClassSerialDescriptor(classDescriptor: SerialDescriptor): SerialDescriptor =
     buildClassSerialDescriptor("net.benwoodworth.knbt.internal.RootClass", classDescriptor) {
         element(classDescriptor.serialName, classDescriptor)
@@ -30,7 +29,6 @@ internal class RootClassDeserializer<T>(
 ) : DeserializationStrategy<T> {
     override val descriptor: SerialDescriptor = rootClassSerialDescriptor(classDeserializer.descriptor)
 
-    @OptIn(ExperimentalSerializationApi::class)
     override fun deserialize(decoder: Decoder): T {
         var root: T? = null
         var rootDecoded = false
