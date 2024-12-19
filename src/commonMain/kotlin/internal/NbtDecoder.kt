@@ -242,7 +242,7 @@ private class ClassNbtDecoder(
                 try {
                     val entryType = reader.discardListTag().type
                     "${TAG_List}<${entryType}>"
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     info.type.toString()
                 }
             } else {
@@ -267,7 +267,6 @@ private class ClassNbtDecoder(
             var index: Int
 
             do {
-                @OptIn(ExperimentalSerializationApi::class)
                 index = descriptor.getElementIndex(compoundEntryInfo.name)
 
                 if (index == CompositeDecoder.UNKNOWN_NAME) {

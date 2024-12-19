@@ -6,21 +6,12 @@ public abstract interface class net/benwoodworth/knbt/CompositeNbtDecoder : kotl
 	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
 
-public final class net/benwoodworth/knbt/CompositeNbtDecoder$DefaultImpls {
-	public static fun decodeCollectionSize (Lnet/benwoodworth/knbt/CompositeNbtDecoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)I
-	public static fun decodeSequentially (Lnet/benwoodworth/knbt/CompositeNbtDecoder;)Z
-}
-
 public abstract interface class net/benwoodworth/knbt/CompositeNbtEncoder : kotlinx/serialization/encoding/CompositeEncoder {
 	public abstract fun encodeByteArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I[B)V
 	public abstract fun encodeIntArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I[I)V
 	public abstract fun encodeLongArrayElement (Lkotlinx/serialization/descriptors/SerialDescriptor;I[J)V
 	public abstract fun encodeNbtTagElement (Lkotlinx/serialization/descriptors/SerialDescriptor;ILnet/benwoodworth/knbt/NbtTag;)V
 	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
-}
-
-public final class net/benwoodworth/knbt/CompositeNbtEncoder$DefaultImpls {
-	public static fun shouldEncodeElementDefault (Lnet/benwoodworth/knbt/CompositeNbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Z
 }
 
 public abstract interface annotation class net/benwoodworth/knbt/ExperimentalNbtApi : java/lang/annotation/Annotation {
@@ -260,11 +251,6 @@ public abstract interface class net/benwoodworth/knbt/NbtDecoder : kotlinx/seria
 	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
 }
 
-public final class net/benwoodworth/knbt/NbtDecoder$DefaultImpls {
-	public static fun decodeNullableSerializableValue (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/DeserializationStrategy;)Ljava/lang/Object;
-	public static fun decodeSerializableValue (Lnet/benwoodworth/knbt/NbtDecoder;Lkotlinx/serialization/DeserializationStrategy;)Ljava/lang/Object;
-}
-
 public final class net/benwoodworth/knbt/NbtDecoderKt {
 	public static final fun asNbtDecoder (Lkotlinx/serialization/encoding/Decoder;)Lnet/benwoodworth/knbt/NbtDecoder;
 }
@@ -301,13 +287,6 @@ public abstract interface class net/benwoodworth/knbt/NbtEncoder : kotlinx/seria
 	public abstract fun encodeLongArray ([J)V
 	public abstract fun encodeNbtTag (Lnet/benwoodworth/knbt/NbtTag;)V
 	public abstract fun getNbt ()Lnet/benwoodworth/knbt/NbtFormat;
-}
-
-public final class net/benwoodworth/knbt/NbtEncoder$DefaultImpls {
-	public static fun beginCollection (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;I)Lkotlinx/serialization/encoding/CompositeEncoder;
-	public static fun encodeNotNullMark (Lnet/benwoodworth/knbt/NbtEncoder;)V
-	public static fun encodeNullableSerializableValue (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V
-	public static fun encodeSerializableValue (Lnet/benwoodworth/knbt/NbtEncoder;Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V
 }
 
 public final class net/benwoodworth/knbt/NbtEncoderKt {

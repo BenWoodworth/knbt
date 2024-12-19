@@ -90,7 +90,7 @@ private class OkioCharSource private constructor(
 
                     CharSource.ReadResult(Char(highSurrogate))
                 }
-            } catch (e: EOFException) {
+            } catch (_: EOFException) {
                 CharSource.ReadResult.EOF
             }
         }
