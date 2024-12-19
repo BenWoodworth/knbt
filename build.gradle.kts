@@ -91,7 +91,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
-                implementation("com.benwoodworth.parameterize:parameterize:0.3.0")
+                implementation("com.benwoodworth.parameterize:parameterize:0.3.3")
             }
         }
         val jvmTest by getting {
@@ -101,7 +101,7 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                implementation(npm("pako", "2.0.3"))
+                implementation(npm("pako", "2.1.0"))
             }
         }
     }
