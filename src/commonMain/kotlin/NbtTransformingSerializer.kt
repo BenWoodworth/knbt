@@ -84,7 +84,7 @@ public abstract class NbtTransformingSerializer<T : Any>(
             .encodeSerializableValue(tSerializer, value)
 
         checkNotNull(element) { "Expected element to be initialized by TreeNbtWriter"}
-        output.encodeNbtTag(transformSerialize(element!!))
+        output.encodeNbtTag(transformSerialize(element))
     }
 
     final override fun deserialize(decoder: Decoder): T {
