@@ -13,7 +13,7 @@ import kotlinx.serialization.encoding.Encoder
 internal object NbtTagSerializer : KSerializer<NbtTag> {
     @OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
     override val descriptor: SerialDescriptor =
-        buildSerialDescriptor("kotlinx.serialization.json.JsonElement", PolymorphicKind.SEALED) {
+        buildSerialDescriptor("net.benwoodworth.knbt.NbtByte", PolymorphicKind.SEALED) {
             // Resolve cyclic dependency in descriptors by late binding
             element("NbtByteSerializer", defer { NbtByteSerializer.descriptor })
             element("NbtShortSerializer", defer { NbtShortSerializer.descriptor })
