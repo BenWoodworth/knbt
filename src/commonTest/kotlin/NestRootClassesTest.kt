@@ -11,7 +11,6 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalSerializationApi::class)
 class NestRootClassesTest {
     private class TestCase<T>(
         val serializer: KSerializer<T>,

@@ -267,7 +267,6 @@ private class ClassNbtDecoder(
             var index: Int
 
             do {
-                @OptIn(ExperimentalSerializationApi::class)
                 index = descriptor.getElementIndex(compoundEntryInfo.name)
 
                 if (index == CompositeDecoder.UNKNOWN_NAME) {

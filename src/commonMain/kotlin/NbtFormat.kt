@@ -92,7 +92,7 @@ public inline fun <reified T> NbtFormat.encodeToNbtTag(value: T): NbtTag =
 public inline fun <reified T> NbtFormat.decodeFromNbtTag(tag: NbtTag): T =
     decodeFromNbtTag(serializersModule.serializer(), tag)
 
-@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
+@OptIn(InternalSerializationApi::class)
 internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: SerializationStrategy<T>, value: T) {
     val rootSerializer = if (
         configuration.nameRootClasses &&
@@ -107,7 +107,7 @@ internal fun <T> NbtFormat.encodeToNbtWriter(writer: NbtWriter, serializer: Seri
         .encodeSerializableValue(rootSerializer, value)
 }
 
-@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
+@OptIn(InternalSerializationApi::class)
 internal fun <T> NbtFormat.decodeFromNbtReader(reader: NbtReader, deserializer: DeserializationStrategy<T>): T {
     val rootDeserializer = if (
         configuration.nameRootClasses &&
