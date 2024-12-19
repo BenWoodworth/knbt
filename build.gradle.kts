@@ -1,4 +1,5 @@
-import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val kotlinx_serialization_version: String by extra
 val okio_version: String by extra
@@ -12,10 +13,10 @@ System.getenv("GIT_REF")?.let { gitRef ->
 val isSnapshot = version.toString().contains("SNAPSHOT", true)
 
 plugins {
-    kotlin("multiplatform") version "1.9.23"
-    kotlin("plugin.serialization") version "1.9.23"
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.14.0"
-    id("org.jetbrains.dokka") version "1.9.20"
+    kotlin("multiplatform") version "2.1.0"
+    kotlin("plugin.serialization") version "2.1.0"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.16.3"
+    id("org.jetbrains.dokka") version "2.0.0"
     id("maven-publish")
     id("signing")
 }
@@ -28,8 +29,8 @@ kotlin {
     explicitApi()
 
     jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_1_8
         }
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
@@ -106,15 +107,15 @@ kotlin {
     }
 }
 
-tasks.withType<DokkaTask> {
+dokka {
     dokkaSourceSets.all {
-        includeNonPublic.set(false)
-        skipDeprecated.set(true)
+        documentedVisibilities = setOf(VisibilityModifier.Public)
+        skipDeprecated = true
     }
 }
 
 val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
+    archiveClassifier = "javadoc"
 }
 
 signing {
@@ -155,27 +156,27 @@ publishing {
         artifact(javadocJar.get())
 
         pom {
-            name.set("knbt")
-            description.set("Minecraft NBT support for kotlinx.serialization")
-            url.set("https://github.com/BenWoodworth/knbt")
+            name = "knbt"
+            description = "Minecraft NBT support for kotlinx.serialization"
+            url = "https://github.com/BenWoodworth/knbt"
 
             licenses {
                 license {
-                    name.set("GNU Lesser General Public License")
-                    url.set("https://www.gnu.org/licenses/lgpl-3.0.txt")
+                    name = "GNU Lesser General Public License"
+                    url = "https://www.gnu.org/licenses/lgpl-3.0.txt"
                 }
             }
             developers {
                 developer {
-                    id.set("BenWoodworth")
-                    name.set("Ben Woodworth")
-                    email.set("ben@benwoodworth.net")
+                    id = "BenWoodworth"
+                    name = "Ben Woodworth"
+                    email = "ben@benwoodworth.net"
                 }
             }
             scm {
-                connection.set("scm:git:git://github.com:BenWoodworth/knbt.git")
-                developerConnection.set("scm:git:ssh://github.com:BenWoodworth/knbt.git")
-                url.set("https://github.com/BenWoodworth/knbt")
+                connection = "scm:git:git://github.com:BenWoodworth/knbt.git"
+                developerConnection = "scm:git:ssh://github.com:BenWoodworth/knbt.git"
+                url = "https://github.com/BenWoodworth/knbt"
             }
         }
     }

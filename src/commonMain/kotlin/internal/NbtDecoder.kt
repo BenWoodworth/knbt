@@ -242,7 +242,7 @@ private class ClassNbtDecoder(
                 try {
                     val entryType = reader.discardListTag().type
                     "${TAG_List}<${entryType}>"
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     info.type.toString()
                 }
             } else {

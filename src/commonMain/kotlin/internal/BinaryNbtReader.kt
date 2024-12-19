@@ -24,7 +24,7 @@ internal class BinaryNbtReader(nbt: Nbt, source: Source) : NbtReader, Closeable 
 
         val detectedCompression = try {
             NbtCompression.detect(nonClosingSource)
-        } catch (e: NbtDecodingException) {
+        } catch (_: NbtDecodingException) {
             null
         }
 
