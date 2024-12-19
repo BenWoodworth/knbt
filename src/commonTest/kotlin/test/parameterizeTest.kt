@@ -47,6 +47,11 @@ fun ParameterizeScope.assume(condition: Boolean) {
     }
 }
 
+class NamedAction(private val name: String, private val action: () -> Unit) {
+    override fun toString(): String = name
+    operator fun invoke(): Unit = action()
+}
+
 // The mapped parameters could be done more seamlessly with context parameters, with the `provideDelegate` and
 // `getValue` operators taking the ParameterizeScope from the calling context instead of explicitly passing the scope
 // and holding onto it. Maybe refactor later once context parameters are available in Kotlin.
