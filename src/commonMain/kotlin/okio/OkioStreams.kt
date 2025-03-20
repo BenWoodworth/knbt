@@ -23,7 +23,7 @@ public fun <T> BinaryNbtFormat.encodeToBufferedSink(
     value: T,
     sink: BufferedSink
 ) {
-    val context = SerializationNbtContext()
+    val context = SerializationNbtContext(this)
 
     val compressingSink = configuration.compression
         .compress(NonClosingSink(sink), configuration.compressionLevel)
@@ -58,7 +58,7 @@ public fun <T> BinaryNbtFormat.decodeFromBufferedSource(
     deserializer: DeserializationStrategy<T>,
     source: BufferedSource
 ): T {
-    val context = SerializationNbtContext()
+    val context = SerializationNbtContext(this)
     val compression = configuration.compression
 
     val nonClosingSource = NonClosingSource(source).buffer()

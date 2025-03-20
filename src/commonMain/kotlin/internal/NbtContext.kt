@@ -6,6 +6,7 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.descriptors.SerialDescriptor
 import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtEncoder
+import net.benwoodworth.knbt.NbtFormat
 
 /**
  * The context of the NBT serialization process, providing access to information about its current state.
@@ -31,9 +32,12 @@ internal data object EmptyNbtContext : NbtContext {
  *
  * Should only be used by [NbtEncoder] and [NbtDecoder].
  */
-internal class SerializationNbtContext : NbtContext {
+internal class SerializationNbtContext(
+    private val nbt: NbtFormat
+) : NbtContext {
     private var currentDescriptor: SerialDescriptor? = null
     private var structureNesting = 0
+    private var isRootValue = true
 
     override fun getPath(): NbtPath? = null // TODO
 
@@ -74,6 +78,22 @@ internal class SerializationNbtContext : NbtContext {
                     "but $quotedSerialName did so without it."
 
             throw NbtException(this, message)
+        }
+    }
+
+    /**
+     * Checks the [type] of a value as it's starting to be serialized.
+     */
+    fun beginSerializingValue(type: NbtTagType) {
+        if (isRootValue) {
+            if (type !in nbt.capabilities.rootTagTypes) {
+                val message = "The ${nbt.name} format does not support root $type values. " +
+                        "Supported types: ${nbt.capabilities.rootTagTypes}"
+
+                throw NbtException(this, message)
+            }
+
+            isRootValue = false
         }
     }
 }

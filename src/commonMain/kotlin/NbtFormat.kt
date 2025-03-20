@@ -25,7 +25,7 @@ public abstract class NbtFormat internal constructor() : SerialFormat {
      */
     protected fun <T> encodeToNbtTagUnsafe(serializer: SerializationStrategy<T>, value: T): NbtNamed<NbtTag> {
         lateinit var result: NbtNamed<NbtTag>
-        val context = SerializationNbtContext()
+        val context = SerializationNbtContext(this)
         val writer = TreeNbtWriter { result = it }
         val encoder = NbtWriterEncoder(this, context, writer)
 
@@ -46,7 +46,7 @@ public abstract class NbtFormat internal constructor() : SerialFormat {
      * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
      */
     protected fun <T> decodeFromNbtTagUnsafe(deserializer: DeserializationStrategy<T>, tag: NbtNamed<NbtTag>): T {
-        val context = SerializationNbtContext()
+        val context = SerializationNbtContext(this)
         val reader = TreeNbtReader(tag)
         val decoder = NbtReaderDecoder(this, context, reader)
 

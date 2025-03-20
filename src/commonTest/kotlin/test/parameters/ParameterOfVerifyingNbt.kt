@@ -117,7 +117,7 @@ internal class EncoderVerifyingNbt(
 
     fun <T> verifyEncoder(serializer: SerializationStrategy<T>, value: T, encodedTag: NbtNamed<NbtTag>) {
         try {
-            val context = SerializationNbtContext()
+            val context = SerializationNbtContext(this)
             val writer = VerifyingNbtWriter(encodedTag)
             val encoder = NbtWriterEncoder(this, context, writer)
 
@@ -161,7 +161,7 @@ internal class DecoderVerifyingNbt(
         testDecodedValue: (decodedValue: T) -> Unit = {}
     ) {
         try {
-            val context = SerializationNbtContext()
+            val context = SerializationNbtContext(this)
             val reader = VerifyingNbtReader(encodedTag, capabilities)
             val decoder = NbtReaderDecoder(this, context, reader)
             val decodedValue = decoder.decodeSerializableValue(deserializer)

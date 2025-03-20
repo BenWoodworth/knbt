@@ -6,7 +6,6 @@ import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.internal.*
-import net.benwoodworth.knbt.internal.NbtTagTypeSet
 import okio.BufferedSink
 import okio.BufferedSource
 

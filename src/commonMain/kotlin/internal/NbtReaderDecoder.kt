@@ -33,6 +33,8 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     private var verifiedNbtName: Boolean = false
 
     private fun beginDecodingValue(type: NbtTagType) {
+        context.beginSerializingValue(type)
+
         val actualType = decodedTagType
 
         if (type != actualType) {

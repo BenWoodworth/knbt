@@ -59,6 +59,8 @@ internal class NbtWriterEncoder(
     }
 
     private fun beginEncodingValue(type: NbtTagType) {
+        context.beginSerializingValue(type)
+
         when (val structureType = structureTypeStack.lastOrNull()) {
             null -> {
                 val name = checkNotNull(nbtNameToWrite) { "${::nbtNameToWrite.name} was not set" }

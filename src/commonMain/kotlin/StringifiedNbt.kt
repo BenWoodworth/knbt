@@ -35,7 +35,7 @@ public open class StringifiedNbt internal constructor(
 
     override fun <T> encodeToString(serializer: SerializationStrategy<T>, value: T): String =
         buildString {
-            val context = SerializationNbtContext()
+            val context = SerializationNbtContext(this@StringifiedNbt)
             val writer = StringifiedNbtWriter(this@StringifiedNbt, this)
             val encoder = NbtWriterEncoder(this@StringifiedNbt, context, writer)
 
@@ -43,7 +43,7 @@ public open class StringifiedNbt internal constructor(
         }
 
     override fun <T> decodeFromString(deserializer: DeserializationStrategy<T>, string: String): T {
-        val context = SerializationNbtContext()
+        val context = SerializationNbtContext(this)
         val source = CharSource(string)
         val reader = StringifiedNbtReader(context, source)
         val decoder = NbtReaderDecoder(this, context, reader)
