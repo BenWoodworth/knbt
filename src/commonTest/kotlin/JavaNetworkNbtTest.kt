@@ -81,14 +81,12 @@ class JavaNetworkNbtTest {
 
         val emptyNamedNbt = JavaNetworkNbt(baseNbt) { this.protocolVersion = protocolVersion }
 
-        val nbtTag by parameterOfNbtTagSubtypeEdgeCases()
+        val namedNbtTag = buildNbtCompound("non_empty_name") {}
 
-        val javaBytes = javaNbt
-            .encodeToByteArray(NbtNamed("", nbtTag))
+        val javaBytesWithEmptyName = javaNbt.encodeToByteArray(NbtNamed("", namedNbtTag.value))
+        val actualBytes = emptyNamedNbt.encodeToByteArray(namedNbtTag.value)
 
-        val actualBytes = emptyNamedNbt.encodeToByteArray(nbtTag)
-
-        assertContentEquals(javaBytes, actualBytes)
+        assertContentEquals(javaBytesWithEmptyName, actualBytes)
     }
 
     @Test
@@ -138,17 +136,16 @@ class JavaNetworkNbtTest {
 
         val unnamedNamedNbt = JavaNetworkNbt(baseNbt) { this.protocolVersion = protocolVersion }
 
-        val nbtTag by parameterOfNbtTagSubtypeEdgeCases()
+        val namedNbtTag = buildNbtCompound("non_empty_name") {}
 
-        val javaBytes = javaNbt
-            .encodeToByteArray(NbtNamed("", nbtTag))
+        val javaBytes = javaNbt.encodeToByteArray(namedNbtTag)
+        val javaNameLength = 2 + namedNbtTag.name.length
 
         val tagTypeByte = javaBytes.take(1)
-        val tagValueBytes = javaBytes.drop(3)
+        val tagValueBytes = javaBytes.drop(1 + javaNameLength)
         val expectedBytes = (tagTypeByte + tagValueBytes).toByteArray()
 
-        val actualBytes = unnamedNamedNbt
-            .encodeToByteArray(nbtTag)
+        val actualBytes = unnamedNamedNbt.encodeToByteArray(namedNbtTag)
 
         assertContentEquals(expectedBytes, actualBytes)
 
