@@ -40,7 +40,6 @@ class StringifiedNbtReaderTest {
             is NbtString -> assertEquals(expected.value, StringifiedNbt.decodeFromString(snbt))
             is NbtCompound -> assertEquals(expected.content, StringifiedNbt.decodeFromString(snbt))
             is NbtList<*> -> assertEquals(expected.content, StringifiedNbt.decodeFromString(snbt))
-            else -> error("Unexpected type: ${expected::class}")
         }
     }
 
