@@ -1,7 +1,9 @@
 package net.benwoodworth.knbt
 
-import kotlinx.serialization.*
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.test.NbtFormat
 import kotlin.test.Test
 import kotlin.test.assertEquals

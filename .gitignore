@@ -5,6 +5,7 @@
 
 # IntelliJ files
 **/.idea/*
+!/.idea/codeStyles
 out/
 *.iml
 

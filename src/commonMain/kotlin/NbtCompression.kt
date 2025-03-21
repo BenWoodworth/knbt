@@ -1,10 +1,8 @@
 package net.benwoodworth.knbt
 
 import net.benwoodworth.knbt.internal.*
-import okio.BufferedSource
 import okio.Sink
 import okio.Source
-import kotlin.jvm.JvmOverloads
 
 public abstract class NbtCompression private constructor() {
     internal abstract fun decompress(source: Source): Source

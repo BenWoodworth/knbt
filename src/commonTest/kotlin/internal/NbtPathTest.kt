@@ -3,7 +3,10 @@ package net.benwoodworth.knbt.internal
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.test.NbtFormat
-import kotlin.test.*
+import kotlin.test.Ignore
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 // Regression tests when changing how NBT exception paths were captured
 class NbtPathTest {
@@ -15,7 +18,7 @@ class NbtPathTest {
     ): NbtException {
         val exception = assertFailsWith<T> { block() }
         assertTrue(
-            actual = exception.message?.contains("'$path'") ?: false,
+            actual = exception.message?.contains("'$path'") == true,
             message = "Expected error message to contain NBT path '$path', but was \"${exception.message}\""
         )
         return exception

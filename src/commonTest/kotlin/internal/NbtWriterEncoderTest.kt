@@ -1,11 +1,11 @@
 package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.internal.NbtTagType.*
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtNamed
+import net.benwoodworth.knbt.NbtTag
 import net.benwoodworth.knbt.test.NbtFormat
 import kotlin.test.Test
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 

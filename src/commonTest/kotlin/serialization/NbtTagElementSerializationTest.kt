@@ -1,7 +1,10 @@
 package net.benwoodworth.knbt.serialization
 
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.NbtNamed
+import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.buildNbtCompound
+import net.benwoodworth.knbt.put
 import kotlin.test.Test
 
 class NbtTagElementSerializationTest : SerializationTest() {
