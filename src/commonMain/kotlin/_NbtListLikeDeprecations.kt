@@ -71,7 +71,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.lastIndex"),
         DeprecationLevel.ERROR
     )
-    public val lastIndex
+     public val lastIndex
          get() = content.lastIndex
 
     @Deprecated(
@@ -79,7 +79,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.indices"),
         DeprecationLevel.ERROR
     )
-    public val indices
+     public val indices
          get() = content.indices
 
     @Deprecated(
@@ -769,7 +769,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.flatMapIndexed(transform)"),
         DeprecationLevel.ERROR
     )
-    @JvmName("flatMapIndexedSequence")
+    @kotlin.jvm.JvmName("flatMapIndexedSequence")
     public fun <R> flatMapIndexed(transform: (Int, T) -> Sequence<R>) =
         content.flatMapIndexed(transform)
 

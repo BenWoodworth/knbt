@@ -84,7 +84,6 @@ nbt.encodeToNbtTag(Example(string = "Hello, World!", int = 42))
 ```
 
 ### Serializing Lists/Arrays
-
 Kotlin's builtin `ByteArray`, `IntArray`, and `LongArray` types will serialize to NBT array tags,
 as well as any other lists marked with `@NbtArray`.
 All other kinds of lists will serialize as NBT list tags.
@@ -147,7 +146,6 @@ class NbtCompound : NbtTag, Map<String, NbtTag>
 ```
 
 ### Creating `NbtTag`s
-
 `NbtTag`s can be created with constructors and builder functions:
 
 ```kotlin

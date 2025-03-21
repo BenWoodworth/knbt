@@ -212,7 +212,6 @@ internal fun NbtReader.discardTag(type: NbtTagType) {
             discardTagEntries(info.size, { beginByteArrayEntry() }, { readByte() })
             endByteArray()
         }
-
         TAG_String -> readString()
         TAG_List -> discardListTag()
         TAG_Compound -> {
@@ -224,13 +223,11 @@ internal fun NbtReader.discardTag(type: NbtTagType) {
             }
             endCompound()
         }
-
         TAG_Int_Array -> {
             val info = beginIntArray()
             discardTagEntries(info.size, { beginIntArrayEntry() }, { readInt() })
             endIntArray()
         }
-
         TAG_Long_Array -> {
             val info = beginLongArray()
             discardTagEntries(info.size, { beginLongArrayEntry() }, { readLong() })

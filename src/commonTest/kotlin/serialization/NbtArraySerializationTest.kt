@@ -1,10 +1,10 @@
 package net.benwoodworth.knbt.serialization
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.serializer
+import kotlinx.serialization.encoding.*
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.test.*
 import net.benwoodworth.knbt.test.serializers.ListSerializerWithAnnotations
 import kotlin.test.Test
 

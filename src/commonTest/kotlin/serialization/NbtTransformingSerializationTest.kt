@@ -6,13 +6,10 @@
 
 package net.benwoodworth.knbt.serialization
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.serializer
+import kotlinx.serialization.*
+import kotlinx.serialization.builtins.*
 import net.benwoodworth.knbt.*
-import kotlin.test.Test
+import kotlin.test.*
 
 class JsonTransformingSerializationTest : SerializationTest() {
     @Serializable
@@ -103,16 +100,7 @@ class JsonTransformingSerializationTest : SerializationTest() {
     @Test
     fun testDocumentationSample() {
         val correctExample = DocExample("str1")
-
-        defaultNbt.testDecoding(
-            DocExample.serializer(),
-            correctExample,
-            StringifiedNbt.decodeFromString("""{"data":["str1"]}""")
-        )
-        defaultNbt.testDecoding(
-            DocExample.serializer(),
-            correctExample,
-            StringifiedNbt.decodeFromString("""{"data":"str1"}""")
-        )
+        defaultNbt.testDecoding(DocExample.serializer(), correctExample, StringifiedNbt.decodeFromString("""{"data":["str1"]}"""))
+        defaultNbt.testDecoding(DocExample.serializer(), correctExample, StringifiedNbt.decodeFromString("""{"data":"str1"}"""))
     }
 }

@@ -6,15 +6,9 @@
 
 package net.benwoodworth.knbt.serialization
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.decodeFromString
-import net.benwoodworth.knbt.NbtContentPolymorphicSerializer
-import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.StringifiedNbt
-import net.benwoodworth.knbt.nbtCompound
-import kotlin.test.Test
+import kotlinx.serialization.*
+import net.benwoodworth.knbt.*
+import kotlin.test.*
 
 class NbtContentPolymorphicSerializationTest : SerializationTest() {
     @Serializable

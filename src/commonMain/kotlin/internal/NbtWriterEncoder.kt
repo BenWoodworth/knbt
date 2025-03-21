@@ -59,41 +59,33 @@ internal class NbtWriterEncoder(
             null -> {
                 writer.beginRootTag(type)
             }
-
             TAG_Compound -> {
                 if (encodingMapKey) throw NbtEncodingException("Only String tag names are supported")
                 writer.beginCompoundEntry(type, elementName)
             }
-
             TAG_List -> when (val listType = listTypeStack.last()) {
                 TAG_End -> {
                     listTypeStack[listTypeStack.lastIndex] = type
                     writer.beginList(type, listSize)
                     writer.beginListEntry()
                 }
-
                 type -> {
                     writer.beginListEntry()
                 }
-
                 else -> throw NbtEncodingException("Cannot encode $type within a $TAG_List of $listType")
             }
-
             TAG_Byte_Array -> {
                 if (type != TAG_Byte) throw NbtEncodingException("Cannot encode $type within a $TAG_Byte_Array")
                 writer.beginByteArrayEntry()
             }
-
             TAG_Int_Array -> {
                 if (type != TAG_Int) throw NbtEncodingException("Cannot encode $type within a $TAG_Int_Array")
                 writer.beginIntArrayEntry()
             }
-
             TAG_Long_Array -> {
                 if (type != TAG_Long) throw NbtEncodingException("Cannot encode $type within a $TAG_Long_Array")
                 writer.beginLongArrayEntry()
             }
-
             else -> error("Unhandled structure type: $structureType")
         }
     }
@@ -180,12 +172,10 @@ internal class NbtWriterEncoder(
                 writer.endCompound()
                 endNamedTagIfNamed(descriptor)
             }
-
             TAG_List -> {
                 if (listTypeStack.removeLast() == TAG_End) writer.beginList(TAG_End, listSize)
                 writer.endList()
             }
-
             TAG_Byte_Array -> writer.endByteArray()
             TAG_Int_Array -> writer.endIntArray()
             TAG_Long_Array -> writer.endLongArray()
@@ -277,7 +267,6 @@ internal class NbtWriterEncoder(
                 }
                 writer.endCompound()
             }
-
             TAG_List -> {
                 val list = (value as NbtList<*>)
                 val listType = list.elementType
@@ -289,7 +278,6 @@ internal class NbtWriterEncoder(
                 }
                 writer.endList()
             }
-
             TAG_Byte_Array -> {
                 val array = (value as NbtByteArray)
                 writer.beginByteArray(array.size)
@@ -299,7 +287,6 @@ internal class NbtWriterEncoder(
                 }
                 writer.endByteArray()
             }
-
             TAG_Int_Array -> {
                 val array = (value as NbtIntArray)
                 writer.beginIntArray(array.size)
@@ -309,7 +296,6 @@ internal class NbtWriterEncoder(
                 }
                 writer.endIntArray()
             }
-
             TAG_Long_Array -> {
                 val array = (value as NbtLongArray)
                 writer.beginLongArray(array.size)

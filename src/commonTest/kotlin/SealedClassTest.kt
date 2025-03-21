@@ -45,3 +45,5 @@ class SealedClassTest {
         assertEquals(child, childFromNbt)
     }
 }
+
+
