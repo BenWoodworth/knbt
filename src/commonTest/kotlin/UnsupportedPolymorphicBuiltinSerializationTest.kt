@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
@@ -11,7 +10,6 @@ import kotlin.test.assertFailsWith
 
 class UnsupportedPolymorphicBuiltinSerializationTest {
     private inline fun <reified T> expectedInformativeMessage(): String {
-        @OptIn(ExperimentalSerializationApi::class)
         val serialName = serializer<T>().descriptor.serialName
 
         return "Unable to serialize type with serial name '$serialName'. " +

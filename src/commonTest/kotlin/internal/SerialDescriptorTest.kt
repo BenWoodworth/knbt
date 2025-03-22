@@ -2,6 +2,7 @@ package net.benwoodworth.knbt.internal
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.SealedSerializationApi
 import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.LongArraySerializer
@@ -16,7 +17,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class SerialDescriptorTest {
-    @OptIn(ExperimentalSerializationApi::class)
+    @OptIn(SealedSerializationApi::class)
     private fun SerialDescriptor.asNbtArray(): SerialDescriptor =
         object : SerialDescriptor by this {
             override val annotations: List<Annotation> = this@asNbtArray.annotations + NbtArray()

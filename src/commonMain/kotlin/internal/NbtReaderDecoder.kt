@@ -270,7 +270,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 internal class NbtReaderDecoder(
     override val nbt: NbtFormat,
     override val reader: NbtReader,
@@ -350,7 +349,6 @@ private class ClassNbtDecoder(
             var index: Int
 
             do {
-                @OptIn(ExperimentalSerializationApi::class)
                 index = descriptor.getElementIndex(compoundEntryInfo.name)
 
                 if (index == CompositeDecoder.UNKNOWN_NAME) {
@@ -366,7 +364,6 @@ private class ClassNbtDecoder(
             index
         }
 
-        @OptIn(ExperimentalSerializationApi::class)
         if (index >= 0 && descriptor.getElementDescriptor(index).kind == StructureKind.LIST) {
             elementListKind = descriptor.getElementNbtListKind(index)
         }

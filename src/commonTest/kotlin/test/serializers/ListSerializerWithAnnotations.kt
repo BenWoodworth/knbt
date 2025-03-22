@@ -2,6 +2,7 @@ package net.benwoodworth.knbt.test.serializers
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SealedSerializationApi
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.*
@@ -14,6 +15,7 @@ class ListSerializerWithAnnotations<T>(
 ) : KSerializer<List<T>> {
     private val listDescriptor = ListSerializer(elementSerializer).descriptor
 
+    @OptIn(SealedSerializationApi::class)
     override val descriptor: SerialDescriptor =
         object : SerialDescriptor by listDescriptor {
             override val serialName: String =

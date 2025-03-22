@@ -2,6 +2,7 @@ package net.benwoodworth.knbt
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SealedSerializationApi
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -88,7 +89,7 @@ internal object NbtDoubleSerializer : KSerializer<NbtDouble> {
 }
 
 internal object NbtByteArraySerializer : KSerializer<NbtByteArray> {
-    @OptIn(ExperimentalSerializationApi::class)
+    @OptIn(SealedSerializationApi::class)
     private object NbtByteArrayDescriptor : SerialDescriptor by ListSerializer(Byte.serializer()).descriptor {
         override val serialName: String = "net.benwoodworth.knbt.NbtByteArray"
         override val annotations: List<Annotation> = listOf(NbtArray())
@@ -129,7 +130,7 @@ internal class NbtListSerializer<T : NbtTag>(
     override fun deserialize(decoder: Decoder): NbtList<T> =
         NbtList(listSerializer.deserialize(decoder))
 
-    @OptIn(ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class, SealedSerializationApi::class)
     private class NbtListDescriptor(
         val elementDescriptor: SerialDescriptor,
     ) : SerialDescriptor by listSerialDescriptor(elementDescriptor) {
@@ -149,7 +150,7 @@ internal object NbtCompoundSerializer : KSerializer<NbtCompound> {
         return NbtCompound(map)
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class, SealedSerializationApi::class)
     private class NbtCompoundDescriptor(
         val elementDescriptor: SerialDescriptor,
     ) : SerialDescriptor by mapSerialDescriptor(String.serializer().descriptor, elementDescriptor) {
@@ -158,7 +159,7 @@ internal object NbtCompoundSerializer : KSerializer<NbtCompound> {
 }
 
 internal object NbtIntArraySerializer : KSerializer<NbtIntArray> {
-    @OptIn(ExperimentalSerializationApi::class)
+    @OptIn(SealedSerializationApi::class)
     private object NbtIntArrayDescriptor : SerialDescriptor by ListSerializer(Int.serializer()).descriptor {
         override val serialName: String = "net.benwoodworth.knbt.NbtIntArray"
         override val annotations: List<Annotation> = listOf(NbtArray())
@@ -176,7 +177,7 @@ internal object NbtIntArraySerializer : KSerializer<NbtIntArray> {
 }
 
 internal object NbtLongArraySerializer : KSerializer<NbtLongArray> {
-    @OptIn(ExperimentalSerializationApi::class)
+    @OptIn(SealedSerializationApi::class)
     private object NbtLongArrayDescriptor : SerialDescriptor by ListSerializer(Long.serializer()).descriptor {
         override val serialName: String = "net.benwoodworth.knbt.NbtLongArray"
         override val annotations: List<Annotation> = listOf(NbtArray())

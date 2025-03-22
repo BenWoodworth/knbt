@@ -44,12 +44,10 @@ private fun SerialDescriptor.getNbtListKind(
 internal val SerialDescriptor.nbtListKind: NbtListKind
     get() = getNbtListKind()
 
-@OptIn(ExperimentalSerializationApi::class)
 internal fun SerialDescriptor.getElementNbtListKind(index: Int): NbtListKind =
     getElementDescriptor(index).getNbtListKind(getElementAnnotations(index))
 
 
-@OptIn(ExperimentalSerializationApi::class)
 internal val SerialDescriptor.nbtNamed: String?
     get() = annotations
         .firstOrNull { it is NbtNamed }
