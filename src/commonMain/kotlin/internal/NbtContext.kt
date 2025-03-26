@@ -7,6 +7,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.NbtFormat
+import net.benwoodworth.knbt.NbtTagType
 
 /**
  * The context of the NBT serialization process, providing access to information about its current state.

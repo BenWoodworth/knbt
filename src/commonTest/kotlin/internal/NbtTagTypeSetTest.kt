@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt.internal
 
 import com.benwoodworth.parameterize.parameter
+import net.benwoodworth.knbt.NbtTagType
 import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.parameterizeTest
 import kotlin.test.Test

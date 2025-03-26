@@ -1,10 +1,10 @@
 package net.benwoodworth.knbt.test.verify
 
 import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.internal.NbtTagType
+import net.benwoodworth.knbt.NbtTagType
 import net.benwoodworth.knbt.internal.NbtWriter
 import net.benwoodworth.knbt.internal.toNbtString
-import net.benwoodworth.knbt.internal.toNbtTagType
+import net.benwoodworth.knbt.toNbtTagType
 import kotlin.contracts.contract
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction

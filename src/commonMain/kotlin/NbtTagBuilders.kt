@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt
 
-import net.benwoodworth.knbt.internal.NbtTagType
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.experimental.ExperimentalTypeInference

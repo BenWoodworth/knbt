@@ -179,7 +179,7 @@ public final class net/benwoodworth/knbt/NbtByte : net/benwoodworth/knbt/NbtByte
 	public fun <init> (B)V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getBooleanValue ()Z
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public final fun getValue ()B
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -196,7 +196,7 @@ public final class net/benwoodworth/knbt/NbtByteArray : net/benwoodworth/knbt/Nb
 	public final fun get (I)B
 	public final fun getContent ()Ljava/util/List;
 	public final fun getSize ()I
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -235,7 +235,7 @@ public final class net/benwoodworth/knbt/NbtCompound : net/benwoodworth/knbt/Nbt
 	public fun get (Ljava/lang/String;)Lnet/benwoodworth/knbt/NbtTag;
 	public final fun getContent ()Ljava/util/Map;
 	public final fun getSize ()I
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -465,7 +465,7 @@ public final class net/benwoodworth/knbt/NbtDouble : net/benwoodworth/knbt/NbtTa
 	public static final field Companion Lnet/benwoodworth/knbt/NbtDouble$Companion;
 	public fun <init> (D)V
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public final fun getValue ()D
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -538,7 +538,7 @@ public final class net/benwoodworth/knbt/NbtFloat : net/benwoodworth/knbt/NbtTag
 	public static final field Companion Lnet/benwoodworth/knbt/NbtFloat$Companion;
 	public fun <init> (F)V
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public final fun getValue ()F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -576,7 +576,7 @@ public final class net/benwoodworth/knbt/NbtInt : net/benwoodworth/knbt/NbtTag {
 	public static final field Companion Lnet/benwoodworth/knbt/NbtInt$Companion;
 	public fun <init> (I)V
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public final fun getValue ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -593,7 +593,7 @@ public final class net/benwoodworth/knbt/NbtIntArray : net/benwoodworth/knbt/Nbt
 	public final fun get (I)I
 	public final fun getContent ()Ljava/util/List;
 	public final fun getSize ()I
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -629,7 +629,7 @@ public final class net/benwoodworth/knbt/NbtList : net/benwoodworth/knbt/NbtList
 	public final fun get (I)Lnet/benwoodworth/knbt/NbtTag;
 	public final fun getContent ()Ljava/util/List;
 	public final fun getSize ()I
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -873,7 +873,7 @@ public final class net/benwoodworth/knbt/NbtLong : net/benwoodworth/knbt/NbtTag 
 	public static final field Companion Lnet/benwoodworth/knbt/NbtLong$Companion;
 	public fun <init> (J)V
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public final fun getValue ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -890,7 +890,7 @@ public final class net/benwoodworth/knbt/NbtLongArray : net/benwoodworth/knbt/Nb
 	public final fun get (I)J
 	public final fun getContent ()Ljava/util/List;
 	public final fun getSize ()I
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -947,7 +947,7 @@ public final class net/benwoodworth/knbt/NbtShort : net/benwoodworth/knbt/NbtTag
 	public static final field Companion Lnet/benwoodworth/knbt/NbtShort$Companion;
 	public fun <init> (S)V
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public final fun getValue ()S
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -961,7 +961,7 @@ public final class net/benwoodworth/knbt/NbtString : net/benwoodworth/knbt/NbtTa
 	public static final field Companion Lnet/benwoodworth/knbt/NbtString$Companion;
 	public fun <init> (Ljava/lang/String;)V
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -973,7 +973,7 @@ public final class net/benwoodworth/knbt/NbtString$Companion {
 
 public abstract interface class net/benwoodworth/knbt/NbtTag {
 	public static final field Companion Lnet/benwoodworth/knbt/NbtTag$Companion;
-	public abstract fun getType ()Lnet/benwoodworth/knbt/internal/NbtTagType;
+	public abstract fun getType ()Lnet/benwoodworth/knbt/NbtTagType;
 }
 
 public final class net/benwoodworth/knbt/NbtTag$Companion {
@@ -1059,6 +1059,26 @@ public final class net/benwoodworth/knbt/NbtTagKt {
 	public static final fun getOrNull (Lnet/benwoodworth/knbt/NbtLongArray;I)Ljava/lang/Long;
 	public static final fun nbtList (Lnet/benwoodworth/knbt/NbtTag;Lkotlin/reflect/KClass;)Lnet/benwoodworth/knbt/NbtList;
 	public static final fun toBoolean (Lnet/benwoodworth/knbt/NbtByte;)Z
+}
+
+public final class net/benwoodworth/knbt/NbtTagType : java/lang/Enum {
+	public static final field TAG_Byte Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_Byte_Array Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_Compound Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_Double Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_End Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_Float Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_Int Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_Int_Array Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_List Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_Long Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_Long_Array Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_Short Lnet/benwoodworth/knbt/NbtTagType;
+	public static final field TAG_String Lnet/benwoodworth/knbt/NbtTagType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getId ()B
+	public static fun valueOf (Ljava/lang/String;)Lnet/benwoodworth/knbt/NbtTagType;
+	public static fun values ()[Lnet/benwoodworth/knbt/NbtTagType;
 }
 
 public abstract class net/benwoodworth/knbt/NbtTransformingSerializer : kotlinx/serialization/KSerializer {
@@ -1156,25 +1176,6 @@ public final class net/benwoodworth/knbt/_DeprecationsKt {
 	public static final fun getShortOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/Short;
 	public static final fun getString (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/String;
 	public static final fun getStringOrNull (Lnet/benwoodworth/knbt/NbtTag;)Ljava/lang/String;
-}
-
-public final class net/benwoodworth/knbt/internal/NbtTagType : java/lang/Enum {
-	public static final field TAG_Byte Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_Byte_Array Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_Compound Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_Double Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_End Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_Float Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_Int Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_Int_Array Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_List Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_Long Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_Long_Array Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_Short Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static final field TAG_String Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lnet/benwoodworth/knbt/internal/NbtTagType;
-	public static fun values ()[Lnet/benwoodworth/knbt/internal/NbtTagType;
 }
 
 public final class net/benwoodworth/knbt/okio/OkioStreamsKt {

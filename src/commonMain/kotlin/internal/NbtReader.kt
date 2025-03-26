@@ -1,7 +1,7 @@
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.internal.NbtTagType.*
+import net.benwoodworth.knbt.NbtTagType.*
 import kotlin.jvm.JvmInline
 
 /**

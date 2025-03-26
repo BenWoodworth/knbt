@@ -3,7 +3,7 @@ package net.benwoodworth.knbt.test.parameters
 import com.benwoodworth.parameterize.ParameterizeScope
 import com.benwoodworth.parameterize.parameter
 import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.internal.NbtTagType
+import net.benwoodworth.knbt.NbtTagType
 
 /**
  * A zero/empty [NbtTag] of each type.

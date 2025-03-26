@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.internal.NbtTagType.TAG_End
+import net.benwoodworth.knbt.NbtTagType
+import net.benwoodworth.knbt.NbtTagType.TAG_End
 import okio.BufferedSink
 
 internal abstract class BinaryNbtWriter : NbtWriter {

@@ -1,5 +1,7 @@
 package net.benwoodworth.knbt.internal
 
+import net.benwoodworth.knbt.NbtTagType
+
 internal class NbtPath(private val path: List<Node>) : List<NbtPath.Node> by path {
     override fun toString(): String = buildString {
         fun Char.isSafeNameChar(): Boolean = when (this) {

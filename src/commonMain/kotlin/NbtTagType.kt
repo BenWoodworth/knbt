@@ -1,16 +1,13 @@
-package net.benwoodworth.knbt.internal
+package net.benwoodworth.knbt
 
-import net.benwoodworth.knbt.InternalNbtApi
-import net.benwoodworth.knbt.NbtTag
 import kotlin.reflect.KClass
 
 /**
- * For internal use only. Will be marked as internal eventually.
- * @suppress
+ * An [NbtTag]'s type.
+ * In [BinaryNbtFormat]s, this is a single [id] byte defining the contents of the payload of the tag.
  */
 @Suppress("EnumEntryName")
-@InternalNbtApi
-public enum class NbtTagType(internal val id: Byte) {
+public enum class NbtTagType(public val id: Byte) {
     TAG_End(0),
     TAG_Byte(1),
     TAG_Short(2),

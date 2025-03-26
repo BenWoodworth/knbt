@@ -1,7 +1,6 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.Serializable
-import net.benwoodworth.knbt.internal.NbtTagType
 import net.benwoodworth.knbt.internal.appendNbtString
 import net.benwoodworth.knbt.internal.toNbtString
 import kotlin.jvm.JvmName
@@ -10,11 +9,9 @@ import kotlin.reflect.KClass
 @Serializable(with = NbtTagSerializer::class)
 public sealed interface NbtTag {
     /**
-     * For internal use only. Will be marked as internal once Kotlin supports it on sealed interface members.
-     * @suppress
+     * Returns this [NbtTag] implementation's associated [NbtTagType].
      */
-    @InternalNbtApi
-    public val type: NbtTagType // TODO Make internal
+    public val type: NbtTagType
 }
 
 @Serializable(with = NbtByteSerializer::class)

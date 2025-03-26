@@ -3,7 +3,7 @@ package net.benwoodworth.knbt.test.verify
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtCapabilities
 import net.benwoodworth.knbt.internal.NbtReader
-import net.benwoodworth.knbt.internal.toNbtTagType
+import net.benwoodworth.knbt.toNbtTagType
 import kotlin.contracts.contract
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction

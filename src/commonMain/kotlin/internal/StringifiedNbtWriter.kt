@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.ExperimentalNbtApi
+import net.benwoodworth.knbt.NbtTagType
 import net.benwoodworth.knbt.StringifiedNbt
 
 @OptIn(ExperimentalNbtApi::class)

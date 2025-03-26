@@ -9,10 +9,6 @@ import kotlinx.serialization.descriptors.StructureKind
 @DslMarker
 internal annotation class NbtDslMarker
 
-@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS)
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
-internal annotation class InternalNbtApi
-
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 internal annotation class UnsafeNbtApi
 

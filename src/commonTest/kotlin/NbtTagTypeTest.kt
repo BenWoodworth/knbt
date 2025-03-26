@@ -1,7 +1,6 @@
-package net.benwoodworth.knbt.internal
+package net.benwoodworth.knbt
 
 import com.benwoodworth.parameterize.parameter
-import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.parameterOfBytes

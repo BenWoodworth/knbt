@@ -1,6 +1,8 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.internal.NbtTagType.*
+import net.benwoodworth.knbt.NbtTagType
+import net.benwoodworth.knbt.NbtTagType.*
+import net.benwoodworth.knbt.toNbtTagTypeOrNull
 import okio.BufferedSource
 
 internal abstract class BinaryNbtReader : NbtReader {

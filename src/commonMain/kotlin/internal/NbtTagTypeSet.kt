@@ -1,5 +1,7 @@
 package net.benwoodworth.knbt.internal
 
+import net.benwoodworth.knbt.NbtTagType
+
 internal class NbtTagTypeSet private constructor(
     /**
      * Bits indicating whether each [NbtTagType] in this set, with `1` indicating that it is contained, and
