@@ -3,6 +3,7 @@ package net.benwoodworth.knbt.internal
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtReader.*
 import net.benwoodworth.knbt.NbtType.*
+import net.benwoodworth.knbt.test.named
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.*
 import net.benwoodworth.knbt.test.shouldReturn
@@ -11,8 +12,18 @@ import kotlin.test.Test
 class TreeNbtReaderTest {
     private val rootName = "root_name"
 
-    private inline fun expectNbtReaderCalls(tag: NbtTag, assertCalls: NbtReader.() -> Unit) {
-        TreeNbtReader(NbtNamed(rootName, tag)).assertCalls()
+    private inline fun expectNbtReaderCalls(tag: NbtTag?, assertCalls: NbtReader.() -> Unit) {
+        TreeNbtReader(tag?.named(rootName)).assertCalls()
+    }
+
+    @Test
+    fun should_read_null_correctly() = parameterizeTest {
+        val value by parameterOfBytes()
+
+        expectNbtReaderCalls(NbtByte(value)) {
+            beginRootTag() shouldReturn NamedTagInfo(TAG_Byte, rootName)
+            readByte() shouldReturn value
+        }
     }
 
     @Test

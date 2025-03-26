@@ -85,18 +85,20 @@ internal sealed class VerifyingNbt(
     abstract fun <T> verifyEncoderOrDecoder(
         serializer: KSerializer<T>,
         value: T,
-        encodedTag: NbtNamed<NbtTag>,
+        encodedTag: NbtNamed<NbtTag>?,
         testDecodedValue: (value: T, decodedValue: T) -> Unit = { _, _ -> }
     )
 
     fun <T> verifyEncoderOrDecoder(
         serializer: KSerializer<T>,
         value: T,
-        encodedTag: NbtTag,
+        encodedTag: NbtTag?,
         testDecodedValue: (value: T, decodedValue: T) -> Unit = { _, _ -> }
     ) {
         // TODO non-empty serializer NbtName?
-        verifyEncoderOrDecoder(serializer, value, NbtNamed("", encodedTag), testDecodedValue)
+        val namedTag = encodedTag?.let { NbtNamed("", it) }
+
+        verifyEncoderOrDecoder(serializer, value, namedTag, testDecodedValue)
     }
 }
 
@@ -109,13 +111,13 @@ internal class EncoderVerifyingNbt(
     override fun <T> verifyEncoderOrDecoder(
         serializer: KSerializer<T>,
         value: T,
-        encodedTag: NbtNamed<NbtTag>,
+        encodedTag: NbtNamed<NbtTag>?,
         testDecodedValue: (value: T, decodedValue: T) -> Unit
     ) {
         verifyEncoder(serializer, value, encodedTag)
     }
 
-    fun <T> verifyEncoder(serializer: SerializationStrategy<T>, value: T, encodedTag: NbtNamed<NbtTag>) {
+    fun <T> verifyEncoder(serializer: SerializationStrategy<T>, value: T, encodedTag: NbtNamed<NbtTag>?) {
         try {
             val context = SerializationNbtContext(this)
             val writer = VerifyingNbtWriter(encodedTag)
@@ -128,9 +130,11 @@ internal class EncoderVerifyingNbt(
         }
     }
 
-    fun <T> verifyEncoder(serializer: SerializationStrategy<T>, value: T, encodedTag: NbtTag) {
+    fun <T> verifyEncoder(serializer: SerializationStrategy<T>, value: T, encodedTag: NbtTag?) {
         // TODO non-empty serializer NbtName?
-        verifyEncoder(serializer, value, NbtNamed("", encodedTag))
+        val namedTag = encodedTag?.let { NbtNamed("", it) }
+
+        verifyEncoder(serializer, value, namedTag)
     }
 }
 
@@ -143,7 +147,7 @@ internal class DecoderVerifyingNbt(
     override fun <T> verifyEncoderOrDecoder(
         serializer: KSerializer<T>,
         value: T,
-        encodedTag: NbtNamed<NbtTag>,
+        encodedTag: NbtNamed<NbtTag>?,
         testDecodedValue: (value: T, decodedValue: T) -> Unit
     ) {
         verifyDecoder(
@@ -157,7 +161,7 @@ internal class DecoderVerifyingNbt(
 
     fun <T> verifyDecoder(
         deserializer: DeserializationStrategy<T>,
-        encodedTag: NbtNamed<NbtTag>,
+        encodedTag: NbtNamed<NbtTag>?,
         testDecodedValue: (decodedValue: T) -> Unit = {}
     ) {
         try {
@@ -176,10 +180,12 @@ internal class DecoderVerifyingNbt(
 
     fun <T> verifyDecoder(
         deserializer: DeserializationStrategy<T>,
-        encodedTag: NbtTag,
+        encodedTag: NbtTag?,
         testDecodedValue: (decodedValue: T) -> Unit = {}
     ) {
-        // TODO non-empty deserializer NbtName?
-        verifyDecoder(deserializer, NbtNamed("", encodedTag), testDecodedValue)
+        // TODO non-empty serializer NbtName?
+        val namedTag = encodedTag?.let { NbtNamed("", it) }
+
+        verifyDecoder(deserializer, namedTag, testDecodedValue)
     }
 }

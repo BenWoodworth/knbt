@@ -14,6 +14,9 @@ public sealed interface NbtTag {
     public val type: NbtType
 }
 
+internal val NbtTag?.type: NbtType
+    get() = this?.type ?: NbtType.TAG_End
+
 @Serializable(with = NbtByteSerializer::class)
 public class NbtByte(public val value: Byte) : NbtTag, @Suppress("DEPRECATION") NbtByteDeprecations {
     override val type: NbtType get() = NbtType.TAG_Byte

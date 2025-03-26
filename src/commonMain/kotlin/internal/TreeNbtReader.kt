@@ -3,7 +3,7 @@ package net.benwoodworth.knbt.internal
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtReader.*
 
-internal class TreeNbtReader(tag: NbtNamed<NbtTag>) : NbtReader {
+internal class TreeNbtReader(tag: NbtNamed<NbtTag>?) : NbtReader {
     private var reader: NbtTagReader = RootNbtTagReader(tag)
 
     override fun beginRootTag(): NamedTagInfo = reader.beginRootTag()
@@ -56,11 +56,11 @@ internal class TreeNbtReader(tag: NbtNamed<NbtTag>) : NbtReader {
         fun readString(): String = error("${this::class} does not support readString()")
     }
 
-    private inner class RootNbtTagReader(private val tag: NbtNamed<NbtTag>) : NbtTagReader {
-        override fun beginRootTag(): NamedTagInfo = NamedTagInfo(tag.value.type, tag.name)
+    private inner class RootNbtTagReader(private val tag: NbtNamed<NbtTag>?) : NbtTagReader {
+        override fun beginRootTag(): NamedTagInfo = NamedTagInfo(tag?.value.type, tag?.name ?: "")
 
         override fun beginCompound() {
-            reader = NbtCompoundReader(this, tag.value as NbtCompound)
+            reader = NbtCompoundReader(this, tag?.value as NbtCompound)
         }
 
         override fun beginList(): ListInfo {

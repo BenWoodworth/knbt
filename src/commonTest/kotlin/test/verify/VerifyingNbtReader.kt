@@ -3,6 +3,8 @@ package net.benwoodworth.knbt.test.verify
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtCapabilities
 import net.benwoodworth.knbt.internal.NbtReader
+import net.benwoodworth.knbt.internal.NbtType
+import net.benwoodworth.knbt.internal.NbtType.TAG_End
 import net.benwoodworth.knbt.toNbtType
 import kotlin.contracts.contract
 import kotlin.reflect.KClass
@@ -12,7 +14,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class VerifyingNbtReader(
-    private val tag: NbtNamed<NbtTag>,
+    private val tag: NbtNamed<NbtTag>?,
     private val capabilities: NbtCapabilities,
 ) : NbtReader {
     private val stateHistory = mutableListOf<State>(State.InRoot)
@@ -26,7 +28,11 @@ internal class VerifyingNbtReader(
     override fun beginRootTag(): NbtReader.NamedTagInfo = transitionState(::beginRootTag) {
         assertStateIs<State.InRoot>(state)
 
-        NbtReader.NamedTagInfo(tag.value.type, tag.name) to State.AwaitingValue(tag.value, State.Complete)
+        if (tag == null) {
+            NbtReader.NamedTagInfo(TAG_End, "") to State.Complete
+        } else {
+            NbtReader.NamedTagInfo(tag.value.type, tag.name) to State.AwaitingValue(tag.value, State.Complete)
+        }
     }
 
     override fun beginCompound(): Unit = transitionState(::beginCompound) {

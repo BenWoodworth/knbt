@@ -2,6 +2,7 @@ package net.benwoodworth.knbt.test.verify
 
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.NbtType
+import net.benwoodworth.knbt.NbtType.TAG_End
 import net.benwoodworth.knbt.internal.NbtWriter
 import net.benwoodworth.knbt.internal.toNbtString
 import net.benwoodworth.knbt.toNbtType
@@ -12,7 +13,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class VerifyingNbtWriter(
-    private val tag: NbtNamed<NbtTag>,
+    private val tag: NbtNamed<NbtTag>?,
 ) : NbtWriter {
     private val stateHistory = mutableListOf<State>(State.InRoot)
 
@@ -24,10 +25,15 @@ internal class VerifyingNbtWriter(
 
     override fun beginRootTag(type: NbtType, name: String): Unit = transitionState(::beginRootTag) {
         assertStateIs<State.InRoot>(state)
-        assertWrittenRootTypeEquals(tag.value.type, type)
-        assertWrittenRootNameEquals(tag.name, name)
+        assertWrittenRootTypeEquals(tag?.value.type, type)
 
-        Unit to State.AwaitingValue(tag.value, State.Complete)
+        if (tag == null) {
+            assertWrittenRootNameIsEmptyForTagEnd(name)
+            Unit to State.Complete
+        } else {
+            assertWrittenRootNameEquals(tag.name, name)
+            Unit to State.AwaitingValue(tag.value, State.Complete)
+        }
     }
 
     override fun beginCompound(): Unit = transitionState(::beginCompound) {
@@ -258,11 +264,15 @@ internal class VerifyingNbtWriter(
             assertEquals(expected, actual, messagePrefix + "Incorrect root type was written")
         }
 
+        fun assertWrittenRootNameIsEmptyForTagEnd(actual: String) {
+            assertEquals("", actual, messagePrefix + "Empty root name should be written for $TAG_End")
+        }
+
         fun assertWrittenRootNameEquals(expected: String, actual: String) {
             assertEquals(expected, actual, messagePrefix + "Incorrect root name was written")
         }
 
-        inline fun <reified T : NbtTag> assertWrittenTagTypeEquals(expected: NbtTag, actual: KClass<T>) {
+        inline fun <reified T : NbtTag> assertWrittenTagTypeEquals(expected: NbtTag?, actual: KClass<T>) {
             contract { returns() implies (expected is T) }
 
             assertEquals(expected.type, actual.toNbtType(), messagePrefix + "Incorrect type was written")

@@ -67,6 +67,15 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     }
 
     //region Primitive NBT types
+    final override fun decodeNotNullMark(): Boolean =
+        decodedTagType != TAG_End
+
+    final override fun decodeNull(): Nothing? {
+        beginDecodingValue(TAG_End)
+        endDecodingValue()
+        return null
+    }
+
     override fun decodeByte(): Byte {
         beginDecodingValue(TAG_Byte)
         return reader.readByte()
@@ -222,12 +231,6 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     //endregion
 
     //region Final super implementations
-    final override fun decodeNotNullMark(): Boolean =
-        super.decodeNotNullMark()
-
-    final override fun decodeNull(): Nothing? =
-        super.decodeNull()
-
     final override fun decodeInline(descriptor: SerialDescriptor): Decoder =
         super.decodeInline(descriptor)
 

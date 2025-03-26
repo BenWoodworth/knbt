@@ -222,6 +222,11 @@ internal class NbtWriterEncoder(
     override fun shouldEncodeElementDefault(descriptor: SerialDescriptor, index: Int): Boolean =
         nbt.configuration.encodeDefaults
 
+    override fun encodeNull() {
+        beginEncodingValue(TAG_End)
+        endEncodingValue()
+    }
+
     override fun encodeByte(value: Byte) {
         beginEncodingValue(TAG_Byte)
         writer.writeByte(value)
