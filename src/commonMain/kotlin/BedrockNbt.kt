@@ -43,6 +43,15 @@ public class BedrockNbt internal constructor(
      */
     public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtNamed<NbtTag>): T =
         decodeFromNbtTagUnsafe(deserializer, tag)
+
+    /**
+     * Deserializes the given empty-named [tag] into a value of type [T] using the given [deserializer].
+     *
+     * @throws [SerializationException] if the given NBT tag is not a valid Bedrock NBT input for the type [T].
+     * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+     */
+    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
+        decodeFromNbtTag(deserializer, NbtNamed("", tag))
 }
 
 /**
@@ -77,4 +86,14 @@ public inline fun <reified T> BedrockNbt.encodeToNbtTag(value: T): NbtNamed<NbtT
  * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
  */
 public inline fun <reified T> BedrockNbt.decodeFromNbtTag(tag: NbtNamed<NbtTag>): T =
+    decodeFromNbtTag(serializersModule.serializer(), tag)
+
+/**
+ * Deserializes the given empty-named [tag] into a value of type [T] using a serializer retrieved from the reified type
+ * parameter.
+ *
+ * @throws [SerializationException] if the given NBT tag is not a valid Bedrock NBT input for the type [T].
+ * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+ */
+public inline fun <reified T> BedrockNbt.decodeFromNbtTag(tag: NbtTag): T =
     decodeFromNbtTag(serializersModule.serializer(), tag)

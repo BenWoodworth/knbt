@@ -50,6 +50,15 @@ public class JavaNbt internal constructor(
      */
     public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtNamed<NbtCompound>): T =
         decodeFromNbtTagUnsafe(deserializer, tag)
+
+    /**
+     * Deserializes the given empty-named [tag] into a value of type [T] using the given [deserializer].
+     *
+     * @throws [SerializationException] if the given NBT tag is not a valid Java NBT input for the type [T].
+     * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+     */
+    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtCompound): T =
+        decodeFromNbtTag(deserializer, NbtNamed("", tag))
 }
 
 /**
@@ -84,4 +93,14 @@ public inline fun <reified T> JavaNbt.encodeToNbtTag(value: T): NbtNamed<NbtComp
  * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
  */
 public inline fun <reified T> JavaNbt.decodeFromNbtTag(tag: NbtNamed<NbtCompound>): T =
+    decodeFromNbtTag(serializersModule.serializer(), tag)
+
+/**
+ * Deserializes the given empty-named [tag] into a value of type [T] using a serializer retrieved from the reified type
+ * parameter.
+ *
+ * @throws [SerializationException] if the given NBT tag is not a valid Java NBT input for the type [T].
+ * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+ */
+public inline fun <reified T> JavaNbt.decodeFromNbtTag(tag: NbtCompound): T =
     decodeFromNbtTag(serializersModule.serializer(), tag)
