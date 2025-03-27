@@ -444,19 +444,19 @@ class NbtListTest {
     @Test
     fun element_type_should_be_correct_when_constructed_with_empty_content() = parameterizeTest {
         val testCase by parameterOf(
-            NbtList<Nothing>(emptyList()) to NbtTagType.TAG_End,
-            NbtList<NbtByte>(emptyList()) to NbtTagType.TAG_Byte,
-            NbtList<NbtShort>(emptyList()) to NbtTagType.TAG_Short,
-            NbtList<NbtInt>(emptyList()) to NbtTagType.TAG_Int,
-            NbtList<NbtLong>(emptyList()) to NbtTagType.TAG_Long,
-            NbtList<NbtFloat>(emptyList()) to NbtTagType.TAG_Float,
-            NbtList<NbtDouble>(emptyList()) to NbtTagType.TAG_Double,
-            NbtList<NbtByteArray>(emptyList()) to NbtTagType.TAG_Byte_Array,
-            NbtList<NbtString>(emptyList()) to NbtTagType.TAG_String,
-            NbtList<NbtList<*>>(emptyList()) to NbtTagType.TAG_List,
-            NbtList<NbtCompound>(emptyList()) to NbtTagType.TAG_Compound,
-            NbtList<NbtIntArray>(emptyList()) to NbtTagType.TAG_Int_Array,
-            NbtList<NbtLongArray>(emptyList()) to NbtTagType.TAG_Long_Array
+            NbtList<Nothing>(emptyList()) to NbtType.TAG_End,
+            NbtList<NbtByte>(emptyList()) to NbtType.TAG_Byte,
+            NbtList<NbtShort>(emptyList()) to NbtType.TAG_Short,
+            NbtList<NbtInt>(emptyList()) to NbtType.TAG_Int,
+            NbtList<NbtLong>(emptyList()) to NbtType.TAG_Long,
+            NbtList<NbtFloat>(emptyList()) to NbtType.TAG_Float,
+            NbtList<NbtDouble>(emptyList()) to NbtType.TAG_Double,
+            NbtList<NbtByteArray>(emptyList()) to NbtType.TAG_Byte_Array,
+            NbtList<NbtString>(emptyList()) to NbtType.TAG_String,
+            NbtList<NbtList<*>>(emptyList()) to NbtType.TAG_List,
+            NbtList<NbtCompound>(emptyList()) to NbtType.TAG_Compound,
+            NbtList<NbtIntArray>(emptyList()) to NbtType.TAG_Int_Array,
+            NbtList<NbtLongArray>(emptyList()) to NbtType.TAG_Long_Array
         )
 
         val (nbtList, expectedType) = testCase
@@ -478,8 +478,8 @@ class NbtListTest {
      */
     @Test
     fun should_equal_NbtList_with_equal_content_but_different_element_type() = parameterizeTest {
-        val elementType by parameter(NbtTagType.entries)
-        val differentElementType by parameter(NbtTagType.entries)
+        val elementType by parameter(NbtType.entries)
+        val differentElementType by parameter(NbtType.entries)
         assume(elementType != differentElementType)
 
         @OptIn(UnsafeNbtApi::class)

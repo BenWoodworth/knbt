@@ -127,7 +127,7 @@ internal class NbtListSerializer<T : NbtTag>(
     @OptIn(UnsafeNbtApi::class)
     override fun deserialize(decoder: Decoder): NbtList<T> =
         listSerializer.deserialize(decoder)
-            .let { NbtList(it.firstOrNull()?.type ?: NbtTagType.TAG_End, it) }
+            .let { NbtList(it.firstOrNull()?.type ?: NbtType.TAG_End, it) }
 
     @OptIn(ExperimentalSerializationApi::class, SealedSerializationApi::class)
     private class NbtListDescriptor(
