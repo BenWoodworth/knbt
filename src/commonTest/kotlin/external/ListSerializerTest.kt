@@ -56,7 +56,7 @@ class ListSerializerTest {
         nbt.verifyEncoderOrDecoder(
             ListSerializer(serializer),
             listOf(Unit),
-            NbtList(listOf(serializableType.valueTag)),
+            NbtList(serializableType.valueTag.type, listOf(serializableType.valueTag)),
             testDecodedValue = { value, decodedValue ->
                 assertContentEquals(value, decodedValue, "decodedValue")
             }
@@ -100,8 +100,8 @@ class ListSerializerTest {
             serializer,
             listOf(listOf(Unit), listOf(Unit)),
             buildNbtList {
-                add(NbtList(listOf(listType.valueTag)))
-                add(NbtList(listOf(listType.valueTag)))
+                add(NbtList(listType.valueTag.type, listOf(listType.valueTag))) // TODO NbtList.of
+                add(NbtList(listType.valueTag.type, listOf(listType.valueTag)))
             }
         )
     }
@@ -147,8 +147,8 @@ class ListSerializerTest {
             serializer,
             Unit,
             buildNbtList {
-                add(NbtList(listOf(list0ElementType.valueTag)))
-                add(NbtList(listOf(list1ElementType.valueTag)))
+                add(NbtList(list0ElementType.valueTag.type, listOf(list0ElementType.valueTag)))
+                add(NbtList(list1ElementType.valueTag.type, listOf(list1ElementType.valueTag)))
             }
         )
     }

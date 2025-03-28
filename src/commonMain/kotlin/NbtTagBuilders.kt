@@ -33,7 +33,7 @@ public class NbtListBuilder<T : NbtTag> @PublishedApi internal constructor(size:
     @OptIn(UnsafeNbtApi::class)
     internal fun build(): NbtList<T> {
         built = true
-        return NbtList(elements)
+        return NbtList(elementType, elements)
     }
 }
 

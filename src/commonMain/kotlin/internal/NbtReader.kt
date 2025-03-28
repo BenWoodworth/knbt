@@ -206,7 +206,7 @@ private fun NbtReader.readNbtList(): NbtList<NbtTag> {
     }
 
     endList()
-    return NbtList(content)
+    return NbtList(info.type, content)
 }
 
 private fun NbtReader.readNbtCompound(): NbtCompound {

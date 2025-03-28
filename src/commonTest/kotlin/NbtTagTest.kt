@@ -3,10 +3,18 @@ package net.benwoodworth.knbt
 import com.benwoodworth.parameterize.ParameterizeScope
 import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterOf
+import net.benwoodworth.knbt.NbtByte
+import net.benwoodworth.knbt.NbtByteArray
+import net.benwoodworth.knbt.NbtFloat
+import net.benwoodworth.knbt.NbtInt
+import net.benwoodworth.knbt.NbtIntArray
+import net.benwoodworth.knbt.NbtList
 import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.parameterizeTest
 import net.benwoodworth.knbt.test.parameters.*
 import kotlin.reflect.KProperty1
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 import kotlin.test.*
 
 class NbtTagTest {
@@ -434,12 +442,51 @@ class NbtByteArrayTest {
 
 class NbtListTest {
     @Test
+    fun element_type_should_be_correct_when_constructed_with_empty_content() = parameterizeTest {
+        val testCase by parameterOf(
+            NbtList<Nothing>(emptyList()) to NbtTagType.TAG_End,
+            NbtList<NbtByte>(emptyList()) to NbtTagType.TAG_Byte,
+            NbtList<NbtShort>(emptyList()) to NbtTagType.TAG_Short,
+            NbtList<NbtInt>(emptyList()) to NbtTagType.TAG_Int,
+            NbtList<NbtLong>(emptyList()) to NbtTagType.TAG_Long,
+            NbtList<NbtFloat>(emptyList()) to NbtTagType.TAG_Float,
+            NbtList<NbtDouble>(emptyList()) to NbtTagType.TAG_Double,
+            NbtList<NbtByteArray>(emptyList()) to NbtTagType.TAG_Byte_Array,
+            NbtList<NbtString>(emptyList()) to NbtTagType.TAG_String,
+            NbtList<NbtList<*>>(emptyList()) to NbtTagType.TAG_List,
+            NbtList<NbtCompound>(emptyList()) to NbtTagType.TAG_Compound,
+            NbtList<NbtIntArray>(emptyList()) to NbtTagType.TAG_Int_Array,
+            NbtList<NbtLongArray>(emptyList()) to NbtTagType.TAG_Long_Array
+        )
+
+        val (nbtList, expectedType) = testCase
+        assertEquals(expectedType, nbtList.elementType)
+    }
+
+    @Test
     fun should_equal_NbtList_with_equal_content() = parameterizeTest {
         val nbtList by parameterOfNbtListContentEdgeCases()
         val nbtListWithEqualContent by parameterOfNbtListContentEdgeCases()
         assume(nbtList.content == nbtListWithEqualContent.content)
 
         assertEquals(nbtListWithEqualContent, nbtList)
+    }
+
+    /**
+     * The Minecraft Java implementation does keep track of the element type that was decoded, but only compares the
+     * content during equality checks.
+     */
+    @Test
+    fun should_equal_NbtList_with_equal_content_but_different_element_type() = parameterizeTest {
+        val elementType by parameter(NbtTagType.entries)
+        val differentElementType by parameter(NbtTagType.entries)
+        assume(elementType != differentElementType)
+
+        @OptIn(UnsafeNbtApi::class)
+        assertEquals(
+            NbtList(elementType, emptyList()),
+            NbtList(differentElementType, emptyList())
+        )
     }
 
     @Test

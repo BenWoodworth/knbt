@@ -30,11 +30,12 @@ class NbtTransformingSerializerTest {
         @SerialName("more_data") @Serializable(WrappingJsonListSerializer::class) val moreData: List<StringData> = emptyList()
     )
 
-    private object WrappingJsonListSerializer :
+    private object WrappingJsonListSerializer : // TODO JSON instead of NBT
         NbtTransformingSerializer<List<StringData>>(ListSerializer(StringData.serializer())) {
         @OptIn(UnsafeNbtApi::class)
         override fun transformDeserialize(tag: NbtTag): NbtTag =
-            if (tag !is NbtList<*>) NbtList(listOf(tag)) else tag
+            // TODO if-then foldable
+            if (tag !is NbtList<*>) NbtList(tag.type, listOf(tag)) else tag
     }
 
     private object UnwrappingJsonListSerializer :
