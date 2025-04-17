@@ -3,7 +3,7 @@ package net.benwoodworth.knbt.test.verify
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtCapabilities
 import net.benwoodworth.knbt.internal.NbtReader
-import net.benwoodworth.knbt.toNbtTagType
+import net.benwoodworth.knbt.toNbtType
 import kotlin.contracts.contract
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -343,7 +343,7 @@ internal class VerifyingNbtReader(
         inline fun <reified T : NbtTag> assertReadTagTypeEquals(expected: NbtTag, actual: KClass<T>) {
             contract { returns() implies (expected is T) }
 
-            assertEquals(expected.type, actual.toNbtTagType(), messagePrefix + "Incorrect type was read")
+            assertEquals(expected.type, actual.toNbtType(), messagePrefix + "Incorrect type was read")
         }
     }
 }

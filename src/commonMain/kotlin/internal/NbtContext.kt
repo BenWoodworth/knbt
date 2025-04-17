@@ -7,7 +7,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import net.benwoodworth.knbt.NbtDecoder
 import net.benwoodworth.knbt.NbtEncoder
 import net.benwoodworth.knbt.NbtFormat
-import net.benwoodworth.knbt.NbtTagType
+import net.benwoodworth.knbt.NbtType
 
 /**
  * The context of the NBT serialization process, providing access to information about its current state.
@@ -85,7 +85,7 @@ internal class SerializationNbtContext(
     /**
      * Checks the [type] of a value as it's starting to be serialized.
      */
-    fun beginSerializingValue(type: NbtTagType) {
+    fun beginSerializingValue(type: NbtType) {
         if (isRootValue) {
             if (type !in nbt.capabilities.rootTagTypes) {
                 val message = "The ${nbt.name} format does not support root $type values. " +

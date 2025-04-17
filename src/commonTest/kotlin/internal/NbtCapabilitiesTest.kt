@@ -32,7 +32,7 @@ class NbtCapabilitiesTest {
 
     @Test
     fun serializing_unsupported_root_type_should_fail() = parameterizeTest {
-        val unsupportedType by parameter(NbtTagType.entries)
+        val unsupportedType by parameter(NbtType.entries)
         val serializableType by parameterOfSerializableTypeEdgeCases()
 
         assume(serializableType.valueTag.type == unsupportedType)
@@ -40,7 +40,7 @@ class NbtCapabilitiesTest {
         val nbt = NbtWithCapabilities(
             "Non-$unsupportedType Root",
             Nbt.capabilities.copy(
-                rootTagTypes = NbtTagTypeSet(NbtTagType.entries - unsupportedType)
+                rootTagTypes = NbtTypeSet(NbtType.entries - unsupportedType)
             )
         )
 

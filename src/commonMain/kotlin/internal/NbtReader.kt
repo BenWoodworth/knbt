@@ -1,7 +1,7 @@
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.NbtTagType.*
+import net.benwoodworth.knbt.NbtType.*
 import kotlin.jvm.JvmInline
 
 /**
@@ -107,7 +107,7 @@ internal interface NbtReader {
     fun readString(): String
 
     data class NamedTagInfo(
-        val type: NbtTagType,
+        val type: NbtType,
         val name: String,
     ) {
         companion object {
@@ -119,7 +119,7 @@ internal interface NbtReader {
      * @property size The list size, or [UNKNOWN_SIZE] if unknown.
      */
     data class ListInfo(
-        val type: NbtTagType,
+        val type: NbtType,
         val size: Int,
     )
 
@@ -224,7 +224,7 @@ private fun NbtReader.readNbtCompound(): NbtCompound {
     return NbtCompound(content)
 }
 
-internal fun NbtReader.readNbtTag(type: NbtTagType): NbtTag? = when (type) {
+internal fun NbtReader.readNbtTag(type: NbtType): NbtTag? = when (type) {
     TAG_End -> null
     TAG_Byte -> NbtByte(readByte())
     TAG_Short -> NbtShort(readShort())
@@ -263,7 +263,7 @@ internal fun NbtReader.discardListTag(): NbtReader.ListInfo {
     return info
 }
 
-internal fun NbtReader.discardTag(type: NbtTagType) {
+internal fun NbtReader.discardTag(type: NbtType) {
     when (type) {
         TAG_End -> error("Unexpected $TAG_End")
         TAG_Byte -> readByte()

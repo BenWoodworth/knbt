@@ -15,8 +15,8 @@ import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.NbtTagType
-import net.benwoodworth.knbt.NbtTagType.*
+import net.benwoodworth.knbt.NbtType
+import net.benwoodworth.knbt.NbtType.*
 
 @OptIn(ExperimentalSerializationApi::class)
 internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
@@ -26,14 +26,14 @@ internal abstract class BaseNbtDecoder : AbstractNbtDecoder() {
     protected abstract val context: SerializationNbtContext
     protected abstract val reader: NbtReader
     protected abstract val parent: BaseNbtDecoder?
-    protected abstract val decodedTagType: NbtTagType
+    protected abstract val decodedTagType: NbtType
     protected abstract val decodedTagName: String?
 
     protected var serializerListKind: NbtListKind? = null
 
     private var verifiedNbtName: Boolean = false
 
-    private fun beginDecodingValue(type: NbtTagType) {
+    private fun beginDecodingValue(type: NbtType) {
         context.beginSerializingValue(type)
 
         val actualType = decodedTagType
@@ -280,7 +280,7 @@ internal class NbtReaderDecoder(
 
     private val rootTagInfo = reader.beginRootTag()
 
-    override val decodedTagType: NbtTagType
+    override val decodedTagType: NbtType
         get() = rootTagInfo.type
 
     override val decodedTagName: String?
@@ -313,7 +313,7 @@ private class ClassNbtDecoder(
 ) : CompoundNbtDecoder() {
     override lateinit var compoundEntryInfo: NbtReader.NamedTagInfo
 
-    override val decodedTagType: NbtTagType
+    override val decodedTagType: NbtType
         get() = compoundEntryInfo.type
 
     override val decodedTagName: String? // TODO Remove
@@ -389,7 +389,7 @@ private class MapNbtDecoder(
 
     override lateinit var compoundEntryInfo: NbtReader.NamedTagInfo
 
-    override val decodedTagType: NbtTagType
+    override val decodedTagType: NbtType
         get() = if (decodeMapKey) TAG_String else compoundEntryInfo.type
 
     override val decodedTagName: String?
@@ -455,7 +455,7 @@ private class ListNbtDecoder(
     override val elementCount: Int
         get() = listInfo.size
 
-    override val decodedTagType: NbtTagType
+    override val decodedTagType: NbtType
         get() = listInfo.type
 
     override val decodedTagName: String?
@@ -481,7 +481,7 @@ private class ByteArrayNbtDecoder(
     override val elementCount: Int
         get() = arrayInfo.size
 
-    override val decodedTagType: NbtTagType
+    override val decodedTagType: NbtType
         get() = TAG_Byte
 
     override val decodedTagName: String?
@@ -507,7 +507,7 @@ private class IntArrayNbtDecoder(
     override val elementCount: Int
         get() = arrayInfo.size
 
-    override val decodedTagType: NbtTagType
+    override val decodedTagType: NbtType
         get() = TAG_Int
 
     override val decodedTagName: String?
@@ -533,7 +533,7 @@ private class LongArrayNbtDecoder(
     override val elementCount: Int
         get() = arrayInfo.size
 
-    override val decodedTagType: NbtTagType
+    override val decodedTagType: NbtType
         get() = TAG_Long
 
     override val decodedTagName: String?

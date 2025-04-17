@@ -1,40 +1,40 @@
 package net.benwoodworth.knbt.internal
 
 import com.benwoodworth.parameterize.parameter
-import net.benwoodworth.knbt.NbtTagType
+import net.benwoodworth.knbt.NbtType
 import net.benwoodworth.knbt.test.assume
 import net.benwoodworth.knbt.test.parameterizeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-class NbtTagTypeSetTest {
+class NbtTypeSetTest {
     private class TestCase(
         private val description: String,
-        val entries: List<NbtTagType>
+        val entries: List<NbtType>
     ) {
         override fun toString(): String = "$description: $entries"
     }
 
     private val testCases = buildList {
-        add(TestCase("All", NbtTagType.entries))
-        add(TestCase("None", NbtTagType.entries))
+        add(TestCase("All", NbtType.entries))
+        add(TestCase("None", NbtType.entries))
 
-        NbtTagType.entries.forEach { tagType ->
+        NbtType.entries.forEach { tagType ->
             add(TestCase("Only $tagType", listOf(tagType)))
         }
 
-        NbtTagType.entries.forEach { tagType ->
-            add(TestCase("All except $tagType", NbtTagType.entries - tagType))
+        NbtType.entries.forEach { tagType ->
+            add(TestCase("All except $tagType", NbtType.entries - tagType))
         }
     }
 
     @Test
     fun contains_should_be_correct() = parameterizeTest {
         val testCase by parameter(testCases)
-        val element by parameter(NbtTagType.entries)
+        val element by parameter(NbtType.entries)
 
-        val set = NbtTagTypeSet(testCase.entries)
+        val set = NbtTypeSet(testCase.entries)
 
         assertEquals(element in testCase.entries, element in set, "$element in $set")
     }
@@ -45,8 +45,8 @@ class NbtTagTypeSetTest {
         val otherTestCase by parameter(testCases)
         assume(testCase.entries.toSet() == otherTestCase.entries.toSet())
 
-        val set = NbtTagTypeSet(testCase.entries)
-        val otherSet = NbtTagTypeSet(testCase.entries)
+        val set = NbtTypeSet(testCase.entries)
+        val otherSet = NbtTypeSet(testCase.entries)
 
         assertEquals(set, otherSet)
     }
@@ -57,8 +57,8 @@ class NbtTagTypeSetTest {
         val otherTestCase by parameter(testCases)
         assume(testCase.entries.toSet() != otherTestCase.entries.toSet())
 
-        val set = NbtTagTypeSet(testCase.entries)
-        val otherSet = NbtTagTypeSet(otherTestCase.entries)
+        val set = NbtTypeSet(testCase.entries)
+        val otherSet = NbtTypeSet(otherTestCase.entries)
 
         assertNotEquals(set, otherSet)
     }
@@ -68,8 +68,8 @@ class NbtTagTypeSetTest {
         val testCase by parameter(testCases)
         val otherTestCase by parameter(testCases)
 
-        val set = NbtTagTypeSet(testCase.entries)
-        val otherSet = NbtTagTypeSet(otherTestCase.entries)
+        val set = NbtTypeSet(testCase.entries)
+        val otherSet = NbtTypeSet(otherTestCase.entries)
         assume(set == otherSet)
 
         assertEquals(set.hashCode(), otherSet.hashCode())
@@ -80,8 +80,8 @@ class NbtTagTypeSetTest {
         val testCase by parameter(testCases)
         val otherTestCase by parameter(testCases)
 
-        val set = NbtTagTypeSet(testCase.entries)
-        val otherSet = NbtTagTypeSet(otherTestCase.entries)
+        val set = NbtTypeSet(testCase.entries)
+        val otherSet = NbtTypeSet(otherTestCase.entries)
         assume(set != otherSet)
 
         assertNotEquals(set.hashCode(), otherSet.hashCode())
@@ -93,7 +93,7 @@ class NbtTagTypeSetTest {
 
         assertEquals(
             LinkedHashSet(testCase.entries.sortedBy { it.id }).toString(),
-            NbtTagTypeSet(testCase.entries).toString()
+            NbtTypeSet(testCase.entries).toString()
         )
     }
 }

@@ -12,5 +12,5 @@ internal data class NbtCapabilities(
      */
     val definiteLengthEncoding: Boolean,
 
-    val rootTagTypes: NbtTagTypeSet,
+    val rootTagTypes: NbtTypeSet,
 )

@@ -1,7 +1,7 @@
 package net.benwoodworth.knbt.internal
 
 import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.NbtTagType.*
+import net.benwoodworth.knbt.NbtType.*
 
 /**
  * An interface for writing NBT data.
@@ -17,7 +17,7 @@ internal interface NbtWriter {
      *
      * The [name] is ignored for unnamed [NbtFormat]s.
      */
-    fun beginRootTag(type: NbtTagType, name: String)
+    fun beginRootTag(type: NbtType, name: String)
 
     /**
      * Followed by calls to [beginCompoundEntry], then a call to [endCompound]
@@ -27,14 +27,14 @@ internal interface NbtWriter {
     /**
      * Followed by a call to write a value of the same type.
      */
-    fun beginCompoundEntry(type: NbtTagType, name: String)
+    fun beginCompoundEntry(type: NbtType, name: String)
 
     fun endCompound()
 
     /**
      * Followed by calls to [beginListEntry], then [endList].
      */
-    fun beginList(type: NbtTagType, size: Int)
+    fun beginList(type: NbtType, size: Int)
 
     /**
      * Followed by a call to write a value of the same type.

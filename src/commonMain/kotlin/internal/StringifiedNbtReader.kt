@@ -1,9 +1,9 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.NbtTagType
+import net.benwoodworth.knbt.NbtType
 import net.benwoodworth.knbt.internal.CharSource.ReadResult
 import net.benwoodworth.knbt.internal.CharSource.ReadResult.Companion.EOF
-import net.benwoodworth.knbt.NbtTagType.*
+import net.benwoodworth.knbt.NbtType.*
 import okio.Closeable
 
 internal class StringifiedNbtReader(
@@ -85,7 +85,7 @@ internal class StringifiedNbtReader(
         }
     }
 
-    private fun CharSource.peekTagType(): NbtTagType? {
+    private fun CharSource.peekTagType(): NbtType? {
         val peek = peek()
         return when (peek.read()) {
             EOF -> null

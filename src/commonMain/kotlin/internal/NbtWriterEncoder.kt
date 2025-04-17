@@ -13,8 +13,8 @@ import net.benwoodworth.knbt.AbstractNbtEncoder
 import net.benwoodworth.knbt.ExperimentalNbtApi
 import net.benwoodworth.knbt.NbtFormat
 import net.benwoodworth.knbt.NbtTag
-import net.benwoodworth.knbt.NbtTagType
-import net.benwoodworth.knbt.NbtTagType.*
+import net.benwoodworth.knbt.NbtType
+import net.benwoodworth.knbt.NbtType.*
 
 @OptIn(ExperimentalSerializationApi::class)
 internal class NbtWriterEncoder(
@@ -28,10 +28,10 @@ internal class NbtWriterEncoder(
     private lateinit var elementName: String
     private var encodingMapKey: Boolean = false
 
-    private val structureTypeStack = ArrayDeque<NbtTagType>()
+    private val structureTypeStack = ArrayDeque<NbtType>()
 
     private var serializerListKind: NbtListKind? = null
-    private val listTypeStack = ArrayDeque<NbtTagType>() // TAG_End when uninitialized
+    private val listTypeStack = ArrayDeque<NbtType>() // TAG_End when uninitialized
     private var listSize: Int = 0
 
     private var nbtNameToWrite: String? = null
@@ -59,7 +59,7 @@ internal class NbtWriterEncoder(
         return true
     }
 
-    private fun beginEncodingValue(type: NbtTagType) {
+    private fun beginEncodingValue(type: NbtType) {
         context.beginSerializingValue(type)
 
         when (val structureType = structureTypeStack.lastOrNull()) {

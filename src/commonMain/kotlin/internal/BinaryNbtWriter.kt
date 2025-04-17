@@ -1,32 +1,32 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.NbtTagType
-import net.benwoodworth.knbt.NbtTagType.TAG_End
+import net.benwoodworth.knbt.NbtType
+import net.benwoodworth.knbt.NbtType.TAG_End
 import okio.BufferedSink
 
 internal abstract class BinaryNbtWriter : NbtWriter {
     protected abstract val context: NbtContext
     protected abstract val sink: BufferedSink
 
-    protected fun BufferedSink.writeNbtTagType(value: NbtTagType) {
+    protected fun BufferedSink.writeNbtType(value: NbtType) {
         writeByte(value.id.toInt())
     }
 
-    abstract override fun beginRootTag(type: NbtTagType, name: String)
+    abstract override fun beginRootTag(type: NbtType, name: String)
 
     override fun beginCompound(): Unit = Unit
 
-    override fun beginCompoundEntry(type: NbtTagType, name: String) {
-        sink.writeNbtTagType(type)
+    override fun beginCompoundEntry(type: NbtType, name: String) {
+        sink.writeNbtType(type)
         sink.writeNbtString(name)
     }
 
     override fun endCompound() {
-        sink.writeNbtTagType(TAG_End)
+        sink.writeNbtType(TAG_End)
     }
 
-    override fun beginList(type: NbtTagType, size: Int) {
-        sink.writeNbtTagType(type)
+    override fun beginList(type: NbtType, size: Int) {
+        sink.writeNbtType(type)
         sink.writeNbtInt(size)
     }
 
@@ -95,8 +95,8 @@ internal abstract class BinaryNbtWriter : NbtWriter {
 }
 
 internal abstract class NamedBinaryNbtWriter : BinaryNbtWriter() {
-    override fun beginRootTag(type: NbtTagType, name: String) {
-        sink.writeNbtTagType(type)
+    override fun beginRootTag(type: NbtType, name: String) {
+        sink.writeNbtType(type)
         sink.writeNbtString(name)
     }
 }
@@ -153,8 +153,8 @@ internal abstract class JavaNetworkNbtWriter : BinaryNbtWriter() {
         override val context: NbtContext,
         override val sink: BufferedSink
     ) : JavaNetworkNbtWriter() {
-        override fun beginRootTag(type: NbtTagType, name: String) {
-            sink.writeNbtTagType(type)
+        override fun beginRootTag(type: NbtType, name: String) {
+            sink.writeNbtType(type)
             sink.writeNbtString("")
         }
     }
@@ -163,8 +163,8 @@ internal abstract class JavaNetworkNbtWriter : BinaryNbtWriter() {
         override val context: NbtContext,
         override val sink: BufferedSink
     ) : JavaNetworkNbtWriter() {
-        override fun beginRootTag(type: NbtTagType, name: String) {
-            sink.writeNbtTagType(type)
+        override fun beginRootTag(type: NbtType, name: String) {
+            sink.writeNbtType(type)
         }
     }
 }

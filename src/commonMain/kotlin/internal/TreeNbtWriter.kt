@@ -5,11 +5,11 @@ import net.benwoodworth.knbt.*
 internal class TreeNbtWriter(tagConsumer: (NbtNamed<NbtTag>) -> Unit) : NbtWriter {
     private var writer: NbtTagWriter = RootNbtTagWriter(tagConsumer)
 
-    override fun beginRootTag(type: NbtTagType, name: String): Unit = writer.beginRootTag(type, name)
+    override fun beginRootTag(type: NbtType, name: String): Unit = writer.beginRootTag(type, name)
     override fun beginCompound(): Unit = writer.beginCompound()
-    override fun beginCompoundEntry(type: NbtTagType, name: String): Unit = writer.beginCompoundEntry(type, name)
+    override fun beginCompoundEntry(type: NbtType, name: String): Unit = writer.beginCompoundEntry(type, name)
     override fun endCompound(): Unit = writer.endCompound()
-    override fun beginList(type: NbtTagType, size: Int): Unit = writer.beginList(type, size)
+    override fun beginList(type: NbtType, size: Int): Unit = writer.beginList(type, size)
     override fun beginListEntry(): Unit = writer.beginListEntry()
     override fun endList(): Unit = writer.endList()
     override fun beginByteArray(size: Int): Unit = writer.beginByteArray(size)
@@ -32,13 +32,13 @@ internal class TreeNbtWriter(tagConsumer: (NbtNamed<NbtTag>) -> Unit) : NbtWrite
     private sealed interface NbtTagWriter {
         fun consumeTag(tag: NbtTag): Unit = error("${this::class} does not support consumeTag()")
 
-        fun beginRootTag(type: NbtTagType, name: String): Unit = error("${this::class} does not support beginRootTag()")
+        fun beginRootTag(type: NbtType, name: String): Unit = error("${this::class} does not support beginRootTag()")
         fun beginCompound(): Unit = error("${this::class} does not support beginCompound()")
-        fun beginCompoundEntry(type: NbtTagType, name: String): Unit =
+        fun beginCompoundEntry(type: NbtType, name: String): Unit =
             error("${this::class} does not support beginCompoundEntry()")
 
         fun endCompound(): Unit = error("${this::class} does not support endCompound()")
-        fun beginList(type: NbtTagType, size: Int): Unit = error("${this::class} does not support beginList()")
+        fun beginList(type: NbtType, size: Int): Unit = error("${this::class} does not support beginList()")
         fun beginListEntry(): Unit = error("${this::class} does not support beginListEntry()")
         fun endList(): Unit = error("${this::class} does not support endList()")
         fun beginByteArray(size: Int): Unit = error("${this::class} does not support beginByteArray()")
@@ -64,7 +64,7 @@ internal class TreeNbtWriter(tagConsumer: (NbtNamed<NbtTag>) -> Unit) : NbtWrite
 
         override fun consumeTag(tag: NbtTag): Unit = tagConsumer(NbtNamed(rootName, tag))
 
-        override fun beginRootTag(type: NbtTagType, name: String) {
+        override fun beginRootTag(type: NbtType, name: String) {
             rootName = name
         }
 
@@ -72,7 +72,7 @@ internal class TreeNbtWriter(tagConsumer: (NbtNamed<NbtTag>) -> Unit) : NbtWrite
             writer = NbtCompoundWriter(this)
         }
 
-        override fun beginList(type: NbtTagType, size: Int) {
+        override fun beginList(type: NbtType, size: Int) {
             writer = NbtListWriter(this, size)
         }
 
@@ -105,7 +105,7 @@ internal class TreeNbtWriter(tagConsumer: (NbtNamed<NbtTag>) -> Unit) : NbtWrite
             builder.put(entryName, tag)
         }
 
-        override fun beginCompoundEntry(type: NbtTagType, name: String) {
+        override fun beginCompoundEntry(type: NbtType, name: String) {
             entryName = name
         }
 
@@ -118,7 +118,7 @@ internal class TreeNbtWriter(tagConsumer: (NbtNamed<NbtTag>) -> Unit) : NbtWrite
             writer = NbtCompoundWriter(this)
         }
 
-        override fun beginList(type: NbtTagType, size: Int) {
+        override fun beginList(type: NbtType, size: Int) {
             writer = NbtListWriter(this, size)
         }
 
@@ -161,7 +161,7 @@ internal class TreeNbtWriter(tagConsumer: (NbtNamed<NbtTag>) -> Unit) : NbtWrite
             writer = NbtCompoundWriter(this)
         }
 
-        override fun beginList(type: NbtTagType, size: Int) {
+        override fun beginList(type: NbtType, size: Int) {
             writer = NbtListWriter(this, size)
         }
 

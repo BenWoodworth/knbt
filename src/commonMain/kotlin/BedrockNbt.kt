@@ -12,7 +12,7 @@ import okio.BufferedSource
 private val bedrockNbtCapabilities = NbtCapabilities(
     namedRoot = true,
     definiteLengthEncoding = true,
-    rootTagTypes = NbtTagTypeSet(listOf(NbtTagType.TAG_List, NbtTagType.TAG_Compound)),
+    rootTagTypes = NbtTypeSet(listOf(NbtType.TAG_List, NbtType.TAG_Compound)),
 )
 
 public class BedrockNbt internal constructor(

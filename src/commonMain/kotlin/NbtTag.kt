@@ -9,14 +9,14 @@ import kotlin.reflect.KClass
 @Serializable(with = NbtTagSerializer::class)
 public sealed interface NbtTag {
     /**
-     * Returns this [NbtTag] implementation's associated [NbtTagType].
+     * Returns this [NbtTag] implementation's associated [NbtType].
      */
-    public val type: NbtTagType
+    public val type: NbtType
 }
 
 @Serializable(with = NbtByteSerializer::class)
 public class NbtByte(public val value: Byte) : NbtTag, @Suppress("DEPRECATION") NbtByteDeprecations {
-    override val type: NbtTagType get() = NbtTagType.TAG_Byte
+    override val type: NbtType get() = NbtType.TAG_Byte
 
     override fun equals(other: Any?): Boolean =
         this === other || (other is NbtByte && value == other.value)
@@ -42,7 +42,7 @@ public fun NbtByte.toBoolean(): Boolean =
 
 @Serializable(NbtShortSerializer::class)
 public class NbtShort(public val value: Short) : NbtTag {
-    override val type: NbtTagType get() = NbtTagType.TAG_Short
+    override val type: NbtType get() = NbtType.TAG_Short
 
     override fun equals(other: Any?): Boolean =
         this === other || (other is NbtShort && value == other.value)
@@ -54,7 +54,7 @@ public class NbtShort(public val value: Short) : NbtTag {
 
 @Serializable(NbtIntSerializer::class)
 public class NbtInt(public val value: Int) : NbtTag {
-    override val type: NbtTagType get() = NbtTagType.TAG_Int
+    override val type: NbtType get() = NbtType.TAG_Int
 
     override fun equals(other: Any?): Boolean =
         this === other || (other is NbtInt && value == other.value)
@@ -66,7 +66,7 @@ public class NbtInt(public val value: Int) : NbtTag {
 
 @Serializable(NbtLongSerializer::class)
 public class NbtLong(public val value: Long) : NbtTag {
-    override val type: NbtTagType get() = NbtTagType.TAG_Long
+    override val type: NbtType get() = NbtType.TAG_Long
 
     override fun equals(other: Any?): Boolean =
         this === other || (other is NbtLong && value == other.value)
@@ -78,7 +78,7 @@ public class NbtLong(public val value: Long) : NbtTag {
 
 @Serializable(NbtFloatSerializer::class)
 public class NbtFloat(public val value: Float) : NbtTag {
-    override val type: NbtTagType get() = NbtTagType.TAG_Float
+    override val type: NbtType get() = NbtType.TAG_Float
 
     override fun equals(other: Any?): Boolean =
         this === other || (other is NbtFloat && value.toRawBits() == other.value.toRawBits())
@@ -90,7 +90,7 @@ public class NbtFloat(public val value: Float) : NbtTag {
 
 @Serializable(NbtDoubleSerializer::class)
 public class NbtDouble(public val value: Double) : NbtTag {
-    override val type: NbtTagType get() = NbtTagType.TAG_Double
+    override val type: NbtType get() = NbtType.TAG_Double
 
     override fun equals(other: Any?): Boolean =
         this === other || (other is NbtDouble && value.toRawBits() == other.value.toRawBits())
@@ -104,7 +104,7 @@ public class NbtDouble(public val value: Double) : NbtTag {
 public class NbtByteArray(public val content: List<Byte>) : NbtTag,
     @Suppress("DEPRECATION") NbtByteArrayDeprecations() {
 
-    override val type: NbtTagType get() = NbtTagType.TAG_Byte_Array
+    override val type: NbtType get() = NbtType.TAG_Byte_Array
 
     public val size: Int
         get() = content.size
@@ -126,7 +126,7 @@ public fun NbtByteArray.getOrNull(index: Int): Byte? =
 
 @Serializable(NbtStringSerializer::class)
 public class NbtString(public val value: String) : NbtTag {
-    override val type: NbtTagType get() = NbtTagType.TAG_String
+    override val type: NbtType get() = NbtType.TAG_String
 
     override fun equals(other: Any?): Boolean =
         this === other || (other is NbtString && value == other.value)
@@ -140,10 +140,10 @@ public class NbtString(public val value: String) : NbtTag {
 public class NbtList<out T : NbtTag> private constructor(
     public val content: List<T>,
 ) : NbtTag, @Suppress("DEPRECATION") NbtListLikeDeprecations<T>() {
-    override val type: NbtTagType get() = NbtTagType.TAG_List
+    override val type: NbtType get() = NbtType.TAG_List
 
-    internal val elementType: NbtTagType
-        get() = if (content.isEmpty()) NbtTagType.TAG_End else content.first().type
+    internal val elementType: NbtType
+        get() = if (content.isEmpty()) NbtType.TAG_End else content.first().type
 
     public val size: Int
         get() = content.size
@@ -227,7 +227,7 @@ public fun <T : NbtTag> NbtList<T>.getOrNull(index: Int): T? =
 public class NbtCompound(public val content: Map<String, NbtTag>) : NbtTag,
     @Suppress("DEPRECATION") NbtCompoundDeprecations() {
 
-    override val type: NbtTagType get() = NbtTagType.TAG_Compound
+    override val type: NbtType get() = NbtType.TAG_Compound
 
     /**
      * Returns the number of tags in this compound.
@@ -283,7 +283,7 @@ public fun NbtCompound.getOrNull(name: String): NbtTag? =
 
 @Serializable(NbtIntArraySerializer::class)
 public class NbtIntArray(public val content: List<Int>) : NbtTag, @Suppress("DEPRECATION") NbtIntArrayDeprecations() {
-    override val type: NbtTagType get() = NbtTagType.TAG_Int_Array
+    override val type: NbtType get() = NbtType.TAG_Int_Array
 
     public val size: Int
         get() = content.size
@@ -307,7 +307,7 @@ public fun NbtIntArray.getOrNull(index: Int): Int? =
 public class NbtLongArray(public val content: List<Long>) : NbtTag,
     @Suppress("DEPRECATION") NbtLongArrayDeprecations() {
 
-    override val type: NbtTagType get() = NbtTagType.TAG_Long_Array
+    override val type: NbtType get() = NbtType.TAG_Long_Array
 
     public val size: Int
         get() = content.size

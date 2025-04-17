@@ -12,14 +12,14 @@ public class NbtListBuilder<T : NbtTag> @PublishedApi internal constructor(size:
         if (size >= 0) ArrayList<T>(size) else ArrayList<T>()
     }
 
-    private var elementType: NbtTagType = NbtTagType.TAG_End
+    private var elementType: NbtType = NbtType.TAG_End
     private var built = false
 
     @PublishedApi
     internal fun add(tag: T): Boolean {
         if (built) throw UnsupportedOperationException("List has already been built")
 
-        if (elementType == NbtTagType.TAG_End) {
+        if (elementType == NbtType.TAG_End) {
             elementType = tag.type
         } else {
             require(tag.type == elementType) { "Cannot add a ${tag.type} to a list of $elementType" }

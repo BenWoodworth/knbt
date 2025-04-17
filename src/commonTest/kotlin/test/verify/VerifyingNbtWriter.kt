@@ -1,10 +1,10 @@
 package net.benwoodworth.knbt.test.verify
 
 import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.NbtTagType
+import net.benwoodworth.knbt.NbtType
 import net.benwoodworth.knbt.internal.NbtWriter
 import net.benwoodworth.knbt.internal.toNbtString
-import net.benwoodworth.knbt.toNbtTagType
+import net.benwoodworth.knbt.toNbtType
 import kotlin.contracts.contract
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -22,7 +22,7 @@ internal class VerifyingNbtWriter(
         Unit to state
     }
 
-    override fun beginRootTag(type: NbtTagType, name: String): Unit = transitionState(::beginRootTag) {
+    override fun beginRootTag(type: NbtType, name: String): Unit = transitionState(::beginRootTag) {
         assertStateIs<State.InRoot>(state)
         assertWrittenRootTypeEquals(tag.value.type, type)
         assertWrittenRootNameEquals(tag.name, name)
@@ -37,7 +37,7 @@ internal class VerifyingNbtWriter(
         Unit to State.InCompound(state.tag, state.tag.content.entries.toList(), 0, state.nextState)
     }
 
-    override fun beginCompoundEntry(type: NbtTagType, name: String): Unit = transitionState(::beginCompoundEntry) {
+    override fun beginCompoundEntry(type: NbtType, name: String): Unit = transitionState(::beginCompoundEntry) {
         assertStateIs<State.InCompound>(state)
 
         val entry = state.entries.getOrNull(state.index)
@@ -57,7 +57,7 @@ internal class VerifyingNbtWriter(
         Unit to state.nextState
     }
 
-    override fun beginList(type: NbtTagType, size: Int): Unit = transitionState(::beginList) {
+    override fun beginList(type: NbtType, size: Int): Unit = transitionState(::beginList) {
         assertStateIs<State.AwaitingValue>(state)
         assertWrittenTagTypeEquals(state.tag, NbtList::class)
         assertWrittenElementTypeEquals(state.tag.elementType, type)
@@ -254,7 +254,7 @@ internal class VerifyingNbtWriter(
             assertTrue(TExpected::class == state::class, message)
         }
 
-        fun assertWrittenRootTypeEquals(expected: NbtTagType, actual: NbtTagType) {
+        fun assertWrittenRootTypeEquals(expected: NbtType, actual: NbtType) {
             assertEquals(expected, actual, messagePrefix + "Incorrect root type was written")
         }
 
@@ -265,7 +265,7 @@ internal class VerifyingNbtWriter(
         inline fun <reified T : NbtTag> assertWrittenTagTypeEquals(expected: NbtTag, actual: KClass<T>) {
             contract { returns() implies (expected is T) }
 
-            assertEquals(expected.type, actual.toNbtTagType(), messagePrefix + "Incorrect type was written")
+            assertEquals(expected.type, actual.toNbtType(), messagePrefix + "Incorrect type was written")
         }
 
         fun assertCompoundShouldBeginEntry(nextEntry: Map.Entry<String, NbtTag>?) {
@@ -282,7 +282,7 @@ internal class VerifyingNbtWriter(
             assertEquals(expected, actual, messagePrefix + "Incorrect compound entry name was written")
         }
 
-        fun assertWrittenCompoundEntryTypeEquals(expected: NbtTagType, actual: NbtTagType) {
+        fun assertWrittenCompoundEntryTypeEquals(expected: NbtType, actual: NbtType) {
             assertEquals(expected, actual, messagePrefix + "Incorrect compound entry type was written")
         }
 
@@ -294,7 +294,7 @@ internal class VerifyingNbtWriter(
             assertTrue(nextEntry == null, message)
         }
 
-        fun assertWrittenElementTypeEquals(expected: NbtTagType, actual: NbtTagType) {
+        fun assertWrittenElementTypeEquals(expected: NbtType, actual: NbtType) {
             assertEquals(expected, actual, messagePrefix + "Incorrect element type was written")
         }
 
