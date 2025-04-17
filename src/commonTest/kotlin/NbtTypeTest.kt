@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class NbtTagTypeTest {
+class NbtTypeTest {
     @Test
     fun converting_to_NbtType_or_null_from_a_valid_ID_byte_should_return_the_correct_tag() = parameterizeTest {
         val expectedType by parameter(NbtType.entries)
