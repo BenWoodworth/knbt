@@ -1,5 +1,8 @@
 package net.benwoodworth.knbt.internal
 
+import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.NbtType.*
+
 /**
  * An interface for writing NBT data.
  *
@@ -11,8 +14,10 @@ package net.benwoodworth.knbt.internal
 internal interface NbtWriter {
     /**
      * Followed by a call to write a value of the same type.
+     *
+     * The [name] is ignored for unnamed [NbtFormat]s.
      */
-    fun beginRootTag(type: NbtTagType)
+    fun beginRootTag(type: NbtType, name: String)
 
     /**
      * Followed by calls to [beginCompoundEntry], then a call to [endCompound]
@@ -22,14 +27,14 @@ internal interface NbtWriter {
     /**
      * Followed by a call to write a value of the same type.
      */
-    fun beginCompoundEntry(type: NbtTagType, name: String)
+    fun beginCompoundEntry(type: NbtType, name: String)
 
     fun endCompound()
 
     /**
      * Followed by calls to [beginListEntry], then [endList].
      */
-    fun beginList(type: NbtTagType, size: Int)
+    fun beginList(type: NbtType, size: Int)
 
     /**
      * Followed by a call to write a value of the same type.
@@ -114,4 +119,70 @@ internal fun NbtWriter.writeLongArray(value: LongArray) {
         writeLong(it)
     }
     endLongArray()
+}
+
+internal fun NbtWriter.writeNbtTag(context: NbtContext, value: NbtTag): Unit = when (value.type) {
+    TAG_End -> error("Unexpected $TAG_End")
+    TAG_Byte -> writeByte((value as NbtByte).value)
+    TAG_Double -> writeDouble((value as NbtDouble).value)
+    TAG_Float -> writeFloat((value as NbtFloat).value)
+    TAG_Int -> writeInt((value as NbtInt).value)
+    TAG_Long -> writeLong((value as NbtLong).value)
+    TAG_Short -> writeShort((value as NbtShort).value)
+    TAG_String -> writeString((value as NbtString).value)
+    TAG_Compound -> {
+        beginCompound()
+        (value as NbtCompound).content.forEach { (key, value) ->
+            beginCompoundEntry(value.type, key)
+            writeNbtTag(context, value)
+        }
+        endCompound()
+    }
+
+    TAG_List -> {
+        val list = (value as NbtList<*>)
+        val listType = list.elementType
+        beginList(listType, list.size)
+        list.content.forEach { entry ->
+            beginListEntry()
+
+            if (entry.type != listType) {
+                val message = "Cannot encode ${entry.type} within a $TAG_List of $listType"
+                throw NbtEncodingException(context, message)
+            }
+
+            writeNbtTag(context, entry)
+        }
+        endList()
+    }
+
+    TAG_Byte_Array -> {
+        val array = (value as NbtByteArray)
+        beginByteArray(array.size)
+        array.content.forEach { entry ->
+            beginByteArrayEntry()
+            writeByte(entry)
+        }
+        endByteArray()
+    }
+
+    TAG_Int_Array -> {
+        val array = (value as NbtIntArray)
+        beginIntArray(array.size)
+        array.content.forEach { entry ->
+            beginIntArrayEntry()
+            writeInt(entry)
+        }
+        endIntArray()
+    }
+
+    TAG_Long_Array -> {
+        val array = (value as NbtLongArray)
+        beginLongArray(array.size)
+        array.content.forEach { entry ->
+            beginLongArrayEntry()
+            writeLong(entry)
+        }
+        endLongArray()
+    }
 }

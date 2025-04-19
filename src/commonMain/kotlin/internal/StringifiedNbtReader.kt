@@ -1,11 +1,15 @@
 package net.benwoodworth.knbt.internal
 
+import net.benwoodworth.knbt.NbtType
 import net.benwoodworth.knbt.internal.CharSource.ReadResult
 import net.benwoodworth.knbt.internal.CharSource.ReadResult.Companion.EOF
-import net.benwoodworth.knbt.internal.NbtTagType.*
+import net.benwoodworth.knbt.NbtType.*
 import okio.Closeable
 
-internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeable {
+internal class StringifiedNbtReader(
+    private val context: NbtContext,
+    val source: CharSource
+) : NbtReader, Closeable {
     private companion object {
         // TODO https://youtrack.jetbrains.com/issue/KT-49065
         // val DOUBLE = Regex("""[-+]?(?:[0-9]+\.?|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?d?""", RegexOption.IGNORE_CASE)
@@ -59,13 +63,14 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
 
         while (true) {
             when (val char = read()) {
-                EOF -> throw NbtDecodingException("Unexpected EOF in String")
+                EOF -> throw NbtDecodingException(context, "Unexpected EOF in String")
                 quote -> break
                 backslash -> when (val esc = read()) {
-                    EOF -> throw NbtDecodingException("Unexpected EOF in String")
+                    EOF -> throw NbtDecodingException(context, "Unexpected EOF in String")
                     quote, backslash -> buffer.append(esc)
-                    else -> throw NbtDecodingException("Invalid escape: \\$esc")
+                    else -> throw NbtDecodingException(context, "Invalid escape: \\$esc")
                 }
+
                 else -> buffer.append(char.toChar())
             }
         }
@@ -74,13 +79,13 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
     private fun CharSource.expect(char: Char, ignoreCase: Boolean = false) {
         val actual = read()
         if (actual == EOF) {
-            throw NbtDecodingException("Expected '$char', but was EOF")
+            throw NbtDecodingException(context, "Expected '$char', but was EOF")
         } else if (!actual.toChar().equals(char, ignoreCase)) {
-            throw NbtDecodingException("Expected '$char', but was '$actual'")
+            throw NbtDecodingException(context, "Expected '$char', but was '$actual'")
         }
     }
 
-    private fun CharSource.peekTagType(): NbtTagType? {
+    private fun CharSource.peekTagType(): NbtType? {
         val peek = peek()
         return when (peek.read()) {
             EOF -> null
@@ -90,6 +95,7 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
                 ReadResult('L') -> if (peek.skipWhitespace().read() == ReadResult(';')) TAG_Long_Array else TAG_List
                 else -> TAG_List
             }
+
             ReadResult('{') -> TAG_Compound
             ReadResult('\''), ReadResult('"') -> TAG_String
             else -> {
@@ -114,21 +120,23 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
 
     private fun CharSource.readSnbtString(): String? =
         when (skipWhitespace().peek().read()) {
-            EOF -> throw NbtDecodingException("Expected String, but was EOF")
+            EOF -> throw NbtDecodingException(context, "Expected String, but was EOF")
             ReadResult('"'), ReadResult('\'') -> {
                 bufferQuotedString()
                 buffer.toString()
             }
+
             else -> {
                 bufferUnquotedString()
                 buffer.takeUnless { it.isEmpty() }?.toString()
             }
         }
 
-    override fun beginRootTag(): NbtReader.RootTagInfo =
-        NbtReader.RootTagInfo(
+    override fun beginRootTag(): NbtReader.NamedTagInfo =
+        NbtReader.NamedTagInfo(
             source.skipWhitespace().peekTagType()
-                ?: throw NbtDecodingException("Expected value, but got nothing")
+                ?: throw NbtDecodingException(context, "Expected value, but got nothing"),
+            ""
         )
 
     override fun beginCompound() {
@@ -136,28 +144,28 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
         firstEntry = true
     }
 
-    override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
+    override fun beginCompoundEntry(): NbtReader.NamedTagInfo {
         source.skipWhitespace()
 
         return if (source.peek().read() == ReadResult('}')) {
-            NbtReader.CompoundEntryInfo.End
+            NbtReader.NamedTagInfo.End
         } else {
             if (firstEntry) {
                 firstEntry = false
             } else {
                 val char = source.read()
-                if (char != ReadResult(',')) throw NbtDecodingException("Expected ',' or '}', but got '$char'")
+                if (char != ReadResult(',')) throw NbtDecodingException(context, "Expected ',' or '}', but got '$char'")
             }
 
             val name = source.skipWhitespace().readSnbtString()
-                ?: throw NbtDecodingException("Expected key but got nothing")
+                ?: throw NbtDecodingException(context, "Expected key but got nothing")
 
             source.skipWhitespace().expect(':')
 
             val type = source.skipWhitespace().peekTagType()
-                ?: throw NbtDecodingException("Expected value but got nothing")
+                ?: throw NbtDecodingException(context, "Expected value but got nothing")
 
-            return NbtReader.CompoundEntryInfo(type, name)
+            return NbtReader.NamedTagInfo(type, name)
         }
     }
 
@@ -187,7 +195,7 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
                 firstEntry = false
             } else {
                 val char = source.read()
-                if (char != ReadResult(',')) throw NbtDecodingException("Expected ',' or ']', but got '$char'")
+                if (char != ReadResult(',')) throw NbtDecodingException(context, "Expected ',' or ']', but got '$char'")
             }
             true
         }
@@ -248,7 +256,7 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
             buffer.contentEquals("true", true) -> 1
             buffer.contentEquals("false", true) -> 0
             else -> {
-                if (!BYTE.matches(buffer)) throw NbtDecodingException("Expected Byte, but was '$buffer'")
+                if (!BYTE.matches(buffer)) throw NbtDecodingException(context, "Expected Byte, but was '$buffer'")
                 buffer.setLength(buffer.length - 1)
                 buffer.toString().toByte()
             }
@@ -258,7 +266,7 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
     override fun readShort(): Short {
         source.skipWhitespace().bufferUnquotedString()
 
-        if (!SHORT.matches(buffer)) throw NbtDecodingException("Expected Short, but was '$buffer'")
+        if (!SHORT.matches(buffer)) throw NbtDecodingException(context, "Expected Short, but was '$buffer'")
         buffer.setLength(buffer.length - 1)
         return buffer.toString().toShort()
     }
@@ -266,14 +274,14 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
     override fun readInt(): Int {
         source.skipWhitespace().bufferUnquotedString()
 
-        if (!INT.matches(buffer)) throw NbtDecodingException("Expected Int, but was '$buffer'")
+        if (!INT.matches(buffer)) throw NbtDecodingException(context, "Expected Int, but was '$buffer'")
         return buffer.toString().toInt()
     }
 
     override fun readLong(): Long {
         source.skipWhitespace().bufferUnquotedString()
 
-        if (!LONG.matches(buffer)) throw NbtDecodingException("Expected Long, but was '$buffer'")
+        if (!LONG.matches(buffer)) throw NbtDecodingException(context, "Expected Long, but was '$buffer'")
         buffer.setLength(buffer.length - 1)
         return buffer.toString().toLong()
     }
@@ -282,7 +290,7 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
         source.skipWhitespace().bufferUnquotedString()
 
         if (!FLOAT_A.matches(buffer) && !FLOAT_B.matches(buffer)) {
-            throw NbtDecodingException("Expected Float, but was '$buffer'")
+            throw NbtDecodingException(context, "Expected Float, but was '$buffer'")
         }
         buffer.setLength(buffer.length - 1)
         return buffer.toString().toFloat()
@@ -292,12 +300,12 @@ internal class StringifiedNbtReader(val source: CharSource) : NbtReader, Closeab
         source.skipWhitespace().bufferUnquotedString()
 
         if (!DOUBLE_A.matches(buffer) && !DOUBLE_B.matches(buffer)) {
-            throw NbtDecodingException("Expected Double, but was '$buffer'")
+            throw NbtDecodingException(context, "Expected Double, but was '$buffer'")
         }
         if (buffer.last().equals('d', true)) buffer.setLength(buffer.length - 1)
         return buffer.toString().toDouble()
     }
 
     override fun readString(): String =
-        source.readSnbtString() ?: throw NbtDecodingException("Expected String but got nothing")
+        source.readSnbtString() ?: throw NbtDecodingException(context, "Expected String but got nothing")
 }

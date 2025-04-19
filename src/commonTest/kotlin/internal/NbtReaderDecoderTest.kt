@@ -1,22 +1,21 @@
 package net.benwoodworth.knbt.internal
 
-import io.kotest.property.Arb
-import io.kotest.property.arbitrary.filter
-import io.kotest.property.arbitrary.map
-import io.kotest.property.arbitrary.string
-import io.kotest.property.checkAll
-import kotlinx.coroutines.test.runTest
-import kotlinx.serialization.*
-import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.internal.NbtReader.*
-import net.benwoodworth.knbt.internal.NbtTagType.*
-import net.benwoodworth.knbt.test.NbtFormat
+import com.benwoodworth.parameterize.parameter
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
+import net.benwoodworth.knbt.NbtName
+import net.benwoodworth.knbt.NbtString
+import net.benwoodworth.knbt.buildNbtCompound
+import net.benwoodworth.knbt.put
+import net.benwoodworth.knbt.test.parameterizeTest
+import net.benwoodworth.knbt.test.parameters.parameterOfDecoderVerifyingNbt
 import kotlin.math.PI
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 class NbtReaderDecoderTest {
     @Serializable
-    @NbtNamed("unknown-keys")
+    @NbtName("unknown-keys")
     private data class UnknownKeys(
         val int: Int,
         val string: String,
@@ -33,32 +32,33 @@ class NbtReaderDecoderTest {
     }
 
     @Test
-    fun decoding_should_fail_on_unknown_key_if_not_ignoring() {
-        val nbt = NbtFormat(ignoreUnknownKeys = false)
+    fun decoding_should_fail_on_unknown_key_if_not_ignoring() = parameterizeTest {
+        val nbt by parameterOfDecoderVerifyingNbt { ignoreUnknownKeys = false }
 
         assertFailsWith<NbtDecodingException> {
-            nbt.decodeFromNbtTag<UnknownKeys>(unknownKeysTag)
+            nbt.verifyDecoder(UnknownKeys.serializer(), unknownKeysTag)
         }
     }
 
     @Test
-    fun decoding_should_not_fail_on_unknown_key_if_ignoring() {
-        val nbt = NbtFormat(ignoreUnknownKeys = true)
+    fun decoding_should_not_fail_on_unknown_key_if_ignoring() = parameterizeTest {
+        val nbt by parameterOfDecoderVerifyingNbt { ignoreUnknownKeys = true }
 
-        val actual = nbt.decodeFromNbtTag<UnknownKeys>(unknownKeysTag)
-        assertEquals(UnknownKeys.expected, actual)
+        nbt.verifyDecoder(UnknownKeys.serializer(), unknownKeysTag)
     }
 
     @Test
-    fun decoding_char_should_throw_if_string_length_is_not_1() = runTest {
-        checkAll(
-            Arb.string(0..10)
-                .filter { it.length != 1 }
-                .map(::NbtString)
-        ) { invalidCharNbtString ->
-            assertFailsWith<NbtDecodingException> {
-                NbtFormat().decodeFromNbtTag<Char>(invalidCharNbtString)
-            }
+    fun decoding_char_should_throw_if_string_length_is_not_1() = parameterizeTest {
+        val nbt by parameterOfDecoderVerifyingNbt()
+
+        val invalidCharNbtString by parameter {
+            (0..10)
+                .filter { length -> length != 1 }
+                .map { length -> NbtString("x".repeat(length)) }
+        }
+
+        assertFailsWith<NbtDecodingException> {
+            nbt.verifyDecoder(Char.serializer(), invalidCharNbtString)
         }
     }
 }

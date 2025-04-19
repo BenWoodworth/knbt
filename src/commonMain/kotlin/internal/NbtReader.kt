@@ -1,6 +1,7 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.internal.NbtTagType.*
+import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.NbtType.*
 import kotlin.jvm.JvmInline
 
 /**
@@ -18,8 +19,10 @@ internal interface NbtReader {
 
     /**
      * Followed by a call to read a value of the same type.
+     *
+     * The returned [name][NamedTagInfo.name] should be ignored for unnamed [NbtFormat]s.
      */
-    fun beginRootTag(): RootTagInfo
+    fun beginRootTag(): NamedTagInfo
 
     /**
      * Followed by calls to [beginCompoundEntry], then a call to [endCompound]
@@ -29,7 +32,7 @@ internal interface NbtReader {
     /**
      * If `type != TAG_End`, then followed by a call to read a value of the same type.
      */
-    fun beginCompoundEntry(): CompoundEntryInfo
+    fun beginCompoundEntry(): NamedTagInfo
 
     fun endCompound()
 
@@ -40,6 +43,8 @@ internal interface NbtReader {
 
     /**
      * If true, then followed by reading a value of the same type.
+     *
+     * Should not be called unless the list's [size][ListInfo.size] is unknown.
      */
     fun beginListEntry(): Boolean
 
@@ -52,6 +57,8 @@ internal interface NbtReader {
 
     /**
      * If true, then followed by a call to [readByte].
+     *
+     * Should not be called unless the array's [size][ArrayInfo.size] is unknown.
      */
     fun beginByteArrayEntry(): Boolean
 
@@ -64,6 +71,8 @@ internal interface NbtReader {
 
     /**
      * If true, then followed by a call to [readInt].
+     *
+     * Should not be called unless the array's [size][ArrayInfo.size] is unknown.
      */
     fun beginIntArrayEntry(): Boolean
 
@@ -76,6 +85,8 @@ internal interface NbtReader {
 
     /**
      * If true, then followed by a call to [readLong].
+     *
+     * Should not be called unless the array's [size][ArrayInfo.size] is unknown.
      */
     fun beginLongArrayEntry(): Boolean
 
@@ -95,23 +106,26 @@ internal interface NbtReader {
 
     fun readString(): String
 
-    @JvmInline
-    value class RootTagInfo(val type: NbtTagType)
-
-    data class CompoundEntryInfo(
-        val type: NbtTagType,
+    data class NamedTagInfo(
+        val type: NbtType,
         val name: String,
     ) {
         companion object {
-            val End = CompoundEntryInfo(TAG_End, "")
+            val End = NamedTagInfo(TAG_End, "")
         }
     }
 
+    /**
+     * @property size The list size, or [UNKNOWN_SIZE] if unknown.
+     */
     data class ListInfo(
-        val type: NbtTagType,
+        val type: NbtType,
         val size: Int,
     )
 
+    /**
+     * @property size The array size, or [UNKNOWN_SIZE] if unknown.
+     */
     @JvmInline
     value class ArrayInfo(
         val size: Int,
@@ -175,6 +189,57 @@ internal fun NbtReader.readLongArray(): LongArray = readArray(
     toEntryArray = { toLongArray() },
 )
 
+@OptIn(UnsafeNbtApi::class)
+private fun NbtReader.readNbtList(): NbtList<NbtTag> {
+    val info = beginList()
+
+    val content = if (info.size == NbtReader.UNKNOWN_SIZE) {
+        buildList {
+            while (beginListEntry()) {
+                add(readNbtTag(info.type) ?: error("NbtList entry is null"))
+            }
+        }
+    } else {
+        List(info.size) {
+            readNbtTag(info.type) ?: error("NbtList entry is null")
+        }
+    }
+
+    endList()
+    return NbtList(info.type, content)
+}
+
+private fun NbtReader.readNbtCompound(): NbtCompound {
+    beginCompound()
+
+    val content = buildMap {
+        while (true) {
+            val entryInfo = beginCompoundEntry()
+            if (entryInfo.type == TAG_End) break
+            put(entryInfo.name, readNbtTag(entryInfo.type) ?: error("NbtCompound entry is null"))
+        }
+    }
+
+    endCompound()
+    return NbtCompound(content)
+}
+
+internal fun NbtReader.readNbtTag(type: NbtType): NbtTag? = when (type) {
+    TAG_End -> null
+    TAG_Byte -> NbtByte(readByte())
+    TAG_Short -> NbtShort(readShort())
+    TAG_Int -> NbtInt(readInt())
+    TAG_Long -> NbtLong(readLong())
+    TAG_Float -> NbtFloat(readFloat())
+    TAG_Double -> NbtDouble(readDouble())
+    TAG_Byte_Array -> NbtByteArray(readByteArray().asList())
+    TAG_String -> NbtString(readString())
+    TAG_List -> readNbtList()
+    TAG_Compound -> readNbtCompound()
+    TAG_Int_Array -> NbtIntArray(readIntArray().asList())
+    TAG_Long_Array -> NbtLongArray(readLongArray().asList())
+}
+
 private inline fun NbtReader.discardTagEntries(
     size: Int,
     beginEntry: NbtReader.() -> Boolean,
@@ -198,7 +263,7 @@ internal fun NbtReader.discardListTag(): NbtReader.ListInfo {
     return info
 }
 
-internal fun NbtReader.discardTag(type: NbtTagType) {
+internal fun NbtReader.discardTag(type: NbtType) {
     when (type) {
         TAG_End -> error("Unexpected $TAG_End")
         TAG_Byte -> readByte()
@@ -212,6 +277,7 @@ internal fun NbtReader.discardTag(type: NbtTagType) {
             discardTagEntries(info.size, { beginByteArrayEntry() }, { readByte() })
             endByteArray()
         }
+
         TAG_String -> readString()
         TAG_List -> discardListTag()
         TAG_Compound -> {
@@ -223,11 +289,13 @@ internal fun NbtReader.discardTag(type: NbtTagType) {
             }
             endCompound()
         }
+
         TAG_Int_Array -> {
             val info = beginIntArray()
             discardTagEntries(info.size, { beginIntArrayEntry() }, { readInt() })
             endIntArray()
         }
+
         TAG_Long_Array -> {
             val info = beginLongArray()
             discardTagEntries(info.size, { beginLongArrayEntry() }, { readLong() })

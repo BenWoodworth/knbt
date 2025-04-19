@@ -1,51 +1,81 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.*
-import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
-import net.benwoodworth.knbt.internal.CharSource
-import net.benwoodworth.knbt.internal.NbtDecodingException
-import net.benwoodworth.knbt.internal.StringifiedNbtReader
-import net.benwoodworth.knbt.internal.StringifiedNbtWriter
+import net.benwoodworth.knbt.internal.*
 import kotlin.native.concurrent.ThreadLocal
 
-public sealed class StringifiedNbt constructor(
+private val stringifiedNbtCapabilities = NbtCapabilities(
+    namedRoot = false,
+    definiteLengthEncoding = false,
+    rootTagTypes = NbtTypeSet(NbtType.entries - NbtType.TAG_End),
+)
+
+public open class StringifiedNbt internal constructor(
     override val configuration: StringifiedNbtConfiguration,
     override val serializersModule: SerializersModule,
-) : NbtFormat, StringFormat {
+) : NbtFormat(), StringFormat {
+    override val name: String get() = "SNBT"
+    override val capabilities: NbtCapabilities get() = stringifiedNbtCapabilities
+
     /**
      * The default instance of [StringifiedNbt] with default configuration.
      */
     @ThreadLocal
     public companion object Default : StringifiedNbt(
         configuration = StringifiedNbtConfiguration(
-            encodeDefaults = false,
-            ignoreUnknownKeys = false,
-            prettyPrint = false,
-            prettyPrintIndent = "    ",
+            encodeDefaults = NbtFormatDefaults.encodeDefaults,
+            ignoreUnknownKeys = NbtFormatDefaults.ignoreUnknownKeys,
+            lenientNbtNames = NbtFormatDefaults.lenientNbtNames,
+            prettyPrint = StringifiedNbtDefaults.prettyPrint,
+            prettyPrintIndent = StringifiedNbtDefaults.prettyPrintIndent,
         ),
-        serializersModule = EmptySerializersModule(),
+        serializersModule = NbtFormatDefaults.serializersModule,
     )
 
     override fun <T> encodeToString(serializer: SerializationStrategy<T>, value: T): String =
         buildString {
-            encodeToNbtWriter(StringifiedNbtWriter(this@StringifiedNbt, this), serializer, value)
+            val context = SerializationNbtContext(this@StringifiedNbt)
+            val writer = StringifiedNbtWriter(this@StringifiedNbt, this)
+            val encoder = NbtWriterEncoder(this@StringifiedNbt, context, writer)
+
+            encoder.encodeSerializableValue(serializer, value)
         }
 
     override fun <T> decodeFromString(deserializer: DeserializationStrategy<T>, string: String): T {
+        val context = SerializationNbtContext(this)
         val source = CharSource(string)
-        val decoded = decodeFromNbtReader(StringifiedNbtReader(source), deserializer)
+        val reader = StringifiedNbtReader(context, source)
+        val decoder = NbtReaderDecoder(this, context, reader)
+        val decoded = decoder.decodeSerializableValue(deserializer)
 
         var char = source.read()
         while (char != CharSource.ReadResult.EOF) {
             if (!char.toChar().isWhitespace()) {
-                throw NbtDecodingException("Expected only whitespace after value, but got '$char'")
+                throw NbtDecodingException(context, "Expected only whitespace after value, but got '$char'")
             }
             char = source.read()
         }
 
         return decoded
     }
+
+    /**
+     * Serializes the given [value] into an equivalent [NbtTag] using the given [serializer].
+     *
+     * @throws [SerializationException] if the given value cannot be serialized to SNBT.
+     */
+    public fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtTag =
+        encodeToNbtTagUnsafe(serializer, value).value
+
+    /**
+     * Deserializes the given [tag] into a value of type [T] using the given [deserializer].
+     *
+     * @throws [SerializationException] if the given NBT tag is not a valid SNBT input for the type [T].
+     * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+     */
+    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
+        decodeFromNbtTagUnsafe(deserializer, NbtNamed("", tag))
 }
 
 /**
@@ -53,7 +83,7 @@ public sealed class StringifiedNbt constructor(
  * and adjusted with [builderAction].
  */
 public fun StringifiedNbt(
-    from: StringifiedNbt = StringifiedNbt.Default,
+    from: StringifiedNbt? = null,
     builderAction: StringifiedNbtBuilder.() -> Unit,
 ): StringifiedNbt {
     val builder = StringifiedNbtBuilder(from)
@@ -62,70 +92,20 @@ public fun StringifiedNbt(
 }
 
 /**
- * Builder of the [StringifiedNbt] instance provided by `StringifiedNbt { ... }` factory function.
+ * Serializes the given [value] into an equivalent [NbtTag] using a serializer retrieved from the reified type
+ * parameter.
+ *
+ * @throws [SerializationException] if the given value cannot be serialized to SNBT.
  */
-@NbtDslMarker
-public class StringifiedNbtBuilder internal constructor(stringifiedNbt: StringifiedNbt) {
-    /**
-     * Specifies whether default values of Kotlin properties should be encoded.
-     * `false` by default.
-     */
-    public var encodeDefaults: Boolean = stringifiedNbt.configuration.encodeDefaults
+public inline fun <reified T> StringifiedNbt.encodeToNbtTag(value: T): NbtTag =
+    encodeToNbtTag(serializersModule.serializer(), value)
 
-    /**
-     * Specifies whether encounters of unknown properties in the input NBT
-     * should be ignored instead of throwing [SerializationException].
-     * `false` by default.
-     */
-    public var ignoreUnknownKeys: Boolean = stringifiedNbt.configuration.ignoreUnknownKeys
-
-    /**
-     * Specifies whether resulting Stringified NBT should be pretty-printed.
-     *  `false` by default.
-     */
-    public var prettyPrint: Boolean = stringifiedNbt.configuration.prettyPrint
-
-    /**
-     * Specifies indent string to use with [prettyPrint] mode
-     * 4 spaces by default.
-     * Experimentality note: this API is experimental because
-     * it is not clear whether this option has compelling use-cases.
-     */
-    @ExperimentalNbtApi
-    public var prettyPrintIndent: String = stringifiedNbt.configuration.prettyPrintIndent
-
-    /**
-     * Module with contextual and polymorphic serializers to be used in the resulting [StringifiedNbt] instance.
-     */
-    public var serializersModule: SerializersModule = stringifiedNbt.serializersModule
-
-    @OptIn(ExperimentalNbtApi::class)
-    internal fun build(): StringifiedNbt {
-        if (!prettyPrint) {
-            require(prettyPrintIndent == StringifiedNbt.configuration.prettyPrintIndent) {
-                "Indent should not be specified when default printing mode is used"
-            }
-        } else if (prettyPrintIndent != StringifiedNbt.configuration.prettyPrintIndent) {
-            // Values allowed by JSON specification as whitespaces
-            val allWhitespaces = prettyPrintIndent.all { it == ' ' || it == '\t' || it == '\r' || it == '\n' }
-            require(allWhitespaces) {
-                "Only whitespace, tab, newline and carriage return are allowed as pretty print symbols. Had $prettyPrintIndent"
-            }
-        }
-
-        return StringifiedNbtImpl(
-            configuration = StringifiedNbtConfiguration(
-                encodeDefaults = encodeDefaults,
-                ignoreUnknownKeys = ignoreUnknownKeys,
-                prettyPrint = prettyPrint,
-                prettyPrintIndent = prettyPrintIndent,
-            ),
-            serializersModule = serializersModule,
-        )
-    }
-}
-
-private class StringifiedNbtImpl(
-    configuration: StringifiedNbtConfiguration,
-    serializersModule: SerializersModule,
-) : StringifiedNbt(configuration, serializersModule)
+/**
+ * Deserializes the given [tag] into a value of type [T] using a serializer retrieved from the reified type
+ * parameter.
+ *
+ * @throws [SerializationException] if the given NBT tag is not a valid SNBT input for the type [T].
+ * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+ */
+public inline fun <reified T> StringifiedNbt.decodeFromNbtTag(tag: NbtTag): T =
+    decodeFromNbtTag(serializersModule.serializer(), tag)

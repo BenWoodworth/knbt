@@ -1,5 +1,7 @@
 package net.benwoodworth.knbt.internal
 
+import net.benwoodworth.knbt.NbtType
+
 internal class NbtPath(private val path: List<Node>) : List<NbtPath.Node> by path {
     override fun toString(): String = buildString {
         fun Char.isSafeNameChar(): Boolean = when (this) {
@@ -21,6 +23,7 @@ internal class NbtPath(private val path: List<Node>) : List<NbtPath.Node> by pat
                 is RootNode -> {
                     append("{root}")
                 }
+
                 is NameNode -> {
                     if (i != 0) append('.')
 
@@ -30,6 +33,7 @@ internal class NbtPath(private val path: List<Node>) : List<NbtPath.Node> by pat
                         append('`').append(node.name).append('`')
                     }
                 }
+
                 is IndexNode -> {
                     append('[').append(node.index).append(']')
                 }
@@ -39,20 +43,20 @@ internal class NbtPath(private val path: List<Node>) : List<NbtPath.Node> by pat
 
 
     sealed interface Node {
-        val type: NbtTagType
+        val type: NbtType
     }
 
     class RootNode(
-        override val type: NbtTagType,
+        override val type: NbtType,
     ) : Node
 
     class NameNode(
         val name: String,
-        override val type: NbtTagType,
+        override val type: NbtType,
     ) : Node
 
     class IndexNode(
         val index: Int,
-        override val type: NbtTagType,
+        override val type: NbtType,
     ) : Node
 }

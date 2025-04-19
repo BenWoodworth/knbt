@@ -9,8 +9,8 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import net.benwoodworth.knbt.internal.EmptyNbtContext
 import net.benwoodworth.knbt.internal.NbtDecodingException
-import net.benwoodworth.knbt.internal.NbtEncodingException
 import net.benwoodworth.knbt.okio.decodeFromBufferedSource
 import net.benwoodworth.knbt.okio.encodeToBufferedSink
 import okio.*
@@ -33,7 +33,7 @@ public sealed interface NbtDeprecations {
         DeprecationLevel.ERROR
     )
     public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: Sink): Unit =
-        (this as Nbt).encodeToBufferedSink(serializer, value, sink.buffer())
+        (this as BinaryNbtFormat).encodeToBufferedSink(serializer, value, sink.buffer())
 
     /**
      * Serializes and encodes the given [value] to the [sink] using the given [serializer].
@@ -50,7 +50,7 @@ public sealed interface NbtDeprecations {
         DeprecationLevel.ERROR
     )
     public fun <T> encodeToSink(serializer: SerializationStrategy<T>, value: T, sink: BufferedSink): Unit =
-        (this as Nbt).encodeToBufferedSink(serializer, value, sink)
+        (this as BinaryNbtFormat).encodeToBufferedSink(serializer, value, sink)
 
     /**
      * Decodes and deserializes from the given [source] to a value of type [T] using the given [deserializer].
@@ -68,7 +68,7 @@ public sealed interface NbtDeprecations {
         DeprecationLevel.ERROR
     )
     public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: Source): T =
-        (this as Nbt).decodeFromBufferedSource(deserializer, source.buffer())
+        (this as BinaryNbtFormat).decodeFromBufferedSource(deserializer, source.buffer())
 
     /**
      * Decodes and deserializes from the given [source] to a value of type [T] using the given [deserializer].
@@ -85,7 +85,7 @@ public sealed interface NbtDeprecations {
         DeprecationLevel.ERROR
     )
     public fun <T> decodeFromSource(deserializer: DeserializationStrategy<T>, source: BufferedSource): T =
-        (this as Nbt).decodeFromBufferedSource(deserializer, source)
+        (this as BinaryNbtFormat).decodeFromBufferedSource(deserializer, source)
 }
 
 /**
@@ -103,7 +103,7 @@ public sealed interface NbtDeprecations {
     ),
     DeprecationLevel.ERROR
 )
-public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
+public inline fun <reified T> BinaryNbtFormat.encodeToSink(value: T, sink: Sink): Unit =
     encodeToBufferedSink(value, sink.buffer())
 
 /**
@@ -120,7 +120,7 @@ public inline fun <reified T> Nbt.encodeToSink(value: T, sink: Sink): Unit =
     ),
     DeprecationLevel.ERROR
 )
-public inline fun <reified T> Nbt.encodeToSink(value: T, sink: BufferedSink): Unit =
+public inline fun <reified T> BinaryNbtFormat.encodeToSink(value: T, sink: BufferedSink): Unit =
     encodeToBufferedSink(value, sink)
 
 /**
@@ -138,7 +138,7 @@ public inline fun <reified T> Nbt.encodeToSink(value: T, sink: BufferedSink): Un
     ),
     DeprecationLevel.ERROR
 )
-public inline fun <reified T> Nbt.decodeFromSource(source: Source): T =
+public inline fun <reified T> BinaryNbtFormat.decodeFromSource(source: Source): T =
     decodeFromBufferedSource(source.buffer())
 
 /**
@@ -155,7 +155,7 @@ public inline fun <reified T> Nbt.decodeFromSource(source: Source): T =
     ),
     DeprecationLevel.ERROR
 )
-public inline fun <reified T> Nbt.decodeFromSource(source: BufferedSource): T =
+public inline fun <reified T> BinaryNbtFormat.decodeFromSource(source: BufferedSource): T =
     decodeFromBufferedSource(source)
 
 
@@ -175,7 +175,7 @@ public inline fun <reified T> Nbt.decodeFromSource(source: BufferedSource): T =
 )
 @Suppress("UNUSED_PARAMETER") // The `deprecated` parameter lowers the overload precedence so the relocated function takes priority when replaced
 public fun NbtCompression.Companion.detect(source: BufferedSource, deprecated: Nothing? = null): NbtCompression =
-    detect(source.peek().readByte())
+    detect(EmptyNbtContext, source.peek().readByte())
 
 
 @Deprecated("For organizing deprecations")
@@ -322,7 +322,7 @@ public sealed interface NbtEncoderDeprecations : Encoder, CompositeEncoder {
     DeprecationLevel.ERROR
 )
 public fun Encoder.asNbtEncoder(deprecated: Nothing? = null): NbtEncoder =
-    this as? NbtEncoder ?: throw NbtEncodingException(
+    this as? NbtEncoder ?: throw IllegalArgumentException(
         "This serializer can be used only with NBT format. Expected Encoder to be NbtEncoder, got ${this::class}"
     )
 
@@ -478,7 +478,7 @@ public sealed interface NbtDecoderDeprecations : Decoder, CompositeDecoder {
     DeprecationLevel.ERROR
 )
 public fun Decoder.asNbtDecoder(deprecated: Nothing? = null): NbtDecoder =
-    this as? NbtDecoder ?: throw NbtDecodingException(
+    this as? NbtDecoder ?: throw IllegalArgumentException(
         "This serializer can be used only with NBT format. Expected Decoder to be NbtDecoder, got ${this::class}"
     )
 
@@ -552,33 +552,189 @@ public fun NbtLongArray(content: LongArray): NbtLongArray =
     NbtLongArray(content.asList())
 
 
+/**
+ * Returns the value of this tag as [Boolean]
+ * @throws IllegalArgumentException if this tag is not an [NbtByte]
+ */
+@Deprecated(
+    "Removed in favor of nbtByte.toBoolean()",
+    ReplaceWith("nbtByte.toBoolean()", "net.benwoodworth.knbt.nbtByte"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.boolean: Boolean get() = nbtByte.toBoolean()
+
+/**
+ * Returns the value of this tag as [Byte]
+ * @throws IllegalArgumentException if this tag is not an [NbtByte]
+ */
+@Deprecated(
+    "Removed in favor of nbtByte.value",
+    ReplaceWith("nbtByte.value", "net.benwoodworth.knbt.nbtByte"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.byte: Byte get() = nbtByte.value
+
+/**
+ * Returns the value of this tag as [Short]
+ * @throws IllegalArgumentException if this tag is not an [NbtShort]
+ */
+@Deprecated(
+    "Removed in favor of nbtShort.value",
+    ReplaceWith("nbtShort.value", "net.benwoodworth.knbt.nbtShort"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.short: Short get() = nbtShort.value
+
+/**
+ * Returns the value of this tag as [Int]
+ * @throws IllegalArgumentException if this tag is not an [NbtInt]
+ */
+@Deprecated(
+    "Removed in favor of nbtInt.value",
+    ReplaceWith("nbtInt.value", "net.benwoodworth.knbt.nbtInt"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.int: Int get() = nbtInt.value
+
+/**
+ * Returns the value of this tag as [Long]
+ * @throws IllegalArgumentException if this tag is not an [NbtLong]
+ */
+@Deprecated(
+    "Removed in favor of nbtLong.value",
+    ReplaceWith("nbtLong.value", "net.benwoodworth.knbt.nbtLong"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.long: Long get() = nbtLong.value
+
+/**
+ * Returns the value of this tag as [Float]
+ * @throws IllegalArgumentException if this tag is not an [NbtFloat]
+ */
+@Deprecated(
+    "Removed in favor of nbtFloat.value",
+    ReplaceWith("nbtFloat.value", "net.benwoodworth.knbt.nbtFloat"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.float: Float get() = nbtFloat.value
+
+/**
+ * Returns the value of this tag as [Double]
+ * @throws IllegalArgumentException if this tag is not an [NbtDouble]
+ */
+@Deprecated(
+    "Removed in favor of nbtDouble.value",
+    ReplaceWith("nbtDouble.value", "net.benwoodworth.knbt.nbtDouble"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.double: Double get() = nbtDouble.value
+
+/**
+ * Returns the value of this tag as [String]
+ * @throws IllegalArgumentException if this tag is not an [NbtString]
+ */
+@Deprecated(
+    "Removed in favor of nbtString.value",
+    ReplaceWith("nbtString.value", "net.benwoodworth.knbt.nbtString"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.string: String get() = nbtString.value
 
 
+/**
+ * Returns the value of this tag as [Boolean], or `null` if this tag is not an [NbtByte]
+ */
+@Deprecated(
+    "Removed in favor of casting",
+    ReplaceWith("(this as? NbtByte)?.toBoolean()", "net.benwoodworth.knbt.NbtByte"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.booleanOrNull: Boolean? get() = (this as? NbtByte)?.toBoolean()
 
+/**
+ * Returns the value of this tag as [Byte], or `null` if this tag is not an [NbtByte]
+ */
+@Deprecated(
+    "Removed in favor of casting",
+    ReplaceWith("(this as? NbtByte)?.value", "net.benwoodworth.knbt.NbtByte"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.byteOrNull: Byte? get() = (this as? NbtByte)?.value
 
+/**
+ * Returns the value of this tag as [Short], or `null` if this tag is not an [NbtShort]
+ */
+@Deprecated(
+    "Removed in favor of casting",
+    ReplaceWith("(this as? NbtShort)?.value", "net.benwoodworth.knbt.NbtShort"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.shortOrNull: Short? get() = (this as? NbtShort)?.value
 
+/**
+ * Returns the value of this tag as [Int], or `null` if this tag is not an [NbtInt]
+ */
+@Deprecated(
+    "Removed in favor of casting",
+    ReplaceWith("(this as? NbtInt)?.value", "net.benwoodworth.knbt.NbtInt"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.intOrNull: Int? get() = (this as? NbtInt)?.value
 
+/**
+ * Returns the value of this tag as [Long], or `null` if this tag is not an [NbtLong]
+ */
+@Deprecated(
+    "Removed in favor of casting",
+    ReplaceWith("(this as? NbtLong)?.value", "net.benwoodworth.knbt.NbtLong"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.longOrNull: Long? get() = (this as? NbtLong)?.value
 
+/**
+ * Returns the value of this tag as [Float], or `null` if this tag is not an [NbtFloat]
+ */
+@Deprecated(
+    "Removed in favor of casting",
+    ReplaceWith("(this as? NbtFloat)?.value", "net.benwoodworth.knbt.NbtFloat"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.floatOrNull: Float? get() = (this as? NbtFloat)?.value
 
+/**
+ * Returns the value of this tag as [Double], or `null` if this tag is not an [NbtDouble]
+ */
+@Deprecated(
+    "Removed in favor of casting",
+    ReplaceWith("(this as? NbtDouble)?.value", "net.benwoodworth.knbt.NbtDouble"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.doubleOrNull: Double? get() = (this as? NbtDouble)?.value
 
+/**
+ * Returns the value of this tag as [String], or `null` if this tag is not an [NbtString]
+ */
+@Deprecated(
+    "Removed in favor of casting",
+    ReplaceWith("(this as? NbtString)?.value", "net.benwoodworth.knbt.NbtString"),
+    DeprecationLevel.ERROR
+)
+public val NbtTag.stringOrNull: String? get() = (this as? NbtString)?.value
 
+@Deprecated("Replaced by JavaNbt, JavaNetworkNbt, BedrockNbt, and BedrockNetworkNbt", level = DeprecationLevel.ERROR)
+public typealias NbtXXX = BinaryNbtFormat // TODO Remove
 
+@Deprecated("Replaced by JavaNbt, JavaNetworkNbt, BedrockNbt, and BedrockNetworkNbt", level = DeprecationLevel.ERROR)
+public object NbtVariant {
+    @Deprecated("Replaced by JavaNbt", level = DeprecationLevel.ERROR)
+    public object Java
 
+    @Deprecated("Replaced by JavaNetworkNbt", level = DeprecationLevel.ERROR)
+    public object JavaNetwork
 
+    @Deprecated("Replaced by BedrockNbt", level = DeprecationLevel.ERROR)
+    public object Bedrock
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Deprecated("Replaced by BedrockNetworkNbt", level = DeprecationLevel.ERROR)
+    public object BedrockNetwork
+}

@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     tags: [ 'v*' ]
-    branches: [ 'master', '[0-9]+.[0-9]+', '[0-9]+.[0-9]+.[0-9]+' ]
+    branches: [ 'main', '[0-9]+.[0-9]+', '[0-9]+.[0-9]+.[0-9]+' ]
 
 env:
   GIT_REF: ${{ github.ref }}
@@ -18,37 +18,50 @@ jobs:
     name: "Publish: multiplatform, jvm, js, linux, mingw"
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK 8
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'zulu'
+      - name: Clean
+        if: ${{ false }} # Skip, since it fails on Windows: https://youtrack.jetbrains.com/issue/KT-50545/
+        run: .\gradlew.bat clean
       - name: Publish to Maven
         run: >-
-          .\gradlew.bat clean
+          .\gradlew.bat
           publishKotlinMultiplatformPublicationToMavenRepository
           publishJvmPublicationToMavenRepository
           publishJsPublicationToMavenRepository
           publishLinuxX64PublicationToMavenRepository
+          publishLinuxArm64PublicationToMavenRepository
           publishMingwX64PublicationToMavenRepository
 
   macos:
     name: "Publish: macos, ios, watchos"
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK 8
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '8'
-          distribution: 'adopt'
+          distribution: 'zulu'
+      - name: Clean
+        run: ./gradlew clean
       - name: Publish to Maven
         run: >-
-          ./gradlew clean
+          ./gradlew
           publishMacosX64PublicationToMavenRepository
-          publishIosArm64PublicationToMavenRepository
+          publishMacosArm64PublicationToMavenRepository
+          publishIosSimulatorArm64PublicationToMavenRepository
           publishIosX64PublicationToMavenRepository
+          publishWatchosSimulatorArm64PublicationToMavenRepository
+          publishWatchosX64PublicationToMavenRepository
           publishWatchosArm32PublicationToMavenRepository
           publishWatchosArm64PublicationToMavenRepository
-          publishWatchosX86PublicationToMavenRepository
+          publishTvosSimulatorArm64PublicationToMavenRepository
+          publishTvosX64PublicationToMavenRepository
+          publishTvosArm64PublicationToMavenRepository
+          publishIosArm64PublicationToMavenRepository
+          publishWatchosDeviceArm64PublicationToMavenRepository

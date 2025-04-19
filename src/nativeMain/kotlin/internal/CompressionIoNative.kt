@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package net.benwoodworth.knbt.internal
 
 import kotlinx.cinterop.*
@@ -83,6 +85,7 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
                     inflateEnd(strm.ptr)
                     throw ZlibException(Z_DATA_ERROR, strm)
                 }
+
                 Z_DATA_ERROR,
                 Z_MEM_ERROR,
                 -> {
@@ -94,7 +97,7 @@ private class ZlibSource(private val source: BufferedSource) : Source by source 
             try {
                 val have = outputBufferSize - strm.avail_out
                 bytesWritten += have.toLong()
-                for (i in 0u until have) {
+                for (i in 0u..<have) {
                     sink.writeByte(outbuf[i.toLong()].toInt())
                 }
             } catch (t: Throwable) {
@@ -158,7 +161,7 @@ private class ZlibSink(private val sink: BufferedSink, gzip: Boolean, level: Int
 
     private fun clearBuffer() {
         val byteCount = outputBufferSize - stream.avail_out
-        for (i in 0u until byteCount) {
+        for (i in 0u..<byteCount) {
             sink.writeByte(outputBuffer[i.toLong()].toInt())
         }
 
@@ -169,7 +172,7 @@ private class ZlibSink(private val sink: BufferedSink, gzip: Boolean, level: Int
     override fun write(source: Buffer, byteCount: Long) {
         if (closed) throw IOException("Sink is closed")
 
-        for (i in 0 until byteCount) {
+        for (i in 0..<byteCount) {
             if (source.exhausted()) throw EOFException("End of source")
 
             stream.next_in = inputBuffer

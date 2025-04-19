@@ -3,8 +3,8 @@
 [![Maven Central](https://img.shields.io/maven-central/v/net.benwoodworth.knbt/knbt)](https://search.maven.org/artifact/net.benwoodworth.knbt/knbt)
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/net.benwoodworth.knbt/knbt?server=https%3A%2F%2Fs01.oss.sonatype.org)](https://s01.oss.sonatype.org/content/repositories/snapshots/net/benwoodworth/knbt/knbt/)
 [![KDoc](https://img.shields.io/badge/api-KDoc-blue)](https://benwoodworth.github.io/knbt)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.7.20-blue.svg?logo=kotlin)](http://kotlinlang.org)
-[![kotlinx.serialization](https://img.shields.io/badge/kotlinx.serialization-1.4.0-blue.svg?logo=kotlin)](https://github.com/Kotlin/kotlinx.serialization)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.0.20-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![kotlinx.serialization](https://img.shields.io/badge/kotlinx.serialization-1.7.1-blue.svg?logo=kotlin)](https://github.com/Kotlin/kotlinx.serialization)
 
 An implementation of [Minecraft's NBT format](https://minecraft.fandom.com/wiki/NBT_format)
 for [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization).
@@ -13,23 +13,23 @@ Technical information about NBT can be found [here](https://wiki.vg/NBT).
 
 ### Features
 
-- Kotlin Multiplatform: JVM, JS (IR), Linux, Windows, macOS, iOS, watchOS
+- Kotlin Multiplatform: JVM, JS, Linux, Windows, macOS, iOS, watchOS
 - Serialize any data to/from NBT or SNBT
-- Support for all NBT variants: Java, Bedrock Files, Bedrock Network
+- Support for all NBT variants: Java, Java Network, Bedrock, Bedrock Network
 - Support for all NBT compressions: gzip, zlib
 - Type-safe `NbtTag` classes, with convenient builder DSLs
 
 ## Serialization
 
-`Nbt` and `StringifiedNbt` are used to encode/decode `@Serializable` data.
+`NbtFormat`s are used to encode/decode `@Serializable` data.
 
 ### Configuration
 
 ```kotlin
 import net.benwoodworth.knbt.*
 
-val nbt = Nbt {
-    variant = NbtVariant. // Java, JavaNetwork, Bedrock, BedrockNetwork
+val nbt = JavaNbt { // Java, JavaNetwork, Bedrock, BedrockNetwork
+    protocolVersion = // >= 0  (For Network)
     compression = NbtCompression. // None, Gzip, Zlib
     //compressionLevel = null // in 0..9
     //encodeDefaults = false
@@ -72,11 +72,11 @@ data = snbt.decodeFromString(string)
 
 ### Serializing Classes
 
-Serializable classes will have their `@SerialName` used for the root tag's name.
+Serializable classes will have their `@NbtName` used for the root tag's name.
 
 ```kotlin
 @Serializable
-@SerialName("root")
+@NbtName("root")
 class Example(val string: String, val int: Int)
 
 // Serializes to: {root : {string : "Hello, world!", int : 42}}
@@ -84,6 +84,7 @@ nbt.encodeToNbtTag(Example(string = "Hello, World!", int = 42))
 ```
 
 ### Serializing Lists/Arrays
+
 Kotlin's builtin `ByteArray`, `IntArray`, and `LongArray` types will serialize to NBT array tags,
 as well as any other lists marked with `@NbtArray`.
 All other kinds of lists will serialize as NBT list tags.
@@ -111,7 +112,7 @@ import net.benwoodworth.knbt.*
 
 val file = Path("file.nbt")
 
-val nbt = Nbt {
+val nbt = JavaNbt {
     TODO()
 }
 
@@ -146,6 +147,7 @@ class NbtCompound : NbtTag, Map<String, NbtTag>
 ```
 
 ### Creating `NbtTag`s
+
 `NbtTag`s can be created with constructors and builder functions:
 
 ```kotlin
@@ -241,8 +243,8 @@ Replacement refactorings will be provided where possible for broken APIs. Change
 
 ```kotlin
 plugins {
-    kotlin("jvm") version "1.7.20" // or kotlin("multiplatform"), etc.
-    //kotlin("plugin.serialization") version "1.7.20"
+    kotlin("jvm") version "2.0.20" // or kotlin("multiplatform"), etc.
+    //kotlin("plugin.serialization") version "2.0.20"
 }
 
 repositories {
@@ -252,6 +254,6 @@ repositories {
 
 dependencies {
     implementation("net.benwoodworth.knbt:knbt:$knbt_version")
-    //implementation("com.squareup.okio:okio:3.2.0")
+    //implementation("com.squareup.okio:okio:3.9.0")
 }
 ```

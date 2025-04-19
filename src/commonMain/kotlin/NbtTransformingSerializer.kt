@@ -8,9 +8,11 @@
 
 package net.benwoodworth.knbt
 
-import kotlinx.serialization.*
-import kotlinx.serialization.descriptors.*
-import kotlinx.serialization.encoding.*
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import net.benwoodworth.knbt.internal.nbtName
 
 /**
  * Base class for custom serializers that allows manipulating an abstract NBT
@@ -56,6 +58,7 @@ import kotlinx.serialization.encoding.*
 public abstract class NbtTransformingSerializer<T : Any>(
     private val tSerializer: KSerializer<T>
 ) : KSerializer<T> {
+    private val nbtName = tSerializer.descriptor.nbtName
 
     /**
      * A descriptor for this transformation.
@@ -68,15 +71,18 @@ public abstract class NbtTransformingSerializer<T : Any>(
 
     final override fun serialize(encoder: Encoder, value: T) {
         val output = encoder.asNbtEncoder()
-        var element = output.nbt.encodeToNbtTag(tSerializer, value)
-        element = transformSerialize(element)
-        output.encodeNbtTag(element)
+        val nbt = Nbt(output.nbt)
+        var tag = nbt.encodeToNbtTag(tSerializer, value).value
+        tag = transformSerialize(tag)
+        output.encodeNbtTag(tag)
     }
 
     final override fun deserialize(decoder: Decoder): T {
         val input = decoder.asNbtDecoder()
-        val element = input.decodeNbtTag()
-        return input.nbt.decodeFromNbtTag(tSerializer, transformDeserialize(element))
+        val nbt = Nbt(input.nbt)
+        val tag = input.decodeNbtTag()
+        val transformed = transformDeserialize(tag)
+        return nbt.decodeFromNbtTag(tSerializer, NbtNamed(nbtName, transformed))
     }
 
     /**

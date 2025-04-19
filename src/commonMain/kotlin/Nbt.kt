@@ -1,124 +1,106 @@
 package net.benwoodworth.knbt
 
-import kotlinx.serialization.*
-import kotlinx.serialization.modules.EmptySerializersModule
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.modules.SerializersModule
-import net.benwoodworth.knbt.okio.decodeFromBufferedSource
-import net.benwoodworth.knbt.okio.encodeToBufferedSink
-import okio.*
+import kotlinx.serialization.serializer
+import net.benwoodworth.knbt.internal.NbtCapabilities
+import net.benwoodworth.knbt.internal.NbtTypeSet
 
-public sealed class Nbt(
-    override val configuration: NbtConfiguration,
-    override val serializersModule: SerializersModule,
-) : NbtFormat, BinaryFormat, @Suppress("DEPRECATION") NbtDeprecations {
-    @OptIn(OkioApi::class)
-    override fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray =
-        Buffer().apply { encodeToBufferedSink(serializer, value, this) }.readByteArray()
-
-    @OptIn(OkioApi::class)
-    override fun <T> decodeFromByteArray(deserializer: DeserializationStrategy<T>, bytes: ByteArray): T =
-        decodeFromBufferedSource(deserializer, Buffer().apply { write(bytes) })
-}
-
-private object DefaultNbt : Nbt(
-    configuration = NbtConfiguration(
-        variant = NbtVariant.Java, // Will be ignored by NbtBuilder
-        compression = NbtCompression.None, // Will be ignored by NbtBuilder
-        compressionLevel = null,
-        encodeDefaults = false,
-        ignoreUnknownKeys = false,
-    ),
-    serializersModule = EmptySerializersModule(),
+private val nbtCapabilities = NbtCapabilities(
+    namedRoot = true,
+    definiteLengthEncoding = true,
+    rootTagTypes = NbtTypeSet(NbtType.entries),
 )
 
+public open class Nbt internal constructor(
+    override val configuration: NbtFormatConfiguration,
+    override val serializersModule: SerializersModule,
+) : NbtFormat() {
+    override val name: String get() = "NbtTag"
+    override val capabilities: NbtCapabilities get() = nbtCapabilities
+
+    public companion object Default : Nbt(
+        configuration = NbtConfiguration(
+            encodeDefaults = NbtFormatDefaults.encodeDefaults,
+            ignoreUnknownKeys = NbtFormatDefaults.ignoreUnknownKeys,
+            lenientNbtNames = NbtFormatDefaults.lenientNbtNames,
+        ),
+        serializersModule = NbtFormatDefaults.serializersModule,
+    )
+
+    /**
+     * Serializes the given [value] into an equivalent named [NbtTag] using the given [serializer].
+     *
+     * @throws [SerializationException] if the given value cannot be serialized to NBT.
+     */
+    public fun <T> encodeToNbtTag(serializer: SerializationStrategy<T>, value: T): NbtNamed<NbtTag> =
+        encodeToNbtTagUnsafe(serializer, value)
+
+    /**
+     * Deserializes the given named [tag] into a value of type [T] using the given [deserializer].
+     *
+     * @throws [SerializationException] if the given NBT tag is not a valid NBT input for the type [T].
+     * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+     */
+    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtNamed<NbtTag>): T =
+        decodeFromNbtTagUnsafe(deserializer, tag)
+
+    /**
+     * Deserializes the given empty-named [tag] into a value of type [T] using the given [deserializer].
+     *
+     * @throws [SerializationException] if the given NBT tag is not a valid NBT input for the type [T].
+     * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+     */
+    public fun <T> decodeFromNbtTag(deserializer: DeserializationStrategy<T>, tag: NbtTag): T =
+        decodeFromNbtTag(deserializer, NbtNamed("", tag))
+}
+
 /**
- * Creates an instance of [Nbt] configured from the optionally given [Nbt instance][from]
+ * Creates an instance of [Nbt] configured from the optionally given [NbtFormat instance][from]
  * and adjusted with [builderAction].
- *
- * [variant][NbtBuilder.variant] and [compression][NbtBuilder.compression] are required.
  */
-public fun Nbt(from: Nbt = DefaultNbt, builderAction: NbtBuilder.() -> Unit): Nbt {
+public fun Nbt(
+    from: NbtFormat? = null,
+    builderAction: NbtBuilder.() -> Unit,
+): Nbt {
     val builder = NbtBuilder(from)
     builder.builderAction()
     return builder.build()
 }
 
 /**
- * Builder of the [Nbt] instance provided by `Nbt { ... }` factory function.
+ * Creates an instance of [Nbt] configured from the given [NbtFormat instance][from].
  */
-@NbtDslMarker
-public class NbtBuilder internal constructor(nbt: Nbt) {
-    /**
-     * The variant of NBT binary format to use. Required.
-     */
-    public var variant: NbtVariant? =
-        if (nbt === DefaultNbt) null else nbt.configuration.variant
+public fun Nbt(from: NbtFormat): Nbt =
+    Nbt(from.configuration, from.serializersModule)
 
-    /**
-     * The compression method to use when writing NBT binary. Required.
-     */
-    public var compression: NbtCompression? =
-        if (nbt === DefaultNbt) null else nbt.configuration.compression
+/**
+ * Serializes the given [value] into an equivalent named [NbtTag] using a serializer retrieved from the reified type
+ * parameter.
+ *
+ * @throws [SerializationException] if the given value cannot be serialized to NBT.
+ */
+public inline fun <reified T> Nbt.encodeToNbtTag(value: T): NbtNamed<NbtTag> =
+    encodeToNbtTag(serializersModule.serializer(), value)
 
-    /**
-     * The compression level, in `0..9` or `null`.
-     * `null` by default.
-     *
-     * - `0` gives no compression at all
-     * - `1` gives the best speed
-     * - `9` gives the best compression.
-     * - `null` requests a compromise between speed and compression.
-     */
-    public var compressionLevel: Int? = nbt.configuration.compressionLevel
-        set(value) {
-            require(value == null || value in 0..9) { "Compression level must be in 0..9 or null." }
-            field = value
-        }
+/**
+ * Deserializes the given named [tag] into a value of type [T] using a serializer retrieved from the reified type
+ * parameter.
+ *
+ * @throws [SerializationException] if the given NBT tag is not a valid NBT input for the type [T].
+ * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+ */
+public inline fun <reified T> Nbt.decodeFromNbtTag(tag: NbtNamed<NbtTag>): T =
+    decodeFromNbtTag(serializersModule.serializer(), tag)
 
-    /**
-     * Specifies whether default values of Kotlin properties should be encoded.
-     * `false` by default.
-     */
-    public var encodeDefaults: Boolean = nbt.configuration.encodeDefaults
-
-    /**
-     * Specifies whether encounters of unknown properties in the input NBT
-     * should be ignored instead of throwing [SerializationException].
-     * `false` by default.
-     */
-    public var ignoreUnknownKeys: Boolean = nbt.configuration.ignoreUnknownKeys
-
-    /**
-     * Module with contextual and polymorphic serializers to be used in the resulting [Nbt] instance.
-     */
-    public var serializersModule: SerializersModule = nbt.serializersModule
-
-    internal fun build(): Nbt {
-        val variant = variant
-        val compression = compression
-
-        require(variant != null && compression != null) {
-            when {
-                variant == null && compression == null -> "Variant and compression are required but are null"
-                variant == null -> "Variant is required but is null"
-                else -> "Compression is required but is null"
-            }
-        }
-
-        return NbtImpl(
-            configuration = NbtConfiguration(
-                variant = variant,
-                compression = compression,
-                compressionLevel = compressionLevel,
-                encodeDefaults = encodeDefaults,
-                ignoreUnknownKeys = ignoreUnknownKeys,
-            ),
-            serializersModule = serializersModule,
-        )
-    }
-}
-
-private class NbtImpl(
-    configuration: NbtConfiguration,
-    serializersModule: SerializersModule,
-) : Nbt(configuration, serializersModule)
+/**
+ * Deserializes the given empty-named [tag] into a value of type [T] using a serializer retrieved from the reified type
+ * parameter.
+ *
+ * @throws [SerializationException] if the given NBT tag is not a valid NBT input for the type [T].
+ * @throws [IllegalArgumentException] if the decoded input cannot be represented as a valid instance of type [T].
+ */
+public inline fun <reified T> Nbt.decodeFromNbtTag(tag: NbtTag): T =
+    decodeFromNbtTag(serializersModule.serializer(), tag)

@@ -1,12 +1,15 @@
 package net.benwoodworth.knbt.okio
 
-import kotlinx.serialization.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.serializer
 import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.encodeToNbtWriter
-import net.benwoodworth.knbt.internal.NbtDecodingException
-import net.benwoodworth.knbt.internal.NonClosingSink
-import net.benwoodworth.knbt.internal.NonClosingSource
-import okio.*
+import net.benwoodworth.knbt.internal.*
+import okio.BufferedSink
+import okio.BufferedSource
+import okio.buffer
+import okio.use
 
 /**
  * Serializes the [value] with [serializer] into a [sink] using NBT format.
@@ -15,15 +18,22 @@ import okio.*
  * @throws [okio.IOException] If an I/O error occurs and sink can't be written to.
  */
 @OkioApi
-public fun <T> Nbt.encodeToBufferedSink(
-    serializer: SerializationStrategy<T>, value: T, sink: BufferedSink
+public fun <T> BinaryNbtFormat.encodeToBufferedSink(
+    serializer: SerializationStrategy<T>,
+    value: T,
+    sink: BufferedSink
 ) {
-    val writer = configuration.variant.getNbtWriter(
-        configuration.compression.compress(NonClosingSink(sink), configuration.compressionLevel).buffer()
-    )
+    val context = SerializationNbtContext(this)
 
-    writer.use {
-        encodeToNbtWriter(writer, serializer, value)
+    val compressingSink = configuration.compression
+        .compress(NonClosingSink(sink), configuration.compressionLevel)
+        .buffer()
+
+    compressingSink.use {
+        val writer = getNbtWriter(context, compressingSink)
+        val encoder = NbtWriterEncoder(this, context, writer)
+
+        encoder.encodeSerializableValue(serializer, value)
     }
 }
 
@@ -34,9 +44,8 @@ public fun <T> Nbt.encodeToBufferedSink(
  * @throws [okio.IOException] If an I/O error occurs and sink can't be written to.
  */
 @OkioApi
-public inline fun <reified T> Nbt.encodeToBufferedSink(
-    value: T, sink: BufferedSink
-): Unit = encodeToBufferedSink(serializersModule.serializer(), value, sink)
+public inline fun <reified T> BinaryNbtFormat.encodeToBufferedSink(value: T, sink: BufferedSink): Unit =
+    encodeToBufferedSink(serializersModule.serializer(), value, sink)
 
 /**
  * Deserializes NBT from [source] to a value of type [T] using [deserializer].
@@ -45,10 +54,11 @@ public inline fun <reified T> Nbt.encodeToBufferedSink(
  * @throws [okio.IOException] If an I/O error occurs and source can't be read from.
  */
 @OkioApi
-public fun <T> Nbt.decodeFromBufferedSource(
-    deserializer: DeserializationStrategy<T>, source: BufferedSource
+public fun <T> BinaryNbtFormat.decodeFromBufferedSource(
+    deserializer: DeserializationStrategy<T>,
+    source: BufferedSource
 ): T {
-    val variant = configuration.variant
+    val context = SerializationNbtContext(this)
     val compression = configuration.compression
 
     val nonClosingSource = NonClosingSource(source).buffer()
@@ -60,15 +70,16 @@ public fun <T> Nbt.decodeFromBufferedSource(
     }
 
     if (detectedCompression != null && compression != detectedCompression) {
-        throw NbtDecodingException("Expected compression to be $compression, but was $detectedCompression")
+        throw NbtDecodingException(context, "Expected compression to be $compression, but was $detectedCompression")
     }
 
-    val reader = variant.getNbtReader(
-        compression.decompress(nonClosingSource).buffer()
-    )
+    val decompressingSource = compression.decompress(nonClosingSource).buffer()
 
-    return reader.use {
-        decodeFromNbtReader(reader, deserializer)
+    return decompressingSource.use {
+        val reader = getNbtReader(context, decompressingSource)
+        val decoder = NbtReaderDecoder(this, context, reader)
+
+        decoder.decodeSerializableValue(deserializer)
     }
 }
 
@@ -80,9 +91,9 @@ public fun <T> Nbt.decodeFromBufferedSource(
  * @throws [okio.IOException] If an I/O error occurs and source can't be read from.
  */
 @OkioApi
-public inline fun <reified T> Nbt.decodeFromBufferedSource(source: BufferedSource): T =
+public inline fun <reified T> BinaryNbtFormat.decodeFromBufferedSource(source: BufferedSource): T =
     decodeFromBufferedSource(serializersModule.serializer(), source)
 
 @OkioApi
 public fun NbtCompression.Companion.detect(source: BufferedSource): NbtCompression =
-    detect(source.peek().readByte())
+    detect(EmptyNbtContext, source.peek().readByte())

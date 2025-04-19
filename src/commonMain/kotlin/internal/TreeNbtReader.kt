@@ -3,12 +3,12 @@ package net.benwoodworth.knbt.internal
 import net.benwoodworth.knbt.*
 import net.benwoodworth.knbt.internal.NbtReader.*
 
-internal class TreeNbtReader(tag: NbtTag) : NbtReader {
+internal class TreeNbtReader(tag: NbtNamed<NbtTag>?) : NbtReader {
     private var reader: NbtTagReader = RootNbtTagReader(tag)
 
-    override fun beginRootTag(): RootTagInfo = reader.beginRootTag()
+    override fun beginRootTag(): NamedTagInfo = reader.beginRootTag()
     override fun beginCompound() = reader.beginCompound()
-    override fun beginCompoundEntry(): CompoundEntryInfo = reader.beginCompoundEntry()
+    override fun beginCompoundEntry(): NamedTagInfo = reader.beginCompoundEntry()
     override fun endCompound() = reader.endCompound()
     override fun beginList(): ListInfo = reader.beginList()
     override fun beginListEntry(): Boolean = reader.beginListEntry()
@@ -31,9 +31,9 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
     override fun readString(): String = reader.readString()
 
     private sealed interface NbtTagReader {
-        fun beginRootTag(): RootTagInfo = error("${this::class} does not support beginRootTag()")
+        fun beginRootTag(): NamedTagInfo = error("${this::class} does not support beginRootTag()")
         fun beginCompound(): Unit = error("${this::class} does not support beginCompound()")
-        fun beginCompoundEntry(): CompoundEntryInfo = error("${this::class} does not support beginCompoundEntry()")
+        fun beginCompoundEntry(): NamedTagInfo = error("${this::class} does not support beginCompoundEntry()")
         fun endCompound(): Unit = error("${this::class} does not support endCompound()")
         fun beginList(): ListInfo = error("${this::class} does not support beginList()")
         fun beginListEntry(): Boolean = error("${this::class} does not support beginListEntry()")
@@ -56,40 +56,44 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         fun readString(): String = error("${this::class} does not support readString()")
     }
 
-    private inner class RootNbtTagReader(private val tag: NbtTag) : NbtTagReader {
-        override fun beginRootTag(): RootTagInfo = RootTagInfo(tag.type)
+    private inner class RootNbtTagReader(private val tag: NbtNamed<NbtTag>?) : NbtTagReader {
+        override fun beginRootTag(): NamedTagInfo = NamedTagInfo(tag?.value.type, tag?.name ?: "")
 
         override fun beginCompound() {
-            reader = NbtCompoundReader(this, tag as NbtCompound)
+            reader = NbtCompoundReader(this, tag?.value as NbtCompound)
         }
 
         override fun beginList(): ListInfo {
-            reader = NbtListReader(this, tag as NbtList<*>)
-            return ListInfo(tag.elementType, tag.size)
+            val nbtList = tag.nbtList
+            reader = NbtListReader(this, nbtList)
+            return ListInfo(nbtList.elementType, nbtList.size)
         }
 
         override fun beginByteArray(): ArrayInfo {
-            reader = NbtByteArrayReader(this, tag as NbtByteArray)
-            return ArrayInfo(tag.size)
+            val nbtByteArray = tag.nbtByteArray
+            reader = NbtByteArrayReader(this, nbtByteArray)
+            return ArrayInfo(nbtByteArray.size)
         }
 
         override fun beginIntArray(): ArrayInfo {
-            reader = NbtIntArrayReader(this, tag as NbtIntArray)
-            return ArrayInfo(tag.size)
+            val nbtIntArray = tag.nbtIntArray
+            reader = NbtIntArrayReader(this, nbtIntArray)
+            return ArrayInfo(nbtIntArray.size)
         }
 
         override fun beginLongArray(): ArrayInfo {
-            reader = NbtLongArrayReader(this, tag as NbtLongArray)
-            return ArrayInfo(tag.size)
+            val nbtLongArray = tag.nbtLongArray
+            reader = NbtLongArrayReader(this, nbtLongArray)
+            return ArrayInfo(nbtLongArray.size)
         }
 
-        override fun readByte(): Byte = (tag as NbtByte).value
-        override fun readShort(): Short = (tag as NbtShort).value
-        override fun readInt(): Int = (tag as NbtInt).value
-        override fun readLong(): Long = (tag as NbtLong).value
-        override fun readFloat(): Float = (tag as NbtFloat).value
-        override fun readDouble(): Double = (tag as NbtDouble).value
-        override fun readString(): String = (tag as NbtString).value
+        override fun readByte(): Byte = tag.nbtByte.value
+        override fun readShort(): Short = tag.nbtShort.value
+        override fun readInt(): Int = tag.nbtInt.value
+        override fun readLong(): Long = tag.nbtLong.value
+        override fun readFloat(): Float = tag.nbtFloat.value
+        override fun readDouble(): Double = tag.nbtDouble.value
+        override fun readString(): String = tag.nbtString.value
     }
 
     private inner class NbtCompoundReader(val parent: NbtTagReader, tag: NbtCompound) : NbtTagReader {
@@ -101,8 +105,8 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
                 .also { next = if (iterator.hasNext()) iterator.next() else null }
         }
 
-        override fun beginCompoundEntry(): CompoundEntryInfo =
-            next?.let { (name, tag) -> CompoundEntryInfo(tag.type, name) } ?: CompoundEntryInfo.End
+        override fun beginCompoundEntry(): NamedTagInfo =
+            next?.let { (name, tag) -> NamedTagInfo(tag.type, name) } ?: NamedTagInfo.End
 
         override fun endCompound() {
             reader = parent
@@ -155,7 +159,8 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
                 .also { next = if (iterator.hasNext()) iterator.next() else null }
         }
 
-        override fun beginListEntry(): Boolean = next != null
+        override fun beginListEntry(): Boolean =
+            error("Should not be called unless size is unknown")
 
         override fun endList() {
             reader = parent
@@ -203,7 +208,8 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         private val array = tag
         private var index = 0
 
-        override fun beginByteArrayEntry(): Boolean = index <= array.content.lastIndex
+        override fun beginByteArrayEntry(): Boolean =
+            error("Should not be called unless size is unknown")
 
         override fun endByteArray() {
             reader = parent
@@ -217,7 +223,8 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         private val array = tag
         private var index = 0
 
-        override fun beginIntArrayEntry(): Boolean = index <= array.content.lastIndex
+        override fun beginIntArrayEntry(): Boolean =
+            error("Should not be called unless size is unknown")
 
         override fun endIntArray() {
             reader = parent
@@ -231,7 +238,8 @@ internal class TreeNbtReader(tag: NbtTag) : NbtReader {
         private val array = tag
         private var index = 0
 
-        override fun beginLongArrayEntry(): Boolean = index <= array.content.lastIndex
+        override fun beginLongArrayEntry(): Boolean =
+            error("Should not be called unless size is unknown")
 
         override fun endLongArray() {
             reader = parent

@@ -1,5 +1,4 @@
 @file:Suppress(
-    "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE",
     "UselessCallOnNotNull",
     "ConvertArgumentToSet",
     "UNUSED_PARAMETER"
@@ -23,7 +22,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ),
         DeprecationLevel.ERROR
     )
-    public fun elementAtOrNull(index: Int) =
+    public fun elementAtOrNull(index: Int): T? =
         content.elementAtOrNull(index)
 
     @Deprecated(
@@ -31,7 +30,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.subList(fromIndex, toIndex)"),
         DeprecationLevel.ERROR
     )
-    public fun subList(fromIndex: Int, toIndex: Int) =
+    public fun subList(fromIndex: Int, toIndex: Int): List<T> =
         content.subList(fromIndex, toIndex)
 
     @Deprecated(
@@ -39,7 +38,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.listIterator()"),
         DeprecationLevel.ERROR
     )
-    public fun listIterator() =
+    public fun listIterator(): ListIterator<T> =
         content.listIterator()
 
     @Deprecated(
@@ -47,7 +46,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.listIterator(index)"),
         DeprecationLevel.ERROR
     )
-    public fun listIterator(index: Int) =
+    public fun listIterator(index: Int): ListIterator<T> =
         content.listIterator(index)
 
     @Deprecated(
@@ -55,7 +54,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.isEmpty()"),
         DeprecationLevel.ERROR
     )
-    public fun isEmpty() =
+    public fun isEmpty(): Boolean =
         content.isEmpty()
 
     @Deprecated(
@@ -63,7 +62,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.iterator()"),
         DeprecationLevel.ERROR
     )
-    public operator fun iterator() =
+    public operator fun iterator(): Iterator<T> =
         content.iterator()
 
     @Deprecated(
@@ -71,23 +70,23 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.lastIndex"),
         DeprecationLevel.ERROR
     )
-     public val lastIndex
-         get() = content.lastIndex
+    public val lastIndex: Int
+        get() = content.lastIndex
 
     @Deprecated(
         "List API moved to `content`",
         ReplaceWith("this.content.indices"),
         DeprecationLevel.ERROR
     )
-     public val indices
-         get() = content.indices
+    public val indices: IntRange
+        get() = content.indices
 
     @Deprecated(
         "List API moved to `content`",
         ReplaceWith("this.content.toList()"),
         DeprecationLevel.ERROR
     )
-    public fun toList() =
+    public fun toList(): List<T> =
         content.toList()
 
     @Deprecated(
@@ -95,7 +94,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.last()"),
         DeprecationLevel.ERROR
     )
-    public fun last() =
+    public fun last(): T =
         content.last()
 
     @Deprecated(
@@ -103,7 +102,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.last(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun last(predicate: (T) -> Boolean) =
+    public fun last(predicate: (T) -> Boolean): T =
         content.last(predicate)
 
     @Deprecated(
@@ -111,7 +110,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.contains(element)"),
         DeprecationLevel.ERROR
     )
-    public operator fun contains(element: @UnsafeVariance T) =
+    public operator fun contains(element: @UnsafeVariance T): Boolean =
         content.contains(element)
 
     @Deprecated(
@@ -119,7 +118,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.asReversed()"),
         DeprecationLevel.ERROR
     )
-    public fun asReversed() =
+    public fun asReversed(): List<T> =
         content.asReversed()
 
     @Deprecated(
@@ -127,8 +126,9 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.binarySearch(fromIndex, toIndex, comparison)"),
         DeprecationLevel.ERROR
     )
-    public fun binarySearch(fromIndex: Int = 0, toIndex: Int = content.size, comparison: (T) -> Int) =
-        content.binarySearch(fromIndex, toIndex, comparison)
+    public fun binarySearch(fromIndex: Int = 0, toIndex: Int = content.size, comparison: (T) -> Int): Int {
+        return content.binarySearch(fromIndex, toIndex, comparison)
+    }
 
     @Deprecated(
         "List API moved to `content`",
@@ -140,7 +140,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         comparator: Comparator<in T>,
         fromIndex: Int = 0,
         toIndex: Int = content.size
-    ) =
+    ): Int =
         content.binarySearch(element, comparator, fromIndex, toIndex)
 
     @Deprecated(
@@ -153,7 +153,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         fromIndex: Int = 0,
         toIndex: Int = content.size, /*crossinline*/
         selector: (T) -> K?
-    ) =
+    ): Int =
         content.binarySearchBy(key, fromIndex, toIndex, selector)
 
     @Deprecated(
@@ -161,7 +161,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.component1()"),
         DeprecationLevel.ERROR
     )
-    public fun component1() =
+    public fun component1(): T =
         content.component1()
 
     @Deprecated(
@@ -169,7 +169,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.component2()"),
         DeprecationLevel.ERROR
     )
-    public fun component2() =
+    public fun component2(): T =
         content.component2()
 
     @Deprecated(
@@ -177,7 +177,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.component3()"),
         DeprecationLevel.ERROR
     )
-    public fun component3() =
+    public fun component3(): T =
         content.component3()
 
     @Deprecated(
@@ -185,7 +185,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.component4()"),
         DeprecationLevel.ERROR
     )
-    public fun component4() =
+    public fun component4(): T =
         content.component4()
 
     @Deprecated(
@@ -193,7 +193,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.component5()"),
         DeprecationLevel.ERROR
     )
-    public fun component5() =
+    public fun component5(): T =
         content.component5()
 
     @Deprecated(
@@ -201,7 +201,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.dropLast(n)"),
         DeprecationLevel.ERROR
     )
-    public fun dropLast(n: Int) =
+    public fun dropLast(n: Int): List<T> =
         content.dropLast(n)
 
     @Deprecated(
@@ -209,7 +209,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.drop(n)"),
         DeprecationLevel.ERROR
     )
-    public fun drop(n: Int) =
+    public fun drop(n: Int): List<T> =
         content.drop(n)
 
     @Deprecated(
@@ -217,7 +217,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.dropLastWhile(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun dropLastWhile(predicate: (T) -> Boolean) =
+    public fun dropLastWhile(predicate: (T) -> Boolean): List<T> =
         content.dropLastWhile(predicate)
 
     @Deprecated(
@@ -225,7 +225,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.elementAt(index)"),
         DeprecationLevel.ERROR
     )
-    public fun elementAt(index: Int) =
+    public fun elementAt(index: Int): T =
         content.elementAt(index)
 
     @Deprecated(
@@ -233,7 +233,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.elementAtOrElse(index, defaultValue)"),
         DeprecationLevel.ERROR
     )
-    public fun elementAtOrElse(index: Int, defaultValue: (Int) -> @UnsafeVariance T) =
+    public fun elementAtOrElse(index: Int, defaultValue: (Int) -> @UnsafeVariance T): T =
         content.elementAtOrElse(index, defaultValue)
 
     @Deprecated(
@@ -241,7 +241,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.findLast(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun findLast(predicate: (T) -> Boolean) =
+    public fun findLast(predicate: (T) -> Boolean): T? =
         content.findLast(predicate)
 
     @Deprecated(
@@ -249,7 +249,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.find(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun find(predicate: (T) -> Boolean) =
+    public fun find(predicate: (T) -> Boolean): T? =
         content.find(predicate)
 
     @Deprecated(
@@ -257,7 +257,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.first()"),
         DeprecationLevel.ERROR
     )
-    public fun first() =
+    public fun first(): T =
         content.first()
 
     @Deprecated(
@@ -265,7 +265,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.firstOrNull()"),
         DeprecationLevel.ERROR
     )
-    public fun firstOrNull() =
+    public fun firstOrNull(): T? =
         content.firstOrNull()
 
     @Deprecated(
@@ -273,7 +273,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.first(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun first(predicate: (T) -> Boolean) =
+    public fun first(predicate: (T) -> Boolean): T =
         content.first(predicate)
 
     @Deprecated(
@@ -281,7 +281,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.foldRight(initial, operation)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> foldRight(initial: R, operation: (T, R) -> R) =
+    public fun <R> foldRight(initial: R, operation: (T, R) -> R): R =
         content.foldRight(initial, operation)
 
     @Deprecated(
@@ -289,7 +289,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.fold(initial, operation)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> fold(initial: R, operation: (R, T) -> R) =
+    public fun <R> fold(initial: R, operation: (R, T) -> R): R =
         content.fold(initial, operation)
 
     @Deprecated(
@@ -297,7 +297,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.foldRightIndexed(initial, operation)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> foldRightIndexed(initial: R, operation: (Int, T, R) -> R) =
+    public fun <R> foldRightIndexed(initial: R, operation: (Int, T, R) -> R): R =
         content.foldRightIndexed(initial, operation)
 
     @Deprecated(
@@ -305,7 +305,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.getOrElse(index, defaultValue)"),
         DeprecationLevel.ERROR
     )
-    public fun getOrElse(index: Int, defaultValue: (Int) -> @UnsafeVariance T) =
+    public fun getOrElse(index: Int, defaultValue: (Int) -> @UnsafeVariance T): T =
         content.getOrElse(index, defaultValue)
 
     @Deprecated(
@@ -313,7 +313,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.indexOf(element)"),
         DeprecationLevel.ERROR
     )
-    public fun indexOf(element: @UnsafeVariance T) =
+    public fun indexOf(element: @UnsafeVariance T): Int =
         content.indexOf(element)
 
     @Deprecated(
@@ -321,7 +321,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.indexOfFirst(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun indexOfFirst(predicate: (T) -> Boolean) =
+    public fun indexOfFirst(predicate: (T) -> Boolean): Int =
         content.indexOfFirst(predicate)
 
     @Deprecated(
@@ -329,7 +329,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.indexOfLast(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun indexOfLast(predicate: (T) -> Boolean) =
+    public fun indexOfLast(predicate: (T) -> Boolean): Int =
         content.indexOfLast(predicate)
 
     @Deprecated(
@@ -337,7 +337,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.lastIndexOf(element)"),
         DeprecationLevel.ERROR
     )
-    public fun lastIndexOf(element: @UnsafeVariance T) =
+    public fun lastIndexOf(element: @UnsafeVariance T): Int =
         content.lastIndexOf(element)
 
     @Deprecated(
@@ -345,7 +345,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.lastOrNull()"),
         DeprecationLevel.ERROR
     )
-    public fun lastOrNull() =
+    public fun lastOrNull(): T? =
         content.lastOrNull()
 
     @Deprecated(
@@ -353,7 +353,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.lastOrNull(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun lastOrNull(predicate: (T) -> Boolean) =
+    public fun lastOrNull(predicate: (T) -> Boolean): T? =
         content.lastOrNull(predicate)
 
     @Deprecated(
@@ -361,7 +361,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.reduceRight(operation)"),
         DeprecationLevel.ERROR
     )
-    public fun reduceRight(operation: (T, T) -> @UnsafeVariance T) =
+    public fun reduceRight(operation: (T, T) -> @UnsafeVariance T): T =
         content.reduceRight(operation)
 
     @Deprecated(
@@ -369,7 +369,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.reduce(operation)"),
         DeprecationLevel.ERROR
     )
-    public fun reduce(operation: (T, T) -> @UnsafeVariance T) =
+    public fun reduce(operation: (T, T) -> @UnsafeVariance T): T =
         content.reduce(operation)
 
     @Deprecated(
@@ -377,7 +377,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.reduceRightIndexed(operation)"),
         DeprecationLevel.ERROR
     )
-    public fun reduceRightIndexed(operation: (Int, T, T) -> @UnsafeVariance T) =
+    public fun reduceRightIndexed(operation: (Int, T, T) -> @UnsafeVariance T): T =
         content.reduceRightIndexed(operation)
 
     @Deprecated(
@@ -385,7 +385,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.reduceRightIndexedOrNull(operation)"),
         DeprecationLevel.ERROR
     )
-    public fun reduceRightIndexedOrNull(operation: (Int, T, T) -> @UnsafeVariance T) =
+    public fun reduceRightIndexedOrNull(operation: (Int, T, T) -> @UnsafeVariance T): T? =
         content.reduceRightIndexedOrNull(operation)
 
     @Deprecated(
@@ -393,7 +393,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.reduceRightOrNull(operation)"),
         DeprecationLevel.ERROR
     )
-    public fun reduceRightOrNull(operation: (T, T) -> @UnsafeVariance T) =
+    public fun reduceRightOrNull(operation: (T, T) -> @UnsafeVariance T): T? =
         content.reduceRightOrNull(operation)
 
     @Deprecated(
@@ -401,7 +401,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.single()"),
         DeprecationLevel.ERROR
     )
-    public fun single() =
+    public fun single(): T =
         content.single()
 
     @Deprecated(
@@ -409,7 +409,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.singleOrNull()"),
         DeprecationLevel.ERROR
     )
-    public fun singleOrNull() =
+    public fun singleOrNull(): T? =
         content.singleOrNull()
 
     @Deprecated(
@@ -417,7 +417,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.single(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun single(predicate: (T) -> Boolean) =
+    public fun single(predicate: (T) -> Boolean): T =
         content.single(predicate)
 
     @Deprecated(
@@ -425,7 +425,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.slice(indices)"),
         DeprecationLevel.ERROR
     )
-    public fun slice(indices: IntRange) =
+    public fun slice(indices: IntRange): List<T> =
         content.slice(indices)
 
     @Deprecated(
@@ -433,7 +433,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.slice(indices)"),
         DeprecationLevel.ERROR
     )
-    public fun slice(indices: Iterable<Int>) =
+    public fun slice(indices: Iterable<Int>): List<T> =
         content.slice(indices)
 
     @Deprecated(
@@ -441,7 +441,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.takeLast(n)"),
         DeprecationLevel.ERROR
     )
-    public fun takeLast(n: Int) =
+    public fun takeLast(n: Int): List<T> =
         content.takeLast(n)
 
     @Deprecated(
@@ -449,7 +449,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.take(n)"),
         DeprecationLevel.ERROR
     )
-    public fun take(n: Int) =
+    public fun take(n: Int): List<T> =
         content.take(n)
 
     @Deprecated(
@@ -457,7 +457,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.takeLastWhile(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun takeLastWhile(predicate: (T) -> Boolean) =
+    public fun takeLastWhile(predicate: (T) -> Boolean): List<T> =
         content.takeLastWhile(predicate)
 
     @Deprecated(
@@ -465,7 +465,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.all(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun all(predicate: (T) -> Boolean) =
+    public fun all(predicate: (T) -> Boolean): Boolean =
         content.all(predicate)
 
     @Deprecated(
@@ -473,7 +473,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.any()"),
         DeprecationLevel.ERROR
     )
-    public fun any() =
+    public fun any(): Boolean =
         content.any()
 
     @Deprecated(
@@ -481,7 +481,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.any(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun any(predicate: (T) -> Boolean) =
+    public fun any(predicate: (T) -> Boolean): Boolean =
         content.any(predicate)
 
     @Deprecated(
@@ -489,7 +489,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.asIterable()"),
         DeprecationLevel.ERROR
     )
-    public fun asIterable() =
+    public fun asIterable(): Iterable<T> =
         content.asIterable()
 
     @Deprecated(
@@ -497,7 +497,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.asSequence()"),
         DeprecationLevel.ERROR
     )
-    public fun asSequence() =
+    public fun asSequence(): Sequence<T> =
         content.asSequence()
 
     @Deprecated(
@@ -505,7 +505,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.associate(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <K, V> associate(transform: (T) -> Pair<K, V>) =
+    public fun <K, V> associate(transform: (T) -> Pair<K, V>): Map<K, V> =
         content.associate(transform)
 
     @Deprecated(
@@ -513,7 +513,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.associateBy(keySelector)"),
         DeprecationLevel.ERROR
     )
-    public fun <K> associateBy(keySelector: (T) -> K) =
+    public fun <K> associateBy(keySelector: (T) -> K): Map<K, T> =
         content.associateBy(keySelector)
 
     @Deprecated(
@@ -521,7 +521,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.associateBy(keySelector, valueTransform)"),
         DeprecationLevel.ERROR
     )
-    public fun <K, V> associateBy(keySelector: (T) -> K, valueTransform: (T) -> V) =
+    public fun <K, V> associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> =
         content.associateBy(keySelector, valueTransform)
 
     @Deprecated(
@@ -529,7 +529,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.associateByTo(destination, keySelector)"),
         DeprecationLevel.ERROR
     )
-    public fun <K, M : MutableMap<in K, in T>> associateByTo(destination: M, keySelector: (T) -> K) =
+    public fun <K, M : MutableMap<in K, in T>> associateByTo(destination: M, keySelector: (T) -> K): M =
         content.associateByTo(destination, keySelector)
 
     @Deprecated(
@@ -541,7 +541,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         destination: M,
         keySelector: (T) -> K,
         valueTransform: (T) -> V
-    ) =
+    ): M =
         content.associateByTo(destination, keySelector, valueTransform)
 
     @Deprecated(
@@ -549,7 +549,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.associateTo(destination, transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <K, V, M : MutableMap<in K, in V>> associateTo(destination: M, transform: (T) -> Pair<K, V>) =
+    public fun <K, V, M : MutableMap<in K, in V>> associateTo(destination: M, transform: (T) -> Pair<K, V>): M =
         content.associateTo(destination, transform)
 
     @Deprecated(
@@ -557,7 +557,8 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.associateWith(valueSelector)"),
         DeprecationLevel.ERROR
     )
-    public fun <V> associateWith(valueSelector: (@UnsafeVariance T) -> V) =
+    // Unsafe variance is okay here since pre-deprecation usages of this function must have already been safe.
+    public fun <V> associateWith(valueSelector: (T) -> V): Map<@UnsafeVariance T, V> =
         content.associateWith(valueSelector)
 
     @Deprecated(
@@ -565,7 +566,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.associateWithTo(destination, valueSelector)"),
         DeprecationLevel.ERROR
     )
-    public fun <V, M : MutableMap<in T, in V>> associateWithTo(destination: M, valueSelector: (T) -> V) =
+    public fun <V, M : MutableMap<in T, in V>> associateWithTo(destination: M, valueSelector: (T) -> V): M =
         content.associateWithTo(destination, valueSelector)
 
     @Deprecated(
@@ -573,7 +574,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.chunked(size)"),
         DeprecationLevel.ERROR
     )
-    public fun chunked(size: Int) =
+    public fun chunked(size: Int): List<List<T>> =
         content.chunked(size)
 
     @Deprecated(
@@ -581,7 +582,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.chunked(size, transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> chunked(size: Int, transform: (List<T>) -> R) =
+    public fun <R> chunked(size: Int, transform: (List<T>) -> R): List<R> =
         content.chunked(size, transform)
 
     @Deprecated(
@@ -589,7 +590,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.containsAll(elements)"),
         DeprecationLevel.ERROR
     )
-    public fun containsAll(elements: Collection<@UnsafeVariance T>) =
+    public fun containsAll(elements: Collection<@UnsafeVariance T>): Boolean =
         content.containsAll(elements)
 
     @Deprecated(
@@ -597,7 +598,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.count()"),
         DeprecationLevel.ERROR
     )
-    public fun count() =
+    public fun count(): Int =
         content.count()
 
     @Deprecated(
@@ -605,7 +606,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.count(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun count(predicate: (T) -> Boolean) =
+    public fun count(predicate: (T) -> Boolean): Int =
         content.count(predicate)
 
     @Deprecated(
@@ -613,7 +614,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.distinct()"),
         DeprecationLevel.ERROR
     )
-    public fun distinct() =
+    public fun distinct(): List<T> =
         content.distinct()
 
     @Deprecated(
@@ -621,7 +622,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.distinctBy(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <K> distinctBy(selector: (T) -> K) =
+    public fun <K> distinctBy(selector: (T) -> K): List<T> =
         content.distinctBy(selector)
 
     @Deprecated(
@@ -629,7 +630,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.dropWhile(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun dropWhile(predicate: (T) -> Boolean) =
+    public fun dropWhile(predicate: (T) -> Boolean): List<T> =
         content.dropWhile(predicate)
 
     @Deprecated(
@@ -637,7 +638,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.filter(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun filter(predicate: (T) -> Boolean) =
+    public fun filter(predicate: (T) -> Boolean): List<T> =
         content.filter(predicate)
 
     @Deprecated(
@@ -645,7 +646,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.filterIndexed(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun filterIndexed(predicate: (Int, T) -> Boolean) =
+    public fun filterIndexed(predicate: (Int, T) -> Boolean): List<T> =
         content.filterIndexed(predicate)
 
     @Deprecated(
@@ -653,7 +654,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.filterIndexedTo(destination, predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun <C : MutableCollection<in T>> filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean) =
+    public fun <C : MutableCollection<in T>> filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C =
         content.filterIndexedTo(destination, predicate)
 
     @Deprecated(
@@ -661,8 +662,9 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.filterIsInstance<R>()"),
         DeprecationLevel.ERROR
     )
-    public fun <R> filterIsInstance(): List<R> =
+    public fun <R> filterIsInstance(): List<R> {
         error("List API moved to `content`") //content.filterIsInstance<R>()
+    }
 
     @Deprecated(
         "List API moved to `content`",
@@ -677,7 +679,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.filterNot(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun filterNot(predicate: (T) -> Boolean) =
+    public fun filterNot(predicate: (T) -> Boolean): List<T> =
         content.filterNot(predicate)
 
 //    @Deprecated(
@@ -701,7 +703,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.filterNotTo(destination, predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun <C : MutableCollection<in T>> filterNotTo(destination: C, predicate: (T) -> Boolean) =
+    public fun <C : MutableCollection<in T>> filterNotTo(destination: C, predicate: (T) -> Boolean): C =
         content.filterNotTo(destination, predicate)
 
     @Deprecated(
@@ -709,7 +711,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.filterTo(destination, predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun <C : MutableCollection<in T>> filterTo(destination: C, predicate: (T) -> Boolean) =
+    public fun <C : MutableCollection<in T>> filterTo(destination: C, predicate: (T) -> Boolean): C =
         content.filterTo(destination, predicate)
 
     @Deprecated(
@@ -717,7 +719,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.firstNotNullOf(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> firstNotNullOf(transform: (T) -> R?) =
+    public fun <R> firstNotNullOf(transform: (T) -> R?): R & Any =
         content.firstNotNullOf(transform)
 
     @Deprecated(
@@ -725,7 +727,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.firstNotNullOfOrNull(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> firstNotNullOfOrNull(transform: (T) -> R?) =
+    public fun <R> firstNotNullOfOrNull(transform: (T) -> R?): R? =
         content.firstNotNullOfOrNull(transform)
 
     @Deprecated(
@@ -733,7 +735,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.firstOrNull(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun firstOrNull(predicate: (T) -> Boolean) =
+    public fun firstOrNull(predicate: (T) -> Boolean): T? =
         content.firstOrNull(predicate)
 
     @Deprecated(
@@ -742,7 +744,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         DeprecationLevel.ERROR
     )
     @JvmName("flatMapIterable")
-    public fun <R> flatMap(transform: (T) -> Iterable<R>) =
+    public fun <R> flatMap(transform: (T) -> Iterable<R>): List<R> =
         content.flatMap(transform)
 
     @Deprecated(
@@ -751,7 +753,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         DeprecationLevel.ERROR
     )
     @JvmName("flatMapSequence")
-    public fun <R> flatMap(transform: (T) -> Sequence<R>) =
+    public fun <R> flatMap(transform: (T) -> Sequence<R>): List<R> =
         content.flatMap(transform)
 
     @Deprecated(
@@ -760,7 +762,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         DeprecationLevel.ERROR
     )
     @JvmName("flatMapIndexedIterable")
-    public fun <R> flatMapIndexed(transform: (Int, T) -> Iterable<R>) =
+    public fun <R> flatMapIndexed(transform: (Int, T) -> Iterable<R>): List<R> =
         content.flatMapIndexed(transform)
 
     @Deprecated(
@@ -768,8 +770,8 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.flatMapIndexed(transform)"),
         DeprecationLevel.ERROR
     )
-    @kotlin.jvm.JvmName("flatMapIndexedSequence")
-    public fun <R> flatMapIndexed(transform: (Int, T) -> Sequence<R>) =
+    @JvmName("flatMapIndexedSequence")
+    public fun <R> flatMapIndexed(transform: (Int, T) -> Sequence<R>): List<R> =
         content.flatMapIndexed(transform)
 
     @Deprecated(
@@ -778,7 +780,10 @@ public sealed class NbtListLikeDeprecations<out T> {
         DeprecationLevel.ERROR
     )
     @JvmName("flatMapIndexedIterableTo")
-    public fun <R, C : MutableCollection<in R>> flatMapIndexedTo(destination: C, transform: (Int, T) -> Iterable<R>) =
+    public fun <R, C : MutableCollection<in R>> flatMapIndexedTo(
+        destination: C,
+        transform: (Int, T) -> Iterable<R>
+    ): C =
         content.flatMapIndexedTo(destination, transform)
 
     @Deprecated(
@@ -787,7 +792,10 @@ public sealed class NbtListLikeDeprecations<out T> {
         DeprecationLevel.ERROR
     )
     @JvmName("flatMapIndexedSequenceTo")
-    public fun <R, C : MutableCollection<in R>> flatMapIndexedTo(destination: C, transform: (Int, T) -> Sequence<R>) =
+    public fun <R, C : MutableCollection<in R>> flatMapIndexedTo(
+        destination: C,
+        transform: (Int, T) -> Sequence<R>
+    ): C =
         content.flatMapIndexedTo(destination, transform)
 
     @Deprecated(
@@ -796,7 +804,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         DeprecationLevel.ERROR
     )
     @JvmName("flatMapIterableTo")
-    public fun <R, C : MutableCollection<in R>> flatMapTo(destination: C, transform: (T) -> Iterable<R>) =
+    public fun <R, C : MutableCollection<in R>> flatMapTo(destination: C, transform: (T) -> Iterable<R>): C =
         content.flatMapTo(destination, transform)
 
     @Deprecated(
@@ -805,7 +813,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         DeprecationLevel.ERROR
     )
     @JvmName("flatMapSequenceTo")
-    public fun <R, C : MutableCollection<in R>> flatMapTo(destination: C, transform: (T) -> Sequence<R>) =
+    public fun <R, C : MutableCollection<in R>> flatMapTo(destination: C, transform: (T) -> Sequence<R>): C =
         content.flatMapTo(destination, transform)
 
     @Deprecated(
@@ -813,7 +821,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.foldIndexed(initial, operation)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> foldIndexed(initial: R, operation: (Int, R, T) -> R) =
+    public fun <R> foldIndexed(initial: R, operation: (Int, R, T) -> R): R =
         content.foldIndexed(initial, operation)
 
     @Deprecated(
@@ -821,7 +829,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.forEach(action)"),
         DeprecationLevel.ERROR
     )
-    public fun forEach(action: (T) -> Unit) =
+    public fun forEach(action: (T) -> Unit): Unit =
         content.forEach(action)
 
     @Deprecated(
@@ -829,7 +837,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.forEachIndexed(action)"),
         DeprecationLevel.ERROR
     )
-    public fun forEachIndexed(action: (Int, T) -> Unit) =
+    public fun forEachIndexed(action: (Int, T) -> Unit): Unit =
         content.forEachIndexed(action)
 
     @Deprecated(
@@ -837,7 +845,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.groupBy(keySelector)"),
         DeprecationLevel.ERROR
     )
-    public fun <K> groupBy(keySelector: (T) -> K) =
+    public fun <K> groupBy(keySelector: (T) -> K): Map<K, List<T>> =
         content.groupBy(keySelector)
 
     @Deprecated(
@@ -845,7 +853,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.groupBy(keySelector, valueTransform)"),
         DeprecationLevel.ERROR
     )
-    public fun <K, V> groupBy(keySelector: (T) -> K, valueTransform: (T) -> V) =
+    public fun <K, V> groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> =
         content.groupBy(keySelector, valueTransform)
 
     @Deprecated(
@@ -856,7 +864,7 @@ public sealed class NbtListLikeDeprecations<out T> {
     public fun <K, M : MutableMap<in K, MutableList<@UnsafeVariance T>>> groupByTo(
         destination: M,
         keySelector: (T) -> K
-    ) =
+    ): M =
         content.groupByTo(destination, keySelector)
 
     @Deprecated(
@@ -868,7 +876,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         destination: M,
         keySelector: (T) -> K,
         valueTransform: (T) -> V
-    ) =
+    ): M =
         content.groupByTo(destination, keySelector, valueTransform)
 
     @Deprecated(
@@ -876,15 +884,17 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.groupingBy(keySelector)"),
         DeprecationLevel.ERROR
     )
-    public fun <K> groupingBy(/*crossinline*/ keySelector: (@UnsafeVariance T) -> K) =
-        content.groupingBy(keySelector)
+    // Unsafe variance is okay here since pre-deprecation usages of this function must have already been safe.
+    public fun <K> groupingBy(/*crossinline*/ keySelector: (T) -> K): Grouping<@UnsafeVariance T, K> {
+        return content.groupingBy(keySelector)
+    }
 
     @Deprecated(
         "List API moved to `content`",
         ReplaceWith("this.content.intersect(other)"),
         DeprecationLevel.ERROR
     )
-    public fun intersect(other: Iterable<Int>) =
+    public fun intersect(other: Iterable<Int>): Set<Any?> =
         content.intersect(other)
 
     @Deprecated(
@@ -892,7 +902,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.isNotEmpty()"),
         DeprecationLevel.ERROR
     )
-    public fun isNotEmpty() =
+    public fun isNotEmpty(): Boolean =
         content.isNotEmpty()
 
     @Deprecated(
@@ -900,7 +910,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.isNullOrEmpty()"),
         DeprecationLevel.ERROR
     )
-    public fun isNullOrEmpty() =
+    public fun isNullOrEmpty(): Boolean =
         content.isNullOrEmpty()
 
     @Deprecated(
@@ -915,7 +925,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         limit: Int = -1,
         truncated: CharSequence = "...",
         transform: ((T) -> CharSequence)? = null
-    ) =
+    ): String =
         content.joinToString(separator, prefix, postfix, limit, truncated, transform)
 
 //    @Deprecated(
@@ -931,7 +941,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.map(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> map(transform: (T) -> R) =
+    public fun <R> map(transform: (T) -> R): List<R> =
         content.map(transform)
 
     @Deprecated(
@@ -939,7 +949,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.mapIndexed(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> mapIndexed(transform: (Int, T) -> R) =
+    public fun <R : Comparable<R>> mapIndexed(transform: (Int, T) -> R): List<R> =
         content.mapIndexed(transform)
 
     @Deprecated(
@@ -947,7 +957,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.mapIndexedNotNull(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> mapIndexedNotNull(transform: (Int, T) -> R?) =
+    public fun <R : Comparable<R>> mapIndexedNotNull(transform: (Int, T) -> R?): List<R> =
         content.mapIndexedNotNull(transform)
 
     @Deprecated(
@@ -958,7 +968,7 @@ public sealed class NbtListLikeDeprecations<out T> {
     public fun <R : Comparable<R>, C : MutableCollection<in R>> mapIndexedNotNullTo(
         destination: C,
         transform: (Int, T) -> R?
-    ) =
+    ): C =
         content.mapIndexedNotNullTo(destination, transform)
 
     @Deprecated(
@@ -966,7 +976,10 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.mapIndexedTo(destination, transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>, C : MutableCollection<in R>> mapIndexedTo(destination: C, transform: (Int, T) -> R) =
+    public fun <R : Comparable<R>, C : MutableCollection<in R>> mapIndexedTo(
+        destination: C,
+        transform: (Int, T) -> R
+    ): C =
         content.mapIndexedTo(destination, transform)
 
     @Deprecated(
@@ -974,7 +987,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.mapNotNull(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> mapNotNull(transform: (T) -> R?) =
+    public fun <R : Comparable<R>> mapNotNull(transform: (T) -> R?): List<R> =
         content.mapNotNull(transform)
 
     @Deprecated(
@@ -982,7 +995,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.mapNotNullTo(destination, transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>, C : MutableCollection<in R>> mapNotNullTo(destination: C, transform: (T) -> R?) =
+    public fun <R : Comparable<R>, C : MutableCollection<in R>> mapNotNullTo(destination: C, transform: (T) -> R?): C =
         content.mapNotNullTo(destination, transform)
 
     @Deprecated(
@@ -990,7 +1003,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.mapTo(destination, transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>, C : MutableCollection<in R>> mapTo(destination: C, transform: (T) -> R) =
+    public fun <R : Comparable<R>, C : MutableCollection<in R>> mapTo(destination: C, transform: (T) -> R): C =
         content.mapTo(destination, transform)
 
     @Deprecated(
@@ -998,7 +1011,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxBy(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> maxBy(selector: (T) -> R) =
+    public fun <R : Comparable<R>> maxBy(selector: (T) -> R): T =
         content.maxBy(selector)
 
     @Deprecated(
@@ -1006,7 +1019,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxByOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> maxByOrNull(selector: (T) -> R) =
+    public fun <R : Comparable<R>> maxByOrNull(selector: (T) -> R): T? =
         content.maxByOrNull(selector)
 
     @Deprecated(
@@ -1014,7 +1027,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> maxOf(selector: (T) -> R) =
+    public fun <R : Comparable<R>> maxOf(selector: (T) -> R): R =
         content.maxOf(selector)
 
     @Deprecated(
@@ -1022,7 +1035,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun maxOf(selector: (T) -> Float) =
+    public fun maxOf(selector: (T) -> Float): Float =
         content.maxOf(selector)
 
     @Deprecated(
@@ -1030,7 +1043,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun maxOf(selector: (T) -> Double) =
+    public fun maxOf(selector: (T) -> Double): Double =
         content.maxOf(selector)
 
     @Deprecated(
@@ -1038,7 +1051,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> maxOfOrNull(selector: (T) -> R) =
+    public fun <R : Comparable<R>> maxOfOrNull(selector: (T) -> R): R? =
         content.maxOfOrNull(selector)
 
     @Deprecated(
@@ -1046,7 +1059,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun maxOfOrNull(selector: (T) -> Float) =
+    public fun maxOfOrNull(selector: (T) -> Float): Float? =
         content.maxOfOrNull(selector)
 
     @Deprecated(
@@ -1054,7 +1067,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun maxOfOrNull(selector: (T) -> Double) =
+    public fun maxOfOrNull(selector: (T) -> Double): Double? =
         content.maxOfOrNull(selector)
 
     @Deprecated(
@@ -1062,7 +1075,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxOfWith(comparator, selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> maxOfWith(comparator: Comparator<in R>, selector: (T) -> R) =
+    public fun <R : Comparable<R>> maxOfWith(comparator: Comparator<in R>, selector: (T) -> R): R =
         content.maxOfWith(comparator, selector)
 
     @Deprecated(
@@ -1070,7 +1083,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxOfWithOrNull(comparator, selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> maxOfWithOrNull(comparator: Comparator<in R>, selector: (T) -> R) =
+    public fun <R> maxOfWithOrNull(comparator: Comparator<in R>, selector: (T) -> R): R? =
         content.maxOfWithOrNull(comparator, selector)
 
     @Deprecated(
@@ -1078,7 +1091,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxWith(comparator)"),
         DeprecationLevel.ERROR
     )
-    public fun maxWith(comparator: Comparator<in T>) =
+    public fun maxWith(comparator: Comparator<in T>): T =
         content.maxWith(comparator)
 
     @Deprecated(
@@ -1086,7 +1099,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.maxWithOrNull(comparator)"),
         DeprecationLevel.ERROR
     )
-    public fun maxWithOrNull(comparator: Comparator<in T>) =
+    public fun maxWithOrNull(comparator: Comparator<in T>): T? =
         content.maxWithOrNull(comparator)
 
     @Deprecated(
@@ -1094,7 +1107,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minBy(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> minBy(selector: (T) -> R) =
+    public fun <R : Comparable<R>> minBy(selector: (T) -> R): T =
         content.minBy(selector)
 
     @Deprecated(
@@ -1102,7 +1115,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minByOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> minByOrNull(selector: (T) -> R) =
+    public fun <R : Comparable<R>> minByOrNull(selector: (T) -> R): T? =
         content.minByOrNull(selector)
 
     @Deprecated(
@@ -1110,7 +1123,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> minOf(selector: (T) -> R) =
+    public fun <R : Comparable<R>> minOf(selector: (T) -> R): R =
         content.minOf(selector)
 
     @Deprecated(
@@ -1118,7 +1131,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun minOf(selector: (T) -> Float) =
+    public fun minOf(selector: (T) -> Float): Float =
         content.minOf(selector)
 
     @Deprecated(
@@ -1126,7 +1139,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun minOf(selector: (T) -> Double) =
+    public fun minOf(selector: (T) -> Double): Double =
         content.minOf(selector)
 
     @Deprecated(
@@ -1134,7 +1147,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> minOfOrNull(selector: (T) -> R) =
+    public fun <R : Comparable<R>> minOfOrNull(selector: (T) -> R): R? =
         content.minOfOrNull(selector)
 
     @Deprecated(
@@ -1142,7 +1155,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun minOfOrNull(selector: (T) -> Float) =
+    public fun minOfOrNull(selector: (T) -> Float): Float? =
         content.minOfOrNull(selector)
 
     @Deprecated(
@@ -1150,7 +1163,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minOfOrNull(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun minOfOrNull(selector: (T) -> Double) =
+    public fun minOfOrNull(selector: (T) -> Double): Double? =
         content.minOfOrNull(selector)
 
     @Deprecated(
@@ -1158,7 +1171,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minOfWith(comparator, selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> minOfWith(comparator: Comparator<in R>, selector: (T) -> R) =
+    public fun <R> minOfWith(comparator: Comparator<in R>, selector: (T) -> R): R =
         content.minOfWith(comparator, selector)
 
     @Deprecated(
@@ -1166,7 +1179,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minOfWithOrNull(comparator, selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> minOfWithOrNull(comparator: Comparator<in R>, selector: (T) -> R) =
+    public fun <R> minOfWithOrNull(comparator: Comparator<in R>, selector: (T) -> R): R? =
         content.minOfWithOrNull(comparator, selector)
 
     @Deprecated(
@@ -1174,7 +1187,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minWith(comparator)"),
         DeprecationLevel.ERROR
     )
-    public fun minWith(comparator: Comparator<in T>) =
+    public fun minWith(comparator: Comparator<in T>): T =
         content.minWith(comparator)
 
     @Deprecated(
@@ -1182,7 +1195,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minWithOrNull(comparator)"),
         DeprecationLevel.ERROR
     )
-    public fun minWithOrNull(comparator: Comparator<in T>) =
+    public fun minWithOrNull(comparator: Comparator<in T>): T? =
         content.minWithOrNull(comparator)
 
     @Deprecated(
@@ -1190,7 +1203,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minus(element)"),
         DeprecationLevel.ERROR
     )
-    public operator fun minus(element: @UnsafeVariance T) =
+    public operator fun minus(element: @UnsafeVariance T): List<T> =
         content.minus(element)
 
     @Deprecated(
@@ -1198,7 +1211,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minus(elements)"),
         DeprecationLevel.ERROR
     )
-    public operator fun minus(elements: Iterable<@UnsafeVariance T>) =
+    public operator fun minus(elements: Iterable<@UnsafeVariance T>): List<T> =
         content.minus(elements)
 
     @Deprecated(
@@ -1206,7 +1219,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minus(elements)"),
         DeprecationLevel.ERROR
     )
-    public operator fun minus(elements: Sequence<@UnsafeVariance T>) =
+    public operator fun minus(elements: Sequence<@UnsafeVariance T>): List<T> =
         content.minus(elements)
 
     @Deprecated(
@@ -1214,7 +1227,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minus(elements)"),
         DeprecationLevel.ERROR
     )
-    public operator fun minus(elements: Array<out @UnsafeVariance T>) =
+    public operator fun minus(elements: Array<out @UnsafeVariance T>): List<T> =
         content.minus(elements)
 
     @Deprecated(
@@ -1222,7 +1235,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.minusElement(element)"),
         DeprecationLevel.ERROR
     )
-    public fun minusElement(element: @UnsafeVariance T) =
+    public fun minusElement(element: @UnsafeVariance T): List<T> =
         content.minusElement(element)
 
     @Deprecated(
@@ -1230,7 +1243,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.none()"),
         DeprecationLevel.ERROR
     )
-    public fun none() =
+    public fun none(): Boolean =
         content.none()
 
     @Deprecated(
@@ -1238,7 +1251,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.none(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun none(predicate: (T) -> Boolean) =
+    public fun none(predicate: (T) -> Boolean): Boolean =
         content.none(predicate)
 
     @Deprecated(
@@ -1246,7 +1259,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.orEmpty()"),
         DeprecationLevel.ERROR
     )
-    public fun orEmpty() =
+    public fun orEmpty(): List<T> =
         content.orEmpty()
 
     @Deprecated(
@@ -1254,7 +1267,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.partition(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun partition(predicate: (T) -> Boolean) =
+    public fun partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
         content.partition(predicate)
 
     @Deprecated(
@@ -1262,7 +1275,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.plus(element)"),
         DeprecationLevel.ERROR
     )
-    public operator fun plus(element: @UnsafeVariance T) =
+    public operator fun plus(element: @UnsafeVariance T): List<T> =
         content.plus(element)
 
     @Deprecated(
@@ -1270,7 +1283,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.plus(elements)"),
         DeprecationLevel.ERROR
     )
-    public operator fun plus(elements: Iterable<Int>) =
+    public operator fun plus(elements: Iterable<Int>): List<Any?> =
         content.plus(elements)
 
     @Deprecated(
@@ -1278,7 +1291,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.plus(elements)"),
         DeprecationLevel.ERROR
     )
-    public operator fun plus(elements: Sequence<Int>) =
+    public operator fun plus(elements: Sequence<Int>): List<Any?> =
         content.plus(elements)
 
     @Deprecated(
@@ -1286,7 +1299,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.plus(elements)"),
         DeprecationLevel.ERROR
     )
-    public operator fun plus(elements: Array<out @UnsafeVariance T>) =
+    public operator fun plus(elements: Array<out @UnsafeVariance T>): List<T> =
         content.plus(elements)
 
     @Deprecated(
@@ -1294,7 +1307,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.plusElement(element)"),
         DeprecationLevel.ERROR
     )
-    public fun plusElement(element: @UnsafeVariance T) =
+    public fun plusElement(element: @UnsafeVariance T): List<T> =
         content.plusElement(element)
 
     @Deprecated(
@@ -1302,7 +1315,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.random()"),
         DeprecationLevel.ERROR
     )
-    public fun random() =
+    public fun random(): T =
         content.random()
 
     @Deprecated(
@@ -1310,7 +1323,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.random(random)"),
         DeprecationLevel.ERROR
     )
-    public fun random(random: Random) =
+    public fun random(random: Random): T =
         content.random(random)
 
     @Deprecated(
@@ -1318,7 +1331,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.randomOrNull()"),
         DeprecationLevel.ERROR
     )
-    public fun randomOrNull() =
+    public fun randomOrNull(): T? =
         content.randomOrNull()
 
     @Deprecated(
@@ -1326,7 +1339,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.randomOrNull(random)"),
         DeprecationLevel.ERROR
     )
-    public fun randomOrNull(random: Random) =
+    public fun randomOrNull(random: Random): T? =
         content.randomOrNull(random)
 
     @Deprecated(
@@ -1334,7 +1347,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.reduceIndexed(operation)"),
         DeprecationLevel.ERROR
     )
-    public fun reduceIndexed(operation: (Int, T, T) -> @UnsafeVariance T) =
+    public fun reduceIndexed(operation: (Int, T, T) -> @UnsafeVariance T): T =
         content.reduceIndexed(operation)
 
     @Deprecated(
@@ -1342,7 +1355,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.reduceIndexedOrNull(operation)"),
         DeprecationLevel.ERROR
     )
-    public fun reduceIndexedOrNull(operation: (Int, T, T) -> @UnsafeVariance T) =
+    public fun reduceIndexedOrNull(operation: (Int, T, T) -> @UnsafeVariance T): T? =
         content.reduceIndexedOrNull(operation)
 
     @Deprecated(
@@ -1350,7 +1363,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.reduceOrNull(operation)"),
         DeprecationLevel.ERROR
     )
-    public fun reduceOrNull(operation: (T, T) -> @UnsafeVariance T) =
+    public fun reduceOrNull(operation: (T, T) -> @UnsafeVariance T): T? =
         content.reduceOrNull(operation)
 
     @Deprecated(
@@ -1358,7 +1371,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.requireNoNulls()"),
         DeprecationLevel.ERROR
     )
-    public fun requireNoNulls() =
+    public fun requireNoNulls(): List<T & Any> =
         content.requireNoNulls()
 
     @Deprecated(
@@ -1366,7 +1379,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.reversed()"),
         DeprecationLevel.ERROR
     )
-    public fun reversed() =
+    public fun reversed(): List<T> =
         content.reversed()
 
     @Deprecated(
@@ -1374,7 +1387,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.runningFold(initial, operation)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> runningFold(initial: R, operation: (R, T) -> R) =
+    public fun <R> runningFold(initial: R, operation: (R, T) -> R): List<R> =
         content.runningFold(initial, operation)
 
     @Deprecated(
@@ -1382,7 +1395,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.runningFoldIndexed(initial, operation)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> runningFoldIndexed(initial: R, operation: (Int, R, T) -> R) =
+    public fun <R> runningFoldIndexed(initial: R, operation: (Int, R, T) -> R): List<R> =
         content.runningFoldIndexed(initial, operation)
 
     @Deprecated(
@@ -1390,7 +1403,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.runningReduce(operation)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> runningReduce(operation: (T, T) -> @UnsafeVariance T) =
+    public fun <R> runningReduce(operation: (T, T) -> @UnsafeVariance T): List<T> =
         content.runningReduce(operation)
 
     @Deprecated(
@@ -1398,7 +1411,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.runningReduceIndexed(operation)"),
         DeprecationLevel.ERROR
     )
-    public fun runningReduceIndexed(operation: (Int, T, T) -> @UnsafeVariance T) =
+    public fun runningReduceIndexed(operation: (Int, T, T) -> @UnsafeVariance T): List<T> =
         content.runningReduceIndexed(operation)
 
     @Deprecated(
@@ -1406,7 +1419,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.scan(initial, operation)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> scan(initial: R, operation: (R, T) -> R) =
+    public fun <R> scan(initial: R, operation: (R, T) -> R): List<R> =
         content.scan(initial, operation)
 
     @Deprecated(
@@ -1414,7 +1427,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.scanIndexed(initial, operation)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> scanIndexed(initial: R, operation: (Int, R, T) -> R) =
+    public fun <R> scanIndexed(initial: R, operation: (Int, R, T) -> R): List<R> =
         content.scanIndexed(initial, operation)
 
     @Deprecated(
@@ -1422,7 +1435,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.shuffled()"),
         DeprecationLevel.ERROR
     )
-    public fun shuffled() =
+    public fun shuffled(): List<T> =
         content.shuffled()
 
     @Deprecated(
@@ -1430,7 +1443,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.shuffled(random)"),
         DeprecationLevel.ERROR
     )
-    public fun shuffled(random: Random) =
+    public fun shuffled(random: Random): List<T> =
         content.shuffled(random)
 
     @Deprecated(
@@ -1438,7 +1451,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.singleOrNull(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun singleOrNull(predicate: (T) -> Boolean) =
+    public fun singleOrNull(predicate: (T) -> Boolean): T? =
         content.singleOrNull(predicate)
 
     @Deprecated(
@@ -1446,7 +1459,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.sortedBy(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> sortedBy(selector: (T) -> R?) =
+    public fun <R : Comparable<R>> sortedBy(selector: (T) -> R?): List<T> =
         content.sortedBy(selector)
 
     @Deprecated(
@@ -1454,7 +1467,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.sortedByDescending(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun <R : Comparable<R>> sortedByDescending(selector: (T) -> R?) =
+    public fun <R : Comparable<R>> sortedByDescending(selector: (T) -> R?): List<T> =
         content.sortedByDescending(selector)
 
     @Deprecated(
@@ -1462,7 +1475,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.sortedWith(comparator)"),
         DeprecationLevel.ERROR
     )
-    public fun sortedWith(comparator: Comparator<in T>) =
+    public fun sortedWith(comparator: Comparator<in T>): List<T> =
         content.sortedWith(comparator)
 
     @Deprecated(
@@ -1470,7 +1483,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.subtract(other)"),
         DeprecationLevel.ERROR
     )
-    public fun subtract(other: Iterable<@UnsafeVariance T>) =
+    public fun subtract(other: Iterable<@UnsafeVariance T>): Set<T> =
         content.subtract(other)
 
     @Deprecated(
@@ -1479,7 +1492,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         DeprecationLevel.ERROR
     )
     @Suppress("DEPRECATION")
-    public fun sumBy(selector: (T) -> Int) =
+    public fun sumBy(selector: (T) -> Int): Int =
         content.sumBy(selector)
 
     @Deprecated(
@@ -1488,7 +1501,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         DeprecationLevel.ERROR
     )
     @Suppress("DEPRECATION")
-    public fun sumByDouble(selector: (T) -> Double) =
+    public fun sumByDouble(selector: (T) -> Double): Double =
         content.sumByDouble(selector)
 
     @Deprecated(
@@ -1496,7 +1509,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.sumOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun sumOf(selector: (T) -> Int) =
+    public fun sumOf(selector: (T) -> Int): Int =
         content.sumOf(selector)
 
     @Deprecated(
@@ -1504,7 +1517,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.sumOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun sumOf(selector: (T) -> Long) =
+    public fun sumOf(selector: (T) -> Long): Long =
         content.sumOf(selector)
 
     @Deprecated(
@@ -1512,7 +1525,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.sumOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun sumOf(selector: (T) -> UInt) =
+    public fun sumOf(selector: (T) -> UInt): UInt =
         content.sumOf(selector)
 
     @Deprecated(
@@ -1520,7 +1533,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.sumOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun sumOf(selector: (T) -> ULong) =
+    public fun sumOf(selector: (T) -> ULong): ULong =
         content.sumOf(selector)
 
     @Deprecated(
@@ -1528,7 +1541,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.sumOf(selector)"),
         DeprecationLevel.ERROR
     )
-    public fun sumOf(selector: (T) -> Double) =
+    public fun sumOf(selector: (T) -> Double): Double =
         content.sumOf(selector)
 
     @Deprecated(
@@ -1536,7 +1549,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.takeWhile(predicate)"),
         DeprecationLevel.ERROR
     )
-    public fun takeWhile(predicate: (T) -> Boolean) =
+    public fun takeWhile(predicate: (T) -> Boolean): List<T> =
         content.takeWhile(predicate)
 
     @Deprecated(
@@ -1544,7 +1557,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.toCollection(destination)"),
         DeprecationLevel.ERROR
     )
-    public fun <C : MutableCollection<in T>> toCollection(destination: C) =
+    public fun <C : MutableCollection<in T>> toCollection(destination: C): C =
         content.toCollection(destination)
 
     @Deprecated(
@@ -1576,7 +1589,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.toSet()"),
         DeprecationLevel.ERROR
     )
-    public fun toSet() =
+    public fun toSet(): Set<T> =
         content.toSet()
 
     @Deprecated(
@@ -1592,7 +1605,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.union(other)"),
         DeprecationLevel.ERROR
     )
-    public fun union(other: Iterable<@UnsafeVariance T>) =
+    public fun union(other: Iterable<@UnsafeVariance T>): Set<T> =
         content.union(other)
 
     @Deprecated(
@@ -1600,7 +1613,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.windowed(size, step)"),
         DeprecationLevel.ERROR
     )
-    public fun windowed(size: Int, step: Int = 1, partialWindows: Boolean = false) =
+    public fun windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): List<List<T>> =
         content.windowed(size, step)
 
     @Deprecated(
@@ -1608,7 +1621,12 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.windowed(size, step, partialWindows, transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R) =
+    public fun <R> windowed(
+        size: Int,
+        step: Int = 1,
+        partialWindows: Boolean = false,
+        transform: (List<T>) -> R
+    ): List<R> =
         content.windowed(size, step, partialWindows, transform)
 
     @Deprecated(
@@ -1616,7 +1634,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.withIndex()"),
         DeprecationLevel.ERROR
     )
-    public fun withIndex() =
+    public fun withIndex(): Iterable<IndexedValue<T>> =
         content.withIndex()
 
     @Deprecated(
@@ -1624,7 +1642,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.zip(other)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> zip(other: Iterable<R>) =
+    public fun <R> zip(other: Iterable<R>): List<Pair<T, R>> =
         content.zip(other)
 
     @Deprecated(
@@ -1632,7 +1650,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.zip(other)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> zip(other: Array<out R>) =
+    public fun <R> zip(other: Array<out R>): List<Pair<T, R>> =
         content.zip(other)
 
     @Deprecated(
@@ -1640,7 +1658,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.zip(other, transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R, V> zip(other: Iterable<R>, transform: (T, R) -> V) =
+    public fun <R, V> zip(other: Iterable<R>, transform: (T, R) -> V): List<V> =
         content.zip(other, transform)
 
     @Deprecated(
@@ -1648,7 +1666,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.zip(other, transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R, V> zip(other: Array<out R>, transform: (T, R) -> V) =
+    public fun <R, V> zip(other: Array<out R>, transform: (T, R) -> V): List<V> =
         content.zip(other, transform)
 
     @Deprecated(
@@ -1656,7 +1674,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.zipWithNext()"),
         DeprecationLevel.ERROR
     )
-    public fun zipWithNext() =
+    public fun zipWithNext(): List<Pair<T, T>> =
         content.zipWithNext()
 
     @Deprecated(
@@ -1664,7 +1682,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.zipWithNext(transform)"),
         DeprecationLevel.ERROR
     )
-    public fun <R> zipWithNext(transform: (T, T) -> R) =
+    public fun <R> zipWithNext(transform: (T, T) -> R): List<R> =
         content.zipWithNext(transform)
 
     @Deprecated(
@@ -1672,7 +1690,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.ifEmpty<List<T>, List<T>>(defaultValue)"),
         DeprecationLevel.ERROR
     )
-    public fun ifEmpty(defaultValue: () -> List<@UnsafeVariance T>) =
+    public fun ifEmpty(defaultValue: () -> List<@UnsafeVariance T>): List<T> =
         content.ifEmpty(defaultValue)
 
     @Deprecated(
@@ -1680,7 +1698,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.onEach<T, List<T>>(action)"),
         DeprecationLevel.ERROR
     )
-    public fun onEach(action: (T) -> Unit) =
+    public fun onEach(action: (T) -> Unit): List<T> =
         content.onEach(action)
 
     @Deprecated(
@@ -1688,7 +1706,7 @@ public sealed class NbtListLikeDeprecations<out T> {
         ReplaceWith("this.content.onEachIndexed<T, List<T>>(action)"),
         DeprecationLevel.ERROR
     )
-    public fun onEachIndexed(action: (Int, T) -> Unit) =
+    public fun onEachIndexed(action: (Int, T) -> Unit): List<T> =
         content.onEachIndexed(action)
 }
 
@@ -1702,7 +1720,7 @@ public sealed class NbtByteArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.average()"),
         DeprecationLevel.ERROR
     )
-    public fun average() =
+    public fun average(): Double =
         content.average()
 
     @Deprecated(
@@ -1710,7 +1728,7 @@ public sealed class NbtByteArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.binarySearch(element, fromIndex, toIndex)"),
         DeprecationLevel.ERROR
     )
-    public fun binarySearch(element: Byte?, fromIndex: Int = 0, toIndex: Int = content.size) =
+    public fun binarySearch(element: Byte?, fromIndex: Int = 0, toIndex: Int = content.size): Int =
         content.binarySearch(element, fromIndex, toIndex)
 
     @Deprecated(
@@ -1718,7 +1736,7 @@ public sealed class NbtByteArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.max()"),
         DeprecationLevel.ERROR
     )
-    public fun max() =
+    public fun max(): Byte =
         content.max()
 
     @Deprecated(
@@ -1726,7 +1744,7 @@ public sealed class NbtByteArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.maxOrNull()"),
         DeprecationLevel.ERROR
     )
-    public fun maxOrNull() =
+    public fun maxOrNull(): Byte? =
         content.maxOrNull()
 
     @Deprecated(
@@ -1734,7 +1752,7 @@ public sealed class NbtByteArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.min()"),
         DeprecationLevel.ERROR
     )
-    public fun min() =
+    public fun min(): Byte =
         content.min()
 
     @Deprecated(
@@ -1742,7 +1760,7 @@ public sealed class NbtByteArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.minOrNull()"),
         DeprecationLevel.ERROR
     )
-    public fun minOrNull() =
+    public fun minOrNull(): Byte? =
         content.minOrNull()
 
     @Deprecated(
@@ -1750,7 +1768,7 @@ public sealed class NbtByteArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.sorted()"),
         DeprecationLevel.ERROR
     )
-    public fun sorted() =
+    public fun sorted(): List<Byte> =
         content.sorted()
 
     @Deprecated(
@@ -1758,7 +1776,7 @@ public sealed class NbtByteArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.sortedDescending()"),
         DeprecationLevel.ERROR
     )
-    public fun sortedDescending() =
+    public fun sortedDescending(): List<Byte> =
         content.sortedDescending()
 
     @Deprecated(
@@ -1766,7 +1784,7 @@ public sealed class NbtByteArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.sum()"),
         DeprecationLevel.ERROR
     )
-    public fun sum() =
+    public fun sum(): Int =
         content.sum()
 
     @Deprecated(
@@ -1774,7 +1792,7 @@ public sealed class NbtByteArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.toByteArray()"),
         DeprecationLevel.ERROR
     )
-    public fun toByteArray() =
+    public fun toByteArray(): ByteArray =
         content.toByteArray()
 }
 
@@ -1788,7 +1806,7 @@ public sealed class NbtIntArrayDeprecations : @Suppress("DEPRECATION") NbtListLi
         ReplaceWith("this.content.average()"),
         DeprecationLevel.ERROR
     )
-    public fun average() =
+    public fun average(): Double =
         content.average()
 
     @Deprecated(
@@ -1796,7 +1814,7 @@ public sealed class NbtIntArrayDeprecations : @Suppress("DEPRECATION") NbtListLi
         ReplaceWith("this.content.binarySearch(element, fromIndex, toIndex)"),
         DeprecationLevel.ERROR
     )
-    public fun binarySearch(element: Int?, fromIndex: Int = 0, toIndex: Int = content.size) =
+    public fun binarySearch(element: Int?, fromIndex: Int = 0, toIndex: Int = content.size): Int =
         content.binarySearch(element, fromIndex, toIndex)
 
     @Deprecated(
@@ -1804,7 +1822,7 @@ public sealed class NbtIntArrayDeprecations : @Suppress("DEPRECATION") NbtListLi
         ReplaceWith("this.content.max()"),
         DeprecationLevel.ERROR
     )
-    public fun max() =
+    public fun max(): Int =
         content.max()
 
     @Deprecated(
@@ -1812,7 +1830,7 @@ public sealed class NbtIntArrayDeprecations : @Suppress("DEPRECATION") NbtListLi
         ReplaceWith("this.content.maxOrNull()"),
         DeprecationLevel.ERROR
     )
-    public fun maxOrNull() =
+    public fun maxOrNull(): Int? =
         content.maxOrNull()
 
     @Deprecated(
@@ -1820,7 +1838,7 @@ public sealed class NbtIntArrayDeprecations : @Suppress("DEPRECATION") NbtListLi
         ReplaceWith("this.content.min()"),
         DeprecationLevel.ERROR
     )
-    public fun min() =
+    public fun min(): Int =
         content.min()
 
     @Deprecated(
@@ -1828,7 +1846,7 @@ public sealed class NbtIntArrayDeprecations : @Suppress("DEPRECATION") NbtListLi
         ReplaceWith("this.content.minOrNull()"),
         DeprecationLevel.ERROR
     )
-    public fun minOrNull() =
+    public fun minOrNull(): Int? =
         content.minOrNull()
 
     @Deprecated(
@@ -1836,7 +1854,7 @@ public sealed class NbtIntArrayDeprecations : @Suppress("DEPRECATION") NbtListLi
         ReplaceWith("this.content.sorted()"),
         DeprecationLevel.ERROR
     )
-    public fun sorted() =
+    public fun sorted(): List<Int> =
         content.sorted()
 
     @Deprecated(
@@ -1844,7 +1862,7 @@ public sealed class NbtIntArrayDeprecations : @Suppress("DEPRECATION") NbtListLi
         ReplaceWith("this.content.sortedDescending()"),
         DeprecationLevel.ERROR
     )
-    public fun sortedDescending() =
+    public fun sortedDescending(): List<Int> =
         content.sortedDescending()
 
     @Deprecated(
@@ -1852,7 +1870,7 @@ public sealed class NbtIntArrayDeprecations : @Suppress("DEPRECATION") NbtListLi
         ReplaceWith("this.content.sum()"),
         DeprecationLevel.ERROR
     )
-    public fun sum() =
+    public fun sum(): Int =
         content.sum()
 
     @Deprecated(
@@ -1860,7 +1878,7 @@ public sealed class NbtIntArrayDeprecations : @Suppress("DEPRECATION") NbtListLi
         ReplaceWith("this.content.toIntArray()"),
         DeprecationLevel.ERROR
     )
-    public fun toIntArray() =
+    public fun toIntArray(): IntArray =
         content.toIntArray()
 }
 
@@ -1874,7 +1892,7 @@ public sealed class NbtLongArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.average()"),
         DeprecationLevel.ERROR
     )
-    public fun average() =
+    public fun average(): Double =
         content.average()
 
     @Deprecated(
@@ -1882,7 +1900,7 @@ public sealed class NbtLongArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.binarySearch(element, fromIndex, toIndex)"),
         DeprecationLevel.ERROR
     )
-    public fun binarySearch(element: Long?, fromIndex: Int = 0, toIndex: Int = content.size) =
+    public fun binarySearch(element: Long?, fromIndex: Int = 0, toIndex: Int = content.size): Int =
         content.binarySearch(element, fromIndex, toIndex)
 
     @Deprecated(
@@ -1890,7 +1908,7 @@ public sealed class NbtLongArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.max()"),
         DeprecationLevel.ERROR
     )
-    public fun max() =
+    public fun max(): Long =
         content.max()
 
     @Deprecated(
@@ -1898,7 +1916,7 @@ public sealed class NbtLongArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.maxOrNull()"),
         DeprecationLevel.ERROR
     )
-    public fun maxOrNull() =
+    public fun maxOrNull(): Long? =
         content.maxOrNull()
 
     @Deprecated(
@@ -1906,7 +1924,7 @@ public sealed class NbtLongArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.min()"),
         DeprecationLevel.ERROR
     )
-    public fun min() =
+    public fun min(): Long =
         content.min()
 
     @Deprecated(
@@ -1914,7 +1932,7 @@ public sealed class NbtLongArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.minOrNull()"),
         DeprecationLevel.ERROR
     )
-    public fun minOrNull() =
+    public fun minOrNull(): Long? =
         content.minOrNull()
 
     @Deprecated(
@@ -1922,7 +1940,7 @@ public sealed class NbtLongArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.sorted()"),
         DeprecationLevel.ERROR
     )
-    public fun sorted() =
+    public fun sorted(): List<Long> =
         content.sorted()
 
     @Deprecated(
@@ -1930,7 +1948,7 @@ public sealed class NbtLongArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.sortedDescending()"),
         DeprecationLevel.ERROR
     )
-    public fun sortedDescending() =
+    public fun sortedDescending(): List<Long> =
         content.sortedDescending()
 
     @Deprecated(
@@ -1938,7 +1956,7 @@ public sealed class NbtLongArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.sum()"),
         DeprecationLevel.ERROR
     )
-    public fun sum() =
+    public fun sum(): Long =
         content.sum()
 
     @Deprecated(
@@ -1946,6 +1964,6 @@ public sealed class NbtLongArrayDeprecations : @Suppress("DEPRECATION") NbtListL
         ReplaceWith("this.content.toLongArray()"),
         DeprecationLevel.ERROR
     )
-    public fun toLongArray() =
+    public fun toLongArray(): LongArray =
         content.toLongArray()
 }

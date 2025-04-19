@@ -4,13 +4,14 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.AbstractDecoder
-import kotlinx.serialization.encoding.AbstractEncoder
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
+import net.benwoodworth.knbt.NbtType.*
+import net.benwoodworth.knbt.internal.NbtException
 
 /**
- * Decoder used by [Nbt] during deserialization.
- * This interface can be used to inject desired behaviour into a serialization process of [Nbt].
+ * Decoder used by [BinaryNbtFormat] during deserialization.
+ * This interface can be used to inject desired behaviour into a serialization process of [BinaryNbtFormat].
  *
  * Typical example of the usage:
  * ```
@@ -84,6 +85,32 @@ public sealed interface NbtDecoder : Decoder, CompositeDecoder, NbtDecoderDeprec
      * ```
      */
     public fun decodeNbtTag(): NbtTag
+
+    /**
+     * Returns the type of the tag being decoded.
+     *
+     * When called within a [TAG_Compound] this is the type of the next element, or [TAG_End] if there is none.
+     *
+     * When called within a [TAG_List] this is the list's element type, even if there are no elements left to decode.
+     */
+    public fun decodeNbtType(): NbtType
+
+    // TODO Description
+    /**
+     * Returns the name of the current value.
+     *
+     * Must be called before decoding value
+     *
+     * requires [NbtName.Dynamic]
+     *
+     * @throws NbtException if the current value is unnamed, such as in a list/array or at the root of an unnamed NBT
+     * variant.
+     *
+     * @throws IllegalArgumentException if the serializer's [descriptor][KSerializer.descriptor] is not marked with
+     * [@NbtName.Dynamic][NbtName.Dynamic].
+     */
+    @ExperimentalNbtApi
+    public fun decodeNbtName(): String
 }
 
 @ExperimentalSerializationApi

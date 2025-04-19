@@ -1,304 +1,282 @@
 package net.benwoodworth.knbt.test.verify
 
 import net.benwoodworth.knbt.*
+import net.benwoodworth.knbt.internal.NbtCapabilities
 import net.benwoodworth.knbt.internal.NbtReader
+import net.benwoodworth.knbt.internal.NbtType
+import net.benwoodworth.knbt.internal.NbtType.TAG_End
+import net.benwoodworth.knbt.toNbtType
+import kotlin.contracts.contract
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class VerifyingNbtReader(
-    private val tag: NbtTag,
-    private val knownSizes: Boolean = true,
+    private val tag: NbtNamed<NbtTag>?,
+    private val capabilities: NbtCapabilities,
 ) : NbtReader {
     private val stateHistory = mutableListOf<State>(State.InRoot)
 
-    fun assertComplete() {
-        val state = stateHistory.last()
-        check(state is State.Complete) { "Expected reader calls to be complete, but is in state $state" }
+    fun assertComplete() = transitionState(::beginRootTag) {
+        assertStateIs<State.Complete>(state)
+
+        Unit to state
     }
 
-    override fun beginRootTag(): NbtReader.RootTagInfo {
-        val state = stateHistory.last()
-        check(state is State.InRoot)
+    override fun beginRootTag(): NbtReader.NamedTagInfo = transitionState(::beginRootTag) {
+        assertStateIs<State.InRoot>(state)
 
-        stateHistory += State.AwaitingValue(tag, State.Complete)
-        return NbtReader.RootTagInfo(tag.type)
+        if (tag == null) {
+            NbtReader.NamedTagInfo(TAG_End, "") to State.Complete
+        } else {
+            NbtReader.NamedTagInfo(tag.value.type, tag.name) to State.AwaitingValue(tag.value, State.Complete)
+        }
     }
 
-    override fun beginCompound() {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtCompound)
+    override fun beginCompound(): Unit = transitionState(::beginCompound) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtCompound::class)
 
-        stateHistory += State.InCompound(state.tag, state.tag.content.entries.toList(), 0, false, state.nextState)
+        Unit to State.InCompound(state.tag, state.tag.content.entries.toList(), 0, false, state.nextState)
     }
 
-    override fun beginCompoundEntry(): NbtReader.CompoundEntryInfo {
-        val state = stateHistory.last()
-        check(state is State.InCompound)
-        check(!state.ended)
+    override fun beginCompoundEntry(): NbtReader.NamedTagInfo = transitionState(::beginCompoundEntry) {
+        assertStateIs<State.InCompound>(state)
+        assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.entries.getOrNull(state.index)
-        return if (entry != null) {
-            stateHistory += State.AwaitingValue(entry.value, state.copy(index = state.index + 1))
-            NbtReader.CompoundEntryInfo(entry.value.type, entry.key)
+        if (entry != null) {
+            val awaitEntryState = State.AwaitingValue(entry.value, state.copy(index = state.index + 1))
+
+            NbtReader.NamedTagInfo(entry.value.type, entry.key) to awaitEntryState
         } else {
-            stateHistory += state.copy(ended = true)
-            return NbtReader.CompoundEntryInfo.End
+            NbtReader.NamedTagInfo.End to state.copy(ended = true)
         }
     }
 
-    override fun endCompound() {
-        val state = stateHistory.last()
-        check(state is State.InCompound)
-        check(state.ended)
+    override fun endCompound(): Unit = transitionState(::endCompound) {
+        assertStateIs<State.InCompound>(state)
+        assertEndingWithNoMoreEntries(state.ended)
 
-        stateHistory += state.nextState
+        Unit to state.nextState
     }
 
-    override fun beginList(): NbtReader.ListInfo {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtList<*>)
+    override fun beginList(): NbtReader.ListInfo = transitionState(::beginList) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtList::class)
 
-        return if (knownSizes) {
+        if (capabilities.definiteLengthEncoding) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
             val consecutiveAwaitValueStates = state.tag.content.foldRight(endState, State::AwaitingValue)
-            stateHistory += consecutiveAwaitValueStates
-            NbtReader.ListInfo(state.tag.elementType, state.tag.size)
+
+            NbtReader.ListInfo(state.tag.elementType, state.tag.size) to consecutiveAwaitValueStates
         } else {
-            stateHistory += State.InListOrArray(state.tag, 0, false, state.nextState)
-            NbtReader.ListInfo(state.tag.elementType, NbtReader.UNKNOWN_SIZE)
+            val inListState = State.InListOrArray(state.tag, 0, false, state.nextState)
+
+            NbtReader.ListInfo(state.tag.elementType, NbtReader.UNKNOWN_SIZE) to inListState
         }
     }
 
-    override fun beginListEntry(): Boolean {
-        val state = stateHistory.last()
-        check(state is State.InListOrArray)
-        check(state.tag is NbtList<*>)
-        check(!state.ended)
-        check(!knownSizes)
+    override fun beginListEntry(): Boolean = transitionState(::beginListEntry) {
+        assertStateIs<State.InListOrArray>(state)
+        assertReadTagTypeEquals(state.tag, NbtList::class)
+        assertBeginningEntryWithUnknownSizes(capabilities.definiteLengthEncoding)
+        assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)
-        return if (entry != null) {
-            stateHistory += State.AwaitingValue(entry, state.copy(index = state.index + 1))
-            true
+        if (entry != null) {
+            val awaitEntryState = State.AwaitingValue(entry, state.copy(index = state.index + 1))
+
+            true to awaitEntryState
         } else {
-            stateHistory += state.copy(ended = true)
-            false
+            false to state.copy(ended = true)
         }
     }
 
-    override fun endList() {
-        val state = stateHistory.last()
-        check(state is State.InListOrArray)
-        check(state.tag is NbtList<*>)
-        check(state.ended)
+    override fun endList(): Unit = transitionState(::endList) {
+        assertStateIs<State.InListOrArray>(state)
+        assertReadTagTypeEquals(state.tag, NbtList::class)
+        assertEndingWithNoMoreEntries(state.ended)
 
-        stateHistory += state.nextState
+        Unit to state.nextState
     }
 
-    override fun beginByteArray(): NbtReader.ArrayInfo {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtByteArray)
+    override fun beginByteArray(): NbtReader.ArrayInfo = transitionState(::beginByteArray) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtByteArray::class)
 
-        return if (knownSizes) {
+        if (capabilities.definiteLengthEncoding) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
             val consecutiveAwaitValueStates = state.tag.content.map(::NbtByte).foldRight(endState, State::AwaitingValue)
-            stateHistory += consecutiveAwaitValueStates
-            NbtReader.ArrayInfo(state.tag.size)
+
+            NbtReader.ArrayInfo(state.tag.size) to consecutiveAwaitValueStates
         } else {
-            stateHistory += State.InListOrArray(state.tag, 0, false, state.nextState)
-            NbtReader.ArrayInfo(NbtReader.UNKNOWN_SIZE)
+            val inByteArrayState = State.InListOrArray(state.tag, 0, false, state.nextState)
+
+            NbtReader.ArrayInfo(NbtReader.UNKNOWN_SIZE) to inByteArrayState
         }
     }
 
-    override fun beginByteArrayEntry(): Boolean {
-        val state = stateHistory.last()
-        check(state is State.InListOrArray)
-        check(state.tag is NbtByteArray)
-        check(!state.ended)
-        check(!knownSizes)
+    override fun beginByteArrayEntry(): Boolean = transitionState(::beginByteArrayEntry) {
+        assertStateIs<State.InListOrArray>(state)
+        assertReadTagTypeEquals(state.tag, NbtByteArray::class)
+        assertBeginningEntryWithUnknownSizes(capabilities.definiteLengthEncoding)
+        assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)
-        return if (entry != null) {
-            stateHistory += State.AwaitingValue(NbtByte(entry), state.copy(index = state.index + 1))
-            true
+        if (entry != null) {
+            val awaitEntryState = State.AwaitingValue(NbtByte(entry), state.copy(index = state.index + 1))
+
+            true to awaitEntryState
         } else {
-            stateHistory += state.copy(ended = true)
-            false
+            false to state.copy(ended = true)
         }
     }
 
-    override fun endByteArray() {
-        val state = stateHistory.last()
-        check(state is State.InListOrArray)
-        check(state.tag is NbtByteArray)
-        check(state.ended)
+    override fun endByteArray(): Unit = transitionState(::endByteArray) {
+        assertStateIs<State.InListOrArray>(state)
+        assertReadTagTypeEquals(state.tag, NbtByteArray::class)
+        assertEndingWithNoMoreEntries(state.ended)
 
-        stateHistory += state.nextState
+        Unit to state.nextState
     }
 
-    override fun beginIntArray(): NbtReader.ArrayInfo {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtIntArray)
+    override fun beginIntArray(): NbtReader.ArrayInfo = transitionState(::beginIntArray) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtIntArray::class)
 
-        return if (knownSizes) {
+        if (capabilities.definiteLengthEncoding) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
             val consecutiveAwaitValueStates = state.tag.content.map(::NbtInt).foldRight(endState, State::AwaitingValue)
-            stateHistory += consecutiveAwaitValueStates
-            NbtReader.ArrayInfo(state.tag.size)
+
+            NbtReader.ArrayInfo(state.tag.size) to consecutiveAwaitValueStates
         } else {
-            stateHistory += State.InListOrArray(state.tag, 0, false, state.nextState)
-            NbtReader.ArrayInfo(NbtReader.UNKNOWN_SIZE)
+            val inIntArrayState = State.InListOrArray(state.tag, 0, false, state.nextState)
+
+            NbtReader.ArrayInfo(NbtReader.UNKNOWN_SIZE) to inIntArrayState
         }
     }
 
-    override fun beginIntArrayEntry(): Boolean {
-        val state = stateHistory.last()
-        check(state is State.InListOrArray)
-        check(state.tag is NbtIntArray)
-        check(!state.ended)
-        check(!knownSizes)
+    override fun beginIntArrayEntry(): Boolean = transitionState(::beginIntArrayEntry) {
+        assertStateIs<State.InListOrArray>(state)
+        assertReadTagTypeEquals(state.tag, NbtIntArray::class)
+        assertBeginningEntryWithUnknownSizes(capabilities.definiteLengthEncoding)
+        assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)
-        return if (entry != null) {
-            stateHistory += State.AwaitingValue(NbtInt(entry), state.copy(index = state.index + 1))
-            true
+        if (entry != null) {
+            true to State.AwaitingValue(NbtInt(entry), state.copy(index = state.index + 1))
         } else {
-            stateHistory += state.copy(ended = true)
-            false
+            false to state.copy(ended = true)
         }
     }
 
-    override fun endIntArray() {
-        val state = stateHistory.last()
-        check(state is State.InListOrArray)
-        check(state.tag is NbtIntArray)
-        check(state.ended)
+    override fun endIntArray(): Unit = transitionState(::endIntArray) {
+        assertStateIs<State.InListOrArray>(state)
+        assertReadTagTypeEquals(state.tag, NbtIntArray::class)
+        assertEndingWithNoMoreEntries(state.ended)
 
-        stateHistory += state.nextState
+        Unit to state.nextState
     }
 
-    override fun beginLongArray(): NbtReader.ArrayInfo {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtLongArray)
+    override fun beginLongArray(): NbtReader.ArrayInfo = transitionState(::beginLongArray) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtLongArray::class)
 
-        return if (knownSizes) {
+        if (capabilities.definiteLengthEncoding) {
             val endState = State.InListOrArray(state.tag, state.tag.content.lastIndex + 1, true, state.nextState)
             val consecutiveAwaitValueStates = state.tag.content.map(::NbtLong).foldRight(endState, State::AwaitingValue)
-            stateHistory += consecutiveAwaitValueStates
-            NbtReader.ArrayInfo(state.tag.size)
+
+            NbtReader.ArrayInfo(state.tag.size) to consecutiveAwaitValueStates
         } else {
-            stateHistory += State.InListOrArray(state.tag, 0, false, state.nextState)
-            NbtReader.ArrayInfo(NbtReader.UNKNOWN_SIZE)
+            val inLongArrayState = State.InListOrArray(state.tag, 0, false, state.nextState)
+
+            NbtReader.ArrayInfo(NbtReader.UNKNOWN_SIZE) to inLongArrayState
         }
     }
 
-    override fun beginLongArrayEntry(): Boolean {
-        val state = stateHistory.last()
-        check(state is State.InListOrArray)
-        check(state.tag is NbtLongArray)
-        check(!state.ended)
-        check(!knownSizes)
+    override fun beginLongArrayEntry(): Boolean = transitionState(::beginLongArrayEntry) {
+        assertStateIs<State.InListOrArray>(state)
+        assertReadTagTypeEquals(state.tag, NbtLongArray::class)
+        assertBeginningEntryWithUnknownSizes(capabilities.definiteLengthEncoding)
+        assertBeginningEntryWithAnotherEntryToRead(state.ended)
 
         val entry = state.tag.getOrNull(state.index)
-        return if (entry != null) {
-            stateHistory += State.AwaitingValue(NbtLong(entry), state.copy(index = state.index + 1))
-            true
+        if (entry != null) {
+            true to State.AwaitingValue(NbtLong(entry), state.copy(index = state.index + 1))
         } else {
-            stateHistory += state.copy(ended = true)
-            false
+            false to state.copy(ended = true)
         }
     }
 
-    override fun endLongArray() {
-        val state = stateHistory.last()
-        check(state is State.InListOrArray)
-        check(state.tag is NbtLongArray)
-        check(state.ended)
+    override fun endLongArray(): Unit = transitionState(::endLongArray) {
+        assertStateIs<State.InListOrArray>(state)
+        assertReadTagTypeEquals(state.tag, NbtLongArray::class)
+        assertEndingWithNoMoreEntries(state.ended)
 
-        stateHistory += state.nextState
+        Unit to state.nextState
     }
 
-    override fun readByte(): Byte {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtByte)
+    override fun readByte(): Byte = transitionState(::readByte) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtByte::class)
 
-        stateHistory += state.nextState
-        return state.tag.value
+        state.tag.value to state.nextState
     }
 
-    override fun readShort(): Short {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtShort)
+    override fun readShort(): Short = transitionState(::readShort) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtShort::class)
 
-        stateHistory += state.nextState
-        return state.tag.value
+        state.tag.value to state.nextState
     }
 
-    override fun readInt(): Int {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtInt)
+    override fun readInt(): Int = transitionState(::readInt) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtInt::class)
 
-        stateHistory += state.nextState
-        return state.tag.value
+        state.tag.value to state.nextState
     }
 
-    override fun readLong(): Long {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtLong)
+    override fun readLong(): Long = transitionState(::readLong) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtLong::class)
 
-        stateHistory += state.nextState
-        return state.tag.value
+        state.tag.value to state.nextState
     }
 
-    override fun readFloat(): Float {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtFloat)
+    override fun readFloat(): Float = transitionState(::readFloat) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtFloat::class)
 
-        stateHistory += state.nextState
-        return state.tag.value
+        state.tag.value to state.nextState
     }
 
-    override fun readDouble(): Double {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtDouble)
+    override fun readDouble(): Double = transitionState(::readDouble) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtDouble::class)
 
-        stateHistory += state.nextState
-        return state.tag.value
+        state.tag.value to state.nextState
     }
 
-    override fun readString(): String {
-        val state = stateHistory.last()
-        check(state is State.AwaitingValue)
-        check(state.tag is NbtString)
+    override fun readString(): String = transitionState(::readString) {
+        assertStateIs<State.AwaitingValue>(state)
+        assertReadTagTypeEquals(state.tag, NbtString::class)
 
-        stateHistory += state.nextState
-        return state.tag.value
+        state.tag.value to state.nextState
     }
 
     private sealed interface State {
-        object Complete : State {
-            override fun toString(): String =
-                this::class.simpleName!!
-        }
+        data object Complete : State
 
         data class AwaitingValue(
             val tag: NbtTag,
             val nextState: State,
         ) : State
 
-        object InRoot : State {
-            override fun toString(): String =
-                this::class.simpleName!!
-        }
+        data object InRoot : State
 
         data class InCompound(
             val tag: NbtCompound,
@@ -322,5 +300,56 @@ internal class VerifyingNbtReader(
         State.InRoot -> "$"
         is State.InCompound -> "${nextState.getPath()}.${entries[index].key}"
         is State.InListOrArray -> "${nextState.getPath()}.[$index]}"
+    }
+
+
+    // KT-49904: May be possible to simplify in the future with decorators
+    private fun <R> transitionState(
+        function: KFunction<R>,
+        transition: VerifyScope.() -> Pair<R, State>
+    ): R {
+        val currentState = stateHistory.last()
+        val (returnValue, nextState) = VerifyScope(function, currentState).transition()
+
+        if (nextState != currentState) {
+            stateHistory += nextState
+        }
+
+        return returnValue
+    }
+
+    private class VerifyScope(
+        function: KFunction<*>,
+        val state: State
+    ) {
+        private val messagePrefix = "${function.name}(): "
+
+        inline fun <reified TExpected : State> assertStateIs(state: State) {
+            contract { returns() implies (state is TExpected) }
+
+            val message = messagePrefix +
+                    "Should only be called in state ${TExpected::class.simpleName}, " +
+                    "but current state is ${state::class.simpleName}."
+
+            assertTrue(TExpected::class == state::class, message)
+        }
+
+        fun assertBeginningEntryWithUnknownSizes(knownSizes: Boolean) {
+            assertFalse(knownSizes, messagePrefix + "Should not explicitly begin entries unless the size is unknown.")
+        }
+
+        fun assertBeginningEntryWithAnotherEntryToRead(ended: Boolean) {
+            assertFalse(ended, messagePrefix + "Should not begin entry when there are no more to read.")
+        }
+
+        fun assertEndingWithNoMoreEntries(ended: Boolean) {
+            assertTrue(ended, messagePrefix + "Should not be ended when there are more entries to read.")
+        }
+
+        inline fun <reified T : NbtTag> assertReadTagTypeEquals(expected: NbtTag, actual: KClass<T>) {
+            contract { returns() implies (expected is T) }
+
+            assertEquals(expected.type, actual.toNbtType(), messagePrefix + "Incorrect type was read")
+        }
     }
 }

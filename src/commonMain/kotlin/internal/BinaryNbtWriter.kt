@@ -1,34 +1,32 @@
 package net.benwoodworth.knbt.internal
 
-import net.benwoodworth.knbt.internal.NbtTagType.TAG_Compound
-import net.benwoodworth.knbt.internal.NbtTagType.TAG_End
+import net.benwoodworth.knbt.NbtType
+import net.benwoodworth.knbt.NbtType.TAG_End
 import okio.BufferedSink
-import okio.Closeable
 
-internal abstract class BinaryNbtWriter : NbtWriter, Closeable {
+internal abstract class BinaryNbtWriter : NbtWriter {
+    protected abstract val context: NbtContext
     protected abstract val sink: BufferedSink
 
-    override fun close(): Unit = sink.close()
-
-    protected fun BufferedSink.writeNbtTagType(value: NbtTagType) {
+    protected fun BufferedSink.writeNbtType(value: NbtType) {
         writeByte(value.id.toInt())
     }
 
-    abstract override fun beginRootTag(type: NbtTagType)
+    abstract override fun beginRootTag(type: NbtType, name: String)
 
     override fun beginCompound(): Unit = Unit
 
-    override fun beginCompoundEntry(type: NbtTagType, name: String) {
-        sink.writeNbtTagType(type)
+    override fun beginCompoundEntry(type: NbtType, name: String) {
+        sink.writeNbtType(type)
         sink.writeNbtString(name)
     }
 
     override fun endCompound() {
-        sink.writeNbtTagType(TAG_End)
+        sink.writeNbtType(TAG_End)
     }
 
-    override fun beginList(type: NbtTagType, size: Int) {
-        sink.writeNbtTagType(type)
+    override fun beginList(type: NbtType, size: Int) {
+        sink.writeNbtType(type)
         sink.writeNbtInt(size)
     }
 
@@ -97,38 +95,14 @@ internal abstract class BinaryNbtWriter : NbtWriter, Closeable {
 }
 
 internal abstract class NamedBinaryNbtWriter : BinaryNbtWriter() {
-    private var compoundNesting = 0
-    private var wroteRootEntry = false
-
-    override fun beginRootTag(type: NbtTagType) {
-        if (type != TAG_Compound) throw NbtEncodingException("The binary NBT format only supports $TAG_Compound with one entry")
-    }
-
-    final override fun beginCompound() {
-        super.beginCompound()
-        compoundNesting++
-    }
-
-    final override fun beginCompoundEntry(type: NbtTagType, name: String) {
-        if (compoundNesting == 1) {
-            if (wroteRootEntry) throw NbtEncodingException("The binary NBT format only supports $TAG_Compound with one entry")
-            wroteRootEntry = true
-        }
-
-        super.beginCompoundEntry(type, name)
-    }
-
-    final override fun endCompound() {
-        if (compoundNesting == 1 && !wroteRootEntry) throw NbtEncodingException("The binary NBT format only supports $TAG_Compound with one entry")
-
-        compoundNesting--
-        if (compoundNesting > 0) {
-            sink.writeNbtTagType(TAG_End)
-        }
+    override fun beginRootTag(type: NbtType, name: String) {
+        sink.writeNbtType(type)
+        sink.writeNbtString(name)
     }
 }
 
 internal class JavaNbtWriter(
+    override val context: NbtContext,
     override val sink: BufferedSink
 ) : NamedBinaryNbtWriter() {
     override fun BufferedSink.writeNbtShort(value: Short): BufferedSink =
@@ -148,7 +122,7 @@ internal class JavaNbtWriter(
 
     override fun BufferedSink.writeNbtString(value: String): BufferedSink = apply {
         val bytes = value.encodeToByteArray()
-        if (bytes.size > UShort.MAX_VALUE.toInt()) throw NbtEncodingException("String too long to encode")
+        if (bytes.size > UShort.MAX_VALUE.toInt()) throw NbtEncodingException(context, "String too long to encode")
         writeShort(bytes.size).write(bytes)
     }
 }
@@ -171,29 +145,32 @@ internal abstract class JavaNetworkNbtWriter : BinaryNbtWriter() {
 
     override fun BufferedSink.writeNbtString(value: String): BufferedSink = apply {
         val bytes = value.encodeToByteArray()
-        if (bytes.size > UShort.MAX_VALUE.toInt()) throw NbtEncodingException("String too long to encode")
+        if (bytes.size > UShort.MAX_VALUE.toInt()) throw NbtEncodingException(context, "String too long to encode")
         writeShort(bytes.size).write(bytes)
     }
 
     class EmptyNamedRoot(
+        override val context: NbtContext,
         override val sink: BufferedSink
     ) : JavaNetworkNbtWriter() {
-        override fun beginRootTag(type: NbtTagType) {
-            sink.writeNbtTagType(type)
+        override fun beginRootTag(type: NbtType, name: String) {
+            sink.writeNbtType(type)
             sink.writeNbtString("")
         }
     }
 
     class UnnamedRoot(
+        override val context: NbtContext,
         override val sink: BufferedSink
     ) : JavaNetworkNbtWriter() {
-        override fun beginRootTag(type: NbtTagType) {
-            sink.writeNbtTagType(type)
+        override fun beginRootTag(type: NbtType, name: String) {
+            sink.writeNbtType(type)
         }
     }
 }
 
 internal class BedrockNbtWriter(
+    override val context: NbtContext,
     override val sink: BufferedSink
 ) : NamedBinaryNbtWriter() {
     override fun BufferedSink.writeNbtShort(value: Short): BufferedSink =
@@ -213,13 +190,14 @@ internal class BedrockNbtWriter(
 
     override fun BufferedSink.writeNbtString(value: String): BufferedSink = apply {
         val bytes = value.encodeToByteArray()
-        if (bytes.size > UShort.MAX_VALUE.toInt()) throw NbtEncodingException("String too long to encode")
+        if (bytes.size > UShort.MAX_VALUE.toInt()) throw NbtEncodingException(context, "String too long to encode")
         writeShortLe(bytes.size)
         write(bytes)
     }
 }
 
 internal class BedrockNetworkNbtWriter(
+    override val context: NbtContext,
     override val sink: BufferedSink
 ) : NamedBinaryNbtWriter() {
     override fun BufferedSink.writeNbtShort(value: Short): BufferedSink =

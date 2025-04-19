@@ -6,13 +6,8 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 
-
 @DslMarker
 internal annotation class NbtDslMarker
-
-@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS)
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
-internal annotation class InternalNbtApi
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 internal annotation class UnsafeNbtApi
@@ -47,7 +42,7 @@ public annotation class OkioApi
 @OptIn(ExperimentalSerializationApi::class)
 public annotation class NbtArray
 
-/**
+/** TODO Change: root, implicitly empty string, decoder checks
  * Instructs the NBT serializer to serialize a [NbtCompound] or [NbtList] as a named tag. (A tag nested in a
  * single-element compound)
  *
@@ -56,7 +51,7 @@ public annotation class NbtArray
  * Example:
  * ```
  * @Serializable
- * @NbtNamed("name")
+ * @NbtName("name")
  * class MyClass(
  *     val entry1: String,
  *     entry2: Int
@@ -76,4 +71,18 @@ public annotation class NbtArray
 @SerialInfo
 @Target(AnnotationTarget.CLASS)
 @OptIn(ExperimentalSerializationApi::class)
-public annotation class NbtNamed(val name: String)
+public annotation class NbtName(val name: String) {
+    /** TODO Revise?
+     * Instructs the NBT serializer to disable the root name check for a type, allowing its [NbtName] to be dynamically
+     * serialized with [NbtEncoder.encodeNbtName] and [NbtDecoder.decodeNbtName].
+     *
+     * If the serializer does not encode a dynamic name, then its type's [NbtName] will be encoded by default.
+     *
+     * ***Experimental:*** Dynamic name serialization in a custom serializer is experimental, and its API or behavior
+     * may be subject to change in a future release.
+     */
+    @SerialInfo
+    @Target(AnnotationTarget.CLASS)
+    @ExperimentalNbtApi
+    public annotation class Dynamic
+}

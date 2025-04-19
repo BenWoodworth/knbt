@@ -7,10 +7,16 @@
 package net.benwoodworth.knbt
 
 import kotlinx.serialization.*
-import kotlinx.serialization.descriptors.*
-import kotlinx.serialization.encoding.*
-import kotlinx.serialization.modules.*
-import kotlin.reflect.*
+import kotlinx.serialization.descriptors.PolymorphicKind
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.SerializersModuleBuilder
+import kotlinx.serialization.modules.polymorphic
+import net.benwoodworth.knbt.internal.nbtName
+import kotlin.reflect.KClass
 
 /**
  * Base class for custom serializers that allows selecting polymorphic serializer
@@ -92,8 +98,10 @@ public abstract class NbtContentPolymorphicSerializer<T : Any>(private val baseC
         val input = decoder.asNbtDecoder()
         val tree = input.decodeNbtTag()
 
+        val nbt = Nbt(input.nbt)
         val actualSerializer = selectDeserializer(tree) as KSerializer<T>
-        return input.nbt.decodeFromNbtTag(actualSerializer, tree)
+        val tagName = actualSerializer.descriptor.nbtName
+        return nbt.decodeFromNbtTag(actualSerializer, NbtNamed(tagName, tree))
     }
 
     /**
@@ -106,7 +114,8 @@ public abstract class NbtContentPolymorphicSerializer<T : Any>(private val baseC
         val scope = "in the scope of '${baseClass.simpleName}'"
         throw SerializationException(
             "Class '${subClassName}' is not registered for polymorphic serialization $scope.\n" +
-                    "Mark the base class as 'sealed' or register the serializer explicitly.")
+                    "Mark the base class as 'sealed' or register the serializer explicitly."
+        )
     }
 
 }

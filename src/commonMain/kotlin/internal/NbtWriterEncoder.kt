@@ -3,21 +3,23 @@ package net.benwoodworth.knbt.internal
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.builtins.ByteArraySerializer
-import kotlinx.serialization.builtins.IntArraySerializer
-import kotlinx.serialization.builtins.LongArraySerializer
 import kotlinx.serialization.descriptors.PolymorphicKind
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.internal.AbstractPolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
-import net.benwoodworth.knbt.*
-import net.benwoodworth.knbt.internal.NbtTagType.*
+import net.benwoodworth.knbt.AbstractNbtEncoder
+import net.benwoodworth.knbt.ExperimentalNbtApi
+import net.benwoodworth.knbt.NbtFormat
+import net.benwoodworth.knbt.NbtTag
+import net.benwoodworth.knbt.NbtType
+import net.benwoodworth.knbt.NbtType.*
 
 @OptIn(ExperimentalSerializationApi::class)
 internal class NbtWriterEncoder(
     override val nbt: NbtFormat,
+    private val context: SerializationNbtContext,
     private val writer: NbtWriter,
 ) : AbstractNbtEncoder() {
     override val serializersModule: SerializersModule
@@ -26,11 +28,14 @@ internal class NbtWriterEncoder(
     private lateinit var elementName: String
     private var encodingMapKey: Boolean = false
 
-    private val structureTypeStack = ArrayDeque<NbtTagType>()
+    private val structureTypeStack = ArrayDeque<NbtType>()
 
-    private var elementListKind: NbtListKind? = null
-    private val listTypeStack = ArrayDeque<NbtTagType>() // TAG_End when uninitialized
+    private var serializerListKind: NbtListKind? = null
+    private val listTypeStack = ArrayDeque<NbtType>() // TAG_End when uninitialized
     private var listSize: Int = 0
+
+    private var nbtNameToWrite: String? = null
+    private var nbtNameToWriteWasDynamicallyEncoded = false
 
     override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
         when (descriptor.kind as StructureKind) {
@@ -48,63 +53,66 @@ internal class NbtWriterEncoder(
         }
 
         if (descriptor.getElementDescriptor(index).kind == StructureKind.LIST) {
-            elementListKind = descriptor.getElementNbtListKind(index)
+            serializerListKind = descriptor.getElementNbtListKind(context, index)
         }
 
         return true
     }
 
-    private fun beginEncodingValue(type: NbtTagType) {
+    private fun beginEncodingValue(type: NbtType) {
+        context.beginSerializingValue(type)
+
         when (val structureType = structureTypeStack.lastOrNull()) {
             null -> {
-                writer.beginRootTag(type)
+                val name = checkNotNull(nbtNameToWrite) { "${::nbtNameToWrite.name} was not set" }
+                writer.beginRootTag(type, name)
             }
+
             TAG_Compound -> {
-                if (encodingMapKey) throw NbtEncodingException("Only String tag names are supported")
+                if (encodingMapKey) throw NbtEncodingException(context, "Only String tag names are supported")
                 writer.beginCompoundEntry(type, elementName)
             }
+
             TAG_List -> when (val listType = listTypeStack.last()) {
                 TAG_End -> {
                     listTypeStack[listTypeStack.lastIndex] = type
                     writer.beginList(type, listSize)
                     writer.beginListEntry()
                 }
+
                 type -> {
                     writer.beginListEntry()
                 }
-                else -> throw NbtEncodingException("Cannot encode $type within a $TAG_List of $listType")
+
+                else -> throw NbtEncodingException(context, "Cannot encode $type within a $TAG_List of $listType")
             }
+
             TAG_Byte_Array -> {
-                if (type != TAG_Byte) throw NbtEncodingException("Cannot encode $type within a $TAG_Byte_Array")
+                if (type != TAG_Byte) {
+                    throw NbtEncodingException(context, "Cannot encode $type within a $TAG_Byte_Array")
+                }
                 writer.beginByteArrayEntry()
             }
+
             TAG_Int_Array -> {
-                if (type != TAG_Int) throw NbtEncodingException("Cannot encode $type within a $TAG_Int_Array")
+                if (type != TAG_Int) {
+                    throw NbtEncodingException(context, "Cannot encode $type within a $TAG_Int_Array")
+                }
                 writer.beginIntArrayEntry()
             }
+
             TAG_Long_Array -> {
-                if (type != TAG_Long) throw NbtEncodingException("Cannot encode $type within a $TAG_Long_Array")
+                if (type != TAG_Long) {
+                    throw NbtEncodingException(context, "Cannot encode $type within a $TAG_Long_Array")
+                }
                 writer.beginLongArrayEntry()
             }
+
             else -> error("Unhandled structure type: $structureType")
         }
     }
 
-    private fun beginNamedTagIfNamed(descriptor: SerialDescriptor) {
-        val name = descriptor.nbtNamed ?: return
-
-        beginEncodingValue(TAG_Compound)
-        writer.beginCompound()
-
-        structureTypeStack += TAG_Compound
-        elementName = name
-    }
-
-    private fun endNamedTagIfNamed(descriptor: SerialDescriptor) {
-        if (descriptor.nbtNamed == null) return
-
-        structureTypeStack.removeLast()
-        writer.endCompound()
+    private fun endEncodingValue() {
     }
 
     override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder =
@@ -114,12 +122,12 @@ internal class NbtWriterEncoder(
                         "beginning structures with polymorphic serial kinds is not supported."
             )
 
-            else -> beginCompound(descriptor)
+            else -> beginCompound()
         }
 
     override fun beginCollection(descriptor: SerialDescriptor, collectionSize: Int): CompositeEncoder =
         if (descriptor.kind == StructureKind.LIST) {
-            when (elementListKind ?: descriptor.nbtListKind) {
+            when (serializerListKind ?: descriptor.getNbtListKind(context)) {
                 NbtListKind.List -> beginList(collectionSize)
                 NbtListKind.ByteArray -> beginByteArray(collectionSize)
                 NbtListKind.IntArray -> beginIntArray(collectionSize)
@@ -129,96 +137,136 @@ internal class NbtWriterEncoder(
             beginStructure(descriptor)
         }
 
-    private fun beginCompound(descriptor: SerialDescriptor): CompositeEncoder {
-        beginNamedTagIfNamed(descriptor)
+    override fun endStructure(descriptor: SerialDescriptor): Unit =
+        when (val structureType = structureTypeStack.removeLast()) {
+            TAG_Compound -> endCompound()
+            TAG_List -> endList()
+            TAG_Byte_Array -> endByteArray()
+            TAG_Int_Array -> endIntArray()
+            TAG_Long_Array -> endLongArray()
+            else -> error("Unhandled structure type: $structureType")
+        }
+
+    private fun beginCompound(): CompositeEncoder {
         beginEncodingValue(TAG_Compound)
+        context.onBeginStructure()
         writer.beginCompound()
         structureTypeStack += TAG_Compound
         return this
     }
 
+    private fun endCompound() {
+        writer.endCompound()
+        context.onEndStructure()
+        endEncodingValue()
+    }
+
     private fun beginList(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_List)
+        context.onBeginStructure()
         structureTypeStack += TAG_List
         listTypeStack += TAG_End // writer.beginList(TYPE, size) is postponed until the first element is encoded, or the list is ended
         listSize = size
         return this
     }
 
+    private fun endList() {
+        if (listTypeStack.removeLast() == TAG_End) writer.beginList(TAG_End, listSize)
+        writer.endList()
+        context.onEndStructure()
+        endEncodingValue()
+    }
+
     private fun beginByteArray(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_Byte_Array)
+        context.onBeginStructure()
         writer.beginByteArray(size)
         structureTypeStack += TAG_Byte_Array
         return this
     }
 
+    private fun endByteArray() {
+        writer.endByteArray()
+        context.onEndStructure()
+        endEncodingValue()
+    }
+
     private fun beginIntArray(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_Int_Array)
+        context.onBeginStructure()
         writer.beginIntArray(size)
         structureTypeStack += TAG_Int_Array
         return this
     }
 
+    private fun endIntArray() {
+        writer.endIntArray()
+        context.onEndStructure()
+        endEncodingValue()
+    }
+
     private fun beginLongArray(size: Int): CompositeEncoder {
         beginEncodingValue(TAG_Long_Array)
+        context.onBeginStructure()
         writer.beginLongArray(size)
         structureTypeStack += TAG_Long_Array
         return this
     }
 
-    override fun endStructure(descriptor: SerialDescriptor) {
-        when (val structureType = structureTypeStack.removeLast()) {
-            TAG_Compound -> {
-                writer.endCompound()
-                endNamedTagIfNamed(descriptor)
-            }
-            TAG_List -> {
-                if (listTypeStack.removeLast() == TAG_End) writer.beginList(TAG_End, listSize)
-                writer.endList()
-            }
-            TAG_Byte_Array -> writer.endByteArray()
-            TAG_Int_Array -> writer.endIntArray()
-            TAG_Long_Array -> writer.endLongArray()
-            else -> error("Unhandled structure type: $structureType")
-        }
+    private fun endLongArray() {
+        writer.endLongArray()
+        context.onEndStructure()
+        endEncodingValue()
     }
 
     override fun shouldEncodeElementDefault(descriptor: SerialDescriptor, index: Int): Boolean =
         nbt.configuration.encodeDefaults
 
+    override fun encodeNull() {
+        beginEncodingValue(TAG_End)
+        endEncodingValue()
+    }
+
     override fun encodeByte(value: Byte) {
         beginEncodingValue(TAG_Byte)
         writer.writeByte(value)
+        endEncodingValue()
     }
 
     override fun encodeBoolean(value: Boolean) {
         beginEncodingValue(TAG_Byte)
         writer.writeByte(if (value) 1 else 0)
+        endEncodingValue()
     }
 
     override fun encodeShort(value: Short) {
         beginEncodingValue(TAG_Short)
         writer.writeShort(value)
+        endEncodingValue()
     }
 
     override fun encodeInt(value: Int) {
         beginEncodingValue(TAG_Int)
         writer.writeInt(value)
+        endEncodingValue()
     }
 
     override fun encodeLong(value: Long) {
         beginEncodingValue(TAG_Long)
         writer.writeLong(value)
+        endEncodingValue()
     }
 
     override fun encodeFloat(value: Float) {
         beginEncodingValue(TAG_Float)
         writer.writeFloat(value)
+        endEncodingValue()
     }
 
     override fun encodeDouble(value: Double) {
         beginEncodingValue(TAG_Double)
         writer.writeDouble(value)
+        endEncodingValue()
     }
 
     override fun encodeString(value: String) {
@@ -228,106 +276,46 @@ internal class NbtWriterEncoder(
         } else {
             beginEncodingValue(TAG_String)
             writer.writeString(value)
+            endEncodingValue()
         }
     }
 
     override fun encodeChar(value: Char): Unit =
         encodeString(value.toString())
 
-    private fun encodeByteArray(value: ByteArray) {
-        beginEncodingValue(TAG_Byte_Array)
-        writer.writeByteArray(value)
-    }
+    @ExperimentalNbtApi
+    override fun encodeNbtName(name: String) {
+        context.checkDynamicallySerializingNbtName()
 
-    private fun encodeIntArray(value: IntArray) {
-        beginEncodingValue(TAG_Int_Array)
-        writer.writeIntArray(value)
-    }
-
-    private fun encodeLongArray(value: LongArray) {
-        beginEncodingValue(TAG_Long_Array)
-        writer.writeLongArray(value)
+        if (!nbtNameToWriteWasDynamicallyEncoded) {
+            nbtNameToWrite = name
+            nbtNameToWriteWasDynamicallyEncoded = true
+        }
     }
 
     override fun encodeNbtTag(tag: NbtTag) {
-        fun writeTag(value: NbtTag): Unit = when (value.type) {
-            TAG_End -> error("Unexpected $TAG_End")
-            TAG_Byte -> writer.writeByte((value as NbtByte).value)
-            TAG_Double -> writer.writeDouble((value as NbtDouble).value)
-            TAG_Float -> writer.writeFloat((value as NbtFloat).value)
-            TAG_Int -> writer.writeInt((value as NbtInt).value)
-            TAG_Long -> writer.writeLong((value as NbtLong).value)
-            TAG_Short -> writer.writeShort((value as NbtShort).value)
-            TAG_String -> writer.writeString((value as NbtString).value)
-            TAG_Compound -> {
-                writer.beginCompound()
-                (value as NbtCompound).content.forEach { (key, value) ->
-                    writer.beginCompoundEntry(value.type, key)
-                    writeTag(value)
-                }
-                writer.endCompound()
-            }
-            TAG_List -> {
-                val list = (value as NbtList<*>)
-                val listType = list.elementType
-                writer.beginList(listType, list.size)
-                list.content.forEach { entry ->
-                    writer.beginListEntry()
-                    if (entry.type != listType) throw NbtEncodingException("Cannot encode ${entry.type} within a $TAG_List of $listType")
-                    writeTag(entry)
-                }
-                writer.endList()
-            }
-            TAG_Byte_Array -> {
-                val array = (value as NbtByteArray)
-                writer.beginByteArray(array.size)
-                array.content.forEach { entry ->
-                    writer.beginByteArrayEntry()
-                    writer.writeByte(entry)
-                }
-                writer.endByteArray()
-            }
-            TAG_Int_Array -> {
-                val array = (value as NbtIntArray)
-                writer.beginIntArray(array.size)
-                array.content.forEach { entry ->
-                    writer.beginIntArrayEntry()
-                    writer.writeInt(entry)
-                }
-                writer.endIntArray()
-            }
-            TAG_Long_Array -> {
-                val array = (value as NbtLongArray)
-                writer.beginLongArray(array.size)
-                array.content.forEach { entry ->
-                    writer.beginLongArrayEntry()
-                    writer.writeLong(entry)
-                }
-                writer.endLongArray()
-            }
-        }
-
         beginEncodingValue(tag.type)
-        writeTag(tag)
+        writer.writeNbtTag(context, tag)
+        endEncodingValue()
     }
 
     @OptIn(InternalSerializationApi::class)
     override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
-        fun isArraySerializer(arraySerializer: SerializationStrategy<*>, arrayKind: NbtListKind): Boolean =
-            (elementListKind == null || elementListKind == arrayKind) && serializer == arraySerializer
+        if (nbtNameToWrite == null) {
+            nbtNameToWrite = serializer.descriptor.nbtName
+        }
 
         return when {
-            isArraySerializer(ByteArraySerializer(), NbtListKind.ByteArray) -> encodeByteArray(value as ByteArray)
-            isArraySerializer(IntArraySerializer(), NbtListKind.IntArray) -> encodeIntArray(value as IntArray)
-            isArraySerializer(LongArraySerializer(), NbtListKind.LongArray) -> encodeLongArray(value as LongArray)
-
             serializer is AbstractPolymorphicSerializer<*> ->
                 throw UnsupportedOperationException(
                     "Unable to serialize type with serial name '${serializer.descriptor.serialName}'. " +
                             "The builtin polymorphic serializers are not yet supported."
                 )
 
-            else -> super.encodeSerializableValue(serializer, value)
+            else ->
+                context.decorateValueSerialization(serializer.descriptor) {
+                    serializer.serialize(this, value)
+                }
         }
     }
 }

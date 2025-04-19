@@ -1,6 +1,5 @@
 package net.benwoodworth.knbt
 
-import net.benwoodworth.knbt.internal.NbtTagType
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.experimental.ExperimentalTypeInference
@@ -13,14 +12,14 @@ public class NbtListBuilder<T : NbtTag> @PublishedApi internal constructor(size:
         if (size >= 0) ArrayList<T>(size) else ArrayList<T>()
     }
 
-    private var elementType: NbtTagType = NbtTagType.TAG_End
+    private var elementType: NbtType = NbtType.TAG_End
     private var built = false
 
     @PublishedApi
     internal fun add(tag: T): Boolean {
         if (built) throw UnsupportedOperationException("List has already been built")
 
-        if (elementType == NbtTagType.TAG_End) {
+        if (elementType == NbtType.TAG_End) {
             elementType = tag.type
         } else {
             require(tag.type == elementType) { "Cannot add a ${tag.type} to a list of $elementType" }
@@ -34,7 +33,7 @@ public class NbtListBuilder<T : NbtTag> @PublishedApi internal constructor(size:
     @OptIn(UnsafeNbtApi::class)
     internal fun build(): NbtList<T> {
         built = true
-        return NbtList(elements)
+        return NbtList(elementType, elements)
     }
 }
 
@@ -55,10 +54,8 @@ public inline fun <T : NbtTag> buildNbtList(
 public inline fun <T : NbtTag> buildNbtList(
     name: String,
     @BuilderInference builderAction: NbtListBuilder<T>.() -> Unit,
-): NbtCompound =
-    buildNbtCompound {
-        putNbtList(name, builderAction)
-    }
+): NbtNamed<NbtList<T>> =
+    NbtNamed(name, buildNbtList(builderAction))
 
 public fun NbtListBuilder<NbtByte>.add(tag: NbtByte): Boolean = add(tag)
 public fun NbtListBuilder<NbtByteArray>.add(tag: NbtByteArray): Boolean = add(tag)
@@ -143,10 +140,8 @@ public inline fun buildNbtCompound(builderAction: NbtCompoundBuilder.() -> Unit)
 public inline fun buildNbtCompound(
     name: String,
     builderAction: NbtCompoundBuilder.() -> Unit,
-): NbtCompound =
-    buildNbtCompound {
-        putNbtCompound(name, builderAction)
-    }
+): NbtNamed<NbtCompound> =
+    NbtNamed(name, buildNbtCompound(builderAction))
 
 public fun NbtCompoundBuilder.put(key: String, value: Byte): NbtTag? = put(key, NbtByte(value))
 public fun NbtCompoundBuilder.put(key: String, value: Boolean): NbtTag? = put(key, NbtByte.fromBoolean(value))
