@@ -9,7 +9,7 @@
 An implementation of [Minecraft's NBT format](https://minecraft.wiki/w/NBT_format)
 for [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization).
 
-Technical information about NBT can be found [here](https://minecraft.wiki/w/NBT_format).
+Technical information about NBT can be found [here](https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/NBT).
 
 ### Features
 
