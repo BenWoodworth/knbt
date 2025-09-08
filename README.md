@@ -6,10 +6,10 @@
 [![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![kotlinx.serialization](https://img.shields.io/badge/kotlinx.serialization-1.8.0-blue.svg?logo=kotlin)](https://github.com/Kotlin/kotlinx.serialization)
 
-An implementation of [Minecraft's NBT format](https://minecraft.fandom.com/wiki/NBT_format)
+An implementation of [Minecraft's NBT format](https://minecraft.wiki/w/NBT_format)
 for [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization).
 
-Technical information about NBT can be found [here](https://wiki.vg/NBT).
+Technical information about NBT can be found [here](https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/NBT).
 
 ### Features
 
