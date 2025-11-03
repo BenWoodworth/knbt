@@ -97,7 +97,7 @@ public class NbtByteArray private constructor(
         else -> list == other
     }
 
-    override fun hashCode(): Int = content.hashCode()
+    override fun hashCode(): Int = content.contentHashCode()
 
     override fun toString(): String =
         content.joinToString(separator = ",", prefix = "[B;", postfix = "]") { "${it}B" }
@@ -212,7 +212,7 @@ public class NbtIntArray private constructor(
         else -> list == other
     }
 
-    override fun hashCode(): Int = content.hashCode()
+    override fun hashCode(): Int = content.contentHashCode()
 
     override fun toString(): String =
         content.joinToString(separator = ",", prefix = "[I;", postfix = "]")
@@ -235,7 +235,7 @@ public class NbtLongArray private constructor(
         else -> list == other
     }
 
-    override fun hashCode(): Int = content.hashCode()
+    override fun hashCode(): Int = content.contentHashCode()
 
     override fun toString(): String =
         content.joinToString(separator = ",", prefix = "[L;", postfix = "]") { "${it}L" }
