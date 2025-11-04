@@ -198,6 +198,26 @@ class NbtByteArrayTest {
     }
 
     @Test
+    fun Should_hash_equal_List_of_same_contents() {
+        fun assertWith(vararg elements: Byte): Unit =
+            assertEquals(elements.asList().hashCode(), NbtByteArray(byteArrayOf(*elements)).hashCode())
+
+        assertWith()
+        assertWith(1)
+        assertWith(1, 2, 4, 8)
+    }
+
+    @Test
+    fun Should_hash_equal_NbtByteArray_of_same_contents() {
+        fun assertWith(vararg elements: Byte): Unit =
+            assertEquals(NbtByteArray(byteArrayOf(*elements)).hashCode(), NbtByteArray(byteArrayOf(*elements)).hashCode())
+
+        assertWith()
+        assertWith(1)
+        assertWith(1, 2, 4, 8)
+    }
+
+    @Test
     fun Should_not_equal_NbtTag_of_different_type_but_same_contents() {
         assertNotEquals<NbtTag>(NbtList(emptyList<NbtByte>()), NbtByteArray(byteArrayOf()))
         assertNotEquals<NbtTag>(NbtIntArray(intArrayOf()), NbtByteArray(byteArrayOf()))
@@ -252,6 +272,26 @@ class NbtIntArrayTest {
     }
 
     @Test
+    fun Should_hash_equal_List_of_same_contents() {
+        fun assertWith(vararg elements: Int): Unit =
+            assertEquals(elements.asList().hashCode(), NbtIntArray(intArrayOf(*elements)).hashCode())
+
+        assertWith()
+        assertWith(1)
+        assertWith(1, 2, 4, 8)
+    }
+
+    @Test
+    fun Should_hash_equal_NbtIntArray_of_same_contents() {
+        fun assertWith(vararg elements: Int): Unit =
+            assertEquals(NbtIntArray(intArrayOf(*elements)).hashCode(), NbtIntArray(intArrayOf(*elements)).hashCode())
+
+        assertWith()
+        assertWith(1)
+        assertWith(1, 2, 4, 8)
+    }
+
+    @Test
     fun Should_not_equal_NbtTag_of_different_type_but_same_contents() {
         assertNotEquals<NbtTag>(NbtList(emptyList<NbtInt>()), NbtIntArray(intArrayOf()))
         assertNotEquals<NbtTag>(NbtByteArray(byteArrayOf()), NbtIntArray(intArrayOf()))
@@ -264,6 +304,26 @@ class NbtLongArrayTest {
     fun Should_equal_List_of_same_contents() {
         fun assertWith(vararg elements: Long): Unit =
             assertEquals(elements.asList(), NbtLongArray(elements))
+
+        assertWith()
+        assertWith(1)
+        assertWith(1, 2, 4, 8)
+    }
+
+    @Test
+    fun Should_hash_equal_List_of_same_contents() {
+        fun assertWith(vararg elements: Long): Unit =
+            assertEquals(elements.asList().hashCode(), NbtLongArray(longArrayOf(*elements)).hashCode())
+
+        assertWith()
+        assertWith(1)
+        assertWith(1, 2, 4, 8)
+    }
+
+    @Test
+    fun Should_hash_equal_NbtLongArray_of_same_contents() {
+        fun assertWith(vararg elements: Long): Unit =
+            assertEquals(NbtLongArray(longArrayOf(*elements)).hashCode(), NbtLongArray(longArrayOf(*elements)).hashCode())
 
         assertWith()
         assertWith(1)
