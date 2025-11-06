@@ -10,8 +10,8 @@ env:
   SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
   SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
   SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-  OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-  OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+  MAVEN_CENTRAL_PORTAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_PORTAL_USERNAME }}
+  MAVEN_CENTRAL_PORTAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PORTAL_PASSWORD }}
 
 jobs:
   windows:
@@ -36,6 +36,7 @@ jobs:
           publishLinuxX64PublicationToMavenRepository
           publishLinuxArm64PublicationToMavenRepository
           publishMingwX64PublicationToMavenRepository
+          uploadOssrhStagingApiDeployment
 
   macos:
     name: "Publish: macos, ios, watchos"
@@ -65,3 +66,4 @@ jobs:
           publishTvosArm64PublicationToMavenRepository
           publishIosArm64PublicationToMavenRepository
           publishWatchosDeviceArm64PublicationToMavenRepository
+          uploadOssrhStagingApiDeployment
