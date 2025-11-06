@@ -1,5 +1,7 @@
 package net.benwoodworth.knbt
 
+import com.benwoodworth.parameterize.parameterOf
+import net.benwoodworth.knbt.internal.NbtTagType
 import kotlin.reflect.KProperty1
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -243,6 +245,54 @@ class NbtListTest {
         assertNotEquals<NbtTag>(NbtByteArray(byteArrayOf()), NbtList(emptyList<NbtByte>()))
         assertNotEquals<NbtTag>(NbtIntArray(intArrayOf()), NbtList(emptyList<NbtInt>()))
         assertNotEquals<NbtTag>(NbtLongArray(longArrayOf()), NbtList(emptyList<NbtLong>()))
+    }
+
+    @Test
+    fun Element_type_error_message() = parameterizeTest {
+        val elementTypes by parameterOf(
+            listOf(NbtTagType.TAG_Int, NbtTagType.TAG_Short), // Should be sorted
+            listOf(NbtTagType.TAG_Short, NbtTagType.TAG_Short), // Should be distinct
+        )
+
+        val expectedElementTypes = elementTypes.asSequence()
+            .distinct()
+            .sortedBy { it.id }
+            .joinToString(separator = ", ")
+
+        val expectedMessage = "NbtList elements should all have the same type, but has: $expectedElementTypes."
+        val actualMessage = NbtList.elementTypeErrorMessage(elementTypes.asSequence())
+
+        assertEquals(expectedMessage, actualMessage)
+    }
+
+    @Test
+    fun NbtList_of_same_element_type_should_contain_those_elements() = parameterizeTest {
+        val content by parameterOf(
+            listOf(),
+            listOf(NbtInt(0), NbtInt(1), NbtInt(2)),
+            listOf(NbtList(listOf(NbtInt(0))), NbtList(listOf(NbtString("")))), // lists of different types
+        )
+
+        val nbtList = NbtList.of(*content.toTypedArray())
+
+        assertEquals(content, nbtList)
+    }
+
+    @Test
+    fun NbtList_of_different_element_types_should_fail() = parameterizeTest {
+        val content by parameterOf(
+            listOf(NbtInt(0), NbtString("")),
+            listOf(NbtInt(0), NbtInt(0), NbtLong(0)), // Multiple of same type
+            listOf(NbtInt(0), NbtShort(0), NbtByte(0)), // Reverse NbtTagType order
+            listOf(NbtList(emptyList<NbtInt>()), NbtByteArray(byteArrayOf()), NbtIntArray(intArrayOf())),
+        )
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            NbtList.of(*content.toTypedArray())
+        }
+
+        val expectedFailureMessage = NbtList.elementTypeErrorMessage(content.asSequence().map { it.type })
+        assertEquals(expectedFailureMessage, failure.message, "Failure message")
     }
 }
 

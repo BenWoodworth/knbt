@@ -174,6 +174,31 @@ public class NbtList<out T : NbtTag> private constructor(
 
         @JvmName("invoke\$NbtLongArray")
         public operator fun invoke(content: List<NbtLongArray>): NbtList<NbtLongArray> = NbtList(content)
+
+        internal fun elementTypeErrorMessage(elementTypes: Sequence<NbtTagType>): String =
+            elementTypes.distinct().sorted().joinToString(
+                prefix = "NbtList elements should all have the same type, but has: ",
+                postfix = "."
+            )
+
+        /**
+         * Returns a new [NbtList] with the given [elements].
+         *
+         * @throws IllegalArgumentException if the given [elements] are not all the same type.
+         */
+        public fun <T : NbtTag> of(vararg elements: T): NbtList<T> {
+            if (elements.size > 1) {
+                val elementType = elements[0].type
+
+                for (i in 1..elements.lastIndex) {
+                    require(elements[i].type == elementType) {
+                        elementTypeErrorMessage(elements.asSequence().map { it.type })
+                    }
+                }
+            }
+
+            return NbtList(elements.asList())
+        }
     }
 }
 
