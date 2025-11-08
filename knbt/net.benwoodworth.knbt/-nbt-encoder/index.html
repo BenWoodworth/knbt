@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>NbtEncoder</title>
     <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
-    <script>var pathToRoot = "../../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
 <script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
@@ -25,20 +25,18 @@
 <link href="../../../styles/main.css" rel="Stylesheet">
 <link href="../../../styles/prism.css" rel="Stylesheet">
 <link href="../../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
-<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
 <script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
 <script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
 <script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
-<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
 </head>
 <body>
-    <div class="root">
-    <nav class="navigation theme-dark" id="navigation-wrapper">
-            <a class="library-name--link" href="../../../index.html">
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
                     knbt
             </a>
         <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
@@ -46,10 +44,10 @@
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
         <div class="library-version" id="library-version">
-0.11.8        </div>
+0.11.9        </div>
         <div class="navigation-controls">
-        <div class="filter-section filter-section_loading" id="filter-section">
-                <button class="platform-tag platform-selector common-like" data-active=""
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
                         data-filter=":/commonMain">common</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
@@ -59,9 +57,9 @@
                         aria-expanded="false"
                         aria-label="Toggle source sets"
                 ></button>
-                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
-                    <div class="dropdown--header"><span>Platform filter</span>
-                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
                             <i class="ui-kit-icon ui-kit-icon_cross"></i>
                         </button>
                     </div>
@@ -76,7 +74,7 @@
                 </ul>
                 <div class="dropdown--overlay"></div>
             </div>
-        </div>
+        </ul>
             <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
                     type="button">Switch theme
             </button>
@@ -84,26 +82,28 @@
                 API
             </div>
         </div>
-    </nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
-                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
-                        data-role="dropdown-listbox">
-                        <div class="dropdown--header">
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
                             <span>
                                     knbt
                             </span>
-                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
-                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
-                            </button>
-                        </div>
-                        <div class="sidebar--inner" id="sideMenu"></div>
-                    </ul>
-                    <div class="dropdown--overlay"></div>
-                </div>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
 <div class="main-content" data-page-type="classlike" id="content" pageIds="knbt::net.benwoodworth.knbt/NbtEncoder///PointingToDeclaration//1558683979">
   <div class="breadcrumbs"><a href="../../../index.html">knbt</a><span class="delimiter">/</span><a href="../index.html">net.benwoodworth.knbt</a><span class="delimiter">/</span><span class="current">NbtEncoder</span></div>
   <div class="cover ">
@@ -114,9 +114,9 @@
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button><button class="section-tab" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION,EXTENSION_PROPERTY,EXTENSION_FUNCTION">Members &amp; Extensions</button></div>
     <div class="tabs-section-body">
       <div data-togglable="PROPERTY">
-        <h2 class="">Properties</h2>
+        <h2 class="tableheader">Properties</h2>
         <div class="table"><a data-name="-2121717571%2FProperties%2F1558683979" anchor-label="nbt" id="-2121717571%2FProperties%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="nbt.html"><span><span>nbt</span></span></a></div>
@@ -131,7 +131,7 @@
             </div>
           </div>
 <a data-name="-1715568630%2FProperties%2F1558683979" anchor-label="serializersModule" id="-1715568630%2FProperties%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-1715568630%2FProperties%2F1558683979"><span>serializers</span><wbr></wbr><span><span>Module</span></span></a></div>
@@ -148,9 +148,9 @@
         </div>
       </div>
       <div data-togglable="FUNCTION">
-        <h2 class="">Functions</h2>
+        <h2 class="tableheader">Functions</h2>
         <div class="table"><a data-name="2136716713%2FFunctions%2F1558683979" anchor-label="asNbtEncoder" id="2136716713%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="../as-nbt-encoder.html"><span>as</span><wbr></wbr><span>Nbt</span><wbr></wbr><span><span>Encoder</span></span></a></div>
@@ -165,7 +165,7 @@
             </div>
           </div>
 <a data-name="1208030762%2FFunctions%2F1558683979" anchor-label="beginByteArray" id="1208030762%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="begin-byte-array.html"><span>begin</span><wbr></wbr><span>Byte</span><wbr></wbr><span><span>Array</span></span></a></div>
@@ -180,7 +180,7 @@
             </div>
           </div>
 <a data-name="355314799%2FFunctions%2F1558683979" anchor-label="beginCollection" id="355314799%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#355314799%2FFunctions%2F1558683979"><span>begin</span><wbr></wbr><span><span>Collection</span></span></a></div>
@@ -195,7 +195,7 @@
             </div>
           </div>
 <a data-name="-2052969369%2FFunctions%2F1558683979" anchor-label="beginCompound" id="-2052969369%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="begin-compound.html"><span>begin</span><wbr></wbr><span><span>Compound</span></span></a></div>
@@ -210,7 +210,7 @@
             </div>
           </div>
 <a data-name="-1771788459%2FFunctions%2F1558683979" anchor-label="beginIntArray" id="-1771788459%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="begin-int-array.html"><span>begin</span><wbr></wbr><span>Int</span><wbr></wbr><span><span>Array</span></span></a></div>
@@ -225,7 +225,7 @@
             </div>
           </div>
 <a data-name="343608777%2FFunctions%2F1558683979" anchor-label="beginList" id="343608777%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="begin-list.html"><span>begin</span><wbr></wbr><span><span>List</span></span></a></div>
@@ -240,7 +240,7 @@
             </div>
           </div>
 <a data-name="1501988918%2FFunctions%2F1558683979" anchor-label="beginLongArray" id="1501988918%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="begin-long-array.html"><span>begin</span><wbr></wbr><span>Long</span><wbr></wbr><span><span>Array</span></span></a></div>
@@ -255,7 +255,7 @@
             </div>
           </div>
 <a data-name="1909331255%2FFunctions%2F1558683979" anchor-label="beginStructure" id="1909331255%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#1909331255%2FFunctions%2F1558683979"><span>begin</span><wbr></wbr><span><span>Structure</span></span></a></div>
@@ -270,7 +270,7 @@
             </div>
           </div>
 <a data-name="-2015155990%2FFunctions%2F1558683979" anchor-label="encodeBoolean" id="-2015155990%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-2015155990%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>Boolean</span></span></a></div>
@@ -285,7 +285,7 @@
             </div>
           </div>
 <a data-name="-312211928%2FFunctions%2F1558683979" anchor-label="encodeByte" id="-312211928%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-312211928%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>Byte</span></span></a></div>
@@ -300,7 +300,7 @@
             </div>
           </div>
 <a data-name="-1284519490%2FFunctions%2F1558683979" anchor-label="encodeByteArray" id="-1284519490%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="encode-byte-array.html"><span>encode</span><wbr></wbr><span>Byte</span><wbr></wbr><span><span>Array</span></span></a></div>
@@ -315,7 +315,7 @@
             </div>
           </div>
 <a data-name="-935936152%2FFunctions%2F1558683979" anchor-label="encodeChar" id="-935936152%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-935936152%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>Char</span></span></a></div>
@@ -330,7 +330,7 @@
             </div>
           </div>
 <a data-name="-1435970168%2FFunctions%2F1558683979" anchor-label="encodeDouble" id="-1435970168%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-1435970168%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>Double</span></span></a></div>
@@ -345,7 +345,7 @@
             </div>
           </div>
 <a data-name="-1965855117%2FFunctions%2F1558683979" anchor-label="encodeEnum" id="-1965855117%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-1965855117%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>Enum</span></span></a></div>
@@ -360,7 +360,7 @@
             </div>
           </div>
 <a data-name="-1198763326%2FFunctions%2F1558683979" anchor-label="encodeFloat" id="-1198763326%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-1198763326%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>Float</span></span></a></div>
@@ -375,7 +375,7 @@
             </div>
           </div>
 <a data-name="2129885202%2FFunctions%2F1558683979" anchor-label="encodeInline" id="2129885202%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#2129885202%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>Inline</span></span></a></div>
@@ -390,7 +390,7 @@
             </div>
           </div>
 <a data-name="-722467684%2FFunctions%2F1558683979" anchor-label="encodeInt" id="-722467684%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-722467684%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>Int</span></span></a></div>
@@ -405,7 +405,7 @@
             </div>
           </div>
 <a data-name="1410730254%2FFunctions%2F1558683979" anchor-label="encodeIntArray" id="1410730254%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="encode-int-array.html"><span>encode</span><wbr></wbr><span>Int</span><wbr></wbr><span><span>Array</span></span></a></div>
@@ -420,7 +420,7 @@
             </div>
           </div>
 <a data-name="1668577704%2FFunctions%2F1558683979" anchor-label="encodeLong" id="1668577704%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#1668577704%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>Long</span></span></a></div>
@@ -435,7 +435,7 @@
             </div>
           </div>
 <a data-name="-2008861786%2FFunctions%2F1558683979" anchor-label="encodeLongArray" id="-2008861786%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="encode-long-array.html"><span>encode</span><wbr></wbr><span>Long</span><wbr></wbr><span><span>Array</span></span></a></div>
@@ -450,7 +450,7 @@
             </div>
           </div>
 <a data-name="-2087024767%2FFunctions%2F1558683979" anchor-label="encodeNbtTag" id="-2087024767%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="encode-nbt-tag.html"><span>encode</span><wbr></wbr><span>Nbt</span><wbr></wbr><span><span>Tag</span></span></a></div>
@@ -465,7 +465,7 @@
             </div>
           </div>
 <a data-name="17739398%2FFunctions%2F1558683979" anchor-label="encodeNotNullMark" id="17739398%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#17739398%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span>Not</span><wbr></wbr><span>Null</span><wbr></wbr><span><span>Mark</span></span></a></div>
@@ -474,13 +474,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#17739398%2FFunctions%2F1558683979"><span class="token function">encodeNotNullMark</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/ExperimentalSerializationApi///PointingToDeclaration/"><span class="token annotation builtin">ExperimentalSerializationApi</span></span></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#17739398%2FFunctions%2F1558683979"><span class="token function">encodeNotNullMark</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="1079772230%2FFunctions%2F1558683979" anchor-label="encodeNull" id="1079772230%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#1079772230%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>Null</span></span></a></div>
@@ -489,13 +489,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="index.html#1079772230%2FFunctions%2F1558683979"><span class="token function">encodeNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/ExperimentalSerializationApi///PointingToDeclaration/"><span class="token annotation builtin">ExperimentalSerializationApi</span></span></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="index.html#1079772230%2FFunctions%2F1558683979"><span class="token function">encodeNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="-1929440544%2FFunctions%2F1558683979" anchor-label="encodeNullableSerializableValue" id="-1929440544%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#-1929440544%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span>Nullable</span><wbr></wbr><span>Serializable</span><wbr></wbr><span><span>Value</span></span></a></div>
@@ -504,13 +504,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="index.html#-1929440544%2FFunctions%2F1558683979">T</a><span class="token operator"> : </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt; </span><a href="index.html#-1929440544%2FFunctions%2F1558683979"><span class="token function">encodeNullableSerializableValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">serializer<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization/SerializationStrategy///PointingToDeclaration/">SerializationStrategy</span><span class="token operator">&lt;</span><a href="index.html#-1929440544%2FFunctions%2F1558683979">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="index.html#-1929440544%2FFunctions%2F1558683979">T</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="kotlinx.serialization/ExperimentalSerializationApi///PointingToDeclaration/"><span class="token annotation builtin">ExperimentalSerializationApi</span></span></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="index.html#-1929440544%2FFunctions%2F1558683979">T</a><span class="token operator"> : </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt; </span><a href="index.html#-1929440544%2FFunctions%2F1558683979"><span class="token function">encodeNullableSerializableValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">serializer<span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization/SerializationStrategy///PointingToDeclaration/">SerializationStrategy</span><span class="token operator">&lt;</span><a href="index.html#-1929440544%2FFunctions%2F1558683979">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">value<span class="token operator">: </span><a href="index.html#-1929440544%2FFunctions%2F1558683979">T</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="563303892%2FFunctions%2F1558683979" anchor-label="encodeSerializableValue" id="563303892%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#563303892%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span>Serializable</span><wbr></wbr><span><span>Value</span></span></a></div>
@@ -525,7 +525,7 @@
             </div>
           </div>
 <a data-name="1540226690%2FFunctions%2F1558683979" anchor-label="encodeShort" id="1540226690%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#1540226690%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>Short</span></span></a></div>
@@ -540,7 +540,7 @@
             </div>
           </div>
 <a data-name="337567112%2FFunctions%2F1558683979" anchor-label="encodeString" id="337567112%2FFunctions%2F1558683979" data-filterable-set=":/commonMain"></a>
-          <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="index.html#337567112%2FFunctions%2F1558683979"><span>encode</span><wbr></wbr><span><span>String</span></span></a></div>
@@ -560,17 +560,21 @@
   </div>
 </div>
     <div class="footer">
-        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
-        <span>© 2025 Copyright</span>
-        <span class="pull-right">
-            <span>Generated by </span>
-            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
-                <span>dokka</span>
-            </a>
-        </span>
-    </div>
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Copyright</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

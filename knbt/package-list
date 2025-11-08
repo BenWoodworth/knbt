@@ -205,6 +205,7 @@ $dokka.location:net.benwoodworth.knbt/NbtList.Companion/invoke/#kotlin.collectio
 $dokka.location:net.benwoodworth.knbt/NbtList.Companion/invoke/#kotlin.collections.List[net.benwoodworth.knbt.NbtLong]/PointingToDeclaration/knbt/net.benwoodworth.knbt/-nbt-list/-companion/invoke.html
 $dokka.location:net.benwoodworth.knbt/NbtList.Companion/invoke/#kotlin.collections.List[net.benwoodworth.knbt.NbtShort]/PointingToDeclaration/knbt/net.benwoodworth.knbt/-nbt-list/-companion/invoke.html
 $dokka.location:net.benwoodworth.knbt/NbtList.Companion/invoke/#kotlin.collections.List[net.benwoodworth.knbt.NbtString]/PointingToDeclaration/knbt/net.benwoodworth.knbt/-nbt-list/-companion/invoke.html
+$dokka.location:net.benwoodworth.knbt/NbtList.Companion/of/#TypeParam(bounds=[net.benwoodworth.knbt.NbtTag])/PointingToDeclaration/knbt/net.benwoodworth.knbt/-nbt-list/-companion/of.html
 $dokka.location:net.benwoodworth.knbt/NbtList///PointingToDeclaration/knbt/net.benwoodworth.knbt/-nbt-list/index.html
 $dokka.location:net.benwoodworth.knbt/NbtList/equals/#kotlin.Any?/PointingToDeclaration/knbt/net.benwoodworth.knbt/-nbt-list/equals.html
 $dokka.location:net.benwoodworth.knbt/NbtList/hashCode/#/PointingToDeclaration/knbt/net.benwoodworth.knbt/-nbt-list/hash-code.html
