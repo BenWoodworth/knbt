@@ -9,8 +9,8 @@ import kotlin.jvm.JvmName
 //region NbtListBuilder
 @NbtDslMarker
 public class NbtListBuilder<T : NbtTag> @PublishedApi internal constructor(size: Int = -1) {
-    private val elements by lazy {
-        if (size >= 0) ArrayList<T>(size) else ArrayList<T>()
+    private val elements: ArrayList<T> by lazy {
+        if (size >= 0) ArrayList(size) else ArrayList()
     }
 
     private var elementType: NbtTagType = NbtTagType.TAG_End

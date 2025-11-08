@@ -3,7 +3,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/net.benwoodworth.knbt/knbt)](https://search.maven.org/artifact/net.benwoodworth.knbt/knbt)
 [![Maven Snapshots](https://img.shields.io/maven-metadata/v?label=maven-snapshots&metadataUrl=https%3A%2F%2Fcentral.sonatype.com%2Frepository%2Fmaven-snapshots%2Fnet%2Fbenwoodworth%2Fknbt%2Fknbt%2Fmaven-metadata.xml)](https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/net/benwoodworth/knbt/knbt)
 [![KDoc](https://img.shields.io/badge/api-KDoc-blue)](https://benwoodworth.github.io/knbt)
-[![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.2.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![kotlinx.serialization](https://img.shields.io/badge/kotlinx.serialization-1.8.0-blue.svg?logo=kotlin)](https://github.com/Kotlin/kotlinx.serialization)
 
 An implementation of [Minecraft's NBT format](https://minecraft.wiki/w/NBT_format)
@@ -221,8 +221,8 @@ Replacement refactorings will be provided where possible for broken APIs. Change
 
 ```kotlin
 plugins {
-    kotlin("jvm") version "2.1.0" // or kotlin("multiplatform"), etc.
-    //kotlin("plugin.serialization") version "2.1.0"
+    kotlin("jvm") version "2.2.21" // or kotlin("multiplatform"), etc.
+    //kotlin("plugin.serialization") version "2.2.21"
 }
 
 repositories {

@@ -97,7 +97,7 @@ class DefaultNbtEncoderTest {
     @Test
     fun Encoding_List_should_write_correctly() = parameterizeTest {
         assertEncodesCorrectly(
-            tag = buildNbtList<NbtList<*>> {
+            tag = buildNbtList {
                 add(NbtList(listOf(NbtByte(1))))
                 add(NbtList(emptyList<NbtInt>()))
             },

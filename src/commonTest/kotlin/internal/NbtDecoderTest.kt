@@ -3,7 +3,6 @@
 package net.benwoodworth.knbt.internal
 
 import com.benwoodworth.parameterize.ParameterizeScope
-import com.benwoodworth.parameterize.parameter
 import data.testTag
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.serializer

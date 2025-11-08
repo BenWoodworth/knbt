@@ -6,6 +6,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ptr
 import platform.zlib.*
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun z_stream.deflateInit2(
     level: Int = Z_DEFAULT_COMPRESSION,
     method: Int = Z_DEFLATED,
@@ -25,9 +26,11 @@ internal inline fun z_stream.deflateInit2(
     if (result < 0) throw ZlibException(result, this)
 }
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun z_stream.deflate(flush: Int = Z_NO_FLUSH): Int =
     deflate(this.ptr, flush)
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun z_stream.deflateEnd() {
     val result = deflateEnd(this.ptr)
 

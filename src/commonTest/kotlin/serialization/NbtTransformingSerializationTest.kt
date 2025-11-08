@@ -31,7 +31,7 @@ class JsonTransformingSerializationTest {
         NbtTransformingSerializer<List<StringData>>(ListSerializer(StringData.serializer())) {
         @OptIn(UnsafeNbtApi::class)
         override fun transformDeserialize(tag: NbtTag): NbtTag =
-            if (tag !is NbtList<*>) NbtList(listOf(tag)) else tag
+            tag as? NbtList<*> ?: NbtList(listOf(tag))
     }
 
     private object UnwrappingJsonListSerializer :

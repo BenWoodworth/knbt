@@ -44,7 +44,6 @@ class StringifiedNbtReaderTest {
                 expected.toList(),
                 StringifiedNbt.decodeFromString(ListSerializer(NbtTag.serializer()), snbt)
             )
-            else -> error("Unexpected type: ${expected::class}")
         }
     }
 
@@ -172,16 +171,16 @@ class StringifiedNbtReaderTest {
         check(buildNbtList<NbtByte> { add(0) }, "[0b]")
         check(buildNbtList<NbtShort> { add(0) }, "[0s]")
         check(buildNbtList<NbtInt> { add(0) }, "[0]")
-        check(buildNbtList<NbtLong> { add(0) }, "[0l]")
-        check(buildNbtList<NbtFloat> { add(0f) }, "[0f]")
-        check(buildNbtList<NbtDouble> { add(0.0) }, "[0d]")
-        check(buildNbtList<NbtByteArray> { add(byteArrayOf()) }, "[[B;]]")
-        check(buildNbtList<NbtIntArray> { add(intArrayOf()) }, "[[I;]]")
-        check(buildNbtList<NbtLongArray> { add(longArrayOf()) }, "[[L;]]")
-        check(buildNbtList<NbtList<*>> { add(buildNbtList<Nothing> { }) }, "[[]]")
+        check(buildNbtList { add(0L) }, "[0l]")
+        check(buildNbtList { add(0f) }, "[0f]")
+        check(buildNbtList { add(0.0) }, "[0d]")
+        check(buildNbtList { add(byteArrayOf()) }, "[[B;]]")
+        check(buildNbtList { add(intArrayOf()) }, "[[I;]]")
+        check(buildNbtList { add(longArrayOf()) }, "[[L;]]")
+        check(buildNbtList { add(buildNbtList<Nothing> { }) }, "[[]]")
         check(buildNbtList { add(buildNbtCompound { }) }, "[{}]")
 
-        check(buildNbtList<NbtList<*>> {
+        check(buildNbtList {
             add(buildNbtList<NbtInt> { add(1) })
             add(buildNbtList<NbtByte> { add(2); add(3) })
         }, " [ [ 1 ] , [ 2b , 3b ] ] ")

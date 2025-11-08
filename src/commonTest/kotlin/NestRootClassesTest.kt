@@ -2,7 +2,6 @@ package net.benwoodworth.knbt
 
 import com.benwoodworth.parameterize.parameter
 import com.benwoodworth.parameterize.parameterOf
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Serializable
