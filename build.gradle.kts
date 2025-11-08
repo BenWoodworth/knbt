@@ -195,7 +195,7 @@ publishing {
 }
 
 fun getIpAddress(): String =
-    URL("http://checkip.amazonaws.com/").openConnection().getInputStream().use { it.buffered().toString() }
+    URL("http://checkip.amazonaws.com/").openConnection().getInputStream().use { it.bufferedReader().readText() }
 
 tasks
     .matching {
