@@ -16,6 +16,9 @@ System.getenv("GIT_REF")?.let { gitRef ->
     }
 }
 
+// TODO Remove
+version = "0.11.9-OSSRH-Staging-API-Test"
+
 val isSnapshot = version.toString().contains("SNAPSHOT", true)
 
 plugins {
@@ -190,6 +193,18 @@ publishing {
         }
     }
 }
+
+fun getIpAddress(): String =
+    URL("http://checkip.amazonaws.com/").openConnection().getInputStream().use { it.buffered().toString() }
+
+tasks
+    .matching {
+        it is PublishToMavenRepository || it.name == "uploadOssrhStagingApiDeployment"
+    }
+    .configureEach {
+        doFirst { logger.lifecycle("Starting task from IP: ${getIpAddress()}") }
+        doLast { logger.lifecycle("Finished task from IP: ${getIpAddress()}") }
+    }
 
 /**
  * OSSRH Staging API: [`POST /manual/upload/defaultRepository`](https://ossrh-staging-api.central.sonatype.com/swagger-ui/#/default/manual_upload_default_repository)
