@@ -17,8 +17,7 @@ plugins {
     kotlin("plugin.serialization") version "2.2.21"
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.18.1"
     id("org.jetbrains.dokka") version "2.1.0"
-    id("maven-publish")
-    id("signing")
+    id("com.vanniktech.maven.publish") version "0.34.0"
 }
 
 repositories {
@@ -114,70 +113,32 @@ dokka {
     }
 }
 
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier = "javadoc"
-}
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
 
-signing {
-    gradle.taskGraph.whenReady {
-        isRequired = allTasks.any { it is PublishToMavenRepository }
-    }
+    pom {
+        name = "knbt"
+        description = "Minecraft NBT support for kotlinx.serialization"
+        url = "https://github.com/BenWoodworth/knbt"
 
-    useInMemoryPgpKeys(
-        System.getenv("SIGNING_KEY_ID"),
-        System.getenv("SIGNING_KEY"),
-        System.getenv("SIGNING_PASSWORD"),
-    )
-
-    sign(publishing.publications)
-
-    // https://github.com/gradle/gradle/issues/26091#issuecomment-1722947958
-    tasks.withType<AbstractPublishToMaven>().configureEach {
-        val signingTasks = tasks.withType<Sign>()
-        mustRunAfter(signingTasks)
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            url = if (isSnapshot) snapshotsRepoUrl else releasesRepoUrl
-
-            credentials {
-                username = System.getenv("OSSRH_USERNAME")
-                password = System.getenv("OSSRH_TOKEN")
+        licenses {
+            license {
+                name = "GNU Lesser General Public License"
+                url = "https://www.gnu.org/licenses/lgpl-3.0.txt"
             }
         }
-    }
-
-    publications.withType<MavenPublication> {
-        artifact(javadocJar.get())
-
-        pom {
-            name = "knbt"
-            description = "Minecraft NBT support for kotlinx.serialization"
+        developers {
+            developer {
+                id = "BenWoodworth"
+                name = "Ben Woodworth"
+                email = "ben@benwoodworth.net"
+            }
+        }
+        scm {
+            connection = "scm:git:git://github.com:BenWoodworth/knbt.git"
+            developerConnection = "scm:git:ssh://github.com:BenWoodworth/knbt.git"
             url = "https://github.com/BenWoodworth/knbt"
-
-            licenses {
-                license {
-                    name = "GNU Lesser General Public License"
-                    url = "https://www.gnu.org/licenses/lgpl-3.0.txt"
-                }
-            }
-            developers {
-                developer {
-                    id = "BenWoodworth"
-                    name = "Ben Woodworth"
-                    email = "ben@benwoodworth.net"
-                }
-            }
-            scm {
-                connection = "scm:git:git://github.com:BenWoodworth/knbt.git"
-                developerConnection = "scm:git:ssh://github.com:BenWoodworth/knbt.git"
-                url = "https://github.com/BenWoodworth/knbt"
-            }
         }
     }
 }
