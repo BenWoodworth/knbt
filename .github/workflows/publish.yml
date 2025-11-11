@@ -7,11 +7,11 @@ on:
 
 env:
   GIT_REF: ${{ github.ref }}
-  SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-  SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-  SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-  MAVEN_CENTRAL_PORTAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_PORTAL_USERNAME }}
-  MAVEN_CENTRAL_PORTAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PORTAL_PASSWORD }}
+  ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+  ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+  ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+  ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_PORTAL_USERNAME }}
+  ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PORTAL_PASSWORD }}
 
 jobs:
   windows:
@@ -19,10 +19,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 8
-        uses: actions/setup-java@v4
+      - name: Set up Java
+        uses: actions/setup-java@v5
         with:
-          java-version: '8'
+          java-version: '21'
           distribution: 'zulu'
       - name: Clean
         if: ${{ false }} # Skip, since it fails on Windows: https://youtrack.jetbrains.com/issue/KT-50545/
@@ -30,40 +30,38 @@ jobs:
       - name: Publish to Maven
         run: >-
           .\gradlew.bat
-          publishKotlinMultiplatformPublicationToMavenRepository
-          publishJvmPublicationToMavenRepository
-          publishJsPublicationToMavenRepository
-          publishLinuxX64PublicationToMavenRepository
-          publishLinuxArm64PublicationToMavenRepository
-          publishMingwX64PublicationToMavenRepository
-          uploadOssrhStagingApiDeployment
+          publishKotlinMultiplatformPublicationToMavenCentralRepository
+          publishJvmPublicationToMavenCentralRepository
+          publishJsPublicationToMavenCentralRepository
+          publishLinuxX64PublicationToMavenCentralRepository
+          publishLinuxArm64PublicationToMavenCentralRepository
+          publishMingwX64PublicationToMavenCentralRepository
 
   macos:
     name: "Publish: macos, ios, watchos"
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 8
-        uses: actions/setup-java@v4
+      - name: Set up Java
+        uses: actions/setup-java@v5
         with:
-          java-version: '8'
+          java-version: '21'
           distribution: 'zulu'
       - name: Clean
         run: ./gradlew clean
       - name: Publish to Maven
         run: >-
           ./gradlew
-          publishMacosX64PublicationToMavenRepository
-          publishMacosArm64PublicationToMavenRepository
-          publishIosSimulatorArm64PublicationToMavenRepository
-          publishIosX64PublicationToMavenRepository
-          publishWatchosSimulatorArm64PublicationToMavenRepository
-          publishWatchosX64PublicationToMavenRepository
-          publishWatchosArm32PublicationToMavenRepository
-          publishWatchosArm64PublicationToMavenRepository
-          publishTvosSimulatorArm64PublicationToMavenRepository
-          publishTvosX64PublicationToMavenRepository
-          publishTvosArm64PublicationToMavenRepository
-          publishIosArm64PublicationToMavenRepository
-          publishWatchosDeviceArm64PublicationToMavenRepository
-          uploadOssrhStagingApiDeployment
+          publishMacosX64PublicationToMavenCentralRepository
+          publishMacosArm64PublicationToMavenCentralRepository
+          publishIosSimulatorArm64PublicationToMavenCentralRepository
+          publishIosX64PublicationToMavenCentralRepository
+          publishWatchosSimulatorArm64PublicationToMavenCentralRepository
+          publishWatchosX64PublicationToMavenCentralRepository
+          publishWatchosArm32PublicationToMavenCentralRepository
+          publishWatchosArm64PublicationToMavenCentralRepository
+          publishTvosSimulatorArm64PublicationToMavenCentralRepository
+          publishTvosX64PublicationToMavenCentralRepository
+          publishTvosArm64PublicationToMavenCentralRepository
+          publishIosArm64PublicationToMavenCentralRepository
+          publishWatchosDeviceArm64PublicationToMavenCentralRepository
