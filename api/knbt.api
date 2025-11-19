@@ -95,6 +95,10 @@ public final class net/benwoodworth/knbt/NbtByteArray : java/util/List, kotlin/j
 	public synthetic fun add (Ljava/lang/Object;)Z
 	public fun addAll (ILjava/util/Collection;)Z
 	public fun addAll (Ljava/util/Collection;)Z
+	public fun addFirst (Ljava/lang/Byte;)V
+	public synthetic fun addFirst (Ljava/lang/Object;)V
+	public fun addLast (Ljava/lang/Byte;)V
+	public synthetic fun addLast (Ljava/lang/Object;)V
 	public fun clear ()V
 	public fun contains (B)Z
 	public final fun contains (Ljava/lang/Object;)Z
@@ -118,6 +122,10 @@ public final class net/benwoodworth/knbt/NbtByteArray : java/util/List, kotlin/j
 	public synthetic fun remove (I)Ljava/lang/Object;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeFirst ()Ljava/lang/Byte;
+	public synthetic fun removeFirst ()Ljava/lang/Object;
+	public fun removeLast ()Ljava/lang/Byte;
+	public synthetic fun removeLast ()Ljava/lang/Object;
 	public fun replaceAll (Ljava/util/function/UnaryOperator;)V
 	public fun retainAll (Ljava/util/Collection;)Z
 	public fun set (IB)Ljava/lang/Byte;
@@ -396,6 +404,10 @@ public final class net/benwoodworth/knbt/NbtIntArray : java/util/List, kotlin/jv
 	public synthetic fun add (Ljava/lang/Object;)Z
 	public fun addAll (ILjava/util/Collection;)Z
 	public fun addAll (Ljava/util/Collection;)Z
+	public fun addFirst (Ljava/lang/Integer;)V
+	public synthetic fun addFirst (Ljava/lang/Object;)V
+	public fun addLast (Ljava/lang/Integer;)V
+	public synthetic fun addLast (Ljava/lang/Object;)V
 	public fun clear ()V
 	public fun contains (I)Z
 	public final fun contains (Ljava/lang/Object;)Z
@@ -419,6 +431,10 @@ public final class net/benwoodworth/knbt/NbtIntArray : java/util/List, kotlin/jv
 	public synthetic fun remove (I)Ljava/lang/Object;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeFirst ()Ljava/lang/Integer;
+	public synthetic fun removeFirst ()Ljava/lang/Object;
+	public fun removeLast ()Ljava/lang/Integer;
+	public synthetic fun removeLast ()Ljava/lang/Object;
 	public fun replaceAll (Ljava/util/function/UnaryOperator;)V
 	public fun retainAll (Ljava/util/Collection;)Z
 	public fun set (II)Ljava/lang/Integer;
@@ -449,6 +465,10 @@ public final class net/benwoodworth/knbt/NbtList : java/util/List, kotlin/jvm/in
 	public fun add (Lnet/benwoodworth/knbt/NbtTag;)Z
 	public fun addAll (ILjava/util/Collection;)Z
 	public fun addAll (Ljava/util/Collection;)Z
+	public synthetic fun addFirst (Ljava/lang/Object;)V
+	public fun addFirst (Lnet/benwoodworth/knbt/NbtTag;)V
+	public synthetic fun addLast (Ljava/lang/Object;)V
+	public fun addLast (Lnet/benwoodworth/knbt/NbtTag;)V
 	public fun clear ()V
 	public final fun contains (Ljava/lang/Object;)Z
 	public fun contains (Lnet/benwoodworth/knbt/NbtTag;)Z
@@ -471,6 +491,10 @@ public final class net/benwoodworth/knbt/NbtList : java/util/List, kotlin/jvm/in
 	public fun remove (I)Lnet/benwoodworth/knbt/NbtTag;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
+	public synthetic fun removeFirst ()Ljava/lang/Object;
+	public fun removeFirst ()Lnet/benwoodworth/knbt/NbtTag;
+	public synthetic fun removeLast ()Ljava/lang/Object;
+	public fun removeLast ()Lnet/benwoodworth/knbt/NbtTag;
 	public fun replaceAll (Ljava/util/function/UnaryOperator;)V
 	public fun retainAll (Ljava/util/Collection;)Z
 	public synthetic fun set (ILjava/lang/Object;)Ljava/lang/Object;
@@ -538,6 +562,10 @@ public final class net/benwoodworth/knbt/NbtLongArray : java/util/List, kotlin/j
 	public synthetic fun add (Ljava/lang/Object;)Z
 	public fun addAll (ILjava/util/Collection;)Z
 	public fun addAll (Ljava/util/Collection;)Z
+	public fun addFirst (Ljava/lang/Long;)V
+	public synthetic fun addFirst (Ljava/lang/Object;)V
+	public fun addLast (Ljava/lang/Long;)V
+	public synthetic fun addLast (Ljava/lang/Object;)V
 	public fun clear ()V
 	public fun contains (J)Z
 	public final fun contains (Ljava/lang/Object;)Z
@@ -561,6 +589,10 @@ public final class net/benwoodworth/knbt/NbtLongArray : java/util/List, kotlin/j
 	public synthetic fun remove (I)Ljava/lang/Object;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeFirst ()Ljava/lang/Long;
+	public synthetic fun removeFirst ()Ljava/lang/Object;
+	public fun removeLast ()Ljava/lang/Long;
+	public synthetic fun removeLast ()Ljava/lang/Object;
 	public fun replaceAll (Ljava/util/function/UnaryOperator;)V
 	public fun retainAll (Ljava/util/Collection;)Z
 	public fun set (IJ)Ljava/lang/Long;
