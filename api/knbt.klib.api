@@ -1,0 +1,689 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <net.benwoodworth.knbt:knbt>
+open annotation class net.benwoodworth.knbt/ExperimentalNbtApi : kotlin/Annotation { // net.benwoodworth.knbt/ExperimentalNbtApi|null[0]
+    constructor <init>() // net.benwoodworth.knbt/ExperimentalNbtApi.<init>|<init>(){}[0]
+}
+
+open annotation class net.benwoodworth.knbt/OkioApi : kotlin/Annotation { // net.benwoodworth.knbt/OkioApi|null[0]
+    constructor <init>() // net.benwoodworth.knbt/OkioApi.<init>|<init>(){}[0]
+}
+
+final enum class net.benwoodworth.knbt.internal/NbtTagType : kotlin/Enum<net.benwoodworth.knbt.internal/NbtTagType> { // net.benwoodworth.knbt.internal/NbtTagType|null[0]
+    enum entry TAG_Byte // net.benwoodworth.knbt.internal/NbtTagType.TAG_Byte|null[0]
+    enum entry TAG_Byte_Array // net.benwoodworth.knbt.internal/NbtTagType.TAG_Byte_Array|null[0]
+    enum entry TAG_Compound // net.benwoodworth.knbt.internal/NbtTagType.TAG_Compound|null[0]
+    enum entry TAG_Double // net.benwoodworth.knbt.internal/NbtTagType.TAG_Double|null[0]
+    enum entry TAG_End // net.benwoodworth.knbt.internal/NbtTagType.TAG_End|null[0]
+    enum entry TAG_Float // net.benwoodworth.knbt.internal/NbtTagType.TAG_Float|null[0]
+    enum entry TAG_Int // net.benwoodworth.knbt.internal/NbtTagType.TAG_Int|null[0]
+    enum entry TAG_Int_Array // net.benwoodworth.knbt.internal/NbtTagType.TAG_Int_Array|null[0]
+    enum entry TAG_List // net.benwoodworth.knbt.internal/NbtTagType.TAG_List|null[0]
+    enum entry TAG_Long // net.benwoodworth.knbt.internal/NbtTagType.TAG_Long|null[0]
+    enum entry TAG_Long_Array // net.benwoodworth.knbt.internal/NbtTagType.TAG_Long_Array|null[0]
+    enum entry TAG_Short // net.benwoodworth.knbt.internal/NbtTagType.TAG_Short|null[0]
+    enum entry TAG_String // net.benwoodworth.knbt.internal/NbtTagType.TAG_String|null[0]
+
+    final val entries // net.benwoodworth.knbt.internal/NbtTagType.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<net.benwoodworth.knbt.internal/NbtTagType> // net.benwoodworth.knbt.internal/NbtTagType.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt.internal/NbtTagType.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<net.benwoodworth.knbt.internal/NbtTagType> // net.benwoodworth.knbt.internal/NbtTagType.values|values#static(){}[0]
+}
+
+sealed interface net.benwoodworth.knbt/CompositeNbtDecoder : kotlinx.serialization.encoding/CompositeDecoder { // net.benwoodworth.knbt/CompositeNbtDecoder|null[0]
+    abstract val nbt // net.benwoodworth.knbt/CompositeNbtDecoder.nbt|{}nbt[0]
+        abstract fun <get-nbt>(): net.benwoodworth.knbt/NbtFormat // net.benwoodworth.knbt/CompositeNbtDecoder.nbt.<get-nbt>|<get-nbt>(){}[0]
+
+    abstract fun decodeByteArrayElement(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int): kotlin/ByteArray // net.benwoodworth.knbt/CompositeNbtDecoder.decodeByteArrayElement|decodeByteArrayElement(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int){}[0]
+    abstract fun decodeIntArrayElement(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int): kotlin/IntArray // net.benwoodworth.knbt/CompositeNbtDecoder.decodeIntArrayElement|decodeIntArrayElement(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int){}[0]
+    abstract fun decodeLongArrayElement(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int): kotlin/LongArray // net.benwoodworth.knbt/CompositeNbtDecoder.decodeLongArrayElement|decodeLongArrayElement(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int){}[0]
+    abstract fun decodeNbtTagElement(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int): net.benwoodworth.knbt/NbtTag // net.benwoodworth.knbt/CompositeNbtDecoder.decodeNbtTagElement|decodeNbtTagElement(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int){}[0]
+}
+
+sealed interface net.benwoodworth.knbt/CompositeNbtEncoder : kotlinx.serialization.encoding/CompositeEncoder { // net.benwoodworth.knbt/CompositeNbtEncoder|null[0]
+    abstract val nbt // net.benwoodworth.knbt/CompositeNbtEncoder.nbt|{}nbt[0]
+        abstract fun <get-nbt>(): net.benwoodworth.knbt/NbtFormat // net.benwoodworth.knbt/CompositeNbtEncoder.nbt.<get-nbt>|<get-nbt>(){}[0]
+
+    abstract fun encodeByteArrayElement(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int, kotlin/ByteArray) // net.benwoodworth.knbt/CompositeNbtEncoder.encodeByteArrayElement|encodeByteArrayElement(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int;kotlin.ByteArray){}[0]
+    abstract fun encodeIntArrayElement(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int, kotlin/IntArray) // net.benwoodworth.knbt/CompositeNbtEncoder.encodeIntArrayElement|encodeIntArrayElement(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int;kotlin.IntArray){}[0]
+    abstract fun encodeLongArrayElement(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int, kotlin/LongArray) // net.benwoodworth.knbt/CompositeNbtEncoder.encodeLongArrayElement|encodeLongArrayElement(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int;kotlin.LongArray){}[0]
+    abstract fun encodeNbtTagElement(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int, net.benwoodworth.knbt/NbtTag) // net.benwoodworth.knbt/CompositeNbtEncoder.encodeNbtTagElement|encodeNbtTagElement(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int;net.benwoodworth.knbt.NbtTag){}[0]
+}
+
+sealed interface net.benwoodworth.knbt/NbtDecoder : kotlinx.serialization.encoding/Decoder { // net.benwoodworth.knbt/NbtDecoder|null[0]
+    abstract val nbt // net.benwoodworth.knbt/NbtDecoder.nbt|{}nbt[0]
+        abstract fun <get-nbt>(): net.benwoodworth.knbt/NbtFormat // net.benwoodworth.knbt/NbtDecoder.nbt.<get-nbt>|<get-nbt>(){}[0]
+
+    abstract fun beginByteArray(kotlinx.serialization.descriptors/SerialDescriptor): net.benwoodworth.knbt/CompositeNbtDecoder // net.benwoodworth.knbt/NbtDecoder.beginByteArray|beginByteArray(kotlinx.serialization.descriptors.SerialDescriptor){}[0]
+    abstract fun beginCompound(kotlinx.serialization.descriptors/SerialDescriptor): net.benwoodworth.knbt/CompositeNbtDecoder // net.benwoodworth.knbt/NbtDecoder.beginCompound|beginCompound(kotlinx.serialization.descriptors.SerialDescriptor){}[0]
+    abstract fun beginIntArray(kotlinx.serialization.descriptors/SerialDescriptor): net.benwoodworth.knbt/CompositeNbtDecoder // net.benwoodworth.knbt/NbtDecoder.beginIntArray|beginIntArray(kotlinx.serialization.descriptors.SerialDescriptor){}[0]
+    abstract fun beginList(kotlinx.serialization.descriptors/SerialDescriptor): net.benwoodworth.knbt/CompositeNbtDecoder // net.benwoodworth.knbt/NbtDecoder.beginList|beginList(kotlinx.serialization.descriptors.SerialDescriptor){}[0]
+    abstract fun beginLongArray(kotlinx.serialization.descriptors/SerialDescriptor): net.benwoodworth.knbt/CompositeNbtDecoder // net.benwoodworth.knbt/NbtDecoder.beginLongArray|beginLongArray(kotlinx.serialization.descriptors.SerialDescriptor){}[0]
+    abstract fun decodeByteArray(): kotlin/ByteArray // net.benwoodworth.knbt/NbtDecoder.decodeByteArray|decodeByteArray(){}[0]
+    abstract fun decodeIntArray(): kotlin/IntArray // net.benwoodworth.knbt/NbtDecoder.decodeIntArray|decodeIntArray(){}[0]
+    abstract fun decodeLongArray(): kotlin/LongArray // net.benwoodworth.knbt/NbtDecoder.decodeLongArray|decodeLongArray(){}[0]
+    abstract fun decodeNbtTag(): net.benwoodworth.knbt/NbtTag // net.benwoodworth.knbt/NbtDecoder.decodeNbtTag|decodeNbtTag(){}[0]
+}
+
+sealed interface net.benwoodworth.knbt/NbtEncoder : kotlinx.serialization.encoding/Encoder { // net.benwoodworth.knbt/NbtEncoder|null[0]
+    abstract val nbt // net.benwoodworth.knbt/NbtEncoder.nbt|{}nbt[0]
+        abstract fun <get-nbt>(): net.benwoodworth.knbt/NbtFormat // net.benwoodworth.knbt/NbtEncoder.nbt.<get-nbt>|<get-nbt>(){}[0]
+
+    abstract fun beginByteArray(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int): net.benwoodworth.knbt/CompositeNbtEncoder // net.benwoodworth.knbt/NbtEncoder.beginByteArray|beginByteArray(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int){}[0]
+    abstract fun beginCompound(kotlinx.serialization.descriptors/SerialDescriptor): net.benwoodworth.knbt/CompositeNbtEncoder // net.benwoodworth.knbt/NbtEncoder.beginCompound|beginCompound(kotlinx.serialization.descriptors.SerialDescriptor){}[0]
+    abstract fun beginIntArray(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int): net.benwoodworth.knbt/CompositeNbtEncoder // net.benwoodworth.knbt/NbtEncoder.beginIntArray|beginIntArray(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int){}[0]
+    abstract fun beginList(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int): net.benwoodworth.knbt/CompositeNbtEncoder // net.benwoodworth.knbt/NbtEncoder.beginList|beginList(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int){}[0]
+    abstract fun beginLongArray(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int): net.benwoodworth.knbt/CompositeNbtEncoder // net.benwoodworth.knbt/NbtEncoder.beginLongArray|beginLongArray(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int){}[0]
+    abstract fun encodeByteArray(kotlin/ByteArray) // net.benwoodworth.knbt/NbtEncoder.encodeByteArray|encodeByteArray(kotlin.ByteArray){}[0]
+    abstract fun encodeIntArray(kotlin/IntArray) // net.benwoodworth.knbt/NbtEncoder.encodeIntArray|encodeIntArray(kotlin.IntArray){}[0]
+    abstract fun encodeLongArray(kotlin/LongArray) // net.benwoodworth.knbt/NbtEncoder.encodeLongArray|encodeLongArray(kotlin.LongArray){}[0]
+    abstract fun encodeNbtTag(net.benwoodworth.knbt/NbtTag) // net.benwoodworth.knbt/NbtEncoder.encodeNbtTag|encodeNbtTag(net.benwoodworth.knbt.NbtTag){}[0]
+}
+
+sealed interface net.benwoodworth.knbt/NbtFormat : kotlinx.serialization/SerialFormat { // net.benwoodworth.knbt/NbtFormat|null[0]
+    abstract val configuration // net.benwoodworth.knbt/NbtFormat.configuration|{}configuration[0]
+        abstract fun <get-configuration>(): net.benwoodworth.knbt/NbtFormatConfiguration // net.benwoodworth.knbt/NbtFormat.configuration.<get-configuration>|<get-configuration>(){}[0]
+
+    open fun <#A1: kotlin/Any?> decodeFromNbtTag(kotlinx.serialization/DeserializationStrategy<#A1>, net.benwoodworth.knbt/NbtTag): #A1 // net.benwoodworth.knbt/NbtFormat.decodeFromNbtTag|decodeFromNbtTag(kotlinx.serialization.DeserializationStrategy<0:0>;net.benwoodworth.knbt.NbtTag){0§<kotlin.Any?>}[0]
+    open fun <#A1: kotlin/Any?> encodeToNbtTag(kotlinx.serialization/SerializationStrategy<#A1>, #A1): net.benwoodworth.knbt/NbtTag // net.benwoodworth.knbt/NbtFormat.encodeToNbtTag|encodeToNbtTag(kotlinx.serialization.SerializationStrategy<0:0>;0:0){0§<kotlin.Any?>}[0]
+}
+
+sealed interface net.benwoodworth.knbt/NbtFormatBuilder { // net.benwoodworth.knbt/NbtFormatBuilder|null[0]
+    abstract var classDiscriminator // net.benwoodworth.knbt/NbtFormatBuilder.classDiscriminator|{}classDiscriminator[0]
+        abstract fun <get-classDiscriminator>(): kotlin/String // net.benwoodworth.knbt/NbtFormatBuilder.classDiscriminator.<get-classDiscriminator>|<get-classDiscriminator>(){}[0]
+        abstract fun <set-classDiscriminator>(kotlin/String) // net.benwoodworth.knbt/NbtFormatBuilder.classDiscriminator.<set-classDiscriminator>|<set-classDiscriminator>(kotlin.String){}[0]
+    abstract var encodeDefaults // net.benwoodworth.knbt/NbtFormatBuilder.encodeDefaults|{}encodeDefaults[0]
+        abstract fun <get-encodeDefaults>(): kotlin/Boolean // net.benwoodworth.knbt/NbtFormatBuilder.encodeDefaults.<get-encodeDefaults>|<get-encodeDefaults>(){}[0]
+        abstract fun <set-encodeDefaults>(kotlin/Boolean) // net.benwoodworth.knbt/NbtFormatBuilder.encodeDefaults.<set-encodeDefaults>|<set-encodeDefaults>(kotlin.Boolean){}[0]
+    abstract var ignoreUnknownKeys // net.benwoodworth.knbt/NbtFormatBuilder.ignoreUnknownKeys|{}ignoreUnknownKeys[0]
+        abstract fun <get-ignoreUnknownKeys>(): kotlin/Boolean // net.benwoodworth.knbt/NbtFormatBuilder.ignoreUnknownKeys.<get-ignoreUnknownKeys>|<get-ignoreUnknownKeys>(){}[0]
+        abstract fun <set-ignoreUnknownKeys>(kotlin/Boolean) // net.benwoodworth.knbt/NbtFormatBuilder.ignoreUnknownKeys.<set-ignoreUnknownKeys>|<set-ignoreUnknownKeys>(kotlin.Boolean){}[0]
+    abstract var nameRootClasses // net.benwoodworth.knbt/NbtFormatBuilder.nameRootClasses|{}nameRootClasses[0]
+        abstract fun <get-nameRootClasses>(): kotlin/Boolean // net.benwoodworth.knbt/NbtFormatBuilder.nameRootClasses.<get-nameRootClasses>|<get-nameRootClasses>(){}[0]
+        abstract fun <set-nameRootClasses>(kotlin/Boolean) // net.benwoodworth.knbt/NbtFormatBuilder.nameRootClasses.<set-nameRootClasses>|<set-nameRootClasses>(kotlin.Boolean){}[0]
+    abstract var serializersModule // net.benwoodworth.knbt/NbtFormatBuilder.serializersModule|{}serializersModule[0]
+        abstract fun <get-serializersModule>(): kotlinx.serialization.modules/SerializersModule // net.benwoodworth.knbt/NbtFormatBuilder.serializersModule.<get-serializersModule>|<get-serializersModule>(){}[0]
+        abstract fun <set-serializersModule>(kotlinx.serialization.modules/SerializersModule) // net.benwoodworth.knbt/NbtFormatBuilder.serializersModule.<set-serializersModule>|<set-serializersModule>(kotlinx.serialization.modules.SerializersModule){}[0]
+}
+
+sealed interface net.benwoodworth.knbt/NbtFormatConfiguration { // net.benwoodworth.knbt/NbtFormatConfiguration|null[0]
+    abstract val classDiscriminator // net.benwoodworth.knbt/NbtFormatConfiguration.classDiscriminator|{}classDiscriminator[0]
+        abstract fun <get-classDiscriminator>(): kotlin/String // net.benwoodworth.knbt/NbtFormatConfiguration.classDiscriminator.<get-classDiscriminator>|<get-classDiscriminator>(){}[0]
+    abstract val encodeDefaults // net.benwoodworth.knbt/NbtFormatConfiguration.encodeDefaults|{}encodeDefaults[0]
+        abstract fun <get-encodeDefaults>(): kotlin/Boolean // net.benwoodworth.knbt/NbtFormatConfiguration.encodeDefaults.<get-encodeDefaults>|<get-encodeDefaults>(){}[0]
+    abstract val ignoreUnknownKeys // net.benwoodworth.knbt/NbtFormatConfiguration.ignoreUnknownKeys|{}ignoreUnknownKeys[0]
+        abstract fun <get-ignoreUnknownKeys>(): kotlin/Boolean // net.benwoodworth.knbt/NbtFormatConfiguration.ignoreUnknownKeys.<get-ignoreUnknownKeys>|<get-ignoreUnknownKeys>(){}[0]
+    abstract val nameRootClasses // net.benwoodworth.knbt/NbtFormatConfiguration.nameRootClasses|{}nameRootClasses[0]
+        abstract fun <get-nameRootClasses>(): kotlin/Boolean // net.benwoodworth.knbt/NbtFormatConfiguration.nameRootClasses.<get-nameRootClasses>|<get-nameRootClasses>(){}[0]
+}
+
+sealed interface net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtTag|null[0]
+    abstract val type // net.benwoodworth.knbt/NbtTag.type|{}type[0]
+        abstract fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtTag.type.<get-type>|<get-type>(){}[0]
+
+    final object Companion : kotlinx.serialization.internal/SerializerFactory { // net.benwoodworth.knbt/NbtTag.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtTag> // net.benwoodworth.knbt/NbtTag.Companion.serializer|serializer(){}[0]
+        final fun serializer(kotlin/Array<out kotlinx.serialization/KSerializer<*>>...): kotlinx.serialization/KSerializer<*> // net.benwoodworth.knbt/NbtTag.Companion.serializer|serializer(kotlin.Array<out|kotlinx.serialization.KSerializer<*>>...){}[0]
+    }
+}
+
+abstract class <#A: kotlin/Any> net.benwoodworth.knbt/NbtContentPolymorphicSerializer : kotlinx.serialization/KSerializer<#A> { // net.benwoodworth.knbt/NbtContentPolymorphicSerializer|null[0]
+    constructor <init>(kotlin.reflect/KClass<#A>) // net.benwoodworth.knbt/NbtContentPolymorphicSerializer.<init>|<init>(kotlin.reflect.KClass<1:0>){}[0]
+
+    open val descriptor // net.benwoodworth.knbt/NbtContentPolymorphicSerializer.descriptor|{}descriptor[0]
+        open fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // net.benwoodworth.knbt/NbtContentPolymorphicSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    abstract fun selectDeserializer(net.benwoodworth.knbt/NbtTag): kotlinx.serialization/DeserializationStrategy<#A> // net.benwoodworth.knbt/NbtContentPolymorphicSerializer.selectDeserializer|selectDeserializer(net.benwoodworth.knbt.NbtTag){}[0]
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): #A // net.benwoodworth.knbt/NbtContentPolymorphicSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, #A) // net.benwoodworth.knbt/NbtContentPolymorphicSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;1:0){}[0]
+}
+
+abstract class <#A: kotlin/Any> net.benwoodworth.knbt/NbtTransformingSerializer : kotlinx.serialization/KSerializer<#A> { // net.benwoodworth.knbt/NbtTransformingSerializer|null[0]
+    constructor <init>(kotlinx.serialization/KSerializer<#A>) // net.benwoodworth.knbt/NbtTransformingSerializer.<init>|<init>(kotlinx.serialization.KSerializer<1:0>){}[0]
+
+    open val descriptor // net.benwoodworth.knbt/NbtTransformingSerializer.descriptor|{}descriptor[0]
+        open fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // net.benwoodworth.knbt/NbtTransformingSerializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+    final fun deserialize(kotlinx.serialization.encoding/Decoder): #A // net.benwoodworth.knbt/NbtTransformingSerializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+    final fun serialize(kotlinx.serialization.encoding/Encoder, #A) // net.benwoodworth.knbt/NbtTransformingSerializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;1:0){}[0]
+    open fun transformDeserialize(net.benwoodworth.knbt/NbtTag): net.benwoodworth.knbt/NbtTag // net.benwoodworth.knbt/NbtTransformingSerializer.transformDeserialize|transformDeserialize(net.benwoodworth.knbt.NbtTag){}[0]
+    open fun transformSerialize(net.benwoodworth.knbt/NbtTag): net.benwoodworth.knbt/NbtTag // net.benwoodworth.knbt/NbtTransformingSerializer.transformSerialize|transformSerialize(net.benwoodworth.knbt.NbtTag){}[0]
+}
+
+abstract class net.benwoodworth.knbt/NbtCompression { // net.benwoodworth.knbt/NbtCompression|null[0]
+    final object Companion // net.benwoodworth.knbt/NbtCompression.Companion|null[0]
+
+    final object Gzip : net.benwoodworth.knbt/NbtCompression { // net.benwoodworth.knbt/NbtCompression.Gzip|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtCompression.Gzip.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtCompression.Gzip.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtCompression.Gzip.toString|toString(){}[0]
+    }
+
+    final object None : net.benwoodworth.knbt/NbtCompression { // net.benwoodworth.knbt/NbtCompression.None|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtCompression.None.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtCompression.None.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtCompression.None.toString|toString(){}[0]
+    }
+
+    final object Zlib : net.benwoodworth.knbt/NbtCompression { // net.benwoodworth.knbt/NbtCompression.Zlib|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtCompression.Zlib.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtCompression.Zlib.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtCompression.Zlib.toString|toString(){}[0]
+    }
+}
+
+abstract class net.benwoodworth.knbt/NbtVariant { // net.benwoodworth.knbt/NbtVariant|null[0]
+    final object Bedrock : net.benwoodworth.knbt/NbtVariant { // net.benwoodworth.knbt/NbtVariant.Bedrock|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtVariant.Bedrock.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtVariant.Bedrock.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtVariant.Bedrock.toString|toString(){}[0]
+    }
+
+    final object BedrockNetwork : net.benwoodworth.knbt/NbtVariant { // net.benwoodworth.knbt/NbtVariant.BedrockNetwork|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtVariant.BedrockNetwork.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtVariant.BedrockNetwork.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtVariant.BedrockNetwork.toString|toString(){}[0]
+    }
+
+    final object Java : net.benwoodworth.knbt/NbtVariant { // net.benwoodworth.knbt/NbtVariant.Java|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtVariant.Java.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtVariant.Java.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtVariant.Java.toString|toString(){}[0]
+    }
+}
+
+final class <#A: net.benwoodworth.knbt/NbtTag> net.benwoodworth.knbt/NbtListBuilder { // net.benwoodworth.knbt/NbtListBuilder|null[0]
+    constructor <init>(kotlin/Int = ...) // net.benwoodworth.knbt/NbtListBuilder.<init>|<init>(kotlin.Int){}[0]
+
+    final fun add(#A): kotlin/Boolean // net.benwoodworth.knbt/NbtListBuilder.add|add(1:0){}[0]
+    final fun build(): net.benwoodworth.knbt/NbtList<#A> // net.benwoodworth.knbt/NbtListBuilder.build|build(){}[0]
+}
+
+final class <#A: out net.benwoodworth.knbt/NbtTag> net.benwoodworth.knbt/NbtList : kotlin.collections/List<#A>, net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtList|null[0]
+    final val size // net.benwoodworth.knbt/NbtList.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // net.benwoodworth.knbt/NbtList.size.<get-size>|<get-size>(){}[0]
+    final val type // net.benwoodworth.knbt/NbtList.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtList.type.<get-type>|<get-type>(){}[0]
+
+    final fun contains(#A): kotlin/Boolean // net.benwoodworth.knbt/NbtList.contains|contains(1:0){}[0]
+    final fun containsAll(kotlin.collections/Collection<#A>): kotlin/Boolean // net.benwoodworth.knbt/NbtList.containsAll|containsAll(kotlin.collections.Collection<1:0>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtList.equals|equals(kotlin.Any?){}[0]
+    final fun get(kotlin/Int): #A // net.benwoodworth.knbt/NbtList.get|get(kotlin.Int){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtList.hashCode|hashCode(){}[0]
+    final fun indexOf(#A): kotlin/Int // net.benwoodworth.knbt/NbtList.indexOf|indexOf(1:0){}[0]
+    final fun isEmpty(): kotlin/Boolean // net.benwoodworth.knbt/NbtList.isEmpty|isEmpty(){}[0]
+    final fun iterator(): kotlin.collections/Iterator<#A> // net.benwoodworth.knbt/NbtList.iterator|iterator(){}[0]
+    final fun lastIndexOf(#A): kotlin/Int // net.benwoodworth.knbt/NbtList.lastIndexOf|lastIndexOf(1:0){}[0]
+    final fun listIterator(): kotlin.collections/ListIterator<#A> // net.benwoodworth.knbt/NbtList.listIterator|listIterator(){}[0]
+    final fun listIterator(kotlin/Int): kotlin.collections/ListIterator<#A> // net.benwoodworth.knbt/NbtList.listIterator|listIterator(kotlin.Int){}[0]
+    final fun subList(kotlin/Int, kotlin/Int): kotlin.collections/List<#A> // net.benwoodworth.knbt/NbtList.subList|subList(kotlin.Int;kotlin.Int){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtList.toString|toString(){}[0]
+
+    final object Companion : kotlinx.serialization.internal/SerializerFactory { // net.benwoodworth.knbt/NbtList.Companion|null[0]
+        final fun <#A2: kotlin/Any?> serializer(kotlinx.serialization/KSerializer<#A2>): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtList<#A2>> // net.benwoodworth.knbt/NbtList.Companion.serializer|serializer(kotlinx.serialization.KSerializer<0:0>){0§<kotlin.Any?>}[0]
+        final fun <#A2: net.benwoodworth.knbt/NbtTag> of(kotlin/Array<out #A2>...): net.benwoodworth.knbt/NbtList<#A2> // net.benwoodworth.knbt/NbtList.Companion.of|of(kotlin.Array<out|0:0>...){0§<net.benwoodworth.knbt.NbtTag>}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtByte>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtByte> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtByte>){}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtByteArray>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtByteArray> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtByteArray>){}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtCompound>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtCompound> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtCompound>){}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtDouble>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtDouble> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtDouble>){}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtFloat>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtFloat> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtFloat>){}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtInt>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtInt> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtInt>){}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtIntArray>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtIntArray> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtIntArray>){}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtList<*>>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtList<*>> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtList<*>>){}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtLong>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtLong> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtLong>){}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtLongArray>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtLongArray> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtLongArray>){}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtShort>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtShort> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtShort>){}[0]
+        final fun invoke(kotlin.collections/List<net.benwoodworth.knbt/NbtString>): net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtString> // net.benwoodworth.knbt/NbtList.Companion.invoke|invoke(kotlin.collections.List<net.benwoodworth.knbt.NbtString>){}[0]
+        final fun serializer(kotlin/Array<out kotlinx.serialization/KSerializer<*>>...): kotlinx.serialization/KSerializer<*> // net.benwoodworth.knbt/NbtList.Companion.serializer|serializer(kotlin.Array<out|kotlinx.serialization.KSerializer<*>>...){}[0]
+    }
+
+    // Targets: [js]
+    final fun asJsReadonlyArrayView(): kotlin.js.collections/JsReadonlyArray<#A> // net.benwoodworth.knbt/NbtList.asJsReadonlyArrayView|asJsReadonlyArrayView(){}[0]
+}
+
+final class net.benwoodworth.knbt/NbtBuilder : net.benwoodworth.knbt/NbtFormatBuilder { // net.benwoodworth.knbt/NbtBuilder|null[0]
+    final var classDiscriminator // net.benwoodworth.knbt/NbtBuilder.classDiscriminator|{}classDiscriminator[0]
+        final fun <get-classDiscriminator>(): kotlin/String // net.benwoodworth.knbt/NbtBuilder.classDiscriminator.<get-classDiscriminator>|<get-classDiscriminator>(){}[0]
+        final fun <set-classDiscriminator>(kotlin/String) // net.benwoodworth.knbt/NbtBuilder.classDiscriminator.<set-classDiscriminator>|<set-classDiscriminator>(kotlin.String){}[0]
+    final var compression // net.benwoodworth.knbt/NbtBuilder.compression|{}compression[0]
+        final fun <get-compression>(): net.benwoodworth.knbt/NbtCompression? // net.benwoodworth.knbt/NbtBuilder.compression.<get-compression>|<get-compression>(){}[0]
+        final fun <set-compression>(net.benwoodworth.knbt/NbtCompression?) // net.benwoodworth.knbt/NbtBuilder.compression.<set-compression>|<set-compression>(net.benwoodworth.knbt.NbtCompression?){}[0]
+    final var compressionLevel // net.benwoodworth.knbt/NbtBuilder.compressionLevel|{}compressionLevel[0]
+        final fun <get-compressionLevel>(): kotlin/Int? // net.benwoodworth.knbt/NbtBuilder.compressionLevel.<get-compressionLevel>|<get-compressionLevel>(){}[0]
+        final fun <set-compressionLevel>(kotlin/Int?) // net.benwoodworth.knbt/NbtBuilder.compressionLevel.<set-compressionLevel>|<set-compressionLevel>(kotlin.Int?){}[0]
+    final var encodeDefaults // net.benwoodworth.knbt/NbtBuilder.encodeDefaults|{}encodeDefaults[0]
+        final fun <get-encodeDefaults>(): kotlin/Boolean // net.benwoodworth.knbt/NbtBuilder.encodeDefaults.<get-encodeDefaults>|<get-encodeDefaults>(){}[0]
+        final fun <set-encodeDefaults>(kotlin/Boolean) // net.benwoodworth.knbt/NbtBuilder.encodeDefaults.<set-encodeDefaults>|<set-encodeDefaults>(kotlin.Boolean){}[0]
+    final var ignoreUnknownKeys // net.benwoodworth.knbt/NbtBuilder.ignoreUnknownKeys|{}ignoreUnknownKeys[0]
+        final fun <get-ignoreUnknownKeys>(): kotlin/Boolean // net.benwoodworth.knbt/NbtBuilder.ignoreUnknownKeys.<get-ignoreUnknownKeys>|<get-ignoreUnknownKeys>(){}[0]
+        final fun <set-ignoreUnknownKeys>(kotlin/Boolean) // net.benwoodworth.knbt/NbtBuilder.ignoreUnknownKeys.<set-ignoreUnknownKeys>|<set-ignoreUnknownKeys>(kotlin.Boolean){}[0]
+    final var nameRootClasses // net.benwoodworth.knbt/NbtBuilder.nameRootClasses|{}nameRootClasses[0]
+        final fun <get-nameRootClasses>(): kotlin/Boolean // net.benwoodworth.knbt/NbtBuilder.nameRootClasses.<get-nameRootClasses>|<get-nameRootClasses>(){}[0]
+        final fun <set-nameRootClasses>(kotlin/Boolean) // net.benwoodworth.knbt/NbtBuilder.nameRootClasses.<set-nameRootClasses>|<set-nameRootClasses>(kotlin.Boolean){}[0]
+    final var serializersModule // net.benwoodworth.knbt/NbtBuilder.serializersModule|{}serializersModule[0]
+        final fun <get-serializersModule>(): kotlinx.serialization.modules/SerializersModule // net.benwoodworth.knbt/NbtBuilder.serializersModule.<get-serializersModule>|<get-serializersModule>(){}[0]
+        final fun <set-serializersModule>(kotlinx.serialization.modules/SerializersModule) // net.benwoodworth.knbt/NbtBuilder.serializersModule.<set-serializersModule>|<set-serializersModule>(kotlinx.serialization.modules.SerializersModule){}[0]
+    final var variant // net.benwoodworth.knbt/NbtBuilder.variant|{}variant[0]
+        final fun <get-variant>(): net.benwoodworth.knbt/NbtVariant? // net.benwoodworth.knbt/NbtBuilder.variant.<get-variant>|<get-variant>(){}[0]
+        final fun <set-variant>(net.benwoodworth.knbt/NbtVariant?) // net.benwoodworth.knbt/NbtBuilder.variant.<set-variant>|<set-variant>(net.benwoodworth.knbt.NbtVariant?){}[0]
+}
+
+final class net.benwoodworth.knbt/NbtByteArray : kotlin.collections/List<kotlin/Byte>, net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtByteArray|null[0]
+    constructor <init>(kotlin/ByteArray) // net.benwoodworth.knbt/NbtByteArray.<init>|<init>(kotlin.ByteArray){}[0]
+
+    final val size // net.benwoodworth.knbt/NbtByteArray.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // net.benwoodworth.knbt/NbtByteArray.size.<get-size>|<get-size>(){}[0]
+    final val type // net.benwoodworth.knbt/NbtByteArray.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtByteArray.type.<get-type>|<get-type>(){}[0]
+
+    final fun contains(kotlin/Byte): kotlin/Boolean // net.benwoodworth.knbt/NbtByteArray.contains|contains(kotlin.Byte){}[0]
+    final fun containsAll(kotlin.collections/Collection<kotlin/Byte>): kotlin/Boolean // net.benwoodworth.knbt/NbtByteArray.containsAll|containsAll(kotlin.collections.Collection<kotlin.Byte>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtByteArray.equals|equals(kotlin.Any?){}[0]
+    final fun get(kotlin/Int): kotlin/Byte // net.benwoodworth.knbt/NbtByteArray.get|get(kotlin.Int){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtByteArray.hashCode|hashCode(){}[0]
+    final fun indexOf(kotlin/Byte): kotlin/Int // net.benwoodworth.knbt/NbtByteArray.indexOf|indexOf(kotlin.Byte){}[0]
+    final fun isEmpty(): kotlin/Boolean // net.benwoodworth.knbt/NbtByteArray.isEmpty|isEmpty(){}[0]
+    final fun iterator(): kotlin.collections/ByteIterator // net.benwoodworth.knbt/NbtByteArray.iterator|iterator(){}[0]
+    final fun lastIndexOf(kotlin/Byte): kotlin/Int // net.benwoodworth.knbt/NbtByteArray.lastIndexOf|lastIndexOf(kotlin.Byte){}[0]
+    final fun listIterator(): kotlin.collections/ListIterator<kotlin/Byte> // net.benwoodworth.knbt/NbtByteArray.listIterator|listIterator(){}[0]
+    final fun listIterator(kotlin/Int): kotlin.collections/ListIterator<kotlin/Byte> // net.benwoodworth.knbt/NbtByteArray.listIterator|listIterator(kotlin.Int){}[0]
+    final fun subList(kotlin/Int, kotlin/Int): kotlin.collections/List<kotlin/Byte> // net.benwoodworth.knbt/NbtByteArray.subList|subList(kotlin.Int;kotlin.Int){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtByteArray.toString|toString(){}[0]
+
+    final object Companion { // net.benwoodworth.knbt/NbtByteArray.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtByteArray> // net.benwoodworth.knbt/NbtByteArray.Companion.serializer|serializer(){}[0]
+    }
+
+    // Targets: [js]
+    final fun asJsReadonlyArrayView(): kotlin.js.collections/JsReadonlyArray<kotlin/Byte> // net.benwoodworth.knbt/NbtByteArray.asJsReadonlyArrayView|asJsReadonlyArrayView(){}[0]
+}
+
+final class net.benwoodworth.knbt/NbtCompound : kotlin.collections/Map<kotlin/String, net.benwoodworth.knbt/NbtTag>, net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtCompound|null[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, net.benwoodworth.knbt/NbtTag>) // net.benwoodworth.knbt/NbtCompound.<init>|<init>(kotlin.collections.Map<kotlin.String,net.benwoodworth.knbt.NbtTag>){}[0]
+
+    final val entries // net.benwoodworth.knbt/NbtCompound.entries|{}entries[0]
+        final fun <get-entries>(): kotlin.collections/Set<kotlin.collections/Map.Entry<kotlin/String, net.benwoodworth.knbt/NbtTag>> // net.benwoodworth.knbt/NbtCompound.entries.<get-entries>|<get-entries>(){}[0]
+    final val keys // net.benwoodworth.knbt/NbtCompound.keys|{}keys[0]
+        final fun <get-keys>(): kotlin.collections/Set<kotlin/String> // net.benwoodworth.knbt/NbtCompound.keys.<get-keys>|<get-keys>(){}[0]
+    final val size // net.benwoodworth.knbt/NbtCompound.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // net.benwoodworth.knbt/NbtCompound.size.<get-size>|<get-size>(){}[0]
+    final val type // net.benwoodworth.knbt/NbtCompound.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtCompound.type.<get-type>|<get-type>(){}[0]
+    final val values // net.benwoodworth.knbt/NbtCompound.values|{}values[0]
+        final fun <get-values>(): kotlin.collections/Collection<net.benwoodworth.knbt/NbtTag> // net.benwoodworth.knbt/NbtCompound.values.<get-values>|<get-values>(){}[0]
+
+    final fun containsKey(kotlin/String): kotlin/Boolean // net.benwoodworth.knbt/NbtCompound.containsKey|containsKey(kotlin.String){}[0]
+    final fun containsValue(net.benwoodworth.knbt/NbtTag): kotlin/Boolean // net.benwoodworth.knbt/NbtCompound.containsValue|containsValue(net.benwoodworth.knbt.NbtTag){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtCompound.equals|equals(kotlin.Any?){}[0]
+    final fun get(kotlin/String): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/NbtCompound.get|get(kotlin.String){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtCompound.hashCode|hashCode(){}[0]
+    final fun isEmpty(): kotlin/Boolean // net.benwoodworth.knbt/NbtCompound.isEmpty|isEmpty(){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtCompound.toString|toString(){}[0]
+
+    final object Companion { // net.benwoodworth.knbt/NbtCompound.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtCompound> // net.benwoodworth.knbt/NbtCompound.Companion.serializer|serializer(){}[0]
+    }
+
+    // Targets: [js]
+    final fun asJsReadonlyMapView(): kotlin.js.collections/JsReadonlyMap<kotlin/String, net.benwoodworth.knbt/NbtTag> // net.benwoodworth.knbt/NbtCompound.asJsReadonlyMapView|asJsReadonlyMapView(){}[0]
+}
+
+final class net.benwoodworth.knbt/NbtCompoundBuilder { // net.benwoodworth.knbt/NbtCompoundBuilder|null[0]
+    constructor <init>() // net.benwoodworth.knbt/NbtCompoundBuilder.<init>|<init>(){}[0]
+
+    final fun build(): net.benwoodworth.knbt/NbtCompound // net.benwoodworth.knbt/NbtCompoundBuilder.build|build(){}[0]
+    final fun put(kotlin/String, net.benwoodworth.knbt/NbtTag): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/NbtCompoundBuilder.put|put(kotlin.String;net.benwoodworth.knbt.NbtTag){}[0]
+}
+
+final class net.benwoodworth.knbt/NbtConfiguration : net.benwoodworth.knbt/NbtFormatConfiguration { // net.benwoodworth.knbt/NbtConfiguration|null[0]
+    final val classDiscriminator // net.benwoodworth.knbt/NbtConfiguration.classDiscriminator|{}classDiscriminator[0]
+        final fun <get-classDiscriminator>(): kotlin/String // net.benwoodworth.knbt/NbtConfiguration.classDiscriminator.<get-classDiscriminator>|<get-classDiscriminator>(){}[0]
+    final val compression // net.benwoodworth.knbt/NbtConfiguration.compression|{}compression[0]
+        final fun <get-compression>(): net.benwoodworth.knbt/NbtCompression // net.benwoodworth.knbt/NbtConfiguration.compression.<get-compression>|<get-compression>(){}[0]
+    final val compressionLevel // net.benwoodworth.knbt/NbtConfiguration.compressionLevel|{}compressionLevel[0]
+        final fun <get-compressionLevel>(): kotlin/Int? // net.benwoodworth.knbt/NbtConfiguration.compressionLevel.<get-compressionLevel>|<get-compressionLevel>(){}[0]
+    final val encodeDefaults // net.benwoodworth.knbt/NbtConfiguration.encodeDefaults|{}encodeDefaults[0]
+        final fun <get-encodeDefaults>(): kotlin/Boolean // net.benwoodworth.knbt/NbtConfiguration.encodeDefaults.<get-encodeDefaults>|<get-encodeDefaults>(){}[0]
+    final val ignoreUnknownKeys // net.benwoodworth.knbt/NbtConfiguration.ignoreUnknownKeys|{}ignoreUnknownKeys[0]
+        final fun <get-ignoreUnknownKeys>(): kotlin/Boolean // net.benwoodworth.knbt/NbtConfiguration.ignoreUnknownKeys.<get-ignoreUnknownKeys>|<get-ignoreUnknownKeys>(){}[0]
+    final val nameRootClasses // net.benwoodworth.knbt/NbtConfiguration.nameRootClasses|{}nameRootClasses[0]
+        final fun <get-nameRootClasses>(): kotlin/Boolean // net.benwoodworth.knbt/NbtConfiguration.nameRootClasses.<get-nameRootClasses>|<get-nameRootClasses>(){}[0]
+    final val variant // net.benwoodworth.knbt/NbtConfiguration.variant|{}variant[0]
+        final fun <get-variant>(): net.benwoodworth.knbt/NbtVariant // net.benwoodworth.knbt/NbtConfiguration.variant.<get-variant>|<get-variant>(){}[0]
+
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtConfiguration.toString|toString(){}[0]
+}
+
+final class net.benwoodworth.knbt/NbtIntArray : kotlin.collections/List<kotlin/Int>, net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtIntArray|null[0]
+    constructor <init>(kotlin/IntArray) // net.benwoodworth.knbt/NbtIntArray.<init>|<init>(kotlin.IntArray){}[0]
+
+    final val size // net.benwoodworth.knbt/NbtIntArray.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // net.benwoodworth.knbt/NbtIntArray.size.<get-size>|<get-size>(){}[0]
+    final val type // net.benwoodworth.knbt/NbtIntArray.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtIntArray.type.<get-type>|<get-type>(){}[0]
+
+    final fun contains(kotlin/Int): kotlin/Boolean // net.benwoodworth.knbt/NbtIntArray.contains|contains(kotlin.Int){}[0]
+    final fun containsAll(kotlin.collections/Collection<kotlin/Int>): kotlin/Boolean // net.benwoodworth.knbt/NbtIntArray.containsAll|containsAll(kotlin.collections.Collection<kotlin.Int>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtIntArray.equals|equals(kotlin.Any?){}[0]
+    final fun get(kotlin/Int): kotlin/Int // net.benwoodworth.knbt/NbtIntArray.get|get(kotlin.Int){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtIntArray.hashCode|hashCode(){}[0]
+    final fun indexOf(kotlin/Int): kotlin/Int // net.benwoodworth.knbt/NbtIntArray.indexOf|indexOf(kotlin.Int){}[0]
+    final fun isEmpty(): kotlin/Boolean // net.benwoodworth.knbt/NbtIntArray.isEmpty|isEmpty(){}[0]
+    final fun iterator(): kotlin.collections/IntIterator // net.benwoodworth.knbt/NbtIntArray.iterator|iterator(){}[0]
+    final fun lastIndexOf(kotlin/Int): kotlin/Int // net.benwoodworth.knbt/NbtIntArray.lastIndexOf|lastIndexOf(kotlin.Int){}[0]
+    final fun listIterator(): kotlin.collections/ListIterator<kotlin/Int> // net.benwoodworth.knbt/NbtIntArray.listIterator|listIterator(){}[0]
+    final fun listIterator(kotlin/Int): kotlin.collections/ListIterator<kotlin/Int> // net.benwoodworth.knbt/NbtIntArray.listIterator|listIterator(kotlin.Int){}[0]
+    final fun subList(kotlin/Int, kotlin/Int): kotlin.collections/List<kotlin/Int> // net.benwoodworth.knbt/NbtIntArray.subList|subList(kotlin.Int;kotlin.Int){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtIntArray.toString|toString(){}[0]
+
+    final object Companion { // net.benwoodworth.knbt/NbtIntArray.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtIntArray> // net.benwoodworth.knbt/NbtIntArray.Companion.serializer|serializer(){}[0]
+    }
+
+    // Targets: [js]
+    final fun asJsReadonlyArrayView(): kotlin.js.collections/JsReadonlyArray<kotlin/Int> // net.benwoodworth.knbt/NbtIntArray.asJsReadonlyArrayView|asJsReadonlyArrayView(){}[0]
+}
+
+final class net.benwoodworth.knbt/NbtLongArray : kotlin.collections/List<kotlin/Long>, net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtLongArray|null[0]
+    constructor <init>(kotlin/LongArray) // net.benwoodworth.knbt/NbtLongArray.<init>|<init>(kotlin.LongArray){}[0]
+
+    final val size // net.benwoodworth.knbt/NbtLongArray.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // net.benwoodworth.knbt/NbtLongArray.size.<get-size>|<get-size>(){}[0]
+    final val type // net.benwoodworth.knbt/NbtLongArray.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtLongArray.type.<get-type>|<get-type>(){}[0]
+
+    final fun contains(kotlin/Long): kotlin/Boolean // net.benwoodworth.knbt/NbtLongArray.contains|contains(kotlin.Long){}[0]
+    final fun containsAll(kotlin.collections/Collection<kotlin/Long>): kotlin/Boolean // net.benwoodworth.knbt/NbtLongArray.containsAll|containsAll(kotlin.collections.Collection<kotlin.Long>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtLongArray.equals|equals(kotlin.Any?){}[0]
+    final fun get(kotlin/Int): kotlin/Long // net.benwoodworth.knbt/NbtLongArray.get|get(kotlin.Int){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtLongArray.hashCode|hashCode(){}[0]
+    final fun indexOf(kotlin/Long): kotlin/Int // net.benwoodworth.knbt/NbtLongArray.indexOf|indexOf(kotlin.Long){}[0]
+    final fun isEmpty(): kotlin/Boolean // net.benwoodworth.knbt/NbtLongArray.isEmpty|isEmpty(){}[0]
+    final fun iterator(): kotlin.collections/LongIterator // net.benwoodworth.knbt/NbtLongArray.iterator|iterator(){}[0]
+    final fun lastIndexOf(kotlin/Long): kotlin/Int // net.benwoodworth.knbt/NbtLongArray.lastIndexOf|lastIndexOf(kotlin.Long){}[0]
+    final fun listIterator(): kotlin.collections/ListIterator<kotlin/Long> // net.benwoodworth.knbt/NbtLongArray.listIterator|listIterator(){}[0]
+    final fun listIterator(kotlin/Int): kotlin.collections/ListIterator<kotlin/Long> // net.benwoodworth.knbt/NbtLongArray.listIterator|listIterator(kotlin.Int){}[0]
+    final fun subList(kotlin/Int, kotlin/Int): kotlin.collections/List<kotlin/Long> // net.benwoodworth.knbt/NbtLongArray.subList|subList(kotlin.Int;kotlin.Int){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtLongArray.toString|toString(){}[0]
+
+    final object Companion { // net.benwoodworth.knbt/NbtLongArray.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtLongArray> // net.benwoodworth.knbt/NbtLongArray.Companion.serializer|serializer(){}[0]
+    }
+
+    // Targets: [js]
+    final fun asJsReadonlyArrayView(): kotlin.js.collections/JsReadonlyArray<kotlin/Long> // net.benwoodworth.knbt/NbtLongArray.asJsReadonlyArrayView|asJsReadonlyArrayView(){}[0]
+}
+
+final class net.benwoodworth.knbt/StringifiedNbtBuilder : net.benwoodworth.knbt/NbtFormatBuilder { // net.benwoodworth.knbt/StringifiedNbtBuilder|null[0]
+    final var classDiscriminator // net.benwoodworth.knbt/StringifiedNbtBuilder.classDiscriminator|{}classDiscriminator[0]
+        final fun <get-classDiscriminator>(): kotlin/String // net.benwoodworth.knbt/StringifiedNbtBuilder.classDiscriminator.<get-classDiscriminator>|<get-classDiscriminator>(){}[0]
+        final fun <set-classDiscriminator>(kotlin/String) // net.benwoodworth.knbt/StringifiedNbtBuilder.classDiscriminator.<set-classDiscriminator>|<set-classDiscriminator>(kotlin.String){}[0]
+    final var encodeDefaults // net.benwoodworth.knbt/StringifiedNbtBuilder.encodeDefaults|{}encodeDefaults[0]
+        final fun <get-encodeDefaults>(): kotlin/Boolean // net.benwoodworth.knbt/StringifiedNbtBuilder.encodeDefaults.<get-encodeDefaults>|<get-encodeDefaults>(){}[0]
+        final fun <set-encodeDefaults>(kotlin/Boolean) // net.benwoodworth.knbt/StringifiedNbtBuilder.encodeDefaults.<set-encodeDefaults>|<set-encodeDefaults>(kotlin.Boolean){}[0]
+    final var ignoreUnknownKeys // net.benwoodworth.knbt/StringifiedNbtBuilder.ignoreUnknownKeys|{}ignoreUnknownKeys[0]
+        final fun <get-ignoreUnknownKeys>(): kotlin/Boolean // net.benwoodworth.knbt/StringifiedNbtBuilder.ignoreUnknownKeys.<get-ignoreUnknownKeys>|<get-ignoreUnknownKeys>(){}[0]
+        final fun <set-ignoreUnknownKeys>(kotlin/Boolean) // net.benwoodworth.knbt/StringifiedNbtBuilder.ignoreUnknownKeys.<set-ignoreUnknownKeys>|<set-ignoreUnknownKeys>(kotlin.Boolean){}[0]
+    final var nameRootClasses // net.benwoodworth.knbt/StringifiedNbtBuilder.nameRootClasses|{}nameRootClasses[0]
+        final fun <get-nameRootClasses>(): kotlin/Boolean // net.benwoodworth.knbt/StringifiedNbtBuilder.nameRootClasses.<get-nameRootClasses>|<get-nameRootClasses>(){}[0]
+        final fun <set-nameRootClasses>(kotlin/Boolean) // net.benwoodworth.knbt/StringifiedNbtBuilder.nameRootClasses.<set-nameRootClasses>|<set-nameRootClasses>(kotlin.Boolean){}[0]
+    final var prettyPrint // net.benwoodworth.knbt/StringifiedNbtBuilder.prettyPrint|{}prettyPrint[0]
+        final fun <get-prettyPrint>(): kotlin/Boolean // net.benwoodworth.knbt/StringifiedNbtBuilder.prettyPrint.<get-prettyPrint>|<get-prettyPrint>(){}[0]
+        final fun <set-prettyPrint>(kotlin/Boolean) // net.benwoodworth.knbt/StringifiedNbtBuilder.prettyPrint.<set-prettyPrint>|<set-prettyPrint>(kotlin.Boolean){}[0]
+    final var prettyPrintIndent // net.benwoodworth.knbt/StringifiedNbtBuilder.prettyPrintIndent|{}prettyPrintIndent[0]
+        final fun <get-prettyPrintIndent>(): kotlin/String // net.benwoodworth.knbt/StringifiedNbtBuilder.prettyPrintIndent.<get-prettyPrintIndent>|<get-prettyPrintIndent>(){}[0]
+        final fun <set-prettyPrintIndent>(kotlin/String) // net.benwoodworth.knbt/StringifiedNbtBuilder.prettyPrintIndent.<set-prettyPrintIndent>|<set-prettyPrintIndent>(kotlin.String){}[0]
+    final var serializersModule // net.benwoodworth.knbt/StringifiedNbtBuilder.serializersModule|{}serializersModule[0]
+        final fun <get-serializersModule>(): kotlinx.serialization.modules/SerializersModule // net.benwoodworth.knbt/StringifiedNbtBuilder.serializersModule.<get-serializersModule>|<get-serializersModule>(){}[0]
+        final fun <set-serializersModule>(kotlinx.serialization.modules/SerializersModule) // net.benwoodworth.knbt/StringifiedNbtBuilder.serializersModule.<set-serializersModule>|<set-serializersModule>(kotlinx.serialization.modules.SerializersModule){}[0]
+}
+
+final class net.benwoodworth.knbt/StringifiedNbtConfiguration : net.benwoodworth.knbt/NbtFormatConfiguration { // net.benwoodworth.knbt/StringifiedNbtConfiguration|null[0]
+    final val classDiscriminator // net.benwoodworth.knbt/StringifiedNbtConfiguration.classDiscriminator|{}classDiscriminator[0]
+        final fun <get-classDiscriminator>(): kotlin/String // net.benwoodworth.knbt/StringifiedNbtConfiguration.classDiscriminator.<get-classDiscriminator>|<get-classDiscriminator>(){}[0]
+    final val encodeDefaults // net.benwoodworth.knbt/StringifiedNbtConfiguration.encodeDefaults|{}encodeDefaults[0]
+        final fun <get-encodeDefaults>(): kotlin/Boolean // net.benwoodworth.knbt/StringifiedNbtConfiguration.encodeDefaults.<get-encodeDefaults>|<get-encodeDefaults>(){}[0]
+    final val ignoreUnknownKeys // net.benwoodworth.knbt/StringifiedNbtConfiguration.ignoreUnknownKeys|{}ignoreUnknownKeys[0]
+        final fun <get-ignoreUnknownKeys>(): kotlin/Boolean // net.benwoodworth.knbt/StringifiedNbtConfiguration.ignoreUnknownKeys.<get-ignoreUnknownKeys>|<get-ignoreUnknownKeys>(){}[0]
+    final val nameRootClasses // net.benwoodworth.knbt/StringifiedNbtConfiguration.nameRootClasses|{}nameRootClasses[0]
+        final fun <get-nameRootClasses>(): kotlin/Boolean // net.benwoodworth.knbt/StringifiedNbtConfiguration.nameRootClasses.<get-nameRootClasses>|<get-nameRootClasses>(){}[0]
+    final val prettyPrint // net.benwoodworth.knbt/StringifiedNbtConfiguration.prettyPrint|{}prettyPrint[0]
+        final fun <get-prettyPrint>(): kotlin/Boolean // net.benwoodworth.knbt/StringifiedNbtConfiguration.prettyPrint.<get-prettyPrint>|<get-prettyPrint>(){}[0]
+    final val prettyPrintIndent // net.benwoodworth.knbt/StringifiedNbtConfiguration.prettyPrintIndent|{}prettyPrintIndent[0]
+        final fun <get-prettyPrintIndent>(): kotlin/String // net.benwoodworth.knbt/StringifiedNbtConfiguration.prettyPrintIndent.<get-prettyPrintIndent>|<get-prettyPrintIndent>(){}[0]
+
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/StringifiedNbtConfiguration.toString|toString(){}[0]
+}
+
+final value class net.benwoodworth.knbt/NbtByte : net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtByte|null[0]
+    constructor <init>(kotlin/Boolean) // net.benwoodworth.knbt/NbtByte.<init>|<init>(kotlin.Boolean){}[0]
+    constructor <init>(kotlin/Byte) // net.benwoodworth.knbt/NbtByte.<init>|<init>(kotlin.Byte){}[0]
+
+    final val booleanValue // net.benwoodworth.knbt/NbtByte.booleanValue|{}booleanValue[0]
+        final fun <get-booleanValue>(): kotlin/Boolean // net.benwoodworth.knbt/NbtByte.booleanValue.<get-booleanValue>|<get-booleanValue>(){}[0]
+    final val type // net.benwoodworth.knbt/NbtByte.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtByte.type.<get-type>|<get-type>(){}[0]
+    final val value // net.benwoodworth.knbt/NbtByte.value|{}value[0]
+        final fun <get-value>(): kotlin/Byte // net.benwoodworth.knbt/NbtByte.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtByte.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtByte.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtByte.toString|toString(){}[0]
+
+    final object Companion { // net.benwoodworth.knbt/NbtByte.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtByte> // net.benwoodworth.knbt/NbtByte.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final value class net.benwoodworth.knbt/NbtDouble : net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtDouble|null[0]
+    constructor <init>(kotlin/Double) // net.benwoodworth.knbt/NbtDouble.<init>|<init>(kotlin.Double){}[0]
+
+    final val type // net.benwoodworth.knbt/NbtDouble.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtDouble.type.<get-type>|<get-type>(){}[0]
+    final val value // net.benwoodworth.knbt/NbtDouble.value|{}value[0]
+        final fun <get-value>(): kotlin/Double // net.benwoodworth.knbt/NbtDouble.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtDouble.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtDouble.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtDouble.toString|toString(){}[0]
+
+    final object Companion { // net.benwoodworth.knbt/NbtDouble.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtDouble> // net.benwoodworth.knbt/NbtDouble.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final value class net.benwoodworth.knbt/NbtFloat : net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtFloat|null[0]
+    constructor <init>(kotlin/Float) // net.benwoodworth.knbt/NbtFloat.<init>|<init>(kotlin.Float){}[0]
+
+    final val type // net.benwoodworth.knbt/NbtFloat.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtFloat.type.<get-type>|<get-type>(){}[0]
+    final val value // net.benwoodworth.knbt/NbtFloat.value|{}value[0]
+        final fun <get-value>(): kotlin/Float // net.benwoodworth.knbt/NbtFloat.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtFloat.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtFloat.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtFloat.toString|toString(){}[0]
+
+    final object Companion { // net.benwoodworth.knbt/NbtFloat.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtFloat> // net.benwoodworth.knbt/NbtFloat.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final value class net.benwoodworth.knbt/NbtInt : net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtInt|null[0]
+    constructor <init>(kotlin/Int) // net.benwoodworth.knbt/NbtInt.<init>|<init>(kotlin.Int){}[0]
+
+    final val type // net.benwoodworth.knbt/NbtInt.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtInt.type.<get-type>|<get-type>(){}[0]
+    final val value // net.benwoodworth.knbt/NbtInt.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // net.benwoodworth.knbt/NbtInt.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtInt.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtInt.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtInt.toString|toString(){}[0]
+
+    final object Companion { // net.benwoodworth.knbt/NbtInt.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtInt> // net.benwoodworth.knbt/NbtInt.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final value class net.benwoodworth.knbt/NbtLong : net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtLong|null[0]
+    constructor <init>(kotlin/Long) // net.benwoodworth.knbt/NbtLong.<init>|<init>(kotlin.Long){}[0]
+
+    final val type // net.benwoodworth.knbt/NbtLong.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtLong.type.<get-type>|<get-type>(){}[0]
+    final val value // net.benwoodworth.knbt/NbtLong.value|{}value[0]
+        final fun <get-value>(): kotlin/Long // net.benwoodworth.knbt/NbtLong.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtLong.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtLong.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtLong.toString|toString(){}[0]
+
+    final object Companion { // net.benwoodworth.knbt/NbtLong.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtLong> // net.benwoodworth.knbt/NbtLong.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final value class net.benwoodworth.knbt/NbtShort : net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtShort|null[0]
+    constructor <init>(kotlin/Short) // net.benwoodworth.knbt/NbtShort.<init>|<init>(kotlin.Short){}[0]
+
+    final val type // net.benwoodworth.knbt/NbtShort.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtShort.type.<get-type>|<get-type>(){}[0]
+    final val value // net.benwoodworth.knbt/NbtShort.value|{}value[0]
+        final fun <get-value>(): kotlin/Short // net.benwoodworth.knbt/NbtShort.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtShort.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtShort.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtShort.toString|toString(){}[0]
+
+    final object Companion { // net.benwoodworth.knbt/NbtShort.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtShort> // net.benwoodworth.knbt/NbtShort.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final value class net.benwoodworth.knbt/NbtString : net.benwoodworth.knbt/NbtTag { // net.benwoodworth.knbt/NbtString|null[0]
+    constructor <init>(kotlin/String) // net.benwoodworth.knbt/NbtString.<init>|<init>(kotlin.String){}[0]
+
+    final val type // net.benwoodworth.knbt/NbtString.type|{}type[0]
+        final fun <get-type>(): net.benwoodworth.knbt.internal/NbtTagType // net.benwoodworth.knbt/NbtString.type.<get-type>|<get-type>(){}[0]
+    final val value // net.benwoodworth.knbt/NbtString.value|{}value[0]
+        final fun <get-value>(): kotlin/String // net.benwoodworth.knbt/NbtString.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // net.benwoodworth.knbt/NbtString.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // net.benwoodworth.knbt/NbtString.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // net.benwoodworth.knbt/NbtString.toString|toString(){}[0]
+
+    final object Companion { // net.benwoodworth.knbt/NbtString.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<net.benwoodworth.knbt/NbtString> // net.benwoodworth.knbt/NbtString.Companion.serializer|serializer(){}[0]
+    }
+}
+
+sealed class net.benwoodworth.knbt/Nbt : kotlinx.serialization/BinaryFormat, net.benwoodworth.knbt/NbtFormat { // net.benwoodworth.knbt/Nbt|null[0]
+    open val configuration // net.benwoodworth.knbt/Nbt.configuration|{}configuration[0]
+        open fun <get-configuration>(): net.benwoodworth.knbt/NbtConfiguration // net.benwoodworth.knbt/Nbt.configuration.<get-configuration>|<get-configuration>(){}[0]
+    open val serializersModule // net.benwoodworth.knbt/Nbt.serializersModule|{}serializersModule[0]
+        open fun <get-serializersModule>(): kotlinx.serialization.modules/SerializersModule // net.benwoodworth.knbt/Nbt.serializersModule.<get-serializersModule>|<get-serializersModule>(){}[0]
+
+    final fun <#A1: kotlin/Any?> decodeFromSource(kotlinx.serialization/DeserializationStrategy<#A1>, okio/Source): #A1 // net.benwoodworth.knbt/Nbt.decodeFromSource|decodeFromSource(kotlinx.serialization.DeserializationStrategy<0:0>;okio.Source){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> encodeToSink(kotlinx.serialization/SerializationStrategy<#A1>, #A1, okio/Sink) // net.benwoodworth.knbt/Nbt.encodeToSink|encodeToSink(kotlinx.serialization.SerializationStrategy<0:0>;0:0;okio.Sink){0§<kotlin.Any?>}[0]
+    open fun <#A1: kotlin/Any?> decodeFromByteArray(kotlinx.serialization/DeserializationStrategy<#A1>, kotlin/ByteArray): #A1 // net.benwoodworth.knbt/Nbt.decodeFromByteArray|decodeFromByteArray(kotlinx.serialization.DeserializationStrategy<0:0>;kotlin.ByteArray){0§<kotlin.Any?>}[0]
+    open fun <#A1: kotlin/Any?> encodeToByteArray(kotlinx.serialization/SerializationStrategy<#A1>, #A1): kotlin/ByteArray // net.benwoodworth.knbt/Nbt.encodeToByteArray|encodeToByteArray(kotlinx.serialization.SerializationStrategy<0:0>;0:0){0§<kotlin.Any?>}[0]
+}
+
+sealed class net.benwoodworth.knbt/StringifiedNbt : kotlinx.serialization/StringFormat, net.benwoodworth.knbt/NbtFormat { // net.benwoodworth.knbt/StringifiedNbt|null[0]
+    open val configuration // net.benwoodworth.knbt/StringifiedNbt.configuration|{}configuration[0]
+        open fun <get-configuration>(): net.benwoodworth.knbt/StringifiedNbtConfiguration // net.benwoodworth.knbt/StringifiedNbt.configuration.<get-configuration>|<get-configuration>(){}[0]
+    open val serializersModule // net.benwoodworth.knbt/StringifiedNbt.serializersModule|{}serializersModule[0]
+        open fun <get-serializersModule>(): kotlinx.serialization.modules/SerializersModule // net.benwoodworth.knbt/StringifiedNbt.serializersModule.<get-serializersModule>|<get-serializersModule>(){}[0]
+
+    open fun <#A1: kotlin/Any?> decodeFromString(kotlinx.serialization/DeserializationStrategy<#A1>, kotlin/String): #A1 // net.benwoodworth.knbt/StringifiedNbt.decodeFromString|decodeFromString(kotlinx.serialization.DeserializationStrategy<0:0>;kotlin.String){0§<kotlin.Any?>}[0]
+    open fun <#A1: kotlin/Any?> encodeToString(kotlinx.serialization/SerializationStrategy<#A1>, #A1): kotlin/String // net.benwoodworth.knbt/StringifiedNbt.encodeToString|encodeToString(kotlinx.serialization.SerializationStrategy<0:0>;0:0){0§<kotlin.Any?>}[0]
+
+    final object Default : net.benwoodworth.knbt/StringifiedNbt // net.benwoodworth.knbt/StringifiedNbt.Default|null[0]
+}
+
+final val net.benwoodworth.knbt/nbtByte // net.benwoodworth.knbt/nbtByte|@net.benwoodworth.knbt.NbtTag{}nbtByte[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtByte>(): net.benwoodworth.knbt/NbtByte // net.benwoodworth.knbt/nbtByte.<get-nbtByte>|<get-nbtByte>@net.benwoodworth.knbt.NbtTag(){}[0]
+final val net.benwoodworth.knbt/nbtByteArray // net.benwoodworth.knbt/nbtByteArray|@net.benwoodworth.knbt.NbtTag{}nbtByteArray[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtByteArray>(): net.benwoodworth.knbt/NbtByteArray // net.benwoodworth.knbt/nbtByteArray.<get-nbtByteArray>|<get-nbtByteArray>@net.benwoodworth.knbt.NbtTag(){}[0]
+final val net.benwoodworth.knbt/nbtCompound // net.benwoodworth.knbt/nbtCompound|@net.benwoodworth.knbt.NbtTag{}nbtCompound[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtCompound>(): net.benwoodworth.knbt/NbtCompound // net.benwoodworth.knbt/nbtCompound.<get-nbtCompound>|<get-nbtCompound>@net.benwoodworth.knbt.NbtTag(){}[0]
+final val net.benwoodworth.knbt/nbtDouble // net.benwoodworth.knbt/nbtDouble|@net.benwoodworth.knbt.NbtTag{}nbtDouble[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtDouble>(): net.benwoodworth.knbt/NbtDouble // net.benwoodworth.knbt/nbtDouble.<get-nbtDouble>|<get-nbtDouble>@net.benwoodworth.knbt.NbtTag(){}[0]
+final val net.benwoodworth.knbt/nbtFloat // net.benwoodworth.knbt/nbtFloat|@net.benwoodworth.knbt.NbtTag{}nbtFloat[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtFloat>(): net.benwoodworth.knbt/NbtFloat // net.benwoodworth.knbt/nbtFloat.<get-nbtFloat>|<get-nbtFloat>@net.benwoodworth.knbt.NbtTag(){}[0]
+final val net.benwoodworth.knbt/nbtInt // net.benwoodworth.knbt/nbtInt|@net.benwoodworth.knbt.NbtTag{}nbtInt[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtInt>(): net.benwoodworth.knbt/NbtInt // net.benwoodworth.knbt/nbtInt.<get-nbtInt>|<get-nbtInt>@net.benwoodworth.knbt.NbtTag(){}[0]
+final val net.benwoodworth.knbt/nbtIntArray // net.benwoodworth.knbt/nbtIntArray|@net.benwoodworth.knbt.NbtTag{}nbtIntArray[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtIntArray>(): net.benwoodworth.knbt/NbtIntArray // net.benwoodworth.knbt/nbtIntArray.<get-nbtIntArray>|<get-nbtIntArray>@net.benwoodworth.knbt.NbtTag(){}[0]
+final val net.benwoodworth.knbt/nbtList // net.benwoodworth.knbt/nbtList|@net.benwoodworth.knbt.NbtTag{}nbtList[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtList>(): net.benwoodworth.knbt/NbtList<*> // net.benwoodworth.knbt/nbtList.<get-nbtList>|<get-nbtList>@net.benwoodworth.knbt.NbtTag(){}[0]
+final val net.benwoodworth.knbt/nbtLong // net.benwoodworth.knbt/nbtLong|@net.benwoodworth.knbt.NbtTag{}nbtLong[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtLong>(): net.benwoodworth.knbt/NbtLong // net.benwoodworth.knbt/nbtLong.<get-nbtLong>|<get-nbtLong>@net.benwoodworth.knbt.NbtTag(){}[0]
+final val net.benwoodworth.knbt/nbtLongArray // net.benwoodworth.knbt/nbtLongArray|@net.benwoodworth.knbt.NbtTag{}nbtLongArray[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtLongArray>(): net.benwoodworth.knbt/NbtLongArray // net.benwoodworth.knbt/nbtLongArray.<get-nbtLongArray>|<get-nbtLongArray>@net.benwoodworth.knbt.NbtTag(){}[0]
+final val net.benwoodworth.knbt/nbtShort // net.benwoodworth.knbt/nbtShort|@net.benwoodworth.knbt.NbtTag{}nbtShort[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtShort>(): net.benwoodworth.knbt/NbtShort // net.benwoodworth.knbt/nbtShort.<get-nbtShort>|<get-nbtShort>@net.benwoodworth.knbt.NbtTag(){}[0]
+final val net.benwoodworth.knbt/nbtString // net.benwoodworth.knbt/nbtString|@net.benwoodworth.knbt.NbtTag{}nbtString[0]
+    final fun (net.benwoodworth.knbt/NbtTag).<get-nbtString>(): net.benwoodworth.knbt/NbtString // net.benwoodworth.knbt/nbtString.<get-nbtString>|<get-nbtString>@net.benwoodworth.knbt.NbtTag(){}[0]
+
+final fun (kotlinx.serialization.encoding/Decoder).net.benwoodworth.knbt/asNbtDecoder(): net.benwoodworth.knbt/NbtDecoder // net.benwoodworth.knbt/asNbtDecoder|asNbtDecoder@kotlinx.serialization.encoding.Decoder(){}[0]
+final fun (kotlinx.serialization.encoding/Encoder).net.benwoodworth.knbt/asNbtEncoder(): net.benwoodworth.knbt/NbtEncoder // net.benwoodworth.knbt/asNbtEncoder|asNbtEncoder@kotlinx.serialization.encoding.Encoder(){}[0]
+final fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/put(kotlin/String, kotlin/Boolean): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/put|put@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.Boolean){}[0]
+final fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/put(kotlin/String, kotlin/Byte): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/put|put@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.Byte){}[0]
+final fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/put(kotlin/String, kotlin/ByteArray): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/put|put@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.ByteArray){}[0]
+final fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/put(kotlin/String, kotlin/Double): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/put|put@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.Double){}[0]
+final fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/put(kotlin/String, kotlin/Float): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/put|put@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.Float){}[0]
+final fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/put(kotlin/String, kotlin/Int): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/put|put@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.Int){}[0]
+final fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/put(kotlin/String, kotlin/IntArray): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/put|put@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.IntArray){}[0]
+final fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/put(kotlin/String, kotlin/Long): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/put|put@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.Long){}[0]
+final fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/put(kotlin/String, kotlin/LongArray): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/put|put@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.LongArray){}[0]
+final fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/put(kotlin/String, kotlin/Short): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/put|put@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.Short){}[0]
+final fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/put(kotlin/String, kotlin/String): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/put|put@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.String){}[0]
+final fun (net.benwoodworth.knbt/NbtCompression.Companion).net.benwoodworth.knbt/detect(kotlin/ByteArray): net.benwoodworth.knbt/NbtCompression // net.benwoodworth.knbt/detect|detect@net.benwoodworth.knbt.NbtCompression.Companion(kotlin.ByteArray){}[0]
+final fun (net.benwoodworth.knbt/NbtCompression.Companion).net.benwoodworth.knbt/detect(okio/BufferedSource): net.benwoodworth.knbt/NbtCompression // net.benwoodworth.knbt/detect|detect@net.benwoodworth.knbt.NbtCompression.Companion(okio.BufferedSource){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtByte>).net.benwoodworth.knbt/add(kotlin/Boolean): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtByte>(kotlin.Boolean){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtByte>).net.benwoodworth.knbt/add(kotlin/Byte): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtByte>(kotlin.Byte){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtByte>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtByte): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtByte>(net.benwoodworth.knbt.NbtByte){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtByteArray>).net.benwoodworth.knbt/add(kotlin/ByteArray): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtByteArray>(kotlin.ByteArray){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtByteArray>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtByteArray): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtByteArray>(net.benwoodworth.knbt.NbtByteArray){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtCompound>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtCompound): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtCompound>(net.benwoodworth.knbt.NbtCompound){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtDouble>).net.benwoodworth.knbt/add(kotlin/Double): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtDouble>(kotlin.Double){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtDouble>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtDouble): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtDouble>(net.benwoodworth.knbt.NbtDouble){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtFloat>).net.benwoodworth.knbt/add(kotlin/Float): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtFloat>(kotlin.Float){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtFloat>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtFloat): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtFloat>(net.benwoodworth.knbt.NbtFloat){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtInt>).net.benwoodworth.knbt/add(kotlin/Int): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtInt>(kotlin.Int){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtInt>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtInt): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtInt>(net.benwoodworth.knbt.NbtInt){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtIntArray>).net.benwoodworth.knbt/add(kotlin/IntArray): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtIntArray>(kotlin.IntArray){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtIntArray>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtIntArray): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtIntArray>(net.benwoodworth.knbt.NbtIntArray){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtLong>).net.benwoodworth.knbt/add(kotlin/Long): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtLong>(kotlin.Long){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtLong>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtLong): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtLong>(net.benwoodworth.knbt.NbtLong){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtLongArray>).net.benwoodworth.knbt/add(kotlin/LongArray): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtLongArray>(kotlin.LongArray){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtLongArray>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtLongArray): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtLongArray>(net.benwoodworth.knbt.NbtLongArray){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtShort>).net.benwoodworth.knbt/add(kotlin/Short): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtShort>(kotlin.Short){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtShort>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtShort): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtShort>(net.benwoodworth.knbt.NbtShort){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtString>).net.benwoodworth.knbt/add(kotlin/String): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtString>(kotlin.String){}[0]
+final fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtString>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtString): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtString>(net.benwoodworth.knbt.NbtString){}[0]
+final fun <#A: net.benwoodworth.knbt/NbtTag> (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtList<#A>>).net.benwoodworth.knbt/add(net.benwoodworth.knbt/NbtList<#A>): kotlin/Boolean // net.benwoodworth.knbt/add|add@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtList<0:0>>(net.benwoodworth.knbt.NbtList<0:0>){0§<net.benwoodworth.knbt.NbtTag>}[0]
+final fun <#A: net.benwoodworth.knbt/NbtTag> (net.benwoodworth.knbt/NbtTag).net.benwoodworth.knbt/nbtList(kotlin.reflect/KClass<#A>): net.benwoodworth.knbt/NbtList<#A> // net.benwoodworth.knbt/nbtList|nbtList@net.benwoodworth.knbt.NbtTag(kotlin.reflect.KClass<0:0>){0§<net.benwoodworth.knbt.NbtTag>}[0]
+final fun net.benwoodworth.knbt/Nbt(net.benwoodworth.knbt/Nbt = ..., kotlin/Function1<net.benwoodworth.knbt/NbtBuilder, kotlin/Unit>): net.benwoodworth.knbt/Nbt // net.benwoodworth.knbt/Nbt|Nbt(net.benwoodworth.knbt.Nbt;kotlin.Function1<net.benwoodworth.knbt.NbtBuilder,kotlin.Unit>){}[0]
+final fun net.benwoodworth.knbt/StringifiedNbt(net.benwoodworth.knbt/StringifiedNbt = ..., kotlin/Function1<net.benwoodworth.knbt/StringifiedNbtBuilder, kotlin/Unit>): net.benwoodworth.knbt/StringifiedNbt // net.benwoodworth.knbt/StringifiedNbt|StringifiedNbt(net.benwoodworth.knbt.StringifiedNbt;kotlin.Function1<net.benwoodworth.knbt.StringifiedNbtBuilder,kotlin.Unit>){}[0]
+final inline fun (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/putNbtCompound(kotlin/String, kotlin/Function1<net.benwoodworth.knbt/NbtCompoundBuilder, kotlin/Unit>): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/putNbtCompound|putNbtCompound@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.Function1<net.benwoodworth.knbt.NbtCompoundBuilder,kotlin.Unit>){}[0]
+final inline fun (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtCompound>).net.benwoodworth.knbt/addNbtCompound(kotlin/Function1<net.benwoodworth.knbt/NbtCompoundBuilder, kotlin/Unit>): kotlin/Boolean // net.benwoodworth.knbt/addNbtCompound|addNbtCompound@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtCompound>(kotlin.Function1<net.benwoodworth.knbt.NbtCompoundBuilder,kotlin.Unit>){}[0]
+final inline fun <#A: net.benwoodworth.knbt/NbtTag> (net.benwoodworth.knbt/NbtCompoundBuilder).net.benwoodworth.knbt/putNbtList(kotlin/String, kotlin/Function1<net.benwoodworth.knbt/NbtListBuilder<#A>, kotlin/Unit>): net.benwoodworth.knbt/NbtTag? // net.benwoodworth.knbt/putNbtList|putNbtList@net.benwoodworth.knbt.NbtCompoundBuilder(kotlin.String;kotlin.Function1<net.benwoodworth.knbt.NbtListBuilder<0:0>,kotlin.Unit>){0§<net.benwoodworth.knbt.NbtTag>}[0]
+final inline fun <#A: net.benwoodworth.knbt/NbtTag> (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtList<#A>>).net.benwoodworth.knbt/addNbtList(kotlin/Function1<net.benwoodworth.knbt/NbtListBuilder<#A>, kotlin/Unit>): kotlin/Boolean // net.benwoodworth.knbt/addNbtList|addNbtList@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtList<0:0>>(kotlin.Function1<net.benwoodworth.knbt.NbtListBuilder<0:0>,kotlin.Unit>){0§<net.benwoodworth.knbt.NbtTag>}[0]
+final inline fun <#A: net.benwoodworth.knbt/NbtTag> (net.benwoodworth.knbt/NbtListBuilder<net.benwoodworth.knbt/NbtList<net.benwoodworth.knbt/NbtTag>>).net.benwoodworth.knbt/addNbtList(kotlin/Function1<net.benwoodworth.knbt/NbtListBuilder<#A>, kotlin/Unit>): kotlin/Boolean // net.benwoodworth.knbt/addNbtList|addNbtList@net.benwoodworth.knbt.NbtListBuilder<net.benwoodworth.knbt.NbtList<net.benwoodworth.knbt.NbtTag>>(kotlin.Function1<net.benwoodworth.knbt.NbtListBuilder<0:0>,kotlin.Unit>){0§<net.benwoodworth.knbt.NbtTag>}[0]
+final inline fun <#A: net.benwoodworth.knbt/NbtTag> net.benwoodworth.knbt/buildNbtList(kotlin/Function1<net.benwoodworth.knbt/NbtListBuilder<#A>, kotlin/Unit>): net.benwoodworth.knbt/NbtList<#A> // net.benwoodworth.knbt/buildNbtList|buildNbtList(kotlin.Function1<net.benwoodworth.knbt.NbtListBuilder<0:0>,kotlin.Unit>){0§<net.benwoodworth.knbt.NbtTag>}[0]
+final inline fun <#A: net.benwoodworth.knbt/NbtTag> net.benwoodworth.knbt/buildNbtList(kotlin/String, kotlin/Function1<net.benwoodworth.knbt/NbtListBuilder<#A>, kotlin/Unit>): net.benwoodworth.knbt/NbtCompound // net.benwoodworth.knbt/buildNbtList|buildNbtList(kotlin.String;kotlin.Function1<net.benwoodworth.knbt.NbtListBuilder<0:0>,kotlin.Unit>){0§<net.benwoodworth.knbt.NbtTag>}[0]
+final inline fun <#A: reified kotlin/Any?> (net.benwoodworth.knbt/Nbt).net.benwoodworth.knbt/decodeFromSource(okio/Source): #A // net.benwoodworth.knbt/decodeFromSource|decodeFromSource@net.benwoodworth.knbt.Nbt(okio.Source){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (net.benwoodworth.knbt/Nbt).net.benwoodworth.knbt/encodeToSink(#A, okio/Sink) // net.benwoodworth.knbt/encodeToSink|encodeToSink@net.benwoodworth.knbt.Nbt(0:0;okio.Sink){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (net.benwoodworth.knbt/NbtFormat).net.benwoodworth.knbt/decodeFromNbtTag(net.benwoodworth.knbt/NbtTag): #A // net.benwoodworth.knbt/decodeFromNbtTag|decodeFromNbtTag@net.benwoodworth.knbt.NbtFormat(net.benwoodworth.knbt.NbtTag){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (net.benwoodworth.knbt/NbtFormat).net.benwoodworth.knbt/encodeToNbtTag(#A): net.benwoodworth.knbt/NbtTag // net.benwoodworth.knbt/encodeToNbtTag|encodeToNbtTag@net.benwoodworth.knbt.NbtFormat(0:0){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified net.benwoodworth.knbt/NbtTag> (net.benwoodworth.knbt/NbtTag).net.benwoodworth.knbt/nbtList(): net.benwoodworth.knbt/NbtList<#A> // net.benwoodworth.knbt/nbtList|nbtList@net.benwoodworth.knbt.NbtTag(){0§<net.benwoodworth.knbt.NbtTag>}[0]
+final inline fun net.benwoodworth.knbt/buildNbtCompound(kotlin/Function1<net.benwoodworth.knbt/NbtCompoundBuilder, kotlin/Unit>): net.benwoodworth.knbt/NbtCompound // net.benwoodworth.knbt/buildNbtCompound|buildNbtCompound(kotlin.Function1<net.benwoodworth.knbt.NbtCompoundBuilder,kotlin.Unit>){}[0]
+final inline fun net.benwoodworth.knbt/buildNbtCompound(kotlin/String, kotlin/Function1<net.benwoodworth.knbt/NbtCompoundBuilder, kotlin/Unit>): net.benwoodworth.knbt/NbtCompound // net.benwoodworth.knbt/buildNbtCompound|buildNbtCompound(kotlin.String;kotlin.Function1<net.benwoodworth.knbt.NbtCompoundBuilder,kotlin.Unit>){}[0]

@@ -1,5 +1,6 @@
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 val kotlinx_serialization_version: String by extra
 val okio_version: String by extra
@@ -15,7 +16,6 @@ val isSnapshot = version.toString().contains("SNAPSHOT", true)
 plugins {
     kotlin("multiplatform") version "2.2.21"
     kotlin("plugin.serialization") version "2.2.21"
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.18.1"
     id("org.jetbrains.dokka") version "2.1.0"
     id("com.vanniktech.maven.publish") version "0.34.0"
 }
@@ -103,6 +103,11 @@ kotlin {
                 implementation(npm("pako", "2.1.0"))
             }
         }
+    }
+
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled = true
     }
 }
 
