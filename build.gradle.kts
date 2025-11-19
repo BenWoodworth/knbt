@@ -112,6 +112,10 @@ kotlin {
 }
 
 dokka {
+    dokkaPublications.configureEach {
+        failOnWarning = true
+    }
+
     dokkaSourceSets.all {
         documentedVisibilities = setOf(VisibilityModifier.Public)
         skipDeprecated = true
