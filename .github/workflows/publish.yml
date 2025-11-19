@@ -6,7 +6,6 @@ on:
     branches: [ 'main', '[0-9]+.[0-9]+', '[0-9]+.[0-9]+.[0-9]+' ]
 
 env:
-  GIT_REF: ${{ github.ref }}
   ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
   ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
   ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
@@ -20,6 +19,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: 'Set Gradle project version'
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        shell: bash
+        run: echo "ORG_GRADLE_PROJECT_version=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
 
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -47,6 +51,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: 'Set Gradle project version'
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        shell: bash
+        run: echo "ORG_GRADLE_PROJECT_version=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
 
       - name: Set up Java
         uses: actions/setup-java@v5

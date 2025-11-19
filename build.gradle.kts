@@ -5,14 +5,6 @@ import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 val kotlinx_serialization_version: String by extra
 val okio_version: String by extra
 
-System.getenv("GIT_REF")?.let { gitRef ->
-    Regex("refs/tags/v(.*)").matchEntire(gitRef)?.let { gitVersionMatch ->
-        version = gitVersionMatch.groupValues[1]
-    }
-}
-
-val isSnapshot = version.toString().contains("SNAPSHOT", true)
-
 plugins {
     kotlin("multiplatform") version "2.2.21"
     kotlin("plugin.serialization") version "2.2.21"
