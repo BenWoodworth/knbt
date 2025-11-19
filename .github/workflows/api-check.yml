@@ -1,0 +1,26 @@
+name: 'API Check'
+
+on:
+  pull_request:
+    branches: [ 'main' ]
+
+jobs:
+  api-check:
+    name: 'API Check'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+
+      - name: Binary Compatibility
+        run: ./gradlew checkLegacyAbi
+
+      - name: Documentation
+        if: success() || failure()
+        run: ./gradlew dokkaGenerate
