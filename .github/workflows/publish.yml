@@ -17,16 +17,20 @@ jobs:
   windows:
     name: "Publish: multiplatform, jvm, js, linux, mingw"
     runs-on: windows-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'zulu'
+
       - name: Clean
         if: ${{ false }} # Skip, since it fails on Windows: https://youtrack.jetbrains.com/issue/KT-50545/
         run: .\gradlew.bat clean
+
       - name: Publish to Maven
         run: >-
           .\gradlew.bat
@@ -40,15 +44,19 @@ jobs:
   macos:
     name: "Publish: macos, ios, watchos"
     runs-on: macos-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'zulu'
+
       - name: Clean
         run: ./gradlew clean
+
       - name: Publish to Maven
         run: >-
           ./gradlew

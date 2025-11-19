@@ -6,46 +6,58 @@ jobs:
   ubuntu:
     name: "Test: jvm, js, linux"
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'zulu'
+
       - name: Clean
         run: ./gradlew clean
+
       - name: Test
         run: ./gradlew jvmTest jsTest linuxX64Test
 
   windows:
     name: "Test: mingw"
     runs-on: windows-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'zulu'
+
       - name: Clean
         if: ${{ false }} # Skip, since it fails on Windows: https://youtrack.jetbrains.com/issue/KT-50545/
         run: .\gradlew.bat clean
+
       - name: Test
         run: .\gradlew.bat mingwX64Test
 
   macos:
     name: "Test: macos, ios, watchos, tvos"
     runs-on: macos-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'zulu'
+
       - name: Clean
         run: ./gradlew clean
+
       - name: Test
         run: >
           ./gradlew
