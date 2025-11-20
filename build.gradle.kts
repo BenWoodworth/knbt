@@ -82,7 +82,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
-                implementation("com.benwoodworth.parameterize:parameterize:0.4.0")
+                implementation("com.benwoodworth.parameterize:parameterize-core:0.4.1")
             }
         }
         val jvmTest by getting {
