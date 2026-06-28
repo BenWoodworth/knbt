@@ -3,6 +3,7 @@ package net.benwoodworth.knbt.internal
 import data.testTag
 import kotlinx.serialization.encodeToString
 import net.benwoodworth.knbt.ExperimentalNbtApi
+import net.benwoodworth.knbt.NbtString
 import net.benwoodworth.knbt.StringifiedNbt
 import net.benwoodworth.knbt.data.bigTestExtendedTag
 import net.benwoodworth.knbt.fix
@@ -82,6 +83,17 @@ class StringifiedNbtWriterTest {
             """.trimIndent(),
 
             actual = snbt.encodeToString(bigTestExtendedTag),
+        )
+    }
+
+    @Test
+    fun Should_write_escape_corrently() {
+        // language="JSON"
+        val str = NbtString("""{"onClick": "tellraw @p \"Hello World!\""}""")
+
+        assertEquals(
+            expected = """"{\"onClick\": \"tellraw @p \\\"Hello World!\\\"\"}"""",
+            actual = snbt.encodeToString(str)
         )
     }
 }
