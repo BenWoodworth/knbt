@@ -115,7 +115,11 @@ internal fun Appendable.appendNbtString(value: String, forceQuote: Boolean = fal
     fun Appendable.appendQuoted(): Appendable = apply {
         append('"')
         value.forEach {
-            if (it == '"') append("\\\"") else append(it)
+            when (it) {
+                '\\' -> append("\\\\")
+                '"' -> append("\\\"")
+                else -> append(it)
+            }
         }
         append('"')
     }
